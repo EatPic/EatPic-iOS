@@ -18,3 +18,11 @@ body:
       placeholder: 어떻게 고칠 계획인지 간단히 적어보세요.
     validations:
       required: false
+
+  - type: input
+    id: days
+    attributes:
+      label: ✅ 예상 일수
+      placeholder: ex) 3일
+    validations:
+      required: false
