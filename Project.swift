@@ -1,5 +1,19 @@
 import ProjectDescription
 
+let swiftLintScript: TargetScript = .pre(
+    script: """
+    export PATH="/opt/homebrew/bin:$PATH"
+
+    if which swiftlint >/dev/null; then
+    swiftlint --config ${TUIST_ROOT_DIR:-.}/.swiftlint.yml
+    else
+    echo "warning: SwiftLint not installed"
+    fi
+    """,
+    name: "SwiftLint",
+    basedOnDependencyAnalysis: false
+)
+
 let project = Project(
     name: "EatPic-iOS",
     targets: [
@@ -18,6 +32,7 @@ let project = Project(
             ),
             sources: ["EatPic-iOS/Sources/**"],
             resources: ["EatPic-iOS/Resources/**"],
+            scripts: [swiftLintScript],
             dependencies: [
                 .external(name: "Alamofire"),
                 .external(name: "Moya"),
