@@ -16,7 +16,9 @@ let package = Package(
     name: "EatPic-iOS",
     dependencies: [
         // You can read more about dependencies here: https://docs.tuist.io/documentation/tuist/dependencies
-        .package(url: "https://github.com/Moya/Moya", from: "15.0.3"),
-        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.7.1")
+        .package(url: "https://github.com/Moya/Moya", .upToNextMajor(from: "15.0.3")),
+        .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.7.1")),
+        .package(url: "https://github.com/kakao/kakao-ios-sdk", .upToNextMajor(from: "2.24.4")),
+        .package(url: "https://github.com/onevcat/Kingfisher", .upToNextMajor(from: "8.3.3")),
     ]
 )
