@@ -1,5 +1,5 @@
 //
-//  Color+Extenstions.swift
+//  View+Extensions.swift
 //  EatPic-iOS
 //
 //  Created by jaewon Lee on 7/10/25.

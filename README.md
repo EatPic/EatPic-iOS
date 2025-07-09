@@ -127,9 +127,9 @@ EatPic-iOS/
 │   │
 │   └── Utilities/
 │       ├── Extensions/
-│       │   ├── Color+Extenstions.swift
-│       │   ├── Font+Extenstions.swift
-│       │   └── View+Extenstions.swift
+│       │   ├── Color+Extensions.swift
+│       │   ├── Font+Extensions.swift
+│       │   └── View+Extensions.swift
 │       ├── Config/
 │       │   └── Config.swift
 │       ├── Constants/
