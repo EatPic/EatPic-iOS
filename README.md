@@ -91,10 +91,11 @@ EatPic-iOS/
 │   │   │   ├── NetworkService.swift         # MoyaProvider 관리
 │   │   │   ├── TargetType/                  # Moya Target 정의
 │   │   │   │   └── AuthAPI.swift
-│   │   │   ├── Request/                     # API 요청 모델(Codable)
-│   │   │   │   └── LoginRequset.swift
-│   │   │   └── Response/                    # API 응답 모델(Codable)
-│   │   │       └── LoginResponse.swift
+│   │   │   └── DTO
+│   │   │       ├── Request/                     # API 요청 모델(Codable)
+│   │   │       │   └── LoginRequset.swift
+│   │   │       └── Response/                    # API 응답 모델(Codable)
+│   │   │           └── LoginResponse.swift
 │   │   │
 │   │   └── Environment/                   # 앱 환경과 과련된 전체 설정(의존성, 빌드 환경, 플래그 등)
 │   │       └── DIConttainer.swift         # 전역 의존성 주입을 위한 환경 구성
@@ -119,16 +120,17 @@ EatPic-iOS/
 │   │
 │   ├── Resources/
 │   │   ├── Assets.xcassets/
+│   │   ├── Colors.xcassets/
+│   │   ├── Secrets.xcconfig
 │   │   └── Fonts/
 │   │       └── # 확정되면 작성
 │   │
 │   └── Utilities/
 │       ├── Extensions/
-│       │   ├── Color+.swift
-│       │   └── View+.swift
+│       │   ├── Color+extenstions.swift
+│       │   └── View+extenstions.swift
 │       └── Constants/
-│           ├── AppColor.swift
-│           └── AppString.swift
+│           └── UIConstants.swift
 │
 ├── Tests/ 
 │   ├── EatPicIOSTests.swift

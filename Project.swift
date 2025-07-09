@@ -22,6 +22,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "io.tuist.EatPic-iOS",
+            deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
