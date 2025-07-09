@@ -21,3 +21,11 @@ body:
         - [ ] API 연동
     validations:
       required: false
+
+ - type: input
+    id: days
+    attributes:
+      label: ✅ 예상 일수
+      placeholder: ex) 3일
+    validations:
+      required: false

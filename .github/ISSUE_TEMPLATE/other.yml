@@ -28,3 +28,11 @@ body:
         - [ ] 설정 파일 수정
     validations:
       required: true
+
+  - type: input
+    id: days
+    attributes:
+      label: ✅ 예상 일수
+      placeholder: ex) 3일
+    validations:
+      required: false
