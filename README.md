@@ -130,6 +130,8 @@ EatPic-iOS/
 │       │   ├── Color+Extenstions.swift
 │       │   ├── Font+Extenstions.swift
 │       │   └── View+Extenstions.swift
+│       ├── Preview/
+│       │   └── DevicePreviewHelper
 │       └── Constants/
 │           └── UIConstants.swift
 │
