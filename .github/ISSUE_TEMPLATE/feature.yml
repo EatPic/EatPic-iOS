@@ -22,7 +22,7 @@ body:
     validations:
       required: false
 
- - type: input
+  - type: input
     id: days
     attributes:
       label: ✅ 예상 일수
