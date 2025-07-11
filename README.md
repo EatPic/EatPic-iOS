@@ -1,14 +1,13 @@
 # 🚀 프로젝트 이름
 
-![배너 이미지 또는 로고](링크)
+<!-- ![배너 이미지 또는 로고](링크) -->
 
-> 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
-
+### 간단한 한 줄 소개 
+EatPic은 사용자가 식사 사진을 기록하고, 유튜브 링크나 간단한 레시피를 함께 공유하는 식사 기록 커뮤니티 앱입니다.
+<!-- 
 [![Swift](https://img.shields.io/badge/Swift-6.0.3-orange.svg)]()
 [![Xcode](https://img.shields.io/badge/Xcode-16.0-blue.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
-
----
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]() -->
 
 <br>
 
@@ -24,7 +23,12 @@
 
 ## 📱 소개
 
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
+EatPic은 사용자가 매일의 식사를 사진으로 기록하고 공유할 수 있는 앱입니다.<br>
+단순한 식사 인증을 넘어서, 커뮤니티를 통한 공유, 감정 반응(이모지),
+그리고 챌린지형 습관 형성 기능을 통해, 사용자들이 즐겁게 식단을 관리할 수 있도록 도와줍니다.
+
+EatPic은 식사를 기록하는 모든 순간에 소소한 동기를 부여하고,
+함께하는 즐거움 속에서 건강한 루틴을 만들 수 있도록 지원합니다.
 
 <br>
 
@@ -80,7 +84,14 @@
 
 ```bash
 EatPic-iOS/
-├── .github/                          
+├── .github/
+├── Resources/
+│   ├── Assets.xcassets/
+│   ├── Colors.xcassets/
+│   ├── Secrets.xcconfig
+│   └── Fonts/
+│       └── # 확정되면 작성                          
+│
 ├── Sources/
 │   ├── App/
 │   │   ├── AppDelegate.swift         # (필요시 추가) 앱 생명주기
@@ -117,13 +128,6 @@ EatPic-iOS/
 │   ├── Models/   # 모델 저장 위치
 │   │   ├── LoginModel.swift
 │   │   └──  HomeModel.swift
-│   │
-│   ├── Resources/
-│   │   ├── Assets.xcassets/
-│   │   ├── Colors.xcassets/
-│   │   ├── Secrets.xcconfig
-│   │   └── Fonts/
-│   │       └── # 확정되면 작성
 │   │
 │   └── Utilities/
 │       ├── Extensions/
