@@ -5,11 +5,13 @@ public struct ContentView: View {
 
     public var body: some View {
         VStack {
-            Text("One Meal, One Routine")
-                .font(.enRegular(size: 18))
-
-            Text("한 장의 식사, 하나의 루틴")
-                .font(.koRegular(size: 18))
+            Text("Hello World!")
+                .foregroundStyle(Color.gray060)
+                .font(.enBold(size: 24))
+            
+            Text("화이팅!")
+                .foregroundStyle(Color.green060)
+                .font(.koRegular(size: 24))
         }
     }
 }
