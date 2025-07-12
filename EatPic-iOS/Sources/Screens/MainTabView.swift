@@ -19,6 +19,8 @@ struct MainTabView: View {
                     switch route {
                     case .calendar:
                         Text("Calendar")
+                    case .notification:
+                        Text("Notification")
                     }
                 }
         }
@@ -97,7 +99,11 @@ struct MainTabView: View {
     }
 }
 
-#Preview {
-    MainTabView()
-        .environmentObject(DIContainer())
+struct MainTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        devicePreviews {
+            MainTabView()
+                .environmentObject(DIContainer())
+        }
+    }
 }

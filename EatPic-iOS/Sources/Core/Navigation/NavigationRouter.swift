@@ -9,6 +9,7 @@ import Foundation
 
 enum NavigationRoute: Equatable, Hashable {
     case calendar
+    case notification
 }
 
 /// SwiftUI에서 상태를 추적할 수 있도록 Observable로 선언된 라우터 클래스
