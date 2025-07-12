@@ -7,29 +7,6 @@
 
 import SwiftUI
 
-enum TabCase: String, CaseIterable {
-    case home = "home"
-    case community = "community"
-    case writePost = "writepost"
-    case explore = "explore"
-    case myPage = "myPage"
-    
-    var icon: Image {
-        switch self {
-        case .home:
-            return .init(.Tab.homeUnselected)
-        case .community:
-            return .init(.Tab.communityUnselected)
-        case .writePost:
-            return .init(.Tab.add)
-        case .explore:
-            return .init(.Tab.exploreUnselected)
-        case .myPage:
-            return .init(.Tab.myPageUnselected)
-        }
-    }
-}
-
 struct MainTabView: View {
     
     @EnvironmentObject private var container: DIContainer
@@ -37,52 +14,60 @@ struct MainTabView: View {
     
     var body: some View {
         NavigationStack(path: $container.router.destinations) {
-            Group {
-                if #available(iOS 18, *) {
-                    TabView(selection: $selectedTab) {
-                        ForEach(TabCase.allCases, id: \.rawValue) { tab in
-                            Tab(value: tab) {
-                                tabView(tab: tab)
-                            } label: {
-                                tabLabel(tab)
-                            }
-                        }
+            renderTabView()
+                .navigationDestination(for: NavigationRoute.self) { route in
+                    switch route {
+                    case .calendar:
+                        Text("Calendar")
                     }
-                } else {
-                    TabView(selection: $selectedTab) {
-                        ForEach(TabCase.allCases, id: \.rawValue) { tab in
+                }
+        }
+    }
+    
+    /// iOS 버전 대응을 위한 탭뷰 함수
+    ///
+    /// `Tab(value:, content:, label:)`은 iOS 18 이상부터 지원하기 때문에, 버전을 분리하여 대응하였습니다.
+    @ViewBuilder
+    private func renderTabView() -> some View {
+        Group {
+            if #available(iOS 18, *) {
+                TabView(selection: $selectedTab) {
+                    ForEach(TabCase.allCases, id: \.rawValue) { tab in
+                        Tab(value: tab) {
                             tabView(tab: tab)
-                                .tabItem {
-                                    tabLabel(tab)
-                                }
-                                .tag(tab)
+                        } label: {
+                            tabLabel(tab)
                         }
                     }
                 }
-            }
-            .navigationDestination(for: NavigationRoute.self) { route in
-                switch route {
-                case .calendar:
-                    Text("Calendar")
+            } else {
+                TabView(selection: $selectedTab) {
+                    ForEach(TabCase.allCases, id: \.rawValue) { tab in
+                        tabView(tab: tab)
+                            .tabItem {
+                                tabLabel(tab)
+                            }
+                            .tag(tab)
+                    }
                 }
             }
         }
+        .tint(Color.green060)
     }
     
     /// 탭 레이블 (아이콘 + 텍스트)
     @ViewBuilder
     private func tabLabel(_ tab: TabCase) -> some View {
         VStack(spacing: 8) {
-            if(tab == .writePost) {
+            if tab == .writePost {
                 tab.icon
                     .renderingMode(.original)
             } else {
                 tab.icon
                     .renderingMode(.template)
-                    .foregroundStyle(selectedTab == tab ? Color.green : Color.gray)
                 
                 Text(tab.rawValue)
-                    .foregroundStyle(selectedTab == tab ? Color.green : Color.gray)
+                    .font(Font.koRegular(size: 12))
             }
         }
     }
