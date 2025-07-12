@@ -28,22 +28,6 @@ struct MainTabView: View {
                     Text("writePost")
                 case .explore:
                     Text("explore")
-                        .toolbar {
-                            ToolbarItem(placement: .principal) {
-                                HStack {
-                                    Circle().frame(width: 32, height: 32)
-                                    Text("Title")
-                                }
-                            }
-                            
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button {
-                                    print("오른쪽 버튼")
-                                } label: {
-                                    Image(systemName: "gearshape")
-                                }
-                            }
-                        }
                 case .myPage:
                     Text("myPage")
                 }
