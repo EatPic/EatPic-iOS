@@ -4,8 +4,15 @@ public struct ContentView: View {
     public init() {}
 
     public var body: some View {
-        Text("Hello, World!")
-            .padding()
+        VStack {
+            Text("Hello World!")
+                .foregroundStyle(Color.gray060)
+                .font(.enBold(size: 24))
+            
+            Text("화이팅!")
+                .foregroundStyle(Color.green060)
+                .font(.koRegular(size: 24))
+        }
     }
 }
 
