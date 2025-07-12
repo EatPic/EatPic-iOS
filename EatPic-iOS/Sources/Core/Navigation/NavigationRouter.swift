@@ -8,11 +8,7 @@
 import Foundation
 
 enum NavigationRoute: Equatable, Hashable {
-    case home
-    case community
-    case writePost
-    case explore
-    case myPage
+    case calendar
 }
 
 /// SwiftUI에서 상태를 추적할 수 있도록 Observable로 선언된 라우터 클래스
