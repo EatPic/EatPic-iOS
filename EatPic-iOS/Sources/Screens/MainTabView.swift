@@ -9,12 +9,12 @@ import SwiftUI
 
 struct MainTabView: View {
     
-    @State private var router: NavigationRouter = .init()
+    @EnvironmentObject private var container: DIContainer
     
     var body: some View {
-        NavigationStack(path: $router.destinations) {
+        NavigationStack(path: $container.router.destinations) {
             Button {
-                router.push(.explore)
+                container.router.push(.explore)
             } label: {
                 Text("explore")
             }
@@ -38,4 +38,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .environmentObject(DIContainer())
 }

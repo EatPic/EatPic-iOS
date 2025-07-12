@@ -15,29 +15,11 @@ enum NavigationRoute: Equatable, Hashable {
     case myPage
 }
 
-/// 화면 이동을 제어하기 위한 라우팅 프로토콜
-protocol NavigationRoutable: AnyObject {
-    /// 현재 네비게이션 스택에 쌓여 있는 목적지들
-    var destinations: [NavigationRoute] { get set }
-
-    /// 새로운 화면을 네비게이션 스택에 푸시
-    func push(_ destination: NavigationRoute)
-
-    /// 현재 화면을 팝 (뒤로 가기)
-    func pop()
-
-    /// 루트 화면까지 모두 팝 (처음 화면으로 이동)
-    func popToRoot()
-    
-    /// 목적지를 포함하고 있는지 여부
-    func contains(_ destination: NavigationRoute) -> Bool
-}
-
 /// SwiftUI에서 상태를 추적할 수 있도록 Observable로 선언된 라우터 클래스
 @Observable
-final class NavigationRouter: NavigationRoutable {
+final class NavigationRouter {
     
-    /// 현재까지 쌓인 화면 목적지 목록 (화면 전환 상태)
+    /// 현재 네비게이션 스택에 쌓여 있는 목적지들 (화면 전환 상태)
     var destinations: [NavigationRoute] = []
     
     /// 화면을 새로 추가 (푸시)
