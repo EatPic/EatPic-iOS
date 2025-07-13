@@ -8,24 +8,24 @@
 import SwiftUI
 
 enum TabCase: String, CaseIterable {
-    case home = "home"
-    case community = "community"
-    case writePost = "writepost"
-    case explore = "explore"
-    case myPage = "myPage"
+    case home = "홈"
+    case community = "커뮤니티"
+    case writePost = "글쓰기"
+    case explore = "탐색"
+    case myPage = "마이페이지"
     
     var icon: Image {
         switch self {
         case .home:
-            return .init(.Tab.homeUnselected)
+            return .init(.Tab.home)
         case .community:
-            return .init(.Tab.communityUnselected)
+            return .init(.Tab.community)
         case .writePost:
             return .init(.Tab.add)
         case .explore:
-            return .init(.Tab.exploreUnselected)
+            return .init(.Tab.explore)
         case .myPage:
-            return .init(.Tab.myPageUnselected)
+            return .init(.Tab.myPage)
         }
     }
 }

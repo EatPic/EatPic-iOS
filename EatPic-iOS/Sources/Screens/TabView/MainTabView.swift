@@ -64,6 +64,7 @@ struct MainTabView: View {
                     .renderingMode(.template)
                 
                 Text(tab.rawValue)
+                    .foregroundStyle(Color.gray060)
                     .font(Font.koRegular(size: 12))
             }
         }
@@ -71,26 +72,8 @@ struct MainTabView: View {
     
     @ViewBuilder
     private func tabView(tab: TabCase) -> some View {
-        Group {
-            switch tab {
-            case .home:
-                Button {
-                    container.router.push(.calendar)
-                } label: {
-                    Text("Home")
-                }
-
-            case .community:
-                Text("community")
-            case .writePost:
-                Text("writePost")
-            case .explore:
-                Text("explore")
-            case .myPage:
-                Text("myPage")
-            }
-        }
-        .environmentObject(container)
+        TabViewContent(tab: tab)
+            .environmentObject(container)
     }
 }
 
