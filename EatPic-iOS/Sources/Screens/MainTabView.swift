@@ -16,12 +16,7 @@ struct MainTabView: View {
         NavigationStack(path: $container.router.destinations) {
             renderTabView()
                 .navigationDestination(for: NavigationRoute.self) { route in
-                    switch route {
-                    case .calendar:
-                        Text("Calendar")
-                    case .notification:
-                        Text("Notification")
-                    }
+                    NavigationRoutingView(route: route)
                 }
         }
     }
