@@ -28,9 +28,6 @@ protocol FormFieldType {
     /// exapmle: .next, .done, .go
     var submitLabel: SubmitLabel { get }
     
-    /// placeholder 텍스트에 사용할 폰트
-    var placeholderFont: Font { get }
-    
-    /// placeholder 텍스트에 사용할 색상
-    var placeholderTextColor: Color { get }
+    /// 입력필드 placeholder
+    var placeholder: String { get }
 }
