@@ -9,35 +9,77 @@ import SwiftUI
 
 struct PicCardView: View {
     
+    // MARK: property
+    let profileImage: Image
+    let profileID: String
+    let time: String
+    let onEllipsisTapped: () -> Void
+    let postImage: Image
+    let myMemo: String
+    
+    // MARK: init
+
+    /// - Parameters:
+    ///   - profileImage: 프로필 이미지
+    ///   - profileID: 프로필 아이디
+    ///   - time: 픽카드 업로드 시간
+    ///   - onEllipsisTapped: 메뉴버튼(eclipsis) 클릭시 실행할 action
+    ///   - postImage: 업로드 이미지
+    ///   - myMemo: 사용자가 작성하는 '나의 메모'
+    init(
+        profileImage: Image,
+        profileID: String,
+        time: String,
+        onEllipsisTapped: @escaping () -> Void,
+        postImage: Image,
+        myMemo: String
+    ) {
+        self.profileImage = profileImage
+        self.profileID = profileID
+        self.time = time
+        self.onEllipsisTapped = onEllipsisTapped
+        self.postImage = postImage
+        self.myMemo = myMemo
+    }
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 16) {
-            // CardInfoView
+            // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
-                Image(systemName: "circle.fill")
+                profileImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 36, height: 36)
+                
                 VStack(alignment: .leading) {
-                    Text("아이디")
+                    Text(profileID)
                         .font(.koBold(size: 17))
-                        .foregroundColor(.gray080)
-                    Text("오후 6:29")
+                        .foregroundStyle(Color.gray080)
+                    Text(time)
                         .font(.koRegular(size: 13))
-                        .foregroundColor(.gray060)
+                        .foregroundStyle(Color.gray060)
                 }
+                
                 Spacer()
-                Image(systemName: "ellipsis")
-                    .frame(width: 24, height: 24)
+                
+                Button(action: {
+                    onEllipsisTapped()
+                }, label: {
+                    Image(systemName: "ellipsis")
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(Color.black)
+                })
             }
-            
-            // CardImageView
-            Image(systemName: "square.fill")
+                        
+            // 업로드 이미지
+            postImage
                 .resizable()
                 .scaledToFit()
                 .frame(width: 360, height: 360)
             
-            // CardMemoView
-            Text("오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~ 다들 제 레시피 보고 따라 만들어주시기길ㄹ.....태그도 남겨주시기르를")
+            // 사용자 메모 (나의 메모)
+            Text(myMemo)
                 .font(.koRegular(size: 16))
                 .foregroundColor(.gray080)
         }
@@ -46,5 +88,12 @@ struct PicCardView: View {
 }
 
 #Preview {
-    PicCardView()
+    PicCardView(
+        profileImage: Image(systemName: "circle.fill"),
+        profileID: "아이디",
+        time: "오후 6:29",
+        onEllipsisTapped: { print("메뉴 선택") },
+        postImage: Image(systemName: "square.fill"),
+        myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를"
+    )
 }
