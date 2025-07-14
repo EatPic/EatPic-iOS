@@ -51,15 +51,16 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
         VStack(alignment: .leading,
                spacing: FormTextFieldConstants.stackSpacing) {
             /// 텍스트 필드 상단 타이틀
-            Text(fieldType.title)
-                .font(fieldType.placeholderFont)
-                .foregroundStyle(fieldType.placeholderTextColor)
+            Text(fieldType.title ?? "")
+                .font(fieldType.titleFont)
+                .foregroundStyle(fieldType.titleTextColor)
             
             /// 텍스트 필드 속성 지정
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(fieldType.placeholder)
                         .font(fieldType.placeholderFont)
+                        .foregroundStyle(fieldType.placeholderTextColor)
                         .padding(.horizontal, 16)
                 }
                 

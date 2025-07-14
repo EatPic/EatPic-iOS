@@ -17,13 +17,21 @@ enum SignUpField: CaseIterable, FormFieldType, Hashable {
     
     
     /// 텍스트 입력필드 상단 텍스트
-    var title: String {
+    var title: String? {
         switch self {
         case .id:
-            return ""
+            return nil // 상단 텍스트 타이틀을 표시하지 않음
         case .password:
             return "비밀번호 입력"
         }
+    }
+    
+    var titleFont: Font {
+        return Font.koSemibold(size: 17)
+    }
+    
+    var titleTextColor: Color {
+        return Color.gray060
     }
     
     var placeholder: String {
