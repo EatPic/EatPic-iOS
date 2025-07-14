@@ -33,12 +33,6 @@ struct PrimaryButton: View {
     /// 버튼이 눌렸을 때 실행되는 클로저
     let action: () -> Void
     
-    /// 버튼 내부에서 사용하는 레이아웃 상수
-    fileprivate enum PrimaryButtonConstants {
-        static let buttonHeight = 50
-        static let cornerRadius = 10
-    }
-    
     // MARK: - Init
     
     /// Primary Button 생성자
