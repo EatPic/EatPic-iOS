@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// 다양한 FormFieldType에 대응 가능한 재사용 가능한 커스텀 텍스트 필드 컴포넌트
+/// (로그인, 회원가입 등 다른 뷰에서도 사용 가능)
 struct FormTextField<T: FormFieldType & Hashable>: View {
     
     // MARK: - Property
@@ -50,14 +52,14 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                spacing: FormTextFieldConstants.stackSpacing) {
             /// 텍스트 필드 상단 타이틀
             Text(fieldType.title)
-                .font(.koRegular(size: 17))
-                .foregroundStyle(Color.gray060)
+                .font(fieldType.placeholderFont)
+                .foregroundStyle(fieldType.placeholderTextColor)
             
             /// 텍스트 필드 속성 지정
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(fieldType.placeholder)
-                        .foregroundStyle(Color.gray050)
+                        .font(fieldType.placeholderFont)
                         .padding(.horizontal, 16)
                 }
                 
