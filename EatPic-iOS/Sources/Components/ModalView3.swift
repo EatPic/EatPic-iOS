@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// 텍스트 + 이미지 + 버튼으로 이루어진 공통 모달 컴포넌트
+
 /// - Parameters:
 ///   - message: 모달 메시지의 내용을 담습니다
 ///   - messageColor : 모달 메시지의 색상입니다
