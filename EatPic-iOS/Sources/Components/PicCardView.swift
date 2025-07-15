@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+/// - Parameters:
+///   - profileImage: 프로필 이미지
+///   - profileID: 프로필 아이디
+///   - time: 픽카드 업로드 시간
+///   - onEllipsisTapped: 메뉴버튼(eclipsis) 클릭시 실행할 action
+///   - postImage: 업로드 이미지
+///   - myMemo: 사용자가 작성하는 '나의 메모'
 struct PicCardView: View {
     
     // MARK: property
@@ -18,14 +25,6 @@ struct PicCardView: View {
     let myMemo: String
     
     // MARK: init
-
-    /// - Parameters:
-    ///   - profileImage: 프로필 이미지
-    ///   - profileID: 프로필 아이디
-    ///   - time: 픽카드 업로드 시간
-    ///   - onEllipsisTapped: 메뉴버튼(eclipsis) 클릭시 실행할 action
-    ///   - postImage: 업로드 이미지
-    ///   - myMemo: 사용자가 작성하는 '나의 메모'
     init(
         profileImage: Image,
         profileID: String,
@@ -78,9 +77,10 @@ struct PicCardView: View {
             postImage
                 .resizable()
                 .scaledToFill()
-                .frame(width: screenWidth, height: screenWidth)
+                .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit) // 정사각형 유지
                 .clipped()
-                .cornerRadius(20)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
             
             // 사용자 메모 (나의 메모)
             Text(myMemo)
