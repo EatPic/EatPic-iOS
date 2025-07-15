@@ -46,38 +46,13 @@ struct RecipeDetailCardView: View {
     // MARK: body
     var body: some View {
         ZStack {
-            let screenWidth = UIScreen.main.bounds.width
-            
-            // 배경 이미지
-            backgroundImage
-                .resizable()
-                .scaledToFill()
-                .frame(width: screenWidth, height: screenWidth)
-                .clipped()
-                .cornerRadius(20)
-                .foregroundStyle(.black.opacity(0.7))
+            backgroundImageView
             
             VStack(alignment: .leading) {
-                // 해시태그
-                HStack(spacing: 4) {
-                    ForEach(hashtags, id: \.self) { tag in
-                        Text(tag)
-                            .font(.koBold(size: 15))
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 100)
-                                    .fill(.black)
-                                    .stroke(.white, lineWidth: 1)
-                            )
-                    }
-                }
-                .padding(.leading, 17)
+                hashtagView
                 
                 Spacer()
                 
-                // 레시피 제목
                 Text("레시피")
                     .font(.koBold(size: 22))
                     .foregroundStyle(.white)
@@ -85,7 +60,6 @@ struct RecipeDetailCardView: View {
                 
                 Spacer().frame(height: 19)
                 
-                // 레시피 설명
                 Text(recipeDescription)
                     .font(.koRegular(size: 13))
                     .foregroundStyle(.white)
@@ -93,45 +67,76 @@ struct RecipeDetailCardView: View {
                 
                 Spacer()
                 
-                // 커스텀 하단 콘텐츠 (버튼들 등)
-                HStack {
-                    if let linkURL = linkURL {
-                        Button {
-                            openURL(linkURL)
-                        } label: {
-                            Image("icon_link")
-                                .padding(5)
-                                .background(
-                                    Circle().fill(Color.white)
-                                )
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    if let naviAction = naviButtonAction,
-                       let naviLabel = naviLabel {
-                        Button(action: naviAction) {
-                            HStack(spacing: 4) {
-                                Image("icon_navi")
-                                Text(naviLabel)
-                                    .font(.koBold(size: 15))
-                                    .foregroundStyle(Color.gray080)
-                            }
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 8)
-                            .background(
-                                Color.white.cornerRadius(50)
-                            )
-                        }
-                    }
-                }
-                .padding(.leading, 20)
-                .padding(.trailing, 17)
+                buttonSection
+                    .padding(.leading, 20)
+                    .padding(.trailing, 17)
             }
             .padding(.top, 19)
             .padding(.bottom, 23)
-            .frame(height: screenWidth)
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+        }
+    }
+    
+    /// 배경 이미지 뷰
+    private var backgroundImageView: some View {
+        backgroundImage
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .overlay(Color.black.opacity(0.7)) // 어두운 필터
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+    
+    /// 해시태그 뷰
+    private var hashtagView: some View {
+        HStack(spacing: 4) {
+            ForEach(hashtags, id: \.self) { tag in
+                Text(tag)
+                    .font(.koBold(size: 15))
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 100)
+                            .fill(.black)
+                            .stroke(.white, lineWidth: 1)
+                    )
+            }
+        }
+        .padding(.leading, 17)
+    }
+    
+    /// 하단 버튼 뷰
+    private var buttonSection: some View {
+        HStack {
+            if let linkURL {
+                Button {
+                    openURL(linkURL)
+                } label: {
+                    Image("icon_link")
+                        .padding(5)
+                        .background(Circle().fill(Color.white))
+                }
+            }
+            
+            Spacer()
+            
+            if let action = naviButtonAction, let label = naviLabel {
+                Button(action: action) {
+                    HStack(spacing: 4) {
+                        Image("icon_navi")
+                        Text(label)
+                            .font(.koBold(size: 15))
+                            .foregroundStyle(Color.gray080)
+                    }
+                    .padding(.vertical, 5)
+                    .padding(.horizontal, 8)
+                    .background(Color.white.cornerRadius(50))
+                }
+            }
         }
     }
 }
