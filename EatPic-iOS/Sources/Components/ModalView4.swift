@@ -192,7 +192,7 @@ struct ModalView4: View {
             }
             .padding(.top, 18)
             .padding(.bottom, 44)
-            .frame(width: 270, height: 277)
+            .frame(width: 270)
             .background(.white)
             .cornerRadius(10)
         }
