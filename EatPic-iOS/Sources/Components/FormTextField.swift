@@ -7,8 +7,15 @@
 
 import SwiftUI
 
-/// 다양한 FormFieldType에 대응 가능한 재사용 가능한 커스텀 텍스트 필드 컴포넌트
-/// (로그인, 회원가입 등 다른 뷰에서도 사용 가능)
+/// 다양한 FormFieldType에 대응 가능한 재사용 가능한 커스텀 텍스트 필드 컴포넌트 (로그인, 회원가입 등 다른 뷰에서도 사용 가능)
+/// 텍스트 입력 전 placeholder가 나타나며 입력 시 사라짐
+/// 포커스 상태에 따라 테두리 색상이 변경되며(focus시 green), `isSecure` 여부에 따라 `TextField` 또는 `SecureField`로 렌더링
+/// - Parameters:
+///   - fieldType: 텍스트 필드의 속성 정보(placeholder, title, 색상, 폰트, 키보드 타입 등)를 담고 있는 열거형
+///   - focusedField: 외부에서 관리하는 포커스 상태. `FocusState<T?>`를 바인딩하여 전달
+///   - currentField: 현재 이 텍스트 필드가 담당하는 필드 타입. 포커스 비교 기준으로 사용
+///   - text: 바인딩된 텍스트 값으로, 입력한 문자열이 연결된 ViewModel 등 전달
+///   자세한 사용 예시 및 관련 문서는 Notion '공용컴포넌트' 참고
 struct FormTextField<T: FormFieldType & Hashable>: View {
     
     // MARK: - Property
