@@ -45,7 +45,7 @@ struct PrimaryButton: View {
     ///   - font: 버튼 내부 텍스트 폰트
     ///   - textColor: 버튼 내부 텍스트 색상
     ///   - height: 버튼 높이
-    ///   - weith:
+    ///   - weith: 버튼 너비
     ///   - action: 버튼 클릭 시 실행할 동작
     init(
         color: Color,
