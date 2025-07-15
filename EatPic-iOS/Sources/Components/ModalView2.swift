@@ -80,7 +80,11 @@ struct ModalView2: View {
 
                 /// 모달 하단 버튼
                 HStack {
-                    Button(action: {}) {
+                    Button(action: {
+                        
+                        // 모달 닫기 동작
+                        
+                    }) {
                         Text(buttonText)
                             .foregroundColor(buttonTextColor)
                             .frame(width: 230, height: 40)

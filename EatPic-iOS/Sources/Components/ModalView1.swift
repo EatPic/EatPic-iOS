@@ -88,7 +88,11 @@ struct ModalView1: View {
                 /// 모달 버튼 두개
                 HStack {
                     /// 부정 버튼
-                    Button(action: {}) {
+                    Button(action: {
+                        
+                        // 모달 닫기 동작
+                        
+                    }) {
                         Text(leftButtonText)
                             .foregroundColor(leftButtonTextColor)
                             .font(.koBold(size: 15))
@@ -99,8 +103,12 @@ struct ModalView1: View {
 
                     Spacer().frame(width: 16)
                     
-                    /// 긍정 버튼
-                    Button(action: {}) {
+                    /// 긍정/실행 버튼
+                    Button(action: {
+                        
+                        // 버튼 실행 동작
+                        
+                    }) {
                         Text(rightButtonText)
                             .foregroundColor(rightButtonTextColor)
                             .font(.koBold(size: 15))

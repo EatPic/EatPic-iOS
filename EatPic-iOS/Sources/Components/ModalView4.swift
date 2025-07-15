@@ -97,7 +97,8 @@ struct ModalView4: View {
                     Spacer()
                 
                     Button(action: {
-                        //닫기 동작
+                        
+                        // 모달 닫기 동작
                         
                     }) {
                         xButtonImage
