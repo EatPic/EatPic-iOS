@@ -7,16 +7,16 @@
 
 import SwiftUI
 
+/// `RecipeDetailCardView`는 레시피 정보와 해시태그, 링크 및 내비게이션 버튼을 포함한 카드 뷰입니다.
+/// 이미지 위에 오버레이 형태로 텍스트와 버튼이 배치되며, 정사각형 형태로 구성되어 피드나 상세뷰 등에 활용됩니다.
+/// - Parameters:
+///   - backgroundImage: 카드의 배경으로 표시될 이미지입니다.
+///   - hashtags: 상단에 표시될 해시태그 문자열 배열입니다. (예: ["#아침", "#다이어트"])
+///   - recipeDescription: 레시피 설명 텍스트입니다.
+///   - linkURL: 외부 웹페이지로 연결될 URL. nil일 경우 버튼이 표시되지 않습니다.
+///   - naviButtonAction: 위치 기반 길찾기 등 내비게이션 버튼을 눌렀을 때 실행할 액션. nil일 경우 버튼이 표시되지 않습니다.
+///   - naviLabel: 내비게이션 버튼에 표시될 라벨 텍스트. `naviButtonAction`이 nil일 경우 함께 무시됩니다.
 struct RecipeDetailCardView: View {
-    /// `RecipeDetailCardView`는 레시피 정보와 해시태그, 링크 및 내비게이션 버튼을 포함한 카드 뷰입니다.
-    /// 이미지 위에 오버레이 형태로 텍스트와 버튼이 배치되며, 정사각형 형태로 구성되어 피드나 상세뷰 등에 활용됩니다.
-    /// - Parameters:
-    ///   - backgroundImage: 카드의 배경으로 표시될 이미지입니다.
-    ///   - hashtags: 상단에 표시될 해시태그 문자열 배열입니다. (예: ["#아침", "#다이어트"])
-    ///   - recipeDescription: 레시피 설명 텍스트입니다.
-    ///   - linkURL: 외부 웹페이지로 연결될 URL. nil일 경우 버튼이 표시되지 않습니다.
-    ///   - naviButtonAction: 위치 기반 길찾기 등 내비게이션 버튼을 눌렀을 때 실행할 액션. nil일 경우 버튼이 표시되지 않습니다.
-    ///   - naviLabel: 내비게이션 버튼에 표시될 라벨 텍스트. `naviButtonAction`이 nil일 경우 함께 무시됩니다.
     let backgroundImage: Image
     let hashtags: [String]
     let recipeDescription: String
