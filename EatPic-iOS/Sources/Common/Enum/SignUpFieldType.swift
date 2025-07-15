@@ -27,10 +27,12 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
         }
     }
     
+    // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
-        return Font.koSemibold(size: 17)
+        return Font.koBold(size: 17)
     }
     
+    // 텍스트 필드 상단 타이틀 컬러
     var titleTextColor: Color {
         return Color.gray060
     }
@@ -44,12 +46,14 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
         }
     }
     
+    // placeholder 폰트
     var placeholderFont: Font {
         return Font.koRegular(size: 17)
     }
     
+    // placeholder 텍스트 컬러
     var placeholderTextColor: Color {
-        return Color.gray050
+        return Color.gray080
     }
     
     /// 보안 입력 여부 (비밀번호면 true)
@@ -63,6 +67,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     }
     
     /// 해당 필드에 맞는 키보드 타입 지정
+    /// 예: .default, .emailAddress, .numberPad 등
     var keyboardType: UIKeyboardType {
         .default
     }
