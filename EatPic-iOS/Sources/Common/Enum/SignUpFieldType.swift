@@ -8,14 +8,15 @@
 import Foundation
 import SwiftUI
 
-enum SignUpField: CaseIterable, FormFieldType, Hashable {
+/// 회원가입 화면에서 사용할 입력 필드 타입을 정의한 enum
+/// 각 케이스에 따라서 입력필드 상단 텍스트, placeholder, 키보드 타입 지정
+enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     /// 아이디 입력 필드
     case id
     /// 비밀번호 입력 필드
     case password
-    
-    
+     
     /// 텍스트 입력필드 상단 텍스트
     var title: String? {
         switch self {

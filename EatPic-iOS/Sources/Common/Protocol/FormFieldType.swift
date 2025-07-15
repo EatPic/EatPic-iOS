@@ -43,4 +43,3 @@ protocol FormFieldType {
     /// exapmle: .next, .done, .go
     var submitLabel: SubmitLabel { get }
 }
-
