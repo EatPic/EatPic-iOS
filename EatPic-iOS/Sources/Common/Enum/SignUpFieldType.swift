@@ -29,7 +29,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
-        return Font.koBold(size: 17)
+        return Font.dsHeadline
     }
     
     // 텍스트 필드 상단 타이틀 컬러
@@ -48,7 +48,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     // placeholder 폰트
     var placeholderFont: Font {
-        return Font.koRegular(size: 17)
+        return Font.dsBody
     }
     
     // placeholder 텍스트 컬러
