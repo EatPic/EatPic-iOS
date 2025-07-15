@@ -25,11 +25,6 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     /// 텍스트 입력 바인딩
     @Binding var text: String
     
-    /*
-     /// 유효성 검사
-     let isValid: Bool?
-     */
-    
     // MARK: - Init
     
     /// 초기화 함수 (Binding 타입을 @Binding 변수로 연결)
@@ -88,14 +83,9 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                 .stroke(borderColor,
                         lineWidth: FormTextFieldConstants.rectangleLinewidth)
             )
-            .frame(height: FormTextFieldConstants.rectangleHeight) // ZStack 높이: 직사각형 + 텍스트
-            /*
-             /// 유효성 통과 시 체크 아이콘 , 추후 유효성 검사 로직 분리 할 예정입니다.
-             if isValid == true {
-             Image(systemName: "checkmark.circle.fill")
-             .foregroundColor(.green060)
-             .padding(.all, 15)
-             }*/
+            .frame(
+                height: FormTextFieldConstants.rectangleHeight
+            ) // ZStack 높이: 직사각형 + 텍스트
         } //: VStack
     }
     
