@@ -15,16 +15,18 @@ import SwiftUI
 ///   - borderWidth: 테두리 두께 (기본값 0)
 struct ProfileImageView: View {
     
+    // MARK: - Property
     let image: Image?
     let size: CGFloat
     let borderColor: Color
     let borderWidth: CGFloat
-
+    
+    // MARK: - Init
     init(
         image: Image? = nil,
         size: CGFloat,
-        borderColor: Color = .clear,
-        borderWidth: CGFloat = 0
+        borderColor: Color = ProfileImageConstants.defaultBorderColor,
+        borderWidth: CGFloat = ProfileImageConstants.defaultBorderWidth
     ) {
         self.image = image
         self.size = size
@@ -33,7 +35,7 @@ struct ProfileImageView: View {
     }
 
     var body: some View {
-        (image ?? Image(systemName: "person.fill")) // 이미지 없으면 기본값 사용
+        (image ?? ProfileImageConstants.defaultPlaceholderImage) // 이미지 없으면 기본값 사용
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)
@@ -46,10 +48,22 @@ struct ProfileImageView: View {
     }
 }
 
+/// ProfileImageView에서 사용되는 텍스트 및 레이아웃 상수를 정의한 내부 열거형
+private enum ProfileImageConstants {
+    static let defaultBorderColor: Color = .clear
+    static let defaultBorderWidth: CGFloat = 0
+    static let defaultPlaceholderImage = Image(systemName: "person.fill")
+}
+
 #Preview("iPhone 16 Pro Max - Light") {
     ProfileImageView(size: 60, borderColor: .green060,
                      borderWidth: 5)
 }
+
+#Preview("iPhone 16 Pro Max - Light") {
+    ProfileImageView(size: 60)
+}
+
 #Preview("iPhone SE (3rd gen) - Light") {
     ProfileImageView(size: 60, borderColor: .gray060,
                      borderWidth: 5)
