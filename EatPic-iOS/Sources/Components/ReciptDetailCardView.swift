@@ -54,14 +54,14 @@ struct RecipeDetailCardView: View {
                 Spacer()
                 
                 Text("레시피")
-                    .font(.koBold(size: 22))
+                    .font(.dsTitle2)
                     .foregroundStyle(.white)
                     .padding(.leading, 20)
                 
                 Spacer().frame(height: 19)
                 
                 Text(recipeDescription)
-                    .font(.koRegular(size: 13))
+                    .font(.dsFootnote)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 20)
                 
@@ -95,7 +95,7 @@ struct RecipeDetailCardView: View {
         HStack(spacing: 4) {
             ForEach(hashtags, id: \.self) { tag in
                 Text(tag)
-                    .font(.koBold(size: 15))
+                    .font(.dsBold15)
                     .foregroundStyle(.white)
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
@@ -129,7 +129,7 @@ struct RecipeDetailCardView: View {
                     HStack(spacing: 4) {
                         Image("icon_navi")
                         Text(label)
-                            .font(.koBold(size: 15))
+                            .font(.dsBold15)
                             .foregroundStyle(Color.gray080)
                     }
                     .padding(.vertical, 5)
