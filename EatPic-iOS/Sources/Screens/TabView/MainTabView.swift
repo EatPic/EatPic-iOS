@@ -65,7 +65,7 @@ struct MainTabView: View {
                 
                 Text(tab.rawValue)
                     .foregroundStyle(Color.gray060)
-                    .font(Font.koRegular(size: 12))
+                    .font(Font.dsCaption1)
             }
         }
     }

@@ -91,7 +91,7 @@ struct PrimaryButton: View {
     PrimaryButton(
         color: .green060,
         text: "로그인",
-        font: .koRegular(size: 20),
+        font: .dsTitle3,
         textColor: Color.white,
         width: 100,
         height: 50,
