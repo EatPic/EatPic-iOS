@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum KechainKey: String {
+enum KeychainKey: String {
     case userSession = "user_session"
 }
