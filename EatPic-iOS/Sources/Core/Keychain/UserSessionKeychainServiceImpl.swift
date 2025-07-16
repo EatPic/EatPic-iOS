@@ -14,18 +14,18 @@ final class UserSessionKeychainServiceImpl: UserSessionKeychainService {
         self.manager = manager
     }
     
-    func saveSession(_ session: UserInfo, for key: String) -> Bool {
+    func saveSession(_ session: UserInfo, for key: KechainKey) -> Bool {
         guard let data = try? JSONEncoder().encode(session) else { return false }
-        return manager.save(data, for: key)
+        return manager.save(data, for: key.rawValue)
     }
     
-    func loadSession(for key: String) -> UserInfo? {
-        guard let data = manager.load(key: key),
+    func loadSession(for key: KechainKey) -> UserInfo? {
+        guard let data = manager.load(key: key.rawValue),
               let session = try? JSONDecoder().decode(UserInfo.self, from: data) else { return nil }
         return session
     }
     
-    func deleteSession(for key: String) {
-        _ = manager.delete(key: key)
+    func deleteSession(for key: KechainKey) {
+        _ = manager.delete(key: key.rawValue)
     }
 }
