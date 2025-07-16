@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Security
 
 final class UserSessionKeychainServiceImpl: UserSessionKeychainService {
     private let manager: KeychainManager
