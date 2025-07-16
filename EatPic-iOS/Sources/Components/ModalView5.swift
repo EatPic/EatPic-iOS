@@ -28,14 +28,9 @@ struct ModalView5: View {
     /// 모달의 우측 상단에 위치하는 닫기(X) 버튼 이미지
     let xButtonImage: Image
     
-    
-    
     /// 뱃지 이미지
     let badge: Image
 
-    
-    
-    
     /// 뱃지 이름 텍스트
     let badgeTitle: String
 
@@ -121,11 +116,16 @@ struct ModalView5: View {
                 Spacer().frame(height: 8)
 
                 
-                /// Badge & ProgressBar / 또는 Badge만
+                /// Progress Bar
                 ZStack{
-                    badge
-                        .resizable()
-                        .frame(width: 130, height: 130)
+                    let current = Int(progressNumText) ?? 0 // 현재 기록, 사용 등등.. 의 횟수
+                    let denominator = 10 // 10회 고정
+                    let progress = CGFloat(current) / CGFloat(denominator)
+                    CircleProgressView(
+                        progress: progress,
+                        size: 130,
+                        icon: badge
+                    )
                 }
                 
                 Spacer().frame(height: 16)
@@ -182,8 +182,8 @@ struct ModalView5: View {
 
 #Preview {
     ModalView5(
-        xButtonImage: Image(systemName: "xmark"),
-        badge: Image(systemName: "circle"),
+        xButtonImage: Image("Modal/btn_close"),
+        badge: Image(systemName: "star.fill"),
         badgeTitle: "맛집왕",
         badgeTitleColor: .black,
         badgeDescription: "식당 위치가 포함된 Pic카드를 10회 이상 기록 시 획득할 수 있습니다.",

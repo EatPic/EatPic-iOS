@@ -57,14 +57,14 @@ struct ModalView4: View {
     
     // MARK: - Init
     init(
-        xButtonImage: Image,
-        messageTitle: String,
+        xButtonImage: Image = Image("Modal/btn_close"),
+        messageTitle: String = "Pic 카드 기록",
         messageTitleColor: Color = .black,
-        messageDescription: String,
+        messageDescription: String = "기록할 방법을 선택해주세요",
         messageDescriptionColor: Color = .gray060,
-        cameraButtonImage: Image,
+        cameraButtonImage: Image = Image("Modal/ic_record_camera"),
         cameraText: String = "카메라",
-        albumButtonImage: Image,
+        albumButtonImage: Image = Image("Modal/ic_record_album"),
         buttonColor : Color = .gray020,
         albumText: String = "사진 앨범"
     ) {
@@ -201,12 +201,12 @@ struct ModalView4: View {
 
 #Preview {
     ModalView4(
-        xButtonImage: Image(systemName: "xmark"),
+        xButtonImage: Image("Modal/btn_close"),
         messageTitle: "Pic 카드 기록",
         messageDescription: "기록할 방법을 선택해주세요",
-        cameraButtonImage: Image(systemName: "camera"),
+        cameraButtonImage: Image("Modal/ic_record_camera"),
         cameraText: "카메라",
-        albumButtonImage: Image(systemName: "photo"),
+        albumButtonImage: Image("Modal/ic_record_album"),
         buttonColor: .gray020,
         albumText: "사진 앨범"
     )
