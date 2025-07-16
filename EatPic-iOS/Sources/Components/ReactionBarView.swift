@@ -39,9 +39,9 @@ struct ReactionBarView: View {
                 } label: {
                     VStack(spacing: 0) {
                         Text(reaction.emoji)
-                            .font(.koBold(size: 17))
+                            .font(.dsHeadline)
                         Text(countText(for: reaction))
-                            .font(.koRegular(size: 11))
+                            .font(.dsCaption2)
                             .foregroundStyle(.white)
                     }
                     .padding(.horizontal, 11)
