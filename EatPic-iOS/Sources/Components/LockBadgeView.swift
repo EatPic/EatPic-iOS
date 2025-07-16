@@ -9,7 +9,7 @@ import SwiftUI
 /// 뱃지를 아직 획득하지 못했을 때 뜨는 뱃지 뷰
 /// - Parameters:
 ///   - iconImage: 중앙에 표시할 자물쇠 이미지입니다
-///   - size: 원형 뱃지 배경의 사이즈
+///   - size: 원형 뱃지 배경의 사이즈입니다
 ///   - backgroundColor: 원형 뱃지 배경의 색상입니다
 struct LockBadgeView: View {
     
