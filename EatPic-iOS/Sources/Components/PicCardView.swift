@@ -53,10 +53,10 @@ struct PicCardView: View {
                 
                 VStack(alignment: .leading) {
                     Text(profileID)
-                        .font(.koBold(size: 17))
+                        .font(.dsHeadline)
                         .foregroundStyle(Color.gray080)
                     Text(time)
-                        .font(.koRegular(size: 13))
+                        .font(.dsFootnote)
                         .foregroundStyle(Color.gray060)
                 }
                 
@@ -84,7 +84,7 @@ struct PicCardView: View {
             
             // 사용자 메모 (나의 메모)
             Text(myMemo)
-                .font(.koRegular(size: 16))
+                .font(.dsSubhead)
                 .foregroundColor(.gray080)
         }
     }
