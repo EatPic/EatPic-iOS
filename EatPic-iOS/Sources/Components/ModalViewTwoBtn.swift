@@ -18,7 +18,7 @@ import SwiftUI
 ///   - leftButtonText: 오른쪽 버튼의 텍스트입니다
 ///   - leftButtonColor: 오른쪽 버튼의 색상입니다
 ///   - leftButtonTextColor: 오른쪽 버튼의 텍스트 색상입니다
-struct ModalView1: View {
+struct ModalViewTwoBtn: View {
     
     // MARK: - Property
     
@@ -128,7 +128,7 @@ struct ModalView1: View {
 }
 
 #Preview() {
-    ModalView1(
+    ModalViewTwoBtn(
         message: "기록한 Pic 카드를 삭제하시겠습니까?",
         messageColor: .black,
         leftButtonText: "아니오",

@@ -17,7 +17,7 @@ import SwiftUI
 ///   - buttonText: 버튼의 텍스트입니다
 ///   - buttonColor: 버튼의 색상입니다
 ///   - buttonTextColor: 버튼의 텍스트 색상입니다
-struct ModalView3: View {
+struct ModalViewClear: View {
     
     
     // MARK: - Property
@@ -48,7 +48,7 @@ struct ModalView3: View {
     init(
         message: String,
         messageColor: Color = .black,
-        image: Image,
+        image: Image = Image("Modal/itcong"),
         imageSize: CGFloat = 150,
         buttonText: String,
         buttonColor: Color = .green060,
@@ -112,10 +112,10 @@ struct ModalView3: View {
 }
 
 #Preview() {
-    ModalView3(
+    ModalViewClear(
         message: "Pic 카드가 기록되었습니다",
         messageColor: .black,
-        image: Image(systemName: "star.fill"),
+        image: Image("Modal/itcong"),
         imageSize: 150,
         buttonText: "확인",
         buttonColor: .green060,

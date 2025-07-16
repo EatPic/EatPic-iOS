@@ -15,7 +15,7 @@ import SwiftUI
 ///   - buttonText: 버튼의 텍스트입니다
 ///   - buttonColor: 버튼의 색상입니다
 ///   - buttonTextColor: 버튼의 텍스트 색상입니다
-struct ModalView2: View {
+struct ModalViewDisabled: View {
     
     // MARK: - Property
     
@@ -104,7 +104,7 @@ struct ModalView2: View {
 }
 
 #Preview() {
-    ModalView2(
+    ModalViewDisabled(
         messageTitle: "안내",
         messageDescription: "최대 3개까지 선택 가능합니다.",
         messageColor: .black,

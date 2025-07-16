@@ -21,7 +21,7 @@ import SwiftUI
 ///   - buttonBorderColor : 횟수 버튼의 테두리 색상입니다
 ///   - buttonTextColor : 횟수 버튼 내부 텍스트 색상입니다.
 ///   - progressNumText : 해시태그 사용률 ( 0 ~ 10 ) 입니다.
-struct ModalView5: View {
+struct ModalViewBadge: View {
     
     // MARK: - Property
     
@@ -181,7 +181,7 @@ struct ModalView5: View {
 }
 
 #Preview {
-    ModalView5(
+    ModalViewBadge(
         xButtonImage: Image("Modal/btn_close"),
         badge: Image(systemName: "star.fill"),
         badgeTitle: "맛집왕",
