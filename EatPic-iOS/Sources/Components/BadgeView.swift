@@ -7,13 +7,16 @@
 //
 import SwiftUI
 
-
+/// 1. progress 상태, 2. locked 상태 이 상태들의 공통점을 뽑아내어 하나의 덩어리를 구성한다.
+/// progress 상태와 locked상태의 공통점 분석
+/// 1.  원형으로 background(Circle)가 구성되어있음
+/// 2. 원형안에 이미지 존재
+/// 3. 원형뱃지 밑에 text값 존재
 /// 뱃지 상태 ( progress : 뱃지 획득 중 ~ 획득 완료) , locked ( 뱃지 획득 이전)
 enum BadgeState {
     case progress(progress: CGFloat, icon: Image)
     case locked
 }
-
 
 /// 상단에 CircleProgressView 또는 LockBadgeView, 하단에 뱃지 이름을 띄워주는 뷰입니다
 ///   - Parameters:
@@ -45,16 +48,16 @@ struct BadgeView: View {
             // 상태에 따른 뱃지 뷰 표시
             Group {
                 switch state {
-                    
+                
                 // progress 케이스의 경우 CircleProgressView 띄우기
                 case .progress(let progress, let icon):
                     CircleProgressView(
                         // 뱃지를 얻기 위한 조건을 달성한 횟수가 n회라면, n/10의 값
                         progress: progress,
-                        size: size - 7, // CircleProgressView 코드의 원형Bar 테두리 때문에 이렇게 고쳐야함 왜 7인지는 정확히 모르겠으나(14일줄) 7이어야지 똑같네요
+                        size: size - 7,
                         icon: icon
                     )
-                    
+                
                 // locked 케이스의 경우 LockBadgeView 띄우기
                 case .locked:
                     LockBadgeView(
@@ -63,9 +66,7 @@ struct BadgeView: View {
                 }
             }
             
-            
-            Spacer() // 높이 156 고정이니까 Spacer()로 만 주어도 충분 (+CircleProgressView의 정확한 크기가 가늠이 안되어 우선 이렇게)
-            
+            Spacer()
             
             // 뱃지 이름
             Text(badgeName)
@@ -75,8 +76,6 @@ struct BadgeView: View {
         .frame(width: 130, height: 156)
     }
 }
-
-
 
 #Preview("뱃지 획득 중 ~ 획득 완료") {
     BadgeView(
