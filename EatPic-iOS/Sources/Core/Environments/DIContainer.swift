@@ -9,8 +9,13 @@ import Foundation
 
 final class DIContainer: ObservableObject {
     @Published var router: NavigationRouter
+    @Published var locationStore: LocationStore
     
-    init(router: NavigationRouter = .init()) {
+    init(
+        router: NavigationRouter = .init(),
+        locationStore: LocationStore = .init(),
+    ) {
         self.router = router
+        self.locationStore = locationStore
     }
 }
