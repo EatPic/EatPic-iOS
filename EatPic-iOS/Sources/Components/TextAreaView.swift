@@ -71,7 +71,6 @@ struct TextAreaView: View {
                 .padding(.vertical, 16)
         }
         .frame(height: height)
-        .padding(.horizontal, 16)
     }
 }
 
@@ -80,9 +79,6 @@ struct TextAreaView: View {
     
     TextAreaView(
         text: $sampleText,
-        height: 140,
-        backgroundColor: .white,
-        borderColor: .gray040,
-        textColor: .gray080
+        height: 140
     )
 }
