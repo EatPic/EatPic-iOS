@@ -1,5 +1,5 @@
 //
-//  ModalView1.swift
+//  ModalViewTwoBtn.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/14/25.
@@ -13,11 +13,9 @@ import SwiftUI
 ///   - message: 모달 메시지의 내용을 담습니다.
 ///   - messageColor : 모달 메시지의 색상입니다;
 ///   - leftButtonText: 왼쪽 버튼의 텍스트입니다
-///   - leftButtonColor: 왼쪽 버튼의 색상입니다
-///   - leftButtonTextColor: 왼쪽 버튼의 텍스트 색상입니다
-///   - leftButtonText: 오른쪽 버튼의 텍스트입니다
-///   - leftButtonColor: 오른쪽 버튼의 색상입니다
-///   - leftButtonTextColor: 오른쪽 버튼의 텍스트 색상입니다
+///   - rightButtonText: 오른쪽 버튼의 텍스트입니다
+///   - leftButtonAction: 왼쪽 버튼의 액션입니다
+///   - rightButtonAction: 오른쪽 버튼의 액션입니다
 struct ModalViewTwoBtn: View {
     
     // MARK: - Property
@@ -31,43 +29,32 @@ struct ModalViewTwoBtn: View {
     /// 하단 왼쪽 버튼 텍스트
     let leftButtonText: String
     
-    /// 하단 왼쪽 버튼 색상
-    let leftButtonColor: Color
-    
-    /// 하단 왼쪽 버튼 텍스트 색상
-    let leftButtonTextColor: Color
-    
     /// 하단 오른쪽 버튼 텍스트
     let rightButtonText: String
     
-    /// 하단 오른쪽 버튼 색상
-    let rightButtonColor: Color
+    /// 왼쪽 버튼의 액션
+    let leftButtonAction: () -> Void
     
-    /// 하단 오른쪽 버튼 텍스트 색상
-    let rightButtonTextColor: Color
-    
+    /// 오른쪽 버튼의 액션
+    let rightButtonAction: () -> Void
     
     // MARK: - Init
     init(
         message: String,
         messageColor: Color = .black,
         leftButtonText: String,
-        leftButtonColor: Color = .gray020,
-        leftButtonTextColor: Color = .white,
         rightButtonText: String,
-        rightButtonColor: Color = .green060,
-        rightButtonTextColor: Color = .white
+        leftButtonAction: @escaping () -> Void,
+        rightButtonAction: @escaping () -> Void
+
     ) {
         self.message = message
         self.messageColor = messageColor
         self.leftButtonText = leftButtonText
-        self.leftButtonColor = leftButtonColor
-        self.leftButtonTextColor = leftButtonTextColor
         self.rightButtonText = rightButtonText
-        self.rightButtonColor = rightButtonColor
-        self.rightButtonTextColor = rightButtonTextColor
+        self.leftButtonAction = leftButtonAction
+        self.rightButtonAction = rightButtonAction
     }
-    
     
     // MARK: - Body
     var body: some View {
@@ -81,41 +68,38 @@ struct ModalViewTwoBtn: View {
                 /// 모달 메시지
                 Text(message)
                     .foregroundColor(messageColor)
-                    .font(.koBold(size: 17))
+                            .font(.dsHeadline)
                 
-                Spacer().frame(height:41)
+                Spacer().frame(height: 41)
  
                 /// 모달 버튼 두개
                 HStack {
-                    /// 부정 버튼
-                    Button(action: {
-                        
-                        // 모달 닫기 동작
-                        
-                    }) {
-                        Text(leftButtonText)
-                            .foregroundColor(leftButtonTextColor)
-                            .font(.koBold(size: 15))
-                            .frame(width: 130, height: 38)
-                    }
-                    .background(leftButtonColor)
-                    .cornerRadius(9)
 
+                    /// 부정 버튼
+                    PrimaryButton(
+                        color: .gray020,
+                        text: leftButtonText,
+                        font: .dsBold15,
+                        textColor: .black,
+                        width: 130,
+                        height: 38,
+                        cornerRadius: 9,
+                        action: leftButtonAction
+                    )
+                    
                     Spacer().frame(width: 16)
                     
-                    /// 긍정/실행 버튼
-                    Button(action: {
-                        
-                        // 버튼 실행 동작
-                        
-                    }) {
-                        Text(rightButtonText)
-                            .foregroundColor(rightButtonTextColor)
-                            .font(.koBold(size: 15))
-                            .frame(width: 130, height: 38)
-                    }
-                    .background(rightButtonColor)
-                    .cornerRadius(9)
+                    /// 긍정 버튼
+                    PrimaryButton(
+                        color: .green060,
+                        text: rightButtonText,
+                        font: .dsBold15,
+                        textColor: .white,
+                        width: 130,
+                        height: 38,
+                        cornerRadius: 9,
+                        action: rightButtonAction
+                    )
                 }
             }
             .padding(.top, 24)
@@ -125,6 +109,22 @@ struct ModalViewTwoBtn: View {
             .cornerRadius(10)
         }
     }
+}
+
+#Preview {
+    ModalViewTwoBtn(
+        message: "기록한 Pic 카드를 삭제하시겠습니까?",
+        messageColor: .black,
+        leftButtonText: "아니오",
+        rightButtonText: "예",
+        leftButtonAction: {
+            print("아니오 눌림")
+        },
+        rightButtonAction: {
+            print("예 눌림")
+        }
+    )
+}
 }
 
 #Preview() {

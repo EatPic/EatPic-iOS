@@ -1,12 +1,11 @@
 //
-//  ModalView5.swift
+//  ModalViewBadge.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/15/25.
 //
 
 import SwiftUI
-
 
 /// 버튼 + 뱃지 + 뱃지 제목 + 뱃지 설명 + 해시태그 사용률 버튼 으로 이루어진 모달 컴포넌트
 
@@ -55,8 +54,6 @@ struct ModalViewBadge: View {
     /// 해시태그 사용률 (0 ~ 10)
     let progressNumText: String
 
-    
-    
     // MARK: - Init
     init(
         xButtonImage: Image,
@@ -83,7 +80,6 @@ struct ModalViewBadge: View {
         
     }
     
-    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -92,32 +88,25 @@ struct ModalViewBadge: View {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
 
-            
             VStack {
-                
                 // 나가기 x 버튼
-                HStack{
+                HStack {
                     Spacer()
                 
                     Button(action: {
-                        
-                        // 모달 닫기 동작
-                        
-                    }) {
+                        print("x 나가기")
+                    }, label: {
                         xButtonImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
-                    }
+                    })
                 }
                 .padding(.horizontal, 15)
                 
-                
                 Spacer().frame(height: 8)
 
-                
-                /// Progress Bar
-                ZStack{
+                ZStack {
                     let current = Int(progressNumText) ?? 0 // 현재 기록, 사용 등등.. 의 횟수
                     let denominator = 10 // 10회 고정
                     let progress = CGFloat(current) / CGFloat(denominator)
@@ -133,41 +122,33 @@ struct ModalViewBadge: View {
                 /// 뱃지 제목 메시지
                 Text(badgeTitle)
                     .foregroundColor(badgeTitleColor)
-                    .font(.koBold(size: 20))
-//                .font(.Title3 20pt)
-                
+                .font(.dsTitle3)
                 
                 Spacer().frame(height: 8)
-                
                 
                 /// 모달 설명 메시지
                 Text(badgeDescription)
                     .padding(.horizontal, 45)
                     .foregroundColor(badgeDescriptionColor)
-                    .font(.koRegular(size: 13))
-//                .font(.Footnote 13pt)
+                .font(.dsFootnote)
                     .fixedSize(horizontal: false, vertical: true) // 텍스트의 줄바꿈 허용
                     .multilineTextAlignment(.center) // 텍스트 중앙 정렬
                 
-                Spacer().frame(height:32)
- 
+                Spacer().frame(height: 32)
                 
                 /// 횟수 버튼
                 Button(action: {
-                    
-                    //동작 없는 버튼임!
-                    
-                }) {
+                    print("횟수 버튼")
+                }, label: {
                     Text("\(progressNumText)/10회")
-                        .font(.koBold(size: 17))
-//                    .font(.Headline 17pt)
+                        .font(.dsHeadline)
                         .foregroundColor(buttonTextColor)
-                        .frame(width: 77, height: 34) //버튼 크기
+                        .frame(width: 77, height: 34) // 버튼 크기
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(buttonBorderColor, lineWidth: 1) // 버튼 테두리
                         )
-                }
+                })
                 .background(buttonColor)
                 .cornerRadius(10)
             }
@@ -194,4 +175,3 @@ struct ModalViewBadge: View {
         progressNumText: "4"
     )
 }
-

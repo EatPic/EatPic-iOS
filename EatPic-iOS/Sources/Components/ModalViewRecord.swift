@@ -1,5 +1,7 @@
+ModalViewRecord
+
 //
-//  ModalView4.swift
+//  ModalViewRecord.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/15/25.
@@ -54,7 +56,6 @@ struct ModalViewRecord: View {
     /// 앨범 버튼 하단 텍스트
     let albumText: String
     
-    
     // MARK: - Init
     init(
         xButtonImage: Image = Image("Modal/btn_close"),
@@ -65,7 +66,7 @@ struct ModalViewRecord: View {
         cameraButtonImage: Image = Image("Modal/ic_record_camera"),
         cameraText: String = "카메라",
         albumButtonImage: Image = Image("Modal/ic_record_album"),
-        buttonColor : Color = .gray020,
+        buttonColor: Color = .gray020,
         albumText: String = "사진 앨범"
     ) {
         self.xButtonImage = xButtonImage
@@ -80,64 +81,56 @@ struct ModalViewRecord: View {
         self.albumText = albumText
     }
     
-    
     // MARK: - Body
     var body: some View {
         ZStack {
-            
             /// 모달 아래 어둡게 처리된 배경
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
-
             
             VStack {
-                
                 // 나가기 x 버튼
-                HStack{
+                HStack {
                     Spacer()
                 
                     Button(action: {
-                        
-                        // 모달 닫기 동작
-                        
-                    }) {
+                        print("x 나가기")
+                    }, label: {
                         xButtonImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
-                    }
+                    })
                 }
                 .padding(.horizontal, 16)
                 
-                
                 Spacer().frame(height: 8)
-
                 
                 /// 모달 제목 메시지
                 Text(messageTitle)
                     .foregroundColor(messageTitleColor)
-                    .font(.koBold(size: 22))
+                    .font(.dsTitle2)
                 
                 Spacer().frame(height: 8)
-                
-                
+               
                 /// 모달 설명 메시지
                 Text(messageDescription)
                     .foregroundColor(messageDescriptionColor)
-                    .font(.koRegular(size: 15))
+                    .font(.dsSubhead)
                 
-                Spacer().frame(height:32)
- 
-                
+                Spacer().frame(height: 32)
+
                 /// 하단 버튼 두개
                 HStack {
                     Spacer()
                     
-                    VStack{
+                    VStack {
                         /// 카메라  버튼
-                        Button(action: {}) {
+                        Button(action: {
+                            print("카메라")
+                        }, label: {
                             
-                            ZStack{
+                            ZStack {
                                 // 배경 버튼
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(buttonColor)
@@ -149,21 +142,22 @@ struct ModalViewRecord: View {
                                     .scaledToFit()
                                     .frame(width: 32, height: 32)
                             }
-                        }
-
+                        })
                         
                         Spacer().frame(height: 11)
                         
-                        ///카메라 텍스트
+                        /// 카메라 텍스트
                         Text(cameraText)
-                            .font(.koBold(size: 15))
+                        .font(.dsBold15)
                     }
                     
                     Spacer().frame(width: 40)
                     
-                    VStack{
+                    VStack {
                         /// 앨범  버튼
-                        Button(action: {}) {
+                        Button(action: {
+                            print("앨범")
+                        }, label: {
                             
                             ZStack {
                                 // 배경 버튼
@@ -177,17 +171,17 @@ struct ModalViewRecord: View {
                                     .scaledToFit()
                                     .frame(width: 32, height: 32)
                             }
-                        }
-
+                        })
                         
                         Spacer().frame(height: 11)
                         
-                        ///앨범 텍스트
+                        /// 앨범 텍스트
                         Text(albumText)
-                            .font(.koBold(size: 15))
+                        .font(.dsBold15)
                     }
                     
                     Spacer()
+                    
                 }
             }
             .padding(.top, 18)
@@ -211,4 +205,3 @@ struct ModalViewRecord: View {
         albumText: "사진 앨범"
     )
 }
-

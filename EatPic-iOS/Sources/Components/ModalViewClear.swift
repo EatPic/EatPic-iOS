@@ -1,5 +1,5 @@
 //
-//  ModalView3.swift
+//  ModalViewClear.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/15/25.
@@ -13,12 +13,10 @@ import SwiftUI
 ///   - message: 모달 메시지의 내용을 담습니다
 ///   - messageColor : 모달 메시지의 색상입니다
 ///   - image : 모달 이미지입니다
-///   - imageSize : 모달 이미지 사이즈입니다.
-///   - buttonText: 버튼의 텍스트입니다
-///   - buttonColor: 버튼의 색상입니다
-///   - buttonTextColor: 버튼의 텍스트 색상입니다
+///   - imageSize : 모달 이미지 사이즈입니다
+///   - buttonText : 버튼 텍스트입니다
+///   - buttonAction: 버튼 클릭 시 실행할 액션입니다
 struct ModalViewClear: View {
-    
     
     // MARK: - Property
     
@@ -29,7 +27,7 @@ struct ModalViewClear: View {
     let messageColor: Color
     
     /// 모달 이미지
-    let image : Image
+    let image: Image
     
     /// 이미지 사이즈
     let imageSize: CGFloat
@@ -37,12 +35,8 @@ struct ModalViewClear: View {
     /// 버튼 텍스트
     let buttonText: String
     
-    /// 버튼 색상
-    let buttonColor: Color
-    
-    /// 버튼 텍스트 색상
-    let buttonTextColor: Color
-
+    /// 버튼 액션
+    let buttonAction: () -> Void
     
     // MARK: - Init
     init(
@@ -51,16 +45,14 @@ struct ModalViewClear: View {
         image: Image = Image("Modal/itcong"),
         imageSize: CGFloat = 150,
         buttonText: String,
-        buttonColor: Color = .green060,
-        buttonTextColor: Color = .white
+        buttonAction: @escaping () -> Void
     ) {
         self.message = message
         self.messageColor = messageColor
         self.image = image
         self.imageSize = imageSize
         self.buttonText = buttonText
-        self.buttonColor = buttonColor
-        self.buttonTextColor = buttonTextColor
+        self.buttonAction = buttonAction
     }
     
     // MARK: - Body
@@ -74,7 +66,8 @@ struct ModalViewClear: View {
                 /// 모달 메시지
                 Text(message)
                     .foregroundColor(messageColor)
-                    .font(.koBold(size: 22))
+//                    .font(.koBold(size: 22))
+                    .font(.dsHeadline)
                 
                 Spacer().frame(height: 22)
                 
@@ -86,20 +79,16 @@ struct ModalViewClear: View {
                 
                 Spacer().frame(height: 34)
 
-                /// 모달 버튼
-                HStack {
-                    Button(action: {
-                        
-                        // 모달 닫기 동작
-                        
-                    }) {
-                        Text(buttonText)
-                            .foregroundColor(buttonTextColor)
-                            .frame(width: 230, height: 38)
-                    }
-                    .background(buttonColor)
-                    .cornerRadius(10)
-                }
+                PrimaryButton(
+                    color: .green060,
+                    text: buttonText,
+                    font: .dsHeadline,
+                    textColor: .white,
+                    width: 230,
+                    height: 38,
+                    cornerRadius: 10,
+                    action: buttonAction
+                )
             }
             .padding(.top, 24)
             .padding(.bottom, 16)
@@ -111,14 +100,14 @@ struct ModalViewClear: View {
     }
 }
 
-#Preview() {
+#Preview {
     ModalViewClear(
         message: "Pic 카드가 기록되었습니다",
-        messageColor: .black,
         image: Image("Modal/itcong"),
         imageSize: 150,
         buttonText: "확인",
-        buttonColor: .green060,
-        buttonTextColor: .white
+        buttonAction: {
+            print("확인 버튼 눌림")
+        }
     )
 }
