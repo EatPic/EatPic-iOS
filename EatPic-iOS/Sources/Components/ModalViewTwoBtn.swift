@@ -125,17 +125,3 @@ struct ModalViewTwoBtn: View {
         }
     )
 }
-}
-
-#Preview() {
-    ModalViewTwoBtn(
-        message: "기록한 Pic 카드를 삭제하시겠습니까?",
-        messageColor: .black,
-        leftButtonText: "아니오",
-        leftButtonColor: .gray020,
-        leftButtonTextColor: .black,
-        rightButtonText: "예",
-        rightButtonColor: .green060,
-        rightButtonTextColor: .white
-    )
-}
