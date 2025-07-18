@@ -25,17 +25,3 @@ extension NetworkService {
         return createProvider(for: targetType, additionalPlugins: [])
     }
 }
-
-final class APIProviderStore {
-    let networkService: NetworkService
-    
-    init(networkService: NetworkService) {
-        self.networkService = networkService
-    }
-}
-
-extension APIProviderStore {
-    func user() -> MoyaProvider<UserTargetType> {
-        return networkService.testProvider(for: UserTargetType.self)
-    }
-}
