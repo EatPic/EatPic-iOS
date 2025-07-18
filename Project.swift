@@ -29,6 +29,7 @@ let project = Project(
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
+                    "NSLocationWhenInUseUsageDescription": "현재 위치 정보를 활용하여 주변 정보를 제공해 드립니다. 위치 권한을 허용하지 않아도 일부 기능을 사용하실 수 있습니다. 원하실 경우, 위치 권한을 허용해 주세요.",
                     "UILaunchScreen": [
                         "UIColorName": "",
                         "UIImageName": "",
