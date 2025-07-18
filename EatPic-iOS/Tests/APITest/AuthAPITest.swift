@@ -1,5 +1,5 @@
 //
-//  LoginTests.swift
+//  AuthAPITest.swift
 //  EatPic-iOSTests
 //
 //  Created by jaewon Lee on 7/17/25.
