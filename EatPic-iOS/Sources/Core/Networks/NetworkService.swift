@@ -6,3 +6,61 @@
 //
 
 import Foundation
+import Moya
+import Alamofire
+
+protocol NetworkService {
+    var isTokenExpiringSoon: Bool { get }
+    
+    func createProvider<T: TargetType>(
+        for targetType: T.Type,
+        additionalPlugins: [PluginType]
+    ) -> MoyaProvider<T>
+    
+    func testProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T>
+}
+
+/// 기본값을 제공하는 extension
+extension NetworkService {
+    func createProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
+        return createProvider(for: targetType, additionalPlugins: [])
+    }
+}
+
+class NetworkServiceImpl: @unchecked Sendable, NetworkService {
+    private let tokenProvider: TokenProviding
+    private let accessTokenRefresher: AccessTokenRefresher
+    private let session: Session
+    private let loggerPlugin: PluginType
+    
+    init(userSessionKeychain: UserSessionKeychainService) {
+        tokenProvider = TokenProvider(userSessionKeychain: userSessionKeychain)
+        accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
+        session = Session(interceptor: accessTokenRefresher)
+        
+        loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
+    }
+    
+    var isTokenExpiringSoon: Bool {
+        tokenProvider.isTokenExpiringSoon()
+    }
+    
+    /// 실제 API 요청용 MoyaProvider
+    func createProvider<T: TargetType>(
+        for targetType: T.Type,
+        additionalPlugins: [PluginType] = []
+    ) -> MoyaProvider<T> {
+        return MoyaProvider<T>(
+            session: session,
+            plugins: [loggerPlugin] + additionalPlugins
+        )
+    }
+    
+    /// 테스트용 MoyaProvider (stub 응답 사용, Authorization 헤더 없음)
+    public func testProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
+        return MoyaProvider<T>(
+            stubClosure: MoyaProvider.immediatelyStub,
+            plugins: [loggerPlugin]
+        )
+    }
+}
