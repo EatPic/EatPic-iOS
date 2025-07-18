@@ -9,57 +9,6 @@ import Foundation
 import Moya
 import Alamofire
 
-enum AuthRouter {
-    // 리프레쉬 토큰 갱신
-    case sendRefreshToken(refreshToken: String)
-}
-
-extension AuthRouter: APITargetType {
-    var path: String {
-        switch self {
-        case .sendRefreshToken:
-            // TODO: 서버 API 명세서에는 리프레쉬 토큰이 아직 없어서 추후 얘기할 예정
-            return "user/refresh"
-        }
-    }
-    
-    var method: Moya.Method {
-        switch self {
-        case .sendRefreshToken:
-            return .get
-        }
-    }
-    
-    var task: Moya.Task {
-        switch self {
-        case .sendRefreshToken:
-            return .requestPlain
-        }
-    }
-    
-    var headers: [String: String]? {
-        switch self {
-        case .sendRefreshToken(let refresh):
-            var headers = ["Content-Type": "application/json"]
-            headers["Refresh-Token"] = "\(refresh)"
-            return headers
-        }
-    }
-}
-
-struct TokenResponse: Codable {
-    let isSuccess: Bool
-    let code: String
-    let message: String
-    let result: UserInfo
-}
-
-protocol TokenProviding {
-    var accessToken: String? { get set }
-    var refreshToken: String? { get set }
-    func refreshToken(completion: @escaping (String?, Error?) -> Void)
-}
-
 class TokenProvider: TokenProviding {
     private let userSessionKeychain: UserSessionKeychainService
     private let provider = MoyaProvider<AuthRouter>()
@@ -169,59 +118,5 @@ class TokenProvider: TokenProviding {
     func clearSession() {
         userSessionKeychain.deleteSession(for: .userSession)
         print("Keychain에서 사용자 세션 삭제 완료")
-    }
-}
-
-class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
-    private var tokenProviding: TokenProviding
-    private var isRefreshing: Bool = false
-    private var requestToRetry: [(RetryResult) -> Void] = []
-    
-    init(tokenProviding: TokenProviding) {
-        self.tokenProviding = tokenProviding
-    }
-    
-    func adapt(
-        _ urlRequest: URLRequest,
-        for session: Session,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
-    ) {
-        var urlRequest = urlRequest
-        if let accessToken = tokenProviding.accessToken {
-            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        }
-        completion(.success(urlRequest))
-    }
-    
-    func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: any Error,
-        completion: @escaping (RetryResult) -> Void
-    ) {
-        guard request.retryCount < 1,
-              let response = request.task?.response as? HTTPURLResponse,
-              [401, 403, 404].contains(response.statusCode) else {
-            return completion(.doNotRetry)
-        }
-        
-        requestToRetry.append(completion)
-        if !isRefreshing {
-            isRefreshing = true
-            tokenProviding.refreshToken { [weak self] _, error in
-                guard let self = self else { return }
-                self.isRefreshing = false
-                
-                let result: RetryResult
-                if let error = error {
-                    result = .doNotRetryWithError(error)
-                } else {
-                    result = .retry
-                }
-                
-                self.requestToRetry.forEach { $0(result) }
-                self.requestToRetry.removeAll()
-            }
-        }
     }
 }
