@@ -37,7 +37,7 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
     ) {
         guard request.retryCount < 1,
               let response = request.task?.response as? HTTPURLResponse,
-              [401, 403, 404].contains(response.statusCode) else {
+              [401, 403].contains(response.statusCode) else {
             return completion(.doNotRetry)
         }
         
