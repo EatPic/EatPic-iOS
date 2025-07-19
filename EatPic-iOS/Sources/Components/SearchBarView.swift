@@ -10,14 +10,43 @@ import SwiftUI
 struct SearchBarView: View {
     @Binding var text: String
     
+    var placeholder: String
+    
+    var showsDeleteButton: Bool
+    
+    var backgroundColor: Color
+    
+    var strokeColor: Color?
+    
+    var onSubmit: (() -> Void)?
+    
+    var onChange: ((String) -> Void)?
+    
+    init(
+        text: Binding<String>,
+        placeholder: String = "계정 또는 해시태그 검색",
+        showsDeleteButton: Bool = true,
+        backgroundColor: Color = Color.gray020,
+        strokeColor: Color? = Color.gray080,
+        onSubmit: (() -> Void)? = nil,
+        onChange: ((String) -> Void)? = nil
+    ) {
+        self._text = text
+        self.placeholder = placeholder
+        self.showsDeleteButton = showsDeleteButton
+        self.backgroundColor = backgroundColor
+        self.strokeColor = strokeColor
+        self.onSubmit = onSubmit
+        self.onChange = onChange
+    }
+    
     var body: some View {
-        
         HStack(spacing: 16) {
             Image("icon_search")
             
             ZStack(alignment: .leading) {
                 if text.isEmpty {
-                    Text("계정 또는 해시태그 검색")
+                    Text(placeholder)
                         .font(.dsBody)
                         .foregroundStyle(Color.gray050)
                 }
@@ -25,14 +54,22 @@ struct SearchBarView: View {
                     .font(.dsBody)
                     .foregroundStyle(Color.gray080)
                     .tint(Color.gray080)
+                    .onSubmit {
+                        onSubmit?()
+                    }
+                    .onChange(of: text) { newValue in
+                        onChange?(newValue)
+                    }
             }
             
             Spacer()
             
-            Button {
-                text = ""
-            } label: {
-                Image("icon_delete")
+            if showsDeleteButton && !text.isEmpty {
+                Button {
+                    text = ""
+                } label: {
+                    Image("icon_delete")
+                }
             }
         }
         .padding(.vertical, 8)
@@ -42,20 +79,29 @@ struct SearchBarView: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.gray020)
-                .stroke(Color.gray080, lineWidth: 1)
+                .overlay(
+                    Group {
+                        if let strokeColor {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(strokeColor, lineWidth: 1)
+                        }
+                    }
+                )
         )
     }
 }
 
-struct SearchBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatefulPreviewWrapper("eatpic") { binding in
-            SearchBarView(text: binding)
-        }
+#Preview {
+    StatefulPreviewWrapper("") {
+        SearchBarView(
+            text: $0,
+            onSubmit: { print("Submitted") },
+            onChange: { print("Changed to: \($0)") }
+        )
     }
 }
 
-/// 바인딩을 테스트용으로 프리뷰에 주입하기 위한 Wrapper
+/// 프리뷰에서 바인딩이 필요한 컴포넌트를 테스트할 수 있도록 도와주는 유틸리티
 struct StatefulPreviewWrapper<Value>: View {
     @State var value: Value
     var content: (Binding<Value>) -> AnyView
