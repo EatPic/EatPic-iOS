@@ -13,7 +13,7 @@ final class DIContainer: ObservableObject {
     
     init(
         router: NavigationRouter = .init(),
-        locationStore: LocationStore = .init()/*,*/
+        locationStore: LocationStore = .init(),
     ) {
         self.router = router
         self.locationStore = locationStore
