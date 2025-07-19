@@ -75,7 +75,6 @@ struct PicCardItemView: View {
                         }
                     }
                 }
-                .background(Color.blue)
             }
         }
     }
