@@ -32,8 +32,6 @@ struct TextAreaView: View {
     /// 텍스트의 색상
     let textColor: Color
     
-    
-    
     // MARK: - Init
     
     init(
@@ -49,7 +47,6 @@ struct TextAreaView: View {
         self.borderColor = borderColor
         self.textColor = textColor
     }
-    
     
     // MARK: - Body
     
