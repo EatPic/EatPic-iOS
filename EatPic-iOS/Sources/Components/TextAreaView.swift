@@ -72,7 +72,7 @@ struct TextAreaView: View {
 }
 
 #Preview {
-    @Previewable @State var sampleText = "이 레시피는요 일단 야채들이 필요하고요 소스는 편의점에서 스위트 갈릭마요 소스를 뿌렸어요 아보카도랑 당근의 조합이 정말 좋은거 아시나요? 다들 꼭 먹어보세요. 어쩌구 저쩌구"
+    @Previewable @State var sampleText = "이 레시피는요"
     
     TextAreaView(
         text: $sampleText,
