@@ -14,7 +14,7 @@ import SwiftUI
 /// - Parameters:
 ///   - title: 바텀시트 제목 텍스트
 ///   - subtitle: 제목 아래에 표시할 뷰 클로저 (예: 설명, 검색창 등)
-///   - content: 하단 콘텐츠 뷰 클로저 (예: 댓글 리스트 뷰, 팔로워 등)
+///   - content: 하단 콘텐츠 뷰 클로저 (예: 댓글 리스트 뷰, 팔로워 리스트 뷰 등)
 struct BottomSheetView<Subtitle: View, Content: View>: View {
     
     // MARK: - Property
@@ -22,7 +22,7 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
     // 바텀시트 제목
     let title: String
     
-    // 바텀시트 부제목 (친구 찾기 뷰에서 검색 뷰로 활용가능)
+    // 바텀시트 부제목
     let subtitle: (() -> Subtitle)?
     
     // 서브타이틀 하단 뷰 (리스트뷰)
@@ -32,7 +32,7 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
     
     /// subtitile 값이 매개변수로 존재할 때
     init(title: String,
-         subtitle: @escaping () -> Subtitle, // 기본적으로 nil값
+         subtitle: @escaping () -> Subtitle,
          @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
