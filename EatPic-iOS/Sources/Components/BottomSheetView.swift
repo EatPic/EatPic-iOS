@@ -66,7 +66,7 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
     }
 }
 
-/// ProfileImageView에서 사용되는 텍스트 및 레이아웃 상수를 정의한 내부 열거형
+/// BottomSheetView에서 사용되는 레이아웃 상수를 정의
 private enum BottomSheetConstants {
     // VStack 간격
     static let stackSpacing: CGFloat = 30
