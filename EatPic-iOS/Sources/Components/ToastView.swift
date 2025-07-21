@@ -30,7 +30,3 @@ struct ToastView: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
     }
 }
-
-#Preview {
-    ToastModel(title: "테스트", duration: 2)
-}
