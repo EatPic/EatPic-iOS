@@ -10,11 +10,12 @@ import SwiftUI
 /// 공용으로 사용되는 바텀시트 뷰 입니다.
 /// 전체적인 구조는 제목 + 부제목 + 부제목 하위 뷰 로 구성되어 있습니다.
 /// 댓글창, 신고창, 친구 찾기 바텀시트에서 활용 가능합니다.
+/// 해당 컴포넌트는 VStack이 Propety마다 간격 30으로 조정되어 있습니다.
 /// - Parameters:
 ///   - title: 바텀시트 제목 텍스트
 ///   - subtitle: 제목 아래에 표시할 뷰 클로저 (예: 설명, 검색창 등)
 ///   - content: 하단 콘텐츠 뷰 클로저 (예: 댓글 리스트 뷰, 팔로워 등)
-struct BottomSheetView<Subtitle: View,Content: View>: View {
+struct BottomSheetView<Subtitle: View, Content: View>: View {
     
     // MARK: - Property
     
@@ -61,5 +62,48 @@ struct BottomSheetView<Subtitle: View,Content: View>: View {
             
             content()
         }
+    }
+}
+
+/// 아래는 프로젝트 피그마를 참고하여 간단 사용 예시를 기입해 뒀습니다.
+/// subtitle 뷰 및 content 뷰는 추후에 따로 뷰를 만들어 렌더링 해야합니다.
+/// 예시: ReportListView(), CommentView(), FollowListView() content 내부 클로져에서 호출
+/// - 1. 사용예시  (신고하기 바텀시트)
+#Preview("바텀시트 - 신고하기") {
+    BottomSheetView(
+        title: "신고하기",
+        subtitle: {
+            VStack(spacing: 16) {
+                Text("해당 Pic카드를 신고하는 이유")
+                    .font(.dsTitle2)
+                Text("회원님의 신고는 익명으로 처리됩니다.")
+                    .font(.dsFootnote)
+            }
+        }//-subtitleVStack
+    ) {
+        List { // 추후에 ForEach 구문으로 전환하고 ReportListView()로 렌더링
+            Text("리스트를 넣으세요")
+            Text("리스트를 넣으세요")
+        }//-content
+        .listStyle(.inset)
+    }
+}
+
+#Preview("바텀시트 - 댓글창") {
+    BottomSheetView(
+        title: "댓글 5"
+    ) { //content: LazyVStack + ScrollView 사용한 CommentView 댓글창 렌더링
+        Text(" LazyVStack + ScrollView 댓글창 사용 예정")
+    }
+}
+
+#Preview("바텀시트 - 친구찾기 팔로우 목록") {
+    BottomSheetView(
+        title: "👍",
+        subtitle: {
+            Text("데이지가 작업한 SearchBarView 컴포넌트 렌더링 예정")
+        }
+    ) { //content: LazyVStack + ScrollView 사용한 FollowListView 팔로우 목록 렌더링
+        Text("팔로우 리스트 렌더링 예정")
     }
 }
