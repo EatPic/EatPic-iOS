@@ -79,22 +79,25 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
                 Text("회원님의 신고는 익명으로 처리됩니다.")
                     .font(.dsFootnote)
             }
-        }//-subtitleVStack
-    ) {
-        List { // 추후에 ForEach 구문으로 전환하고 ReportListView()로 렌더링
-            Text("리스트를 넣으세요")
-            Text("리스트를 넣으세요")
-        }//-content
-        .listStyle(.inset)
-    }
+        },
+        content: {
+            List { // 추후에 ForEach 구문으로 전환하고 ReportListView()로 렌더링
+                Text("리스트를 넣으세요")
+                Text("리스트를 넣으세요")
+            }
+            .listStyle(.inset)
+        }
+    )
 }
 
 #Preview("바텀시트 - 댓글창") {
     BottomSheetView(
-        title: "댓글 5"
-    ) { //content: LazyVStack + ScrollView 사용한 CommentView 댓글창 렌더링
-        Text(" LazyVStack + ScrollView 댓글창 사용 예정")
-    }
+        title: "댓글 5",
+        content: {
+            // CommentView 댓글창 렌더링 예정
+            Text(" LazyVStack + ScrollView 댓글창 사용 예정")
+        }
+    )
 }
 
 #Preview("바텀시트 - 친구찾기 팔로우 목록") {
@@ -102,8 +105,9 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
         title: "👍",
         subtitle: {
             Text("데이지가 작업한 SearchBarView 컴포넌트 렌더링 예정")
+        },
+        content: { // content: FollowListView 팔로우 목록 렌더링
+            Text("LazyVStack + ScrollView 팔로우 리스트 렌더링 예정")
         }
-    ) { //content: LazyVStack + ScrollView 사용한 FollowListView 팔로우 목록 렌더링
-        Text("팔로우 리스트 렌더링 예정")
-    }
+    )
 }
