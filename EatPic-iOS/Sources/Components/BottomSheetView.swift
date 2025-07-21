@@ -51,7 +51,8 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
     
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .center, spacing: 30) {
+        VStack(alignment: .center,
+               spacing: BottomSheetConstants.stackSpacing) {
             Text(title)
                 .font(.dsTitle2)
                 .foregroundStyle(Color.black)
@@ -63,6 +64,12 @@ struct BottomSheetView<Subtitle: View, Content: View>: View {
             content()
         }
     }
+}
+
+/// ProfileImageView에서 사용되는 텍스트 및 레이아웃 상수를 정의한 내부 열거형
+private enum BottomSheetConstants {
+    // VStack 간격
+    static let stackSpacing: CGFloat = 30
 }
 
 /// 아래는 프로젝트 피그마를 참고하여 간단 사용 예시를 기입해 뒀습니다.
