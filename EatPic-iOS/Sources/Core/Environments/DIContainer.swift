@@ -11,6 +11,7 @@ import Foundation
 final class DIContainer: ObservableObject {
     
     @Published var router: NavigationRouter
+    @Published var locationStore: LocationStore
     
     private let networkService: NetworkService
     
@@ -19,9 +20,11 @@ final class DIContainer: ObservableObject {
     
     init(
         router: NavigationRouter = .init(),
+        locationStore: LocationStore = .init(),
         userSessionKeychain: UserSessionKeychainService = UserSessionKeychainServiceImpl()
     ) {
         self.router = router
+        self.locationStore = locationStore
         self.userSessionKeychain = userSessionKeychain
         self.networkService = NetworkServiceImpl(userSessionKeychain: userSessionKeychain)
         self.apiProviderStore = APIProviderStore(networkService: networkService)
