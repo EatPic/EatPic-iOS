@@ -129,7 +129,7 @@ struct SearchBarView: View {
 
 // MARK: - Preview 바인딩 지원 유틸
 /// 프리뷰에서 바인딩이 필요한 컴포넌트를 테스트할 수 있도록 도와주는 유틸리티
-struct StatefulPreviewWrapper<Value>: View {
+fileprivate struct StatefulPreviewWrapper<Value>: View {
     @State var value: Value
     var content: (Binding<Value>) -> AnyView
     
