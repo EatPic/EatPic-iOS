@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 단방향 흐름을 위한 전역 의존성 주입 컨테이너
 final class DIContainer: ObservableObject {
     
     @Published var router: NavigationRouter

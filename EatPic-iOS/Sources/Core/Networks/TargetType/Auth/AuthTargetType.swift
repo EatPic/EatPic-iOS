@@ -8,6 +8,7 @@
 import Foundation
 import Moya
 
+/// 로그인 등의 인증 요청을 위한 API를 정의하는 TargetType입니다.
 enum AuthTargetType {
     case login(email: String, password: String)
 }

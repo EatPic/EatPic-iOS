@@ -8,6 +8,7 @@
 import Foundation
 import Moya
 
+/// 사용자 인증과 관련된 API 요청을 정의하는 라우터입니다.
 enum AuthRouter {
     // 리프레쉬 토큰 갱신
     case sendRefreshToken(refreshToken: String)
