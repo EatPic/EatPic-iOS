@@ -47,6 +47,34 @@ struct AuthAPITest {
         #expect(json?["token"] as? String == "jwt-token")
     }
     
+    @Test("로그인 실패 시 에러가 발생해야 한다")
+    func authLoginFailure() async throws {
+        
+        // given
+        let endpointClosure = { (target: AuthTargetType) -> Endpoint in
+            return Endpoint(
+                url: URL(target: target).absoluteString,
+                sampleResponseClosure: {
+                    .networkResponse(401, Data())
+                },
+                method: target.method,
+                task: target.task,
+                httpHeaderFields: target.headers
+            )
+        }
+        
+        let provider = MoyaProvider<AuthTargetType>(
+            endpointClosure: endpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub
+        )
+
+        // When & Then
+        await #expect(throws: MoyaError.self, performing: {
+            try await provider.requestAsync(
+                .login(email: "user@example.com", password: "userpassword"))
+        })
+    }
+    
     @Test("adapt 함수를 통해 accessToken이 Authorization 헤더에 포함되어야 한다")
     func addAuthorizationHeader() async throws {
         // Given
