@@ -11,7 +11,9 @@ struct MainHomeView: View {
     var body: some View {
         
         VStack {
-            Text("Hello, World!")
+            
+            MealStatusView()
+            
                 }
               .customNavigationBar(title: {
                         HStack {

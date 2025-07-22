@@ -9,13 +9,19 @@ import SwiftUI
 
 struct MealStatusView: View {
     var body: some View {
-        ZStack{
+        ZStack {
+            
+            Text("오늘의 식사 현황").font(.headline)
+                            Spacer()
+                            Button(action: {
+                                
+                            }) {
+                                Image(systemName: "ellipsis")
+                            }
             
         }
     }
 }
-
-
 
 #Preview {
     MealStatusView()
