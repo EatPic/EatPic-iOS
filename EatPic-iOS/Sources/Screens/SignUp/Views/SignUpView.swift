@@ -10,7 +10,6 @@ import SwiftUI
 /// 회원가입 뷰
 struct SignUpView: View {
     // MARK: - Property
-    @State private var toastVM = ToastViewModel()
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
     @State var viewModel: SignUpViewModel
@@ -51,14 +50,7 @@ struct SignUpView: View {
             .onSubmit {
                 focus = nil
             }
-            
-            // toast 테스트
-            Button("가입하기") {
-                toastVM.showToast(title: "링크가 복사되었습니다.")
-            }
         }
-        .toastView(viewModel: toastVM)
-        .padding(.horizontal, 16)
     }
 }
 
