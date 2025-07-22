@@ -77,11 +77,7 @@ struct MainTabView: View {
     }
 }
 
-struct MainTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        devicePreviews {
-            MainTabView()
-                .environmentObject(DIContainer())
-        }
-    }
+#Preview {
+    MainTabView()
+        .environmentObject(DIContainer())
 }
