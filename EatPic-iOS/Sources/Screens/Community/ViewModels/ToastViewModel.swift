@@ -16,7 +16,7 @@ class ToastViewModel {
     // MARK: - Property
     
     /// 현재 화면에 표시될 토스트 정보 (title, duration 포함)
-    var toast: ToastModel? = nil
+    var toast: ToastModel?
     
     /// 토스트 자동 닫기 예약을 위한 작업 객체
     private var dismissWorkItem: DispatchWorkItem?
