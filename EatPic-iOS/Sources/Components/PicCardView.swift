@@ -11,7 +11,7 @@ import SwiftUI
 ///   - profileImage: 프로필 이미지
 ///   - profileID: 프로필 아이디
 ///   - time: 픽카드 업로드 시간
-///   - onEllipsisTapped: 메뉴버튼(eclipsis) 클릭시 실행할 action
+///   - menuContent: 메뉴버튼(eclipsis) 클릭 시 나타날 버튼목록 커스텀
 ///   - postImage: 업로드 이미지
 ///   - myMemo: 사용자가 작성하는 '나의 메모'
 struct PicCardView<Content: View>: View {
@@ -96,11 +96,23 @@ struct PicCardView<Content: View>: View {
         profileID: "아이디",
         time: "오후 6:29",
         menuContent: {
-            Button("옵션 1") {
-                print("옵션 1 선택")
+            Button(action: {
+                print("사진 앱에 저장")
+            }) {
+                Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
             }
-            Button("옵션 2") {
-                print("옵션 2 선택")
+            
+            Button(action: {
+                print("수정하기")
+            }) {
+                Label("수정하기", systemImage: "square.and.pencil")
+            }
+            
+            // role을 destructive로 설정 시, 빨간 버튼으로 만들 수 있음
+            Button(role: .destructive, action: {
+                print("삭제하기")
+            }) {
+                Label("삭제하기", systemImage: "exclamationmark.bubble")
             }
         },
         postImage: Image(systemName: "square.fill"),
