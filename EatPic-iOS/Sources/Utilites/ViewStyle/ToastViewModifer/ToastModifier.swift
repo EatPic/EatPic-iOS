@@ -29,8 +29,8 @@ struct ToastModifier: ViewModifier {
                     // 공용 토스트 view 사용
                     ToastView(title: toast.title)
                 }
-                .transition(.move(edge: .bottom).combined(with: .opacity)) // 아래에서 위로 등장 + 투명도 애니메이션
-                .animation(.spring(), value: toast) // spring 애니메이션 적용
+                .transition(.opacity) // fade in/out 애니메이션
+                .animation(.easeInOut(duration: 0.3), value: toast) // fade 애니메이션 효과
                 .padding(.bottom, 20)
             }
         }

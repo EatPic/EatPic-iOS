@@ -24,6 +24,7 @@ struct ToastView: View {
                 .font(.dsHeadline)
                 .foregroundStyle(Color.white)
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 24)
         .padding(.vertical, 14)
         .background(Color.gray060)
