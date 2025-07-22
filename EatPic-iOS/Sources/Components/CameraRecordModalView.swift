@@ -8,7 +8,6 @@
 import SwiftUI
 
 /// 버튼 + 제목 + 설명 + 카메라/사진버튼 + 텍스트로 이루어진 카메라 모달 컴포넌트
-
 /// - Parameters:
 ///   - xButtonImage: 모달의 우측 상단에 위치하는 닫기(X) 버튼 이미지입니다.
 ///   - messageTitle: 모달 제목 메시지의 내용을 담습니다
