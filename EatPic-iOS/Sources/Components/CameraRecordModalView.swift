@@ -20,7 +20,7 @@ import SwiftUI
 ///   - albumButtonImage: 사진 앨범 버튼 이미지입니다.
 ///   - buttonColor: 카메라 및 앨범 버튼의 배경 색상입니다.
 ///   - albumText: 앨범 버튼 하단에 표시될 텍스트입니다.
-struct ModalViewRecord: View {
+struct CameraRecordModalView: View {
     
     // MARK: - Property
     
@@ -192,7 +192,7 @@ struct ModalViewRecord: View {
 }
 
 #Preview {
-    ModalViewRecord(
+    CameraRecordModalView(
         xButtonImage: Image("Modal/btn_close"),
         messageTitle: "Pic 카드 기록",
         messageDescription: "기록할 방법을 선택해주세요",

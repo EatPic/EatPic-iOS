@@ -16,7 +16,7 @@ import SwiftUI
 ///   - rightButtonText: 오른쪽 버튼의 텍스트입니다
 ///   - leftButtonAction: 왼쪽 버튼의 액션입니다
 ///   - rightButtonAction: 오른쪽 버튼의 액션입니다
-struct ModalViewTwoBtn: View {
+struct DecisionModalView: View {
     
     // MARK: - Property
     
@@ -112,7 +112,7 @@ struct ModalViewTwoBtn: View {
 }
 
 #Preview {
-    ModalViewTwoBtn(
+    DecisionModalView(
         message: "기록한 Pic 카드를 삭제하시겠습니까?",
         messageColor: .black,
         leftButtonText: "아니오",

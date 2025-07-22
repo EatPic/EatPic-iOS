@@ -14,7 +14,7 @@ import SwiftUI
 ///   - badgeTitleColor: 뱃지 이름 텍스트 색상입니다
 ///   - badgeDescription: 뱃지 설명 입니다
 ///   - badgeDescriptionColor: 뱃지 설명 텍스트 색상
-struct ModalViewBadge<T: ModalBadgeTypeProtocol>: View {
+struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
     
     // MARK: - Properties
 
@@ -123,7 +123,7 @@ struct ModalViewBadge<T: ModalBadgeTypeProtocol>: View {
 }
 
 #Preview("뱃지 획득 중 ~ 획득 완료") {
-    ModalViewBadge(
+    BadgeProgressModalView(
         badgeType: BadgeModalType.badgeUnlocked(
             progress: 0.7,
             icon: Image(systemName: "star.fill")),
@@ -134,7 +134,7 @@ struct ModalViewBadge<T: ModalBadgeTypeProtocol>: View {
 }
 
 #Preview("뱃지 잠금") {
-    ModalViewBadge(
+    BadgeProgressModalView(
         badgeType: BadgeModalType.badgeLocked,
         badgeSize: 130,
         badgeTitle: "혼밥러",

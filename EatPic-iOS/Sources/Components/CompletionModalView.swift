@@ -8,7 +8,6 @@
 import SwiftUI
 
 /// 텍스트 + 이미지 + 버튼으로 이루어진 공통 모달 컴포넌트
-
 /// - Parameters:
 ///   - message: 모달 메시지의 내용을 담습니다
 ///   - messageColor : 모달 메시지의 색상입니다
@@ -16,7 +15,7 @@ import SwiftUI
 ///   - imageSize : 모달 이미지 사이즈입니다
 ///   - buttonText : 버튼 텍스트입니다
 ///   - buttonAction: 버튼 클릭 시 실행할 액션입니다
-struct ModalViewClear: View {
+struct CompletionModalView: View {
     
     // MARK: - Property
     
@@ -101,7 +100,7 @@ struct ModalViewClear: View {
 }
 
 #Preview {
-    ModalViewClear(
+    CompletionModalView(
         message: "Pic 카드가 기록되었습니다",
         image: Image("Modal/itcong"),
         imageSize: 150,

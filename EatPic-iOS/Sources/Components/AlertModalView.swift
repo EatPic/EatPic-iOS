@@ -14,7 +14,7 @@ import SwiftUI
 ///   - messageColor : 모달 메시지의 색상입니다
 ///   - buttonText : 버튼 텍스트입니다
 ///   - buttonAction: 버튼 클릭 시 실행할 액션입니다
-struct ModalViewDisabled: View {
+struct AlertModalView: View {
     
     // MARK: - Property
     
@@ -92,7 +92,7 @@ struct ModalViewDisabled: View {
 }
 
 #Preview {
-    ModalViewDisabled(
+    AlertModalView(
         messageTitle: "안내",
         messageDescription: "최대 3개까지 선택 가능합니다.",
         messageColor: .black,
