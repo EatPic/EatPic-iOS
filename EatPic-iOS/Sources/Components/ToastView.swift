@@ -17,12 +17,16 @@ struct ToastView: View {
         HStack(spacing: 16) {
             // 왼쪽 아이콘
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(Color.red)
+                .foregroundStyle(Color.pink060)
+            
+            Spacer()
             
             // 토스트 뷰 제목
             Text(title)
                 .font(.dsHeadline)
                 .foregroundStyle(Color.white)
+            
+            Spacer()
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 24)
