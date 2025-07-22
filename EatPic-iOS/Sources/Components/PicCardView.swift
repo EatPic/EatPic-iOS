@@ -14,13 +14,13 @@ import SwiftUI
 ///   - onEllipsisTapped: 메뉴버튼(eclipsis) 클릭시 실행할 action
 ///   - postImage: 업로드 이미지
 ///   - myMemo: 사용자가 작성하는 '나의 메모'
-struct PicCardView: View {
+struct PicCardView<Content: View>: View {
     
     // MARK: property
     let profileImage: Image
     let profileID: String
     let time: String
-    let onEllipsisTapped: () -> Void
+    let menuContent: () -> Content
     let postImage: Image
     let myMemo: String
     
@@ -29,21 +29,21 @@ struct PicCardView: View {
         profileImage: Image,
         profileID: String,
         time: String,
-        onEllipsisTapped: @escaping () -> Void,
+        @ViewBuilder menuContent: @escaping () -> Content,
         postImage: Image,
         myMemo: String
     ) {
         self.profileImage = profileImage
         self.profileID = profileID
         self.time = time
-        self.onEllipsisTapped = onEllipsisTapped
+        self.menuContent = menuContent
         self.postImage = postImage
         self.myMemo = myMemo
     }
     
     // MARK: body
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
                 profileImage
@@ -62,13 +62,13 @@ struct PicCardView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    onEllipsisTapped()
-                }, label: {
+                Menu {
+                    menuContent()
+                } label: {
                     Image(systemName: "ellipsis")
                         .frame(width: 24, height: 24)
                         .foregroundStyle(Color.black)
-                })
+                }
             }
                         
             // 업로드 이미지 (정사각형 + 모서리 둥글게)
@@ -95,7 +95,14 @@ struct PicCardView: View {
         profileImage: Image(systemName: "circle.fill"),
         profileID: "아이디",
         time: "오후 6:29",
-        onEllipsisTapped: { print("메뉴 선택") },
+        menuContent: {
+            Button("옵션 1") {
+                print("옵션 1 선택")
+            }
+            Button("옵션 2") {
+                print("옵션 2 선택")
+            }
+        },
         postImage: Image(systemName: "square.fill"),
         myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를"
     )
