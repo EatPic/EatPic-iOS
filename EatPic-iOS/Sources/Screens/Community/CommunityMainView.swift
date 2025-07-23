@@ -9,15 +9,14 @@ import SwiftUI
 
 struct CommunityMainView: View {
     var body: some View {
-        VStack(spacing: 40) {
-            userListView()
-            ScrollView {
+        ScrollView {
+            VStack(spacing: 40) {
+                userListView()
                 cardListView()
-                Spacer().frame(height: 40)
                 lastContentView()
             }
-            .scrollIndicators(.hidden)
         }
+        .scrollIndicators(.hidden)
     }
     
     private func userListView() -> some View {
@@ -99,7 +98,7 @@ struct CommunityMainView: View {
                         Label("신고하기", systemImage: "exclamationmark.bubble")
                     }
                 },
-                postImage: Image(systemName: "circle.fill"),
+                postImage: Image(systemName: "square.fill"),
                 myMemo: "오늘은 샐러드를 먹었습니다~")
             
             PicCardView(
@@ -113,7 +112,7 @@ struct CommunityMainView: View {
                         Label("신고하기", systemImage: "exclamationmark.bubble")
                     }
                 },
-                postImage: Image(systemName: "circle.fill"),
+                postImage: Image(systemName: "square.fill"),
                 myMemo: "오늘은 샐러드를 먹었습니다~")
         }
         .padding(.horizontal, 16)
