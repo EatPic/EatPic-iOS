@@ -51,7 +51,6 @@ struct TopView: View {
         HStack(alignment: .top) {
             Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
                 .font(.dsTitle2)
-                .lineSpacing(2)
                 .kerning(-0.44) // 22 * -0.02 = -0.44
             
             Spacer()
@@ -60,6 +59,7 @@ struct TopView: View {
                 print("캘린더로 이동")
             } label: {
                 Image("Home/btn_home_calender")
+                    .resizable()
                     .frame(width: 24, height: 24)
             }
             
@@ -69,6 +69,7 @@ struct TopView: View {
                 print("알림으로 이동")
             } label: {
                 Image("Home/btn_home_notification")
+                    .resizable()
                     .frame(width: 24, height: 24)
             }
             

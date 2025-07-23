@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+/// - Parameters:
+///   - friendNickNname: 알림을 일으킨 사람의 닉네임
+///   - notiTime: 알림 온 시간
+///   - state: 알림 바 클릭 상태
 struct LikeNotiView: View {
     let friendNickname: String
     let notiTime: String
@@ -15,8 +19,6 @@ struct LikeNotiView: View {
     var body: some View {
         HStack {
             // 프로필 사진
-//            Circle()
-//                .frame(width: 47, height: 47)
             ProfileImageView(size: 47)
             
             Spacer().frame(width: 16)

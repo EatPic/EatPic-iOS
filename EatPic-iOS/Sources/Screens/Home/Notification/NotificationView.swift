@@ -18,7 +18,7 @@ struct NotificationView: View {
                 FollowNotiView(friendNickname: "bbbjhjjkjkjk", notiTime: "23시간", state: .clicked)
             }
         }
-        //커스텀 네비게이션 바 적용 안됨 이슈
+        // 커스텀 네비게이션 바 적용 안됨 이슈
         .customNavigationBar(title: {
                   HStack {
                 Circle().frame(width: 32, height: 32)
