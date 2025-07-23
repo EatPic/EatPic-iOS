@@ -9,6 +9,17 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
+protocol MapRepresentable {
+    func makeMapView(with markers: [Marker]) -> AnyView
+}
+
+final class MapViewAdapter: MapRepresentable {
+    func makeMapView(with markers: [Marker]) -> AnyView {
+        let viewModel: MapViewModel = .init(makers: markers)
+        return AnyView(MapKitView(viewModel: viewModel))
+    }
+}
+
 struct Marker: Identifiable {
     let id = UUID()
     let coordinate: CLLocationCoordinate2D
@@ -29,26 +40,50 @@ struct Place: Identifiable, Hashable {
 @Observable
 final class MapViewModel {
     
-    var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    var cameraPosition: MapCameraPosition
+    var makers: [Marker]
     
-    var makers: [Marker] = [
-        .init(coordinate: .init(
-            latitude: 37.587964, longitude: 127.007662), title: "방목")
-    ]
-    
-    init(locationStore: LocationStore) {
-        locationStore.start()
+    init(makers: [Marker]) {
+        self.makers = makers
+        if let first = makers.first {
+            self.cameraPosition = .region(MKCoordinateRegion(
+                center: first.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+            ))
+        } else {
+            self.cameraPosition = .automatic
+        }
     }
 }
 
-struct MapView: View {
-    @State private var viewModel: MapViewModel
-    @EnvironmentObject private var container: DIContainer
+struct MapKitView: View {
+    @Bindable private var viewModel: MapViewModel
     
-    init(container: DIContainer) {
-        self.viewModel = .init(locationStore: container.locationStore)
+    init(viewModel: MapViewModel) {
+        self.viewModel = viewModel
     }
     
+    var body: some View {
+        Map(position: $viewModel.cameraPosition) {
+            ForEach(viewModel.makers, id: \.id, content: { marker in
+                Annotation(marker.title, coordinate: marker.coordinate, content: {
+                    Image(systemName: "mappin.circle.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundStyle(Color.red)
+                })
+            })
+        }
+    }
+}
+
+struct StoreLocationView: View {
+    let markers: [Marker] = [
+        .init(coordinate: .init(latitude: 37.587964, longitude: 127.007662), title: "방목")
+    ]
+    let mapView: MapRepresentable
+   
     var body: some View {
         VStack(alignment: .leading) {
             Text("식당이름")
@@ -81,28 +116,14 @@ struct MapView: View {
             
             Spacer().frame(height: 34)
             
-            Map(
-                position: $viewModel.cameraPosition,
-                bounds: .none,
-                interactionModes: .all,
-            ) {
-                ForEach(viewModel.makers, id: \.id, content: { marker in
-                    Annotation(marker.title, coordinate: marker.coordinate, content: {
-                        Image(systemName: "mappin.circle.fill")
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundStyle(Color.red)
-                    })
-                })
-            }
-            .frame(height: 544)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            mapView.makeMapView(with: markers)
+                .frame(height: 544)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .padding(.horizontal, 16)
     }
 }
 
 #Preview {
-    MapView(container: .init())
+    StoreLocationView(mapView: MapViewAdapter())
 }
