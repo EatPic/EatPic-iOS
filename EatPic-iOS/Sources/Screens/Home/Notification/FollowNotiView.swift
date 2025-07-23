@@ -63,4 +63,3 @@ struct FollowNotiView: View {
 #Preview ("알림 클릭 후") {
     FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .clicked)
 }
-

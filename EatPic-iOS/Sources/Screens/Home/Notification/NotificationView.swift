@@ -9,8 +9,13 @@ import SwiftUI
 
 struct NotificationView: View {
     var body: some View {
+        
+        // 상단바
+        RoundedRectangle(cornerRadius: 0)
+            .frame(height: 56)
+        
         ScrollView {
-            LazyVStack {
+            LazyVStack(spacing: 0) {
                 LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간 전", state: .clicked)
 
                 FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .unclicked)

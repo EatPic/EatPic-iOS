@@ -9,10 +9,14 @@ import SwiftUI
 
 struct CalenderCardView: View {
     var body: some View {
+
+        Spacer().frame(height: 8)
         
-        //상단바
-        
-        VStack{
+        VStack {
+            // 상단바
+            RoundedRectangle(cornerRadius: 0)
+                .frame(height: 56)
+            
             // 당일 식사 사진 띄워주는 Carousel 뷰
             VStack {
                 Spacer().frame(height: 36)
@@ -20,12 +24,13 @@ struct CalenderCardView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .frame(width: 300, height: 300)
                 
-                Spacer().frame(height: 36)
+                Spacer().frame(height: 43)
             }
             
             // 레시피 링크 ~ 메모 등의 버튼 뷰 4개
             ZStack {
-                //VStack이 기본적으로 각 자식 뷰 사이에 spacing을 주기 때문에
+                // VStack은 기본적으로
+                // 각 자식 뷰 사이에 spacing을 주기 때문에
                 // spacing을 0으로 처리
                 VStack(spacing: 0) {
                     
@@ -66,6 +71,8 @@ struct CalenderCardView: View {
                     }
                 }
             }
+            
+            Spacer()
         }
     }
 }
