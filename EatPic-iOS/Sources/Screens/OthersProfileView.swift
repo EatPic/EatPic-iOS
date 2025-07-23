@@ -38,8 +38,13 @@ struct OthersProfileView: View {
             .customNavigationBar(title: {
                 Text("")
             }, right: {
-                Button {
-                    print("메뉴")
+                Menu {
+                    Button(role: .destructive) { } label: {
+                        Label("차단하기", systemImage: "hand.raised.slash")
+                    }
+                    Button(role: .destructive) {} label: {
+                        Label("신고하기", systemImage: "info.circle")
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                 }
