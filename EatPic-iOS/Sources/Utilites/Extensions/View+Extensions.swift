@@ -26,4 +26,10 @@ extension View {
     ) -> some View {
         modifier(CustomNavigationBarModifier(title: title, right: right))
     }
+    
+    /// .toastView(toast: $toast)를 붙이면 자동으로 ToastModifier가 적용됨
+    /// 공용 토스트 뷰를 View에 부착
+    func toastView(viewModel: ToastViewModel) -> some View {
+        self.modifier(ToastModifier(viewModel: viewModel))
+    }
 }
