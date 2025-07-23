@@ -78,11 +78,51 @@ struct MapKitView: View {
     }
 }
 
-struct StoreLocationView: View {
-    let markers: [Marker] = [
+@Observable
+class StoreLocationViewModel {
+    
+    private let geocoder = CLGeocoder()
+    
+    let makers: [Marker] = [
         .init(coordinate: .init(latitude: 37.587964, longitude: 127.007662), title: "방목")
     ]
+    var address: String = "식당 위치 로딩 중.."
+    
+    func reverseGeocode() async {
+        guard let latitude = makers.first?.coordinate.latitude,
+              let longitude = makers.first?.coordinate.longitude else {
+            fatalError("식당의 GPS 좌표가 없어 역지오코딩을 할 수 없습니다.")
+        }
+        
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+        
+        do {
+            let placemarks = try await geocoder.reverseGeocodeLocation(
+                location,
+                preferredLocale: Locale(identifier: "ko_KR")
+            )
+            if let placemark = placemarks.first {
+                let address = [
+                    placemark.locality,
+                    placemark.name
+                ].compactMap { $0 }.joined(separator: " ")
+                
+                self.address = address
+            }
+        } catch {
+            print("역지오코딩 에러: \(error.localizedDescription)")
+        }
+    }
+}
+
+struct StoreLocationView: View {
+    
+    @State private var viewModel: StoreLocationViewModel = .init()
     let mapView: MapRepresentable
+    
+    init(mapView: MapRepresentable = MapViewAdapter()) {
+        self.mapView = mapView
+    }
    
     var body: some View {
         VStack(alignment: .leading) {
@@ -93,7 +133,7 @@ struct StoreLocationView: View {
             Spacer().frame(height: 18)
             
             HStack {
-                Text("자세한 식당 위치")
+                Text("\(viewModel.address)")
                     .font(.dsBody)
                     .foregroundStyle(Color.gray060)
                 
@@ -116,14 +156,17 @@ struct StoreLocationView: View {
             
             Spacer().frame(height: 34)
             
-            mapView.makeMapView(with: markers)
+            mapView.makeMapView(with: viewModel.makers)
                 .frame(height: 544)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .padding(.horizontal, 16)
+        .task {
+            await viewModel.reverseGeocode()
+        }
     }
 }
 
 #Preview {
-    StoreLocationView(mapView: MapViewAdapter())
+    StoreLocationView()
 }

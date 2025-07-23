@@ -11,7 +11,7 @@ struct EatPicIOSApp: App {
     var body: some Scene {
         WindowGroup {
 //            MainTabView()
-            StoreLocationView(mapView: MapViewAdapter())
+            StoreLocationView()
                 .environmentObject(container)
         }
     }
