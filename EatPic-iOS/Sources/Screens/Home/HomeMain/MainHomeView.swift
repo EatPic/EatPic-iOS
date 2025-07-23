@@ -11,8 +11,9 @@ struct MainHomeView: View {
     var body: some View {
         ScrollView {
             VStack {
+                TopView()
                 
-                Spacer()
+                Spacer().frame(height: 28)
                 
                 MealStatusView()
                 
@@ -41,6 +42,37 @@ struct MainHomeView: View {
                 Image(systemName: "gearshape")
             }
         })
+    }
+}
+
+// 상단 제목 뷰
+struct TopView: View {
+    var body: some View {
+        HStack(alignment: .top) {
+            Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
+                .font(.dsTitle2)
+                .lineSpacing(2)
+                .kerning(-0.44) // 22 * -0.02 = -0.44
+            
+            Spacer()
+            
+            Button {
+                print("캘린더로 이동")
+            } label: {
+                Image("Home/btn_home_calender")
+                    .frame(width: 24, height: 24)
+            }
+            
+            Spacer().frame(width: 16)
+            
+            Button {
+                print("알림으로 이동")
+            } label: {
+                Image("Home/btn_home_notification")
+                    .frame(width: 24, height: 24)
+            }
+            
+        }
     }
 }
 

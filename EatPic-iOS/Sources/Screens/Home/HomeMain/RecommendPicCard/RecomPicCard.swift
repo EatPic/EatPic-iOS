@@ -13,6 +13,7 @@ struct RecomPicCard: View {
                 HStack {
                     Text("추천 Pic카드")
                         .font(.title3)
+                        .foregroundColor(.gray080)
                     
                     Spacer()
                     

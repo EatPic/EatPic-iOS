@@ -22,6 +22,7 @@ struct MealStatusView: View {
                 HStack {
                     Text("오늘의 식사 현황")
                         .font(.title3)
+                        .foregroundColor(.gray080)
                     
                     Spacer().frame(height: 24)
                     
