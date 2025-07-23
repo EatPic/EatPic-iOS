@@ -118,12 +118,15 @@ class StoreLocationViewModel {
 struct StoreLocationView: View {
     
     @State private var viewModel: StoreLocationViewModel = .init()
-    let mapView: MapRepresentable
+    @State private var toastViewModel: ToastViewModel = .init()
+    
+    private let mapView: MapRepresentable
+    private let toastDuration: TimeInterval = 1.5
     
     init(mapView: MapRepresentable = MapViewAdapter()) {
         self.mapView = mapView
     }
-   
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("식당이름")
@@ -148,10 +151,15 @@ struct StoreLocationView: View {
                     height: 23,
                     cornerRadius: 5,
                     action: {
-                        print("복사")
+                        UIPasteboard.general.string = viewModel.address
+                        
+                        toastViewModel.showToast(
+                            title: "주소가 복사되었습니다.",
+                            duration: toastDuration
+                        )
                     }
                 )
-
+                
             }
             
             Spacer().frame(height: 34)
@@ -160,6 +168,7 @@ struct StoreLocationView: View {
                 .frame(height: 544)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
         }
+        .toastView(viewModel: toastViewModel)
         .padding(.horizontal, 16)
         .task {
             await viewModel.reverseGeocode()
