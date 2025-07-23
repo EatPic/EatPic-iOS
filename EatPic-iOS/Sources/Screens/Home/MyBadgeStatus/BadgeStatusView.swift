@@ -80,7 +80,7 @@ struct BadgeStatusView: View {
                 }
             }
         }
-        .padding(.vertical, 16)
+        .padding(.top, 16)
         .padding(.horizontal, 19)
 //        .frame(height: 202)
         .background(.white)
