@@ -37,26 +37,27 @@ struct ReactionBarView: View {
                 Button {
                     toggleReaction(reaction)
                 } label: {
-                    VStack(spacing: 0) {
+                    VStack(spacing: 1) {
                         Text(reaction.emoji)
                             .font(.dsHeadline)
                         Text(countText(for: reaction))
                             .font(.dsCaption2)
                             .foregroundStyle(.white)
                     }
-                    .padding(.horizontal, 11)
-                    .padding(.top, 6)
-                    .padding(.bottom, 3)
-                    .background(
-                        Circle()
-                            .fill(selectedReaction == reaction ?
-                                  Color.pink060 : Color.black.opacity(0.8))
-                    )
                 }
+                .padding(.horizontal, 10)
+                .padding(.top, 6)
+                .padding(.bottom, 3)
+                .background(
+                    Circle()
+                        .fill(selectedReaction == reaction ?
+                              Color.pink060 : Color.black.opacity(0.8))
+                )
+                .frame(width: 40, height: 40)
             }
         }
         .padding(.horizontal, 48)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: 40)
     }
 
     // 리액션 선택/해제 처리
@@ -78,6 +79,10 @@ struct ReactionBarView: View {
         let count = reactionCounts[reaction, default: 0]
         return count > 99 ? "99+" : "\(count)"
     }
+}
+
+#Preview {
+    CommunityMainView()
 }
 
 #Preview {

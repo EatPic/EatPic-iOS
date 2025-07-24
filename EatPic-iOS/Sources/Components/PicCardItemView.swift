@@ -42,36 +42,34 @@ struct PicCardItemView: View {
     
     // MARK: - body
     var body: some View {
-        ZStack {
-            // 리액션 바 표시 상태일 경우 배경 터치로 닫기 가능
-            if isShowingReactionBar {
-                Color.black.opacity(0.001)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            isShowingReactionBar = false
-                        }
+        // 리액션 바 표시 상태일 경우 배경 터치로 닫기 가능
+        if isShowingReactionBar {
+            Color.black.opacity(0.001)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation {
+                        isShowingReactionBar = false
                     }
-                
-//                ReactionBarView(
-//                    selectedReaction: $selectedReaction,
-//                    reactionCounts: $reactionCounts
-//                )
-                .zIndex(1)
-            } else {
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(items, id: \..id) { item in
-                        HStack(spacing: 8) {
-                            Button {
-                                handleTap(for: item)
-                            } label: {
-                                item.icon
-                            }
-                            if let count = item.count {
-                                Text(count > 999 ? "999+" : "\(count)")
-                                    .font(.dsHeadline)
-                                    .foregroundStyle(.white)
-                            }
+                }
+            
+            ReactionBarView(
+                selectedReaction: $selectedReaction,
+                reactionCounts: $reactionCounts
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        } else {
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(items, id: \..id) { item in
+                    HStack(spacing: 8) {
+                        Button {
+                            handleTap(for: item)
+                        } label: {
+                            item.icon
+                        }
+                        if let count = item.count {
+                            Text(count > 999 ? "999+" : "\(count)")
+                                .font(.dsHeadline)
+                                .foregroundStyle(.white)
                         }
                     }
                 }
@@ -107,4 +105,8 @@ struct PicCardItemView: View {
             print("선택된 리액션: \(String(describing: selected))")
         }
     }
+}
+
+#Preview {
+    CommunityMainView()
 }
