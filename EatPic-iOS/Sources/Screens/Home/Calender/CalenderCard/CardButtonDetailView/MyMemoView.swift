@@ -13,19 +13,24 @@ struct MyMemoView: View {
 
     var body: some View {
         
-        // 상단바
-        RoundedRectangle(cornerRadius: 0)
-            .frame(height: 56)
-        
-        Spacer().frame(height: 32)
-        
-        TextAreaView(
-            text: $sampleText,
-            height: 417
-        )
-        .padding(.horizontal, 16)
-        
-        Spacer()
+        VStack {
+            Spacer().frame(height: 32)
+            
+            TextAreaView(
+                text: $sampleText,
+                height: 417
+            )
+            .padding(.horizontal, 16)
+            
+            Spacer()
+        }
+        .customNavigationBar(title: {
+            HStack {
+                      Text("나의 메모")
+                  }
+              }, right: {
+                  
+              })
     }
 }
 

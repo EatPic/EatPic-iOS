@@ -12,7 +12,7 @@ struct RecomPicCard: View {
             VStack {
                 HStack {
                     Text("추천 Pic카드")
-                        .font(.title3)
+                        .font(.dsTitle3)
                         .foregroundColor(.gray080)
                     
                     Spacer()

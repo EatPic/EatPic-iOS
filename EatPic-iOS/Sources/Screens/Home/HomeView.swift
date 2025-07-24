@@ -7,21 +7,15 @@
 
 import SwiftUI
 
-struct MainHomeView: View {
+struct HomeView: View {
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(spacing: 24) {
                 TopView()
-                
-                Spacer().frame(height: 28)
                 
                 MealStatusView()
                 
-                Spacer().frame(height: 24)
-                
                 RecomPicCard()
-                
-                Spacer().frame(height: 24)
                 
                 BadgeStatusView()
                 
@@ -45,8 +39,8 @@ struct MainHomeView: View {
     }
 }
 
-// 상단 제목 뷰
-struct TopView: View {
+
+fileprivate struct TopView: View {
     var body: some View {
         HStack(alignment: .top) {
             Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
@@ -72,11 +66,11 @@ struct TopView: View {
                     .resizable()
                     .frame(width: 24, height: 24)
             }
-            
         }
+        .padding(.horizontal, 4)
     }
 }
 
 #Preview {
-    MainHomeView()
+    HomeView()
 }

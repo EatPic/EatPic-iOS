@@ -21,7 +21,7 @@ struct MealStatusView: View {
                 // 상단 제목
                 HStack {
                     Text("오늘의 식사 현황")
-                        .font(.title3)
+                        .font(.dsTitle3)
                         .foregroundColor(.gray080)
                     
                     Spacer().frame(height: 24)
@@ -111,6 +111,48 @@ struct MealStatusView: View {
             .background(.white)
             .cornerRadius(15)
         }
+}
+
+//
+//struct HomeView1: View {
+//    var body: some View {
+//        VStack {
+//            Text("View1")
+//            
+//            
+//            Text("View1")
+//            Text("View1")
+//        }
+//    }
+//}
+//
+//
+///fileprivate struct View1: View {
+//
+//}
+//
+///fileprivate struct View2: View {
+//    
+//}
+
+
+
+//
+struct AddMealView: View {
+    var body: some View {
+        VStack {
+
+            // 사진 추가 ~ 이미지
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.gray020)
+                    .frame(width: 76, height: 76)
+                
+                Image("Home/btn_home_add")
+                
+            }
+        }
+    }
 }
 
 #Preview {

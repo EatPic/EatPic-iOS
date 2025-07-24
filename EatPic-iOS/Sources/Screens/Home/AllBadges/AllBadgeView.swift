@@ -7,3 +7,13 @@
 
 import SwiftUI
 
+struct AllBadgeView: View {
+    var body: some View {
+        Text("잇콩님이 획득하 배지 현황")
+    }
+}
+
+
+#Preview {
+    AllBadgeView()
+}

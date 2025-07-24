@@ -13,7 +13,7 @@ struct BadgeStatusView: View {
         VStack {
             HStack {
                 Text("나의 뱃지 현황")
-                    .font(.title3)
+                    .font(.dsTitle3)
                     .foregroundColor(.gray080)
                 
                 Spacer()
