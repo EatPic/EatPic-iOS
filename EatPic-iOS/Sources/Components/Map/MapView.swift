@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import UIKit
 
 protocol MapRepresentable {
     func makeMapView(with markers: [Marker]) -> AnyView
@@ -56,26 +57,48 @@ final class MapViewModel {
     }
 }
 
-struct MapKitView: View {
+struct MapKitView: UIViewRepresentable {
     @Bindable private var viewModel: MapViewModel
     
     init(viewModel: MapViewModel) {
         self.viewModel = viewModel
     }
-    
-    var body: some View {
-        Map(position: $viewModel.cameraPosition) {
-            ForEach(viewModel.makers, id: \.id, content: { marker in
-                Annotation(marker.title, coordinate: marker.coordinate, content: {
-                    Image(systemName: "mappin.circle.fill")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundStyle(Color.red)
-                })
-            })
+
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.isZoomEnabled = true
+        mapView.isScrollEnabled = true
+        mapView.delegate = context.coordinator
+        
+        // 중심 위치 설정
+        if let first = viewModel.makers.first {
+            let region = MKCoordinateRegion(
+                center: first.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+            )
+            mapView.setRegion(region, animated: false)
         }
+        
+        // 마커 추가
+        for marker in viewModel.makers {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = marker.coordinate
+            annotation.title = marker.title
+            mapView.addAnnotation(annotation)
+        }
+        
+        return mapView
     }
+    
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        // 현재는 동적 업데이트 없음
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    class Coordinator: NSObject, MKMapViewDelegate { }
 }
 
 @Observable
@@ -117,6 +140,7 @@ class StoreLocationViewModel {
 
 struct StoreLocationView: View {
     
+    @EnvironmentObject private var container: DIContainer
     @State private var viewModel: StoreLocationViewModel = .init()
     @State private var toastViewModel: ToastViewModel = .init()
     
@@ -173,6 +197,12 @@ struct StoreLocationView: View {
         .task {
             await viewModel.reverseGeocode()
         }
+        .customNavigationBar {
+            Text("식당 위치")
+        } right: {
+            EmptyView()
+        }
+
     }
 }
 
