@@ -16,6 +16,7 @@ struct NotificationView: View {
         
         ScrollView {
             LazyVStack(spacing: 0) {
+                /// 더미데이터에 이 값을 넣어놓고 For Each 문으로 불러오게 
                 LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간 전", state: .clicked)
 
                 FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .unclicked)
