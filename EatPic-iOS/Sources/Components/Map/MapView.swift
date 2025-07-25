@@ -98,7 +98,31 @@ struct MapKitView: UIViewRepresentable {
         Coordinator()
     }
 
-    class Coordinator: NSObject, MKMapViewDelegate { }
+    class Coordinator: NSObject, MKMapViewDelegate {
+        func mapView(
+            _ mapView: MKMapView,
+            viewFor annotation: any MKAnnotation
+        ) -> MKAnnotationView? {
+            if annotation is MKUserLocation {
+                return nil
+            }
+            
+            let identifier = "CustomMarker"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKAnnotationView(
+                    annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = true
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            annotationView?.image = UIImage(resource: .Map.marker)
+            
+            return annotationView
+        }
+    }
 }
 
 @Observable
@@ -106,10 +130,12 @@ class StoreLocationViewModel {
     
     private let geocoder = CLGeocoder()
     
-    let makers: [Marker] = [
-        .init(coordinate: .init(latitude: 37.587964, longitude: 127.007662), title: "방목")
-    ]
+    let makers: [Marker]
     var address: String = "식당 위치 로딩 중.."
+    
+    init(makers: [Marker]) {
+        self.makers = makers
+    }
     
     func reverseGeocode() async {
         guard let latitude = makers.first?.coordinate.latitude,
@@ -141,14 +167,18 @@ class StoreLocationViewModel {
 struct StoreLocationView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @State private var viewModel: StoreLocationViewModel = .init()
+    @State private var viewModel: StoreLocationViewModel
     @State private var toastViewModel: ToastViewModel = .init()
     
     private let mapView: MapRepresentable
     private let toastDuration: TimeInterval = 1.5
     
-    init(mapView: MapRepresentable = MapViewAdapter()) {
+    init(
+        makers: [Marker],
+        mapView: MapRepresentable = MapViewAdapter()
+    ) {
         self.mapView = mapView
+        self.viewModel = .init(makers: makers)
     }
     
     var body: some View {
@@ -207,5 +237,7 @@ struct StoreLocationView: View {
 }
 
 #Preview {
-    StoreLocationView()
+    StoreLocationView(makers: [
+        .init(coordinate: .init(latitude: 37.587964, longitude: 127.007662), title: "방목")
+    ])
 }
