@@ -31,7 +31,6 @@ struct TextAreaView: View {
     let textColor: Color
     
     // MARK: - Init
-    
     init(
         text: Binding<String>,
         placeholder: String = "",
@@ -52,7 +51,7 @@ struct TextAreaView: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            //테두리
+            // 테두리
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColor)
                 .overlay(
@@ -60,7 +59,7 @@ struct TextAreaView: View {
                         .stroke(borderColor, lineWidth: 1)
                 )
             
-            //텍스트 입력
+            // 텍스트 입력
             TextEditor(text: $text)
                 .foregroundColor(textColor)
                 .font(.dsBody)
@@ -69,7 +68,7 @@ struct TextAreaView: View {
                 .background(Color.clear)
                 .scrollContentBackground(.hidden)
             
-            //Placeholder
+            // Placeholder
             if text.isEmpty {
                 Text(placeholder)
                     .foregroundColor(.gray050)
