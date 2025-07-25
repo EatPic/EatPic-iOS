@@ -32,14 +32,7 @@ struct NavigationRoutingView: View {
         Group {
             switch route {
             case .calendar:
-                StoreLocationView(
-                    markers: [
-                        .init(
-                            coordinate: .init(latitude: 37.587964, longitude: 127.007662),
-                            title: "방목"
-                        )
-                    ]
-                )
+                EmptyView()
             case .notification:
                 EmptyView()
             }
