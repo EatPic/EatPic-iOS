@@ -21,6 +21,7 @@ class StoreLocationViewModel {
         self.makers = makers
     }
     
+    @MainActor
     func reverseGeocode() async {
         guard let latitude = makers.first?.coordinate.latitude,
               let longitude = makers.first?.coordinate.longitude else {
