@@ -10,10 +10,16 @@ import CoreLocation
 import MapKit
 import UIKit
 
+/// 지도 View를 추상화하기 위한 프로토콜입니다.
+/// 다양한 지도 SDK (MapKit, NaverMap, KakaoMap 등)를 대응할 수 있도록 설계되었습니다.
 protocol MapRepresentable {
+    /// 마커들을 지도에 표시하는 SwiftUI 뷰를 반환합니다.
+    /// - Parameter markers: 지도에 표시할 마커 배열
+    /// - Returns: SwiftUI View
     func makeMapView(with markers: [Marker]) -> AnyView
 }
 
+/// MapKit 기반의 지도 뷰를 반환하는 어댑터입니다.
 final class MapViewAdapter: MapRepresentable {
     func makeMapView(with markers: [Marker]) -> AnyView {
         let viewModel: MapViewModel = .init(makers: markers)
@@ -38,6 +44,8 @@ struct Place: Identifiable, Hashable {
     let mapItem: MKMapItem
 }
 
+/// MapKitView를 위한 ViewModel입니다.
+/// 지도 중심 위치와 마커 정보를 관리합니다.
 @Observable
 final class MapViewModel {
     
@@ -57,6 +65,8 @@ final class MapViewModel {
     }
 }
 
+/// MapKit을 SwiftUI에서 사용하기 위한 UIViewRepresentable 구현체입니다.
+/// 마커와 카메라 포지션을 기반으로 지도를 표시합니다.
 struct MapKitView: UIViewRepresentable {
     @Bindable private var viewModel: MapViewModel
     
@@ -90,9 +100,7 @@ struct MapKitView: UIViewRepresentable {
         return mapView
     }
     
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        // 현재는 동적 업데이트 없음
-    }
+    func updateUIView(_ uiView: MKMapView, context: Context) { }
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
@@ -125,6 +133,7 @@ struct MapKitView: UIViewRepresentable {
     }
 }
 
+/// 식당 위치 화면 전용 ViewModel입니다.
 @Observable
 class StoreLocationViewModel {
     
@@ -164,6 +173,14 @@ class StoreLocationViewModel {
     }
 }
 
+/// 식당의 위치 정보를 지도와 함께 표시하는 View입니다.
+///
+/// 이 뷰는 식당의 좌표 정보를 기반으로 지도에 마커를 표시하고, 도로명 주소를 표시합니다.
+/// 지도 SDK는 `MapKit`을 사용하며, 기본 구현체는 MapViewAdpater 입니다.
+///
+/// - Parameters
+///     - markers: 지도에 표시할 마커 배열입니다. 보통은 하나의 식당 좌표를 포함합니다.
+///     - mapView: 지도 구현체. 주입하지 않으면 MapViewAdapter가 기본으로 주입됩니다.
 struct StoreLocationView: View {
     
     @EnvironmentObject private var container: DIContainer
@@ -174,11 +191,11 @@ struct StoreLocationView: View {
     private let toastDuration: TimeInterval = 1.5
     
     init(
-        makers: [Marker],
+        markers: [Marker],
         mapView: MapRepresentable = MapViewAdapter()
     ) {
         self.mapView = mapView
-        self.viewModel = .init(makers: makers)
+        self.viewModel = .init(makers: markers)
     }
     
     var body: some View {
@@ -237,7 +254,7 @@ struct StoreLocationView: View {
 }
 
 #Preview {
-    StoreLocationView(makers: [
+    StoreLocationView(markers: [
         .init(coordinate: .init(latitude: 37.587964, longitude: 127.007662), title: "방목")
     ])
 }
