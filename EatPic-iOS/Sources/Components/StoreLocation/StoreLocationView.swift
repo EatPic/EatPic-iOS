@@ -34,44 +34,24 @@ struct StoreLocationView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            Spacer().frame(height: 22)
+            
             Text("식당이름")
                 .font(.dsTitle3)
                 .foregroundStyle(.black)
             
             Spacer().frame(height: 18)
             
-            HStack {
-                Text("\(viewModel.address)")
-                    .font(.dsBody)
-                    .foregroundStyle(Color.gray060)
-                
-                Spacer()
-                
-                PrimaryButton(
-                    color: .green060,
-                    text: "복사",
-                    font: .dsSubhead,
-                    textColor: .white,
-                    width: 50,
-                    height: 23,
-                    cornerRadius: 5,
-                    action: {
-                        UIPasteboard.general.string = viewModel.address
-                        
-                        toastViewModel.showToast(
-                            title: "주소가 복사되었습니다.",
-                            duration: toastDuration
-                        )
-                    }
-                )
-                
-            }
+            storeInfoHeader
             
             Spacer().frame(height: 34)
             
             mapView.makeMapView(with: viewModel.makers)
                 .frame(height: 544)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+            
+            // 피그마 디자인 상하 여백 간격 조정을 위한 Spacer
+            Spacer()
         }
         .toastView(viewModel: toastViewModel)
         .padding(.horizontal, 16)
@@ -83,7 +63,35 @@ struct StoreLocationView: View {
         } right: {
             EmptyView()
         }
-
+    }
+    
+    private var storeInfoHeader: some View {
+        HStack {
+            Text("\(viewModel.address)")
+                .font(.dsBody)
+                .foregroundStyle(Color.gray060)
+            
+            Spacer()
+            
+            PrimaryButton(
+                color: .green060,
+                text: "복사",
+                font: .dsSubhead,
+                textColor: .white,
+                width: 50,
+                height: 23,
+                cornerRadius: 5,
+                action: {
+                    UIPasteboard.general.string = viewModel.address
+                    
+                    toastViewModel.showToast(
+                        title: "주소가 복사되었습니다.",
+                        duration: toastDuration
+                    )
+                }
+            )
+            
+        }
     }
 }
 
