@@ -27,7 +27,7 @@ struct PicCardWriteView: View {
             
             TextAreaView(
                 text: $myMemo,
-                // placeholder: "잇친들과 공유할 나의 메모를 입력해주세요."
+                placeholder: "잇친들과 공유할 나의 메모를 입력해주세요.",
                 height: 150
             )
             
@@ -41,7 +41,7 @@ struct PicCardWriteView: View {
             
             TextAreaView(
                 text: $receiptDetail,
-                // placeholder: "잇친들과 공유할 레시피 내용을 입력해주세요."
+                placeholder: "잇친들과 공유할 레시피 내용을 입력해주세요.",
                 height: 150
             )
             
