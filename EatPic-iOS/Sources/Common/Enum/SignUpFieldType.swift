@@ -16,16 +16,6 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     case id
     /// 비밀번호 입력 필드
     case password
-     
-    /// 텍스트 입력필드 상단 텍스트
-    var title: String? {
-        switch self {
-        case .id:
-            return nil // 상단 텍스트 타이틀을 표시하지 않음
-        case .password:
-            return "비밀번호 입력"
-        }
-    }
     
     // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
