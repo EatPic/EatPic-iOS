@@ -26,10 +26,11 @@ struct EmailLoginView: View {
         VStack(alignment: .leading, spacing: 48) {
             Spacer()
             topContents
-            Spacer()
+            
             middleContents
             Spacer()
         }
+        .padding(.horizontal, 16)
         .customNavigationBar(title: {
             HStack {
                 Circle().frame(width: 32, height: 32)
@@ -85,7 +86,6 @@ struct EmailLoginView: View {
             text: "로그인",
             font: .dsTitle3,
             textColor: .gray040,
-            width: 361,
             height: 50,
             cornerRadius: 10,
             action: {
