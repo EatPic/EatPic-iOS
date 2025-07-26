@@ -9,19 +9,22 @@ import SwiftUI
 
 struct EmailLoginView: View {
     // MARK: - Property
+    
     /// 로그인 기능 및 상태를 관리하는 ViewModel
-    /// 유효성검사 목적, ViewModel 초기에는 SignUpViewModel 선언
-    @State var viewModel: SignUpViewModel
+    /// 유효성검사 목적 ViewModel, 초기에는 SignUpViewModel 선언
+    @Bindable var viewModel: SignUpViewModel = .init()
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
     
     // MARK: - Init
+    
     init() {
         self.viewModel = .init()
     }
     
     // MARK: - Body
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 48) {
             Spacer()
@@ -31,21 +34,13 @@ struct EmailLoginView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .customNavigationBar(title: {
-            HStack {
-                Circle().frame(width: 32, height: 32)
-                Text("Title")
-            }
-        }, right: {
-            Button {
-                print("오른쪽 버튼")
-            } label: {
-                Image(systemName: "gearshape")
-            }
-        })
-    } // :body
+        .customCenterNavigationBar {
+            Text("이메일로 로그인")
+        }
+    }
     
     // MARK: - topContents(이메일, 비밀번호 텍스트 필드)
+    
     private var topContents: some View {
         VStack(alignment: .leading, spacing: 32) {
             emailLoginField
@@ -73,6 +68,7 @@ struct EmailLoginView: View {
     }
 
     // MARK: - 로그인버튼 및 회원가입하기 버튼
+    
     private var middleContents: some View {
         VStack(alignment: .leading, spacing: 24) {
             loginButton
@@ -82,7 +78,7 @@ struct EmailLoginView: View {
     
     private var loginButton: some View {
         PrimaryButton(
-            color: .gray020,
+            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
             text: "로그인",
             font: .dsTitle3,
             textColor: .gray040,
@@ -114,6 +110,16 @@ struct EmailLoginView: View {
     }
 }
 
-#Preview {
-    EmailLoginView()
+struct EmailLoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            EmailLoginView()
+                .previewDevice("iPhone SE (3rd generation)")
+                .previewDisplayName("iPhone SE 3rd")
+
+            EmailLoginView()
+                .previewDevice("iPhone 16 Pro Max")
+                .previewDisplayName("iPhone 16 Pro Max")
+        }
+    }
 }
