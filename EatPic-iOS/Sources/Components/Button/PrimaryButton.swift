@@ -25,7 +25,7 @@ struct PrimaryButton: View {
     let textColor: Color
     
     /// 버튼 너비
-    let width: CGFloat
+    let width: CGFloat?
     
     /// 버튼 높이
     let height: CGFloat
@@ -52,7 +52,7 @@ struct PrimaryButton: View {
         text: String,
         font: Font,
         textColor: Color,
-        width: CGFloat,
+        width: CGFloat? = nil, // 기본값 nil = maxwidth
         height: CGFloat,
         cornerRadius: CGFloat,
         action: @escaping () -> Void
@@ -76,10 +76,12 @@ struct PrimaryButton: View {
                 // 배경: 둥근 사각형 모양
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(color)
-                    .frame(width: width, height: height)
-                
+                    .frame(
+                        width: width ?? .infinity,
+                        height: height
+                    )
                 // 버튼 텍스트
-                    Text(text)
+                Text(text)
                     .font(font)
                     .foregroundStyle(textColor)
             }
