@@ -48,37 +48,29 @@ struct EmailLoginView: View {
     private var topContents: some View {
         VStack(alignment: .leading, spacing: 32) {
             emailLoginField
-            passwordField
         }
     }
     
     /// 이메일 텍스트필드 및 타이틀
     private var emailLoginField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("이메일")
-                .font(.dsHeadline)
-                .foregroundStyle(Color.gray060)
+        VStack(alignment: .leading, spacing: 32) {
             FormTextField(
+                fieldTitle: "이메일",
                 fieldType: SignUpFieldType.id,
                 focusedField: $focus,
                 currentField: .id,
                 text: $viewModel.id)
-        }
-    }
-    
-    /// 비밀번호 텍스트필드 및 타이틀
-    private var passwordField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("비밀번호")
-                .font(.dsHeadline)
-                .foregroundStyle(Color.gray060)
+            
+            /// 비밀번호 텍스트필드 및 타이틀
             FormTextField(
+                fieldTitle: "비밀번호",
                 fieldType: SignUpFieldType.password,
                 focusedField: $focus,
                 currentField: .password,
                 text: $viewModel.password)
         }
     }
+
     // MARK: - 로그인버튼 및 회원가입하기 버튼
     private var middleContents: some View {
         VStack(alignment: .leading, spacing: 24) {
