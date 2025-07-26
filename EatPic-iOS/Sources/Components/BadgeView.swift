@@ -51,10 +51,11 @@ struct BadgeView: View {
                 
                 // progress 케이스의 경우 CircleProgressView 띄우기
                 case .progress(let progress, let icon):
+                    let badgeCircleSize = size * 0.92 // locked와 badge크기 맞추기 위한 값
                     CircleProgressView(
-                        // 뱃지를 얻기 위한 조건을 달성한 횟수가 n회라면, n/10의 값
                         progress: progress,
-                        size: size - 7,
+                        lineWidth: badgeCircleSize * 0.09,
+                        size: badgeCircleSize,
                         icon: icon
                     )
                 
@@ -79,7 +80,9 @@ struct BadgeView: View {
 
 #Preview("뱃지 획득 중 ~ 획득 완료") {
     BadgeView(
-        state: .progress(progress: 0.4, icon: Image(systemName: "star.fill")),
+        state: .progress(progress: 0.4,
+                         icon: Image(systemName: "star.fill")
+                        ),
         badgeName: "혼밥러"
     )
 }
