@@ -95,9 +95,12 @@ struct EmailLoginView: View {
     
     private var signupButton: some View {
         HStack(alignment: .center, spacing: 8) {
+            Spacer()
+            
             Text("아직 계정이 없으신가요?")
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray060)
+            
             Button {
                 print("회원가입 이동")
             } label: {
@@ -105,6 +108,8 @@ struct EmailLoginView: View {
                     .font(.dsSubhead)
                     .foregroundStyle(Color.green060)
             }
+            
+            Spacer()
         }
     }
 }
