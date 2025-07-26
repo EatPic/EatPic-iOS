@@ -10,11 +10,12 @@ import SwiftUI
 struct LoginView: View {
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .center, spacing: 31) {
+        VStack(alignment: .center) {
             Spacer()
             topContents // 로고와 타이틀
             Spacer()
             middleContents // 소셜 로그인 버튼
+            Spacer()
             bottomContents // 텍스트와 하단 회원가입 버튼
             Spacer()
         }
@@ -130,6 +131,17 @@ struct LoginView: View {
     }
 }
 
-#Preview {
-    LoginView()
+/// 다양한 디바이스 확인
+struct LoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            LoginView()
+                .previewDevice("iPhone SE (3rd generation)")
+                .previewDisplayName("iPhone SE 3rd")
+
+            LoginView()
+                .previewDevice("iPhone 16 Pro")
+                .previewDisplayName("iPhone 16 Pro")
+        }
+    }
 }
