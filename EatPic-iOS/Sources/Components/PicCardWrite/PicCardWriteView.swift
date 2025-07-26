@@ -103,7 +103,7 @@ private struct AddButtonView: View {
             Button(action: {
                 print("\(btnTitle)하기")
             }, label: {
-                Image("Record/add_btn")
+                Image("PicCardWrite/add_btn")
             })
             
             Spacer().frame(width: 12)
