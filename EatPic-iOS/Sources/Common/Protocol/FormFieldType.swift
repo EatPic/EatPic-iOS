@@ -12,10 +12,6 @@ import SwiftUI
 /// 로그인, 회원가입에서 반복적으로 사용되는 텍스트 필드 속성 정의
 protocol FormFieldType {
     
-    /// 입력 필드의 상단 텍스트
-    /// example: "아이디", "비밀번호", "이메일", "닉네임"
-    var title: String? { get }
-    
     /// 입력 필드 상단 텍스트 폰트
     var titleFont: Font {get}
     
