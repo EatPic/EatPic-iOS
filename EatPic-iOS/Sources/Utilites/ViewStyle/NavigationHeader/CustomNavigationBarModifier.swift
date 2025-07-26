@@ -24,3 +24,29 @@ struct CustomNavigationBarModifier<TitleContent: View, RightContent: View>: View
             }
     }
 }
+
+struct CenterNavigationBarModifier<TitleContent: View>: ViewModifier {
+    let title: () -> TitleContent
+    
+    func body(content: Content) -> some View {
+        content
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    title()
+                }
+            }
+    }
+}
+
+struct RightNavigationBarModifier<RightContent: View>: ViewModifier {
+    let right: () -> RightContent
+    
+    func body(content: Content) -> some View {
+        content
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    right()
+                }
+            }
+    }
+}
