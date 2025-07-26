@@ -19,29 +19,28 @@ struct TextAreaView: View {
     // MARK: - Property
     /// 바인딩된 텍스트 값
     @Binding var text: String
-    
+    /// placeholder 텍스트
+    let placeholder: String
     /// TextArea의 높이
     let height: CGFloat
-    
     /// TextArea의 배경 색상
     let backgroundColor: Color
-    
     /// TextArea의 테두리 색상
     let borderColor: Color
-    
     /// 텍스트의 색상
     let textColor: Color
     
     // MARK: - Init
-    
     init(
         text: Binding<String>,
+        placeholder: String = "",
         height: CGFloat,
         backgroundColor: Color = .white,
         borderColor: Color = .gray040,
         textColor: Color = .gray080
     ) {
         self._text = text
+        self.placeholder = placeholder
         self.height = height
         self.backgroundColor = backgroundColor
         self.borderColor = borderColor
@@ -51,8 +50,8 @@ struct TextAreaView: View {
     // MARK: - Body
     
     var body: some View {
-        ZStack {
-            // 배경과 테두리
+        ZStack(alignment: .topLeading) {
+            // 테두리
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColor)
                 .overlay(
@@ -60,22 +59,34 @@ struct TextAreaView: View {
                         .stroke(borderColor, lineWidth: 1)
                 )
             
-            // 실제 텍스트 입력
+            // 텍스트 입력
             TextEditor(text: $text)
                 .foregroundColor(textColor)
                 .font(.dsBody)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
+                .background(Color.clear)
+                .scrollContentBackground(.hidden)
+            
+            // Placeholder
+            if text.isEmpty {
+                Text(placeholder)
+                    .foregroundColor(.gray050)
+                    .font(.dsBody)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+            }
         }
         .frame(height: height)
     }
 }
 
 #Preview {
-    @Previewable @State var sampleText = "이 레시피는요"
+    @Previewable @State var myMemo = ""
     
     TextAreaView(
-        text: $sampleText,
+        text: $myMemo,
+        placeholder: "메모를 입력하세요",
         height: 140
     )
 }
