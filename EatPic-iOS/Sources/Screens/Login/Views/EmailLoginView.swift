@@ -30,7 +30,7 @@ struct EmailLoginView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 48) {
-            Spacer()
+            Spacer().frame(height: 49)
             topContents
             
             middleContents
@@ -39,6 +39,7 @@ struct EmailLoginView: View {
         .padding(.horizontal, 16)
         .customCenterNavigationBar {
             Text("이메일로 로그인")
+                .font(.dsTitle2)
         }
     }
     
@@ -88,9 +89,9 @@ struct EmailLoginView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-            // 추후 mainTab으로 연결 예정
-            print("로그인하기")
-        })
+                // 추후 mainTab으로 연결 예정
+                print("로그인하기")
+            })
     }
     
     private var signupButton: some View {

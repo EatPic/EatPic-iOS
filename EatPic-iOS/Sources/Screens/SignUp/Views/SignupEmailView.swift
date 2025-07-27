@@ -27,6 +27,7 @@ struct SignupEmailView: View {
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
+            Spacer().frame(height: 32)
             topContents
             Spacer()
             nextButton
@@ -34,6 +35,7 @@ struct SignupEmailView: View {
         }
         .customCenterNavigationBar {
             Text("회원가입")
+                .font(.dsTitle2)
         }
         .padding(.horizontal, 16)
     }
