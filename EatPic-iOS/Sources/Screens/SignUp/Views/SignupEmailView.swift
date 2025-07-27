@@ -16,6 +16,8 @@ struct SignupEmailView: View {
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
    
+    @EnvironmentObject private var container: DIContainer
+    
     // MARK: - Init
     /// 기본 생성자: 내부에서 ViewModel 인스턴스 생성
     init() {
@@ -25,11 +27,10 @@ struct SignupEmailView: View {
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
-            
             topContents
             Spacer()
             nextButton
-            
+            Spacer().frame(height: 40)
         }
         .customCenterNavigationBar {
             Text("회원가입") // 추후 LoginView 병합되면 연결 예정
@@ -68,8 +69,10 @@ struct SignupEmailView: View {
     }
     
     // MARK: - BottomContents(화면 이동 버튼)
+    
+    /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
-        PrimaryButton(
+        PrimaryButton( // 유
             color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
             text: "다음",
             font: .dsTitle3,

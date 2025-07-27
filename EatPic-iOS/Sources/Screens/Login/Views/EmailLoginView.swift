@@ -16,13 +16,7 @@ struct EmailLoginView: View {
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
-    
-    // MARK: - Init
-    
-    init() {
-        self.viewModel = .init()
-    }
-    
+     
     // MARK: - Body
     
     var body: some View {
