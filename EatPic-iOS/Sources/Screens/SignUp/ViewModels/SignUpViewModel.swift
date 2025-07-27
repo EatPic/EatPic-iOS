@@ -20,8 +20,8 @@ class SignUpViewModel {
     var password: String = ""
     
     // MARK: - Logic
-    
-        var fieldsNotEmpty: Bool {
-            !id.isEmpty && !password.isEmpty
-        }
+
+    var fieldsNotEmpty: Bool {
+        !id.isEmpty && !password.isEmpty
+    }
 }

@@ -80,6 +80,7 @@ struct PrimaryButton: View {
                         width: width ?? .infinity,
                         height: height
                     )
+                
                 // 버튼 텍스트
                 Text(text)
                     .font(font)
