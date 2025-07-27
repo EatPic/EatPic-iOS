@@ -33,7 +33,7 @@ struct SignupEmailView: View {
             Spacer().frame(height: 40)
         }
         .customCenterNavigationBar {
-            Text("회원가입") // 추후 LoginView 병합되면 연결 예정
+            Text("회원가입")
         }
         .padding(.horizontal, 16)
     }
@@ -72,7 +72,7 @@ struct SignupEmailView: View {
     
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
-        PrimaryButton( // 유
+        PrimaryButton(
             color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
             text: "다음",
             font: .dsTitle3,
@@ -80,6 +80,7 @@ struct SignupEmailView: View {
             height: 50,
             cornerRadius: 10,
             action: {
+                /// 이메일 유효성검사 통과시 화면 이동 구현 예정
                 print("다음화면이동")
             })
     }

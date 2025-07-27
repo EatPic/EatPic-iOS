@@ -12,11 +12,20 @@ struct EmailLoginView: View {
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
     /// 유효성검사 목적 ViewModel, 초기에는 SignUpViewModel 선언
-    @Bindable var viewModel: SignUpViewModel = .init()
+    @State var viewModel: SignUpViewModel
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
-     
+    
+    /// DIContainer (앱 전역 의존성 주입, 네비게이션 및 서비스 등 )
+    @EnvironmentObject var container: DIContainer
+    
+    // MARK: - Init
+    
+    /// 기본 생성자 내부에서 ViewModel 인스턴스 생성
+    init() {
+        self.viewModel = .init()
+    }
     // MARK: - Body
     
     var body: some View {
@@ -79,6 +88,7 @@ struct EmailLoginView: View {
             height: 50,
             cornerRadius: 10,
             action: {
+            // 추후 mainTab으로 연결 예정
             print("로그인하기")
         })
     }
