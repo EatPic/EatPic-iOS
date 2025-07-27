@@ -35,7 +35,6 @@ struct MyBadgeStatusAllView: View{
                 }
             }
             
-            
             // 획득 뱃지 현황
             // 5행 2열
             ScrollView {

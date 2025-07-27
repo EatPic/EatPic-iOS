@@ -18,6 +18,13 @@ class MealStatusViewModel: ObservableObject {
     
     // 수정 버튼 액션
     func editButtonTapped() {
-        print("수정 버튼")
+        print("이거 어케함요? 아래 버튼 뜨게 해야함")
+//        Button(role: .destructive, action: {
+//            print("신고하기")
+//        }) {
+//            Label("신고하기", systemImage: "exclamationmark.bubble")
+//        }
     }
+    
+    
 }

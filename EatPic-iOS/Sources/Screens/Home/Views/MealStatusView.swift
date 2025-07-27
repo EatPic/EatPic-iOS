@@ -27,6 +27,7 @@ struct MealStatusView: View {
                     Image("Home/btn_home_ellipsis")
                 }
             }
+            
 
             Spacer().frame(height: 24)
 
