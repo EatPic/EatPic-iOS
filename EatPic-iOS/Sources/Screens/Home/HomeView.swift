@@ -15,7 +15,7 @@ struct HomeView: View {
                 
                 MealStatusView()
                 
-                RecomPicCardView()
+                RecomPicCardHomeView()
                 
                 MyBadgeStatusHomeView()
                 
