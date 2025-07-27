@@ -29,10 +29,12 @@ struct SignupEmailView: View {
             topContents
             Spacer()
             nextButton
+            
         }
         .customCenterNavigationBar {
             Text("회원가입") // 추후 LoginView 병합되면 연결 예정
         }
+        .padding(.horizontal, 16)
     }
     
     // MARK: - TopContents(이메일 로그인 뷰 상단 타이틀 및 텍스트 필드)
