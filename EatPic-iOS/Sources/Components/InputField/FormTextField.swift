@@ -20,6 +20,9 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     
     // MARK: - Property
     
+    /// 텍스트 입력필드 상단 타이틀
+    let fieldTitle: String?
+    
     /// 현재 필드 타입 (예: .email, password, nickname)
     let fieldType: T
     
@@ -36,11 +39,13 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     
     /// 초기화 함수 (Binding 타입을 @Binding 변수로 연결)
     init(
+        fieldTitle: String? = nil,
         fieldType: T,
         focusedField: FocusState<T?>.Binding,
         currentField: T,
         text: Binding<String>
     ) {
+        self.fieldTitle = fieldTitle
         self.fieldType = fieldType
         self.focusedField = focusedField
         self.currentField = currentField
@@ -53,9 +58,11 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
         VStack(alignment: .leading,
                spacing: FormTextFieldConstants.stackSpacing) {
             /// 텍스트 필드 상단 타이틀
-            Text(fieldType.title ?? "")
+            if let title = fieldTitle {
+                Text(title)
                 .font(fieldType.titleFont)
                 .foregroundStyle(fieldType.titleTextColor)
+            }
             
             /// 텍스트 필드 속성 지정
             ZStack(alignment: .leading) {
