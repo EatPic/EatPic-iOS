@@ -1,5 +1,5 @@
 //
-//  BadgeStatusView.swift
+//  MyBadgeStatusHomeView.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/23/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BadgeStatusView: View {
+struct MyBadgeStatusHomeView: View {
     var body: some View {
         
         VStack {
@@ -89,5 +89,5 @@ struct BadgeStatusView: View {
 }
 
 #Preview {
-    BadgeStatusView()
+    MyBadgeStatusHomeView()
 }

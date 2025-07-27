@@ -15,9 +15,9 @@ struct HomeView: View {
                 
                 MealStatusView()
                 
-                RecomPicCard()
+                RecomPicCardView()
                 
-                BadgeStatusView()
+                MyBadgeStatusHomeView()
                 
                 Spacer()
             }
@@ -39,8 +39,8 @@ struct HomeView: View {
     }
 }
 
-
-fileprivate struct TopView: View {
+// MARK: 홈 뷰 상단 제목 + 캘린더 알림 버튼 뷰
+private struct TopView: View {
     var body: some View {
         HStack(alignment: .top) {
             Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
