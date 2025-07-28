@@ -1,13 +1,13 @@
 //
-//  signupEmailView.swift
+//  SignupPasswordView.swift
 //  EatPic-iOS
 //
-//  Created by 송승윤 on 7/26/25.
+//  Created by 송승윤 on 7/28/25.
 //
 
 import SwiftUI
 
-struct SignupEmailView: View {
+struct SignupPasswordView: View {
     // MARK: - Property
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
@@ -40,34 +40,46 @@ struct SignupEmailView: View {
         .padding(.horizontal, 16)
     }
     
-    // MARK: - TopContents(이메일 로그인 뷰 상단 타이틀 및 텍스트 필드)
+    // MARK: - TopContents(회원가입 비밀번호 입력 뷰 상단 타이틀 및 텍스트 필드)
     
-    /// 이메일 회원가입 상단 콘텐츠
+    /// 회원가입 비밀번호 입력 뷰 상단 콘텐츠
     private var topContents: some View {
         VStack(alignment: .leading, spacing: 32) {
-            signupEmailTitle
-            signupEmailTextField
+            signupPasswordTitle
+            signupPasswordTextField
+            confirmPasswordTextField
         }
     }
     
-    /// 이메일 회원가입 뷰 타이틀
-    private var signupEmailTitle: some View {
+    /// 회원가입 비밀번호 입력 뷰 타이틀
+    private var signupPasswordTitle: some View {
         (
             Text("로그인에 사용할\n")
-            + Text("이메일").foregroundStyle(Color.green060)
-            + Text("을 입력해주세요")
+            + Text("비밀번호").foregroundStyle(Color.green060)
+            + Text("를 입력해주세요")
         )
         .font(.dsTitle2)
         .multilineTextAlignment(.leading)
     }
     
-    /// 이메일 회원가입 뷰 텍스트 필드
-    private var signupEmailTextField: some View {
+    /// 회원가입 비밀번호 입력 텍스트 필드
+    private var signupPasswordTextField: some View {
         FormTextField(
-            fieldType: SignUpFieldType.email,
+            fieldTitle: "비밀번호 입력",
+            fieldType: SignUpFieldType.password,
             focusedField: $focus,
-            currentField: .email,
-            text: $viewModel.email)
+            currentField: .password,
+            text: $viewModel.password)
+    }
+    
+    /// 회원가입 비밀번호 확인 텍스트 필드
+    private var confirmPasswordTextField: some View {
+        FormTextField(
+            fieldTitle: "비밀번호 확인",
+            fieldType: SignUpFieldType.password,
+            focusedField: $focus,
+            currentField: .password,
+            text: $viewModel.password)
     }
     
     // MARK: - BottomContents(화면 이동 버튼)
@@ -82,12 +94,12 @@ struct SignupEmailView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-                /// 이메일 유효성검사 통과시 화면 이동 구현 예정
+                /// 비밀번호 유효성검사 통과시 화면 이동 구현 예정
                 print("다음화면이동")
             })
     }
 }
 
 #Preview {
-    SignupEmailView()
+    SignupPasswordView()
 }
