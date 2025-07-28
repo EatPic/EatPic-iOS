@@ -72,29 +72,30 @@ struct PicCardView<Content: View>: View {
                         .foregroundStyle(Color.black)
                 }
             }
-                        
+            
             // 업로드 이미지 (정사각형 + 모서리 둥글게)
             // 이미지의 사이즈는 기기의 화면 너비에 따라 달라지도록 설정 (화면 너비를 꽉채우도록)
-            ZStack {
-                postImage
-                    .resizable()
-//                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(1, contentMode: .fit) // 정사각형 유지
-//                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                
-                PicCardItemView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity,
-                           alignment: .bottomLeading)
-                    .aspectRatio(1, contentMode: .fit)
-//                    .padding(.bottom, 16)
+            GeometryReader { geometry in
+                ZStack {
+                    postImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: geometry.size.width, height: geometry.size.width)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    
+                    PicCardItemView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity,
+                               alignment: .bottomLeading)
+                }
             }
-            
+            .aspectRatio(1, contentMode: .fit)
+
             // 사용자 메모 (나의 메모)
             Text(myMemo)
                 .font(.dsSubhead)
                 .foregroundColor(.gray080)
+                .frame(alignment: .leading)
         }
     }
 }
