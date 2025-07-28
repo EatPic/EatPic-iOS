@@ -11,8 +11,8 @@ import SwiftUI
 ///   - messageTitle: 모달 제목 메시지의 내용을 담습니다
 ///   - messageDescription: 모달 설명 메시지의 내용을 담습니다
 ///   - messageColor : 모달 메시지의 색상입니다
-///   - buttonText : 버튼 텍스트입니다
-///   - buttonAction: 버튼 클릭 시 실행할 액션입니다
+///   - btnText : 버튼 텍스트입니다
+///   - btnAction: 버튼 클릭 시 실행할 액션입니다
 struct AlertModalView: View {
     
     // MARK: - Property
@@ -27,24 +27,24 @@ struct AlertModalView: View {
     let messageColor: Color
     
     /// 버튼 텍스트
-    let buttonText: String
+    let btnText: String
     
     /// 버튼 액션
-    let buttonAction: () -> Void
+    let btnAction: () -> Void
     
     // MARK: - Init
     init(
         messageTitle: String,
         messageDescription: String,
         messageColor: Color = .black,
-        buttonText: String,
-        buttonAction: @escaping () -> Void
+        btnText: String,
+        btnAction: @escaping () -> Void
     ) {
         self.messageTitle = messageTitle
         self.messageDescription = messageDescription
         self.messageColor = messageColor
-        self.buttonText = buttonText
-        self.buttonAction = buttonAction
+        self.btnText = btnText
+        self.btnAction = btnAction
     }
     
     // MARK: - Body
@@ -72,13 +72,13 @@ struct AlertModalView: View {
 
                 PrimaryButton(
                     color: .green060,
-                    text: buttonText,
+                    text: btnText,
                     font: .dsBold15,
                     textColor: .white,
                     width: 230,
                     height: 40,
                     cornerRadius: 10,
-                    action: buttonAction
+                    action: btnAction
                 )
             }
             .padding(.top, 20)
@@ -95,8 +95,8 @@ struct AlertModalView: View {
         messageTitle: "안내",
         messageDescription: "최대 3개까지 선택 가능합니다.",
         messageColor: .black,
-        buttonText: "확인buttonText",
-        buttonAction: {
+        btnText: "확인btnText",
+        btnAction: {
             print("확인 버튼 눌림")
         }
     )

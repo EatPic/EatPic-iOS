@@ -20,9 +20,8 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
 
     /// 현재 뱃지 상태 타입(Unlocked/Locked)
     let badgeType: T
-
-    /// 나가기 x 버튼 이미지
-    let xButtonImage: Image
+    
+    let closeBtnAction: () -> Void
 
     /// 뱃지뷰 사이즈
     let badgeSize: CGFloat
@@ -42,7 +41,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
     // MARK: - Init
     init(
         badgeType: T,
-        xButtonImage: Image = Image("Modal/btn_close"),
+        closeBtnAction: @escaping () -> Void,
         badgeSize: CGFloat,
         badgeTitle: String,
         badgeTitleColor: Color = .black,
@@ -50,7 +49,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
         badgeDescriptionColor: Color = .gray060
     ) {
         self.badgeType = badgeType
-        self.xButtonImage = xButtonImage
+        self.closeBtnAction = closeBtnAction
         self.badgeSize = badgeSize
         self.badgeTitle = badgeTitle
         self.badgeTitleColor = badgeTitleColor
@@ -68,9 +67,10 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        print("x 나가기")
+                        print("모달 나가기 동작")
+                        closeBtnAction()
                     }, label: {
-                        xButtonImage
+                        Image("Modal/btn_close")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
@@ -99,9 +99,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
 
                 Spacer().frame(height: 32)
 
-                Button(action: {
-                    print("횟수 버튼")
-                }, label: {
+                Button(action: {}, label: {
                     Text("\(badgeType.progressText)/10회")
                         .font(.dsHeadline)
                         .foregroundColor(badgeType.buttonTextColor)
@@ -127,6 +125,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
         badgeType: BadgeModalType.badgeUnlocked(
             progress: 0.7,
             icon: Image(systemName: "star.fill")),
+        closeBtnAction: { print("close") },
         badgeSize: 130,
         badgeTitle: "혼밥러",
         badgeDescription: "'혼밥' 해시태그를 10회 이상 사용 시 획득할 수 있습니다."
@@ -136,6 +135,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
 #Preview("뱃지 잠금") {
     BadgeProgressModalView(
         badgeType: BadgeModalType.badgeLocked,
+        closeBtnAction: { print("close") },
         badgeSize: 130,
         badgeTitle: "혼밥러",
         badgeDescription: "'혼밥' 해시태그를 10회 이상 사용 시 획득할 수 있습니다."
