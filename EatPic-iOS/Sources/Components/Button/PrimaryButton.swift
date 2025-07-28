@@ -77,12 +77,12 @@ struct PrimaryButton: View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(color)
                     .frame(
-                        width: width ?? .infinity,
+                        width: width,
                         height: height
                     )
-                
+                    .frame(maxWidth: width == nil ? .infinity : nil)
                 // 버튼 텍스트
-                    Text(text)
+                Text(text)
                     .font(font)
                     .foregroundStyle(textColor)
             }
