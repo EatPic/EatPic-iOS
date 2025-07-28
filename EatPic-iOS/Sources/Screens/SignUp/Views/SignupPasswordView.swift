@@ -62,7 +62,7 @@ struct SignupPasswordView: View {
         .multilineTextAlignment(.leading)
     }
     
-    /// 이메일 회원가입 뷰 텍스트 필드
+    /// 회원가입 비밀번호 입력 텍스트 필드
     private var signupPasswordTextField: some View {
         FormTextField(
             fieldTitle: "비밀번호 입력",
@@ -72,7 +72,7 @@ struct SignupPasswordView: View {
             text: $viewModel.password)
     }
     
-    /// 이메일 회원가입 뷰 텍스트 필드
+    /// 회원가입 비밀번호 확인 텍스트 필드
     private var confirmPasswordTextField: some View {
         FormTextField(
             fieldTitle: "비밀번호 확인",
