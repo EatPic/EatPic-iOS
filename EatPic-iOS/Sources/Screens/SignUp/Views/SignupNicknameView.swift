@@ -63,15 +63,15 @@ struct SignupNicknameView: View {
     
     /// 회원가입 닉네임 정보입력 뷰 타이틀
     private var signupNicknameTitle: some View {
-        (
-            Text("사용할 닉네임을 입력해주세요\n").font(.dsTitle2)
-            + Text("추후에 언제든지 변경할 수 있어요")
-                .foregroundStyle(Color.gray060)
-                .font(.dsFootnote)
-        )
-        .multilineTextAlignment(.leading)
-    }
+        VStack(alignment: .leading, spacing: 8) { // 필요에 따라 spacing 값 조정
+            Text("사용할 닉네임을 입력해주세요")
+                .font(.dsTitle2)
 
+            Text("추후에 언제든지 변경할 수 있어요")
+                .font(.dsFootnote)
+                .foregroundStyle(Color.gray060)
+        }
+    }
     /// 회원가입 닉네임 정보입력 뷰 텍스트 필드
     private var signupNicknameTextField: some View {
         FormTextField(
