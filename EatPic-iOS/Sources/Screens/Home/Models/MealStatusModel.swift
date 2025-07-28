@@ -12,7 +12,7 @@ struct MealStatusModel: Identifiable {
     let id: String = UUID().uuidString
     let mealTime: String
     let isRecorded: Bool
-    let imageName: String? // optional로 변경
+    let imageName: String?
     
     init(mealTime: String, isRecorded: Bool = false, imageName: String? = nil) {
         self.mealTime = mealTime

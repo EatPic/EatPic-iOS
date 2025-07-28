@@ -8,20 +8,23 @@
 import SwiftUI
 
 struct NotificationView: View {
+    // MARK: - Property
+    @State private var viewModel = NotificationViewModel()
+    
     var body: some View {
-        
-        // 상단바
-        RoundedRectangle(cornerRadius: 0)
-            .frame(height: 56)
-        
         ScrollView {
             LazyVStack(spacing: 0) {
-                /// 더미데이터에 이 값을 넣어놓고 For Each 문으로 불러오게 
-                LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간 전", state: .clicked)
-
-                FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .unclicked)
-                
-                FollowNotiView(friendNickname: "bbbjhjjkjkjk", notiTime: "23시간", state: .clicked)
+                ForEach(viewModel.notifications) { notification in
+                    NotificationItemView(
+                        notification: notification,
+                        onTap: {
+                            viewModel.toggleNotificationState(for: notification.id)
+                        },
+                        onFollowTap: {
+                            viewModel.followButtonTapped(for: notification.id)
+                        }
+                    )
+                }
             }
         }
         // 커스텀 네비게이션 바 적용 안됨 이슈

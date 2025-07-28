@@ -20,7 +20,7 @@ struct PicCardEditView: View {
                 Spacer().frame(width: 119)
                 
                 Button(action: {
-                    print("RecomPicCardView로 나가기 액션")
+                    // TODO: RecomPicCardView로 Navigation
                 }, label: {
                     Image("Home/btn_home_close")
                 })

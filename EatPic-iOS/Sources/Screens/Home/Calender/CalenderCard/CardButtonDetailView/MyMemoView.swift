@@ -9,32 +9,34 @@
 import SwiftUI
 
 struct MyMemoView: View {
-    @State var sampleText = ""
+    // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 메모 내용)
+    @State var myMemo = ""
 
     var body: some View {
         
         VStack {
             Spacer().frame(height: 32)
             
+            
             TextAreaView(
-                text: $sampleText,
+                // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 메모 내용)
+                text: $myMemo,
                 height: 417
             )
             .padding(.horizontal, 16)
             
             Spacer()
         }
-        .customNavigationBar(title: {
-            HStack {
-                      Text("나의 메모")
-                  }
-              }, right: {
-                  
-              })
+        .customNavigationBar {
+            Text("나의 메모")
+                .font(.dsTitle2)
+                .foregroundColor(Color.gray080)
+        } right: {
+            EmptyView()
+        }
     }
 }
 
 #Preview {
     MyMemoView()
 }
-

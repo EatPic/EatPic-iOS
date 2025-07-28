@@ -11,10 +11,12 @@ import SwiftUI
 ///   - friendNickNname: 알림을 일으킨 사람의 닉네임
 ///   - notiTime: 알림 온 시간
 ///   - state: 알림 바 클릭 상태
+///   - onFollowTap: 팔로우 버튼 클릭 시 실행할 액션
 struct FollowNotiView: View {
     let friendNickname: String
     let notiTime: String
     let state: NotiState
+    let onFollowTap: () -> Void
 
     var body: some View {
         HStack {
@@ -37,9 +39,7 @@ struct FollowNotiView: View {
             Spacer()
             
             // 팔로우 버튼
-            Button(action: {
-                print("팔로우 버튼 누르기 ( 팔로우 활성화 됨 / 한번더 누르면 비활성화? <<< 이건 어케 구현하긔 ;")
-            }, label: {
+            Button(action: onFollowTap, label: {
                 Text("팔로잉")
                     .foregroundColor(state.followButtonTextColor)
                     .font(.dsBold15)
@@ -57,9 +57,9 @@ struct FollowNotiView: View {
 }
 
 #Preview ("알림 클릭 전") {
-    FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .unclicked)
+    FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .unclicked, onFollowTap: { print("팔로우") })
 }
 
 #Preview ("알림 클릭 후") {
-    FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .clicked)
+    FollowNotiView(friendNickname: "aaa", notiTime: "23시간", state: .clicked, onFollowTap: { print("팔로우") })
 }

@@ -23,16 +23,15 @@ struct MealStatusView: View {
                 
                 Menu {
                     Button(action: {
+                        // TODO: ZStack으로 현재 사진이 들어간 부분 위에 x 표시 떠야함, 그리고 그 x표시 누르면 사진 삭제 되어야함 < 어케 해야할지????
                         print("수정하기")
-                    }) {
+                    }, label: {
                         Label("수정하기", systemImage: "pencil")
-                    }
+                    })
                 } label: {
-                    Image(systemName: "ellipsis")
+                    Image("Home/btn_home_ellipsis")
                         .resizable()
-                        .frame(width: 24, height: 6)
-                        .padding(.trailing, 2)
-                        .foregroundStyle(Color.black)
+                        .frame(width: 24, height: 24)
                 }
             }
 
@@ -41,7 +40,7 @@ struct MealStatusView: View {
             // 식사 항목 리스트
             HStack(spacing: 6) {
                 ForEach(viewModel.mealStatus) { meal in
-                    MealItemView(meal: meal)
+                    MealItemView(mymeal: meal)
                 }
                 Spacer()
             }
@@ -55,13 +54,13 @@ struct MealStatusView: View {
 
 // MARK: - Meal 기록됐느냐 안됐느냐 상태에 따른 뷰
 private struct MealItemView: View {
-    let meal: MealStatusModel
+    let mymeal: MealStatusModel
     
     var body: some View {
-        if meal.isRecorded {
-            RecordedMealView(meal: meal)
+        if mymeal.isRecorded {
+            RecordedMealView(meal: mymeal)
         } else {
-            EmptyMealView(meal: meal)
+            EmptyMealView(meal: mymeal)
         }
     }
 }

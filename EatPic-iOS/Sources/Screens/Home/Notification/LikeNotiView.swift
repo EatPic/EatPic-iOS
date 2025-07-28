@@ -11,10 +11,12 @@ import SwiftUI
 ///   - friendNickNname: 알림을 일으킨 사람의 닉네임
 ///   - notiTime: 알림 온 시간
 ///   - state: 알림 바 클릭 상태
+///   - postImageName: 게시글 이미지 이름 (선택사항)
 struct LikeNotiView: View {
     let friendNickname: String
     let notiTime: String
     let state: NotiState
+    let postImageName: String?
 
     var body: some View {
         HStack {
@@ -36,9 +38,17 @@ struct LikeNotiView: View {
             
             Spacer()
             
-            // 게시글 사진.. ( << 어케 불러옴?)
-            RoundedRectangle(cornerRadius: 4)
-                .frame(width: 47, height: 47)
+            // 게시글 사진
+            if let postImageName = postImageName {
+                Image(postImageName)
+                    .resizable()
+                    .frame(width: 47, height: 47)
+                    .cornerRadius(4)
+            } else {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.gray020)
+                    .frame(width: 47, height: 47)
+            }
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 20)
@@ -48,9 +58,9 @@ struct LikeNotiView: View {
 }
 
 #Preview("알림 클릭 전") {
-    LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간", state: .unclicked)
+    LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간", state: .unclicked, postImageName: "sample_post_1")
 }
 
 #Preview("알림 클릭 후") {
-    LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간", state: .clicked)
+    LikeNotiView(friendNickname: "absdfsdfcd", notiTime: "21시간", state: .clicked, postImageName: "sample_post_1")
 }
