@@ -52,10 +52,10 @@ struct EmailLoginView: View {
         VStack(alignment: .leading, spacing: 32) {
             FormTextField(
                 fieldTitle: "이메일",
-                fieldType: SignUpFieldType.id,
+                fieldType: SignUpFieldType.email,
                 focusedField: $focus,
-                currentField: .id,
-                text: $viewModel.id)
+                currentField: .email,
+                text: $viewModel.email)
             
             /// 비밀번호 텍스트필드 및 타이틀
             FormTextField(

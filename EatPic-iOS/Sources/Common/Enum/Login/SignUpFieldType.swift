@@ -13,7 +13,7 @@ import SwiftUI
 enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     /// 아이디 입력 필드
-    case id
+    case email
     /// 비밀번호 입력 필드
     case password
     /// 비밀번호 확인 입력 필드
@@ -31,7 +31,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     var placeholder: String {
         switch self {
-        case .id:
+        case .email:
             return "abc@email.com"
         case .password:
             return "6자리 이상의 비밀번호"
@@ -64,7 +64,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     /// 예: .default, .emailAddress, .numberPad 등
     var keyboardType: UIKeyboardType {
         switch self {
-        case .id:
+        case .email:
             return .emailAddress
         default:
             return .default
