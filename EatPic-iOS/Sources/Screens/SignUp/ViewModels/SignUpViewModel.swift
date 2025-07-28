@@ -19,6 +19,8 @@ class SignUpViewModel {
     /// 사용자 입력 비밀번호
     var password: String = ""
     
+    /// 사용자 입력 닉네임
+    var nickname: String = ""
     // MARK: - Logic
     var fieldsNotEmpty: Bool {
         !id.isEmpty && !password.isEmpty

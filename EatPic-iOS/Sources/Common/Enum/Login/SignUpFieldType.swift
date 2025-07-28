@@ -16,6 +16,8 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     case id
     /// 비밀번호 입력 필드
     case password
+    /// 닉네임 입력 필드
+    case nickname
     
     // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
@@ -33,6 +35,8 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
             return "아이디를 입력하세요"
         case .password:
             return "비밀번호를 입력하세요"
+        case .nickname:
+            return "2자 이상의 한글 입력"
         }
     }
     
