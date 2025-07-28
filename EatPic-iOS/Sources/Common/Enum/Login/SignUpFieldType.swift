@@ -32,9 +32,9 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     var placeholder: String {
         switch self {
         case .id:
-            return "아이디를 입력하세요"
+            return "abc@email.com"
         case .password:
-            return "비밀번호를 입력하세요"
+            return "6자리 이상의 비밀번호"
         case .confirmPassword:
             return "다시 한 번 입력해주세요"
         }
