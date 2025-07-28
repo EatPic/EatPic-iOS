@@ -22,9 +22,7 @@ import SwiftUI
 struct CameraRecordModalView: View {
     
     // MARK: - Property
-    
-    /// 나가기 x 버튼 이미지
-    let xButtonImage: Image
+    let closeBtnAction: () -> Void
     
     /// 모달 제목 메시지
     let messageTitle: String
@@ -53,9 +51,13 @@ struct CameraRecordModalView: View {
     /// 앨범 버튼 하단 텍스트
     let albumText: String
     
+    let cameraBtnAction: () -> Void
+    
+    let albumBtnAction: () -> Void
+    
     // MARK: - Init
     init(
-        xButtonImage: Image = Image("Modal/btn_close"),
+        closeBtnAction : @escaping () -> Void,
         messageTitle: String = "Pic 카드 기록",
         messageTitleColor: Color = .black,
         messageDescription: String = "기록할 방법을 선택해주세요",
@@ -64,9 +66,11 @@ struct CameraRecordModalView: View {
         cameraText: String = "카메라",
         albumButtonImage: Image = Image("Modal/ic_record_album"),
         buttonColor: Color = .gray020,
-        albumText: String = "사진 앨범"
+        albumText: String = "사진 앨범",
+        cameraBtnAction : @escaping () -> Void,
+        albumBtnAction : @escaping () -> Void
     ) {
-        self.xButtonImage = xButtonImage
+        self.closeBtnAction = closeBtnAction
         self.messageTitle = messageTitle
         self.messageTitleColor = messageTitleColor
         self.messageDescription = messageDescription
@@ -76,6 +80,8 @@ struct CameraRecordModalView: View {
         self.albumButtonImage = albumButtonImage
         self.buttonColor = buttonColor
         self.albumText = albumText
+        self.cameraBtnAction = cameraBtnAction
+        self.albumBtnAction = albumBtnAction
     }
     
     // MARK: - Body
@@ -91,9 +97,10 @@ struct CameraRecordModalView: View {
                     Spacer()
                 
                     Button(action: {
-                        print("x 나가기")
+                        print("모달 나가기 동작")
+                        closeBtnAction()
                     }, label: {
-                        xButtonImage
+                        Image("Modal/btn_close")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
@@ -192,13 +199,16 @@ struct CameraRecordModalView: View {
 
 #Preview {
     CameraRecordModalView(
-        xButtonImage: Image("Modal/btn_close"),
+        closeBtnAction: { print("close") },
         messageTitle: "Pic 카드 기록",
         messageDescription: "기록할 방법을 선택해주세요",
         cameraButtonImage: Image("Modal/ic_record_camera"),
         cameraText: "카메라",
         albumButtonImage: Image("Modal/ic_record_album"),
         buttonColor: .gray020,
-        albumText: "사진 앨범"
+        albumText: "사진 앨범",
+        cameraBtnAction: { print("camera") },
+        albumBtnAction: { print("album") }
+        
     )
 }

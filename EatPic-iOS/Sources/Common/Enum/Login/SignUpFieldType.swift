@@ -12,12 +12,20 @@ import SwiftUI
 /// 각 케이스에 따라서 입력필드 상단 텍스트, placeholder, 키보드 타입 지정
 enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
-    /// 아이디 입력 필드
-    case id
+    /// 이메일 입력 필드
+    case email
+    
     /// 비밀번호 입력 필드
     case password
+    
     /// 닉네임 입력 필드
     case nickname
+
+    /// 비밀번호 확인 입력 필드
+    case confirmPassword
+    
+    /// 아이디 입력 필드
+    case id
     
     // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
@@ -31,12 +39,16 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     var placeholder: String {
         switch self {
-        case .id:
-            return "아이디를 입력하세요"
+        case .email:
+            return "abc@email.com"
         case .password:
-            return "비밀번호를 입력하세요"
+            return "6자리 이상의 비밀번호"
         case .nickname:
             return "2자 이상의 한글 입력"
+        case .confirmPassword:
+            return "다시 한 번 입력해주세요"
+        case .id:
+            return "5~8자 사이의 소문자 및 숫자 입력"
         }
     }
     
@@ -63,7 +75,12 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     /// 해당 필드에 맞는 키보드 타입 지정
     /// 예: .default, .emailAddress, .numberPad 등
     var keyboardType: UIKeyboardType {
-        .default
+        switch self {
+        case .email:
+            return .emailAddress
+        default:
+            return .default
+        }
     }
 
     /// 키보드 asubmit 버튼 스타일 설정
