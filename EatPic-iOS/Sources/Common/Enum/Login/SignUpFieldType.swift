@@ -13,19 +13,11 @@ import SwiftUI
 enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     /// 아이디 입력 필드
-    case id
+    case email
     /// 비밀번호 입력 필드
     case password
-     
-    /// 텍스트 입력필드 상단 텍스트
-    var title: String? {
-        switch self {
-        case .id:
-            return nil // 상단 텍스트 타이틀을 표시하지 않음
-        case .password:
-            return "비밀번호 입력"
-        }
-    }
+    /// 비밀번호 확인 입력 필드
+    case confirmPassword
     
     // 텍스트 필드 상단 타이틀 폰트
     var titleFont: Font {
@@ -39,10 +31,12 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     var placeholder: String {
         switch self {
-        case .id:
-            return "아이디를 입력하세요"
+        case .email:
+            return "abc@email.com"
         case .password:
-            return "비밀번호를 입력하세요"
+            return "6자리 이상의 비밀번호"
+        case .confirmPassword:
+            return "다시 한 번 입력해주세요"
         }
     }
     
@@ -69,7 +63,12 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     /// 해당 필드에 맞는 키보드 타입 지정
     /// 예: .default, .emailAddress, .numberPad 등
     var keyboardType: UIKeyboardType {
-        .default
+        switch self {
+        case .email:
+            return .emailAddress
+        default:
+            return .default
+        }
     }
 
     /// 키보드 asubmit 버튼 스타일 설정

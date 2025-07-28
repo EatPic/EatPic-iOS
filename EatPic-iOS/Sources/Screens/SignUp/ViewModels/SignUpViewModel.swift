@@ -14,8 +14,14 @@ class SignUpViewModel {
     // MARK: - Property
     
     /// 사용자 입력 ID
-    var id: String = ""
+    var email: String = ""
     
     /// 사용자 입력 비밀번호
     var password: String = ""
+    
+    // MARK: - Logic
+
+    var fieldsNotEmpty: Bool {
+        !email.isEmpty && !password.isEmpty
+    }
 }

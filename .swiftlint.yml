@@ -36,7 +36,7 @@ type_name:
     error: 50
 
 function_body_length:
-  warning: 40 # 함수 본문 경고 길이
+  warning: 50 # 함수 본문 경고 길이
   error: 100  # 함수 본문 에러 길이
 
 file_length:

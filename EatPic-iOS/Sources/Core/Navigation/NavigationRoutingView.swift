@@ -13,6 +13,8 @@ import SwiftUI
 enum NavigationRoute: Equatable, Hashable {
     case calendar
     case notification
+    case emailLoginView
+    case signUpEmailView
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -35,6 +37,10 @@ struct NavigationRoutingView: View {
                 EmptyView()
             case .notification:
                 EmptyView()
+            case .emailLoginView:
+                EmailLoginView()
+            case .signUpEmailView:
+                SignupEmailView()
             }
         }
         .environmentObject(container)
