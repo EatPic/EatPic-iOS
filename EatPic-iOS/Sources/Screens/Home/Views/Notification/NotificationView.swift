@@ -18,11 +18,11 @@ struct NotificationView: View {
                     NotificationItemView(
                         notification: notification,
                         onTap: {
-                            //TODO: 알림 버튼 클릭 함수 생성 (근데 이거 댓글, 좋아요일 경우 해당 Pic카드 화면 이동, 팔로우일 경우 그사람으로)
+                            // TODO: 알림 버튼 클릭 함수 생성 (근데 이거 댓글, 좋아요일 경우 해당 Pic카드 화면 이동, 팔로우일 경우 그사람으로)
                             print("알림 클릭됨")
                         },
                         onFollowTap: {
-                            //TODO: 팔로우 버튼 클릭 기능 함수 생성
+                            // TODO: 팔로우 버튼 클릭 기능 함수 생성
                             print("팔로우 버튼 클릭됨")
                         }
                     )
