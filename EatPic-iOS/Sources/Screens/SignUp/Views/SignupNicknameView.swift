@@ -63,7 +63,7 @@ struct SignupNicknameView: View {
     
     /// 회원가입 닉네임 정보입력 뷰 타이틀
     private var signupNicknameTitle: some View {
-        VStack(alignment: .leading, spacing: 8) { // 필요에 따라 spacing 값 조정
+        VStack(alignment: .leading, spacing: 8) {
             Text("사용할 닉네임을 입력해주세요")
                 .font(.dsTitle2)
 
