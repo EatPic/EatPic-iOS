@@ -11,10 +11,10 @@ import SwiftUI
 /// - Parameters:
 ///   - message: 모달 메시지의 내용을 담습니다.
 ///   - messageColor : 모달 메시지의 색상입니다;
-///   - leftButtonText: 왼쪽 버튼의 텍스트입니다
-///   - rightButtonText: 오른쪽 버튼의 텍스트입니다
-///   - leftButtonAction: 왼쪽 버튼의 액션입니다
-///   - rightButtonAction: 오른쪽 버튼의 액션입니다
+///   - leftBtnText: 왼쪽 버튼의 텍스트입니다
+///   - rightBtnText: 오른쪽 버튼의 텍스트입니다
+///   - leftBtnAction: 왼쪽 버튼의 액션입니다
+///   - rightBtnAction: 오른쪽 버튼의 액션입니다
 struct DecisionModalView: View {
     
     // MARK: - Property
@@ -26,33 +26,33 @@ struct DecisionModalView: View {
     let messageColor: Color
     
     /// 하단 왼쪽 버튼 텍스트
-    let leftButtonText: String
+    let leftBtnText: String
     
     /// 하단 오른쪽 버튼 텍스트
-    let rightButtonText: String
+    let rightBtnText: String
     
     /// 왼쪽 버튼의 액션
-    let leftButtonAction: () -> Void
+    let leftBtnAction: () -> Void
     
     /// 오른쪽 버튼의 액션
-    let rightButtonAction: () -> Void
+    let rightBtnAction: () -> Void
     
     // MARK: - Init
     init(
         message: String,
         messageColor: Color = .black,
-        leftButtonText: String,
-        rightButtonText: String,
-        leftButtonAction: @escaping () -> Void,
-        rightButtonAction: @escaping () -> Void
+        leftBtnText: String,
+        rightBtnText: String,
+        leftBtnAction: @escaping () -> Void,
+        rightBtnAction: @escaping () -> Void
 
     ) {
         self.message = message
         self.messageColor = messageColor
-        self.leftButtonText = leftButtonText
-        self.rightButtonText = rightButtonText
-        self.leftButtonAction = leftButtonAction
-        self.rightButtonAction = rightButtonAction
+        self.leftBtnText = leftBtnText
+        self.rightBtnText = rightBtnText
+        self.leftBtnAction = leftBtnAction
+        self.rightBtnAction = rightBtnAction
     }
     
     // MARK: - Body
@@ -77,13 +77,13 @@ struct DecisionModalView: View {
                     /// 부정 버튼
                     PrimaryButton(
                         color: .gray020,
-                        text: leftButtonText,
+                        text: leftBtnText,
                         font: .dsBold15,
                         textColor: .black,
                         width: 130,
                         height: 38,
                         cornerRadius: 9,
-                        action: leftButtonAction
+                        action: leftBtnAction
                     )
                     
                     Spacer().frame(width: 16)
@@ -91,13 +91,13 @@ struct DecisionModalView: View {
                     /// 긍정 버튼
                     PrimaryButton(
                         color: .green060,
-                        text: rightButtonText,
+                        text: rightBtnText,
                         font: .dsBold15,
                         textColor: .white,
                         width: 130,
                         height: 38,
                         cornerRadius: 9,
-                        action: rightButtonAction
+                        action: rightBtnAction
                     )
                 }
             }
@@ -114,12 +114,12 @@ struct DecisionModalView: View {
     DecisionModalView(
         message: "기록한 Pic 카드를 삭제하시겠습니까?",
         messageColor: .black,
-        leftButtonText: "아니오",
-        rightButtonText: "예",
-        leftButtonAction: {
+        leftBtnText: "아니오",
+        rightBtnText: "예",
+        leftBtnAction: {
             print("아니오 눌림")
         },
-        rightButtonAction: {
+        rightBtnAction: {
             print("예 눌림")
         }
     )

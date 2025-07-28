@@ -32,10 +32,10 @@ struct CompletionModalView: View {
     let imageSize: CGFloat
     
     /// 버튼 텍스트
-    let buttonText: String
+    let btnText: String
     
     /// 버튼 액션
-    let buttonAction: () -> Void
+    let btnAction: () -> Void
     
     // MARK: - Init
     init(
@@ -43,15 +43,15 @@ struct CompletionModalView: View {
         messageColor: Color = .black,
         image: Image = Image("Modal/itcong"),
         imageSize: CGFloat = 150,
-        buttonText: String,
-        buttonAction: @escaping () -> Void
+        btnText: String,
+        btnAction: @escaping () -> Void
     ) {
         self.message = message
         self.messageColor = messageColor
         self.image = image
         self.imageSize = imageSize
-        self.buttonText = buttonText
-        self.buttonAction = buttonAction
+        self.btnText = btnText
+        self.btnAction = btnAction
     }
     
     // MARK: - Body
@@ -80,13 +80,13 @@ struct CompletionModalView: View {
 
                 PrimaryButton(
                     color: .green060,
-                    text: buttonText,
+                    text: btnText,
                     font: .dsHeadline,
                     textColor: .white,
                     width: 230,
                     height: 38,
                     cornerRadius: 10,
-                    action: buttonAction
+                    action: btnAction
                 )
             }
             .padding(.top, 24)
@@ -104,8 +104,8 @@ struct CompletionModalView: View {
         message: "Pic 카드가 기록되었습니다",
         image: Image("Modal/itcong"),
         imageSize: 150,
-        buttonText: "확인",
-        buttonAction: {
+        btnText: "확인",
+        btnAction: {
             print("확인 버튼 눌림")
         }
     )
