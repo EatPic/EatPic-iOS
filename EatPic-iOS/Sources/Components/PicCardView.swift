@@ -78,17 +78,17 @@ struct PicCardView<Content: View>: View {
             ZStack {
                 postImage
                     .resizable()
-                    .scaledToFill()
+//                    .scaledToFill()
                     .frame(maxWidth: .infinity)
                     .aspectRatio(1, contentMode: .fit) // 정사각형 유지
-                    .clipped()
+//                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 
                 PicCardItemView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity,
                            alignment: .bottomLeading)
                     .aspectRatio(1, contentMode: .fit)
-                    .padding(16)
+//                    .padding(.bottom, 16)
             }
             
             // 사용자 메모 (나의 메모)
@@ -128,7 +128,7 @@ struct PicCardView<Content: View>: View {
                 Label("삭제하기", systemImage: "exclamationmark.bubble")
             }
         },
-        postImage: Image(systemName: "square.fill"),
+        postImage: Image("Community/testImage"),
         myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를"
     )
 }

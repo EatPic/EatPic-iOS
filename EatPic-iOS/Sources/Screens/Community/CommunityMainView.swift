@@ -98,7 +98,7 @@ struct CommunityMainView: View {
                         Label("신고하기", systemImage: "exclamationmark.bubble")
                     }
                 },
-                postImage: Image(systemName: "square.fill"),
+                postImage: Image("Community/testImage"),
                 myMemo: "오늘은 샐러드를 먹었습니다~")
             
             PicCardView(
@@ -112,7 +112,7 @@ struct CommunityMainView: View {
                         Label("신고하기", systemImage: "exclamationmark.bubble")
                     }
                 },
-                postImage: Image(systemName: "square.fill"),
+                postImage: Image("Community/testImage"),
                 myMemo: "오늘은 샐러드를 먹었습니다~")
         }
         .padding(.horizontal, 16)

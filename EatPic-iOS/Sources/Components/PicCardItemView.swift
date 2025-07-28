@@ -74,6 +74,7 @@ struct PicCardItemView: View {
                     }
                 }
             }
+            .padding(16)
         }
     }
     

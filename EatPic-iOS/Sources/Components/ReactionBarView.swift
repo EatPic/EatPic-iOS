@@ -56,8 +56,9 @@ struct ReactionBarView: View {
                 .frame(width: 40, height: 40)
             }
         }
-        .padding(.horizontal, 48)
         .frame(maxWidth: .infinity, maxHeight: 40)
+        .padding(.horizontal, 48)
+        .padding(.bottom, 16)
     }
 
     // 리액션 선택/해제 처리
