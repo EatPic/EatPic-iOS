@@ -64,10 +64,10 @@ struct SignupEmailView: View {
     /// 이메일 회원가입 뷰 텍스트 필드
     private var signupEmailTextField: some View {
         FormTextField(
-            fieldType: SignUpFieldType.id,
+            fieldType: SignUpFieldType.email,
             focusedField: $focus,
-            currentField: .id,
-            text: $viewModel.id)
+            currentField: .email,
+            text: $viewModel.email)
     }
     
     // MARK: - BottomContents(화면 이동 버튼)
