@@ -36,4 +36,28 @@ enum NotificationType {
     case like    // 좋아요 알림
     case follow  // 팔로우 알림
     case comment // 댓글 알림
+}
+
+// 알림 타입에 따른 UI 차이
+extension NotificationType {
+    var hasPostImage: Bool {
+        switch self {
+        case .like, .comment:
+            return true  // 좋아요, 댓글은 항상 게시글 이미지가 있음
+        case .follow:
+            return false // 팔로우는 게시글 이미지가 없음
+        }
+    }
+    
+    // 알림 메시지 생성 함수 (문자열 보간 사용)
+    func getMessage(for friendNickname: String) -> String {
+        switch self {
+        case .like:
+            return "\(friendNickname) 님이 회원님의 식사 기록에 좋아요를 눌렀습니다."
+        case .comment:
+            return "\(friendNickname) 님이 회원님의 식사 기록에 댓글을 남겼습니다."
+        case .follow:
+            return "\(friendNickname) 님이 회원님을 팔로우합니다."
+        }
+    }
 } 

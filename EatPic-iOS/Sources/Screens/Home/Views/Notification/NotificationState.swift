@@ -1,5 +1,5 @@
 //
-//  NotiState.swift
+//  NotificationState.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/23/25.
@@ -7,13 +7,13 @@
 import SwiftUI
 
 // 알림 메시지를 클릭했을 때와 클릭하지 않았을 때의 상태
-enum NotiState {
+enum NotificationState {
     case unclicked
     case clicked
 }
 
 // 클릭 상태에 따른 UI 차이
-extension NotiState {
+extension NotificationState {
     var backgroundColor: Color {
         switch self {
         case .unclicked: return .green020

@@ -48,10 +48,4 @@ class NotificationViewModel: ObservableObject {
             postImageName: "Home/img1"
         )
     ]
-    
-    /// 팔로우 버튼 액션
-    func followButtonTapped(for notificationId: String) {
-        print("팔로우 버튼 클릭됨: \(notificationId)")
-        // TODO: 팔로우/언팔로우 로직 구현
-    }
 } 

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NotificationView: View {
     // MARK: - Property
-    @State private var viewModel = NotificationViewModel()
+    @StateObject private var viewModel = NotificationViewModel()
     
     var body: some View {
         ScrollView {
@@ -18,10 +18,12 @@ struct NotificationView: View {
                     NotificationItemView(
                         notification: notification,
                         onTap: {
-                            viewModel.toggleNotificationState(for: notification.id)
+                            //TODO: 알림 버튼 클릭 함수 생성 (근데 이거 댓글, 좋아요일 경우 해당 Pic카드 화면 이동, 팔로우일 경우 그사람으로)
+                            print("알림 클릭됨")
                         },
                         onFollowTap: {
-                            viewModel.followButtonTapped(for: notification.id)
+                            //TODO: 팔로우 버튼 클릭 기능 함수 생성
+                            print("팔로우 버튼 클릭됨")
                         }
                     )
                 }
