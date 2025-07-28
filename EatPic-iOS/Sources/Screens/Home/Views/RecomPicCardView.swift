@@ -10,23 +10,37 @@ import SwiftUI
 struct RecomPicCardView: View {
     var body: some View {
         VStack {
-            PicCardView(
-                profileImage: Image(systemName: "circle.fill"),
-                profileID: "아이디",
-                time: "오후 6:30",
-                onEllipsisTapped: {
-                    Button(role: .destructive, action: {
-                        print("신고하기")
-                    }) {
-                        Label("신고하기", systemImage: "exclamationmark.bubble")
-                    }
-                },
-                postImage: Image(systemName: "square.fill"),
-                myMemo: "오늘은 샐러드를 먹었습니다~")
+            
+            Menu {
+                Button(action: {
+                    print("사진 앱에 저장")
+                }) {
+                    Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
+                }
+                
+                Button(action: {
+                    print("수정하기")
+                }) {
+                    Label("수정하기", systemImage: "square.and.pencil")
+                }
+                
+                // role을 destructive로 설정 시, 빨간 버튼으로 만들 수 있음
+                Button(role: .destructive, action: {
+                    print("삭제하기")
+                }) {
+                    Label("삭제하기", systemImage: "exclamationmark.bubble")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .resizable()
+                    .frame(width: 24, height: 6)
+                    .padding(.trailing, 2)
+                    .foregroundStyle(Color.black)
+            }
+            
         }
     }
 }
-
 
 #Preview {
     RecomPicCardView()

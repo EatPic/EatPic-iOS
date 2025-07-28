@@ -1,5 +1,5 @@
 //
-//  BadgeStatusView.swift
+//  MyBadgeStatusHomeView.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/23/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BadgeStatusView: View {
+struct MyBadgeStatusHomeView: View {
     var body: some View {
         
         VStack {
@@ -27,11 +27,12 @@ struct BadgeStatusView: View {
                 })
             }
             
-            Spacer().frame(height: 24)
-            
             // 뱃지 리스트
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 8) {
+                    
+                    Spacer().frame(height: 24)
+                    
                     Group {
                         
                         BadgeView(
@@ -75,19 +76,19 @@ struct BadgeStatusView: View {
                         )
                         .scaleEffect(0.77)
                         .frame(width: 100)
-                        
                     }
+                    
                 }
             }
         }
         .padding(.top, 16)
         .padding(.horizontal, 19)
-//        .frame(height: 202)
+        .frame(height: 202)
         .background(.white)
         .cornerRadius(15)
     }
 }
 
 #Preview {
-    BadgeStatusView()
+    MyBadgeStatusHomeView()
 }

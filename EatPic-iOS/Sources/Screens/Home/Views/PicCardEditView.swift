@@ -19,9 +19,13 @@ struct PicCardEditView: View {
                 
                 Spacer().frame(width: 119)
                 
-                Image("home/btn-")
-                
+                Button(action: {
+                    print("RecomPicCardView로 나가기 액션")
+                }, label: {
+                    Image("Home/btn_home_close")
+                })
             }
+            .padding(.horizontal, 16)
             
             PicCardWriteView()
         }

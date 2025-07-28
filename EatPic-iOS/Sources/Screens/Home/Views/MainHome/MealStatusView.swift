@@ -20,14 +20,21 @@ struct MealStatusView: View {
                     .foregroundColor(.gray080)
 
                 Spacer().frame(height: 24)
-
-                Button(action: {
-                    viewModel.editButtonTapped()
-                }) {
-                    Image("Home/btn_home_ellipsis")
+                
+                Menu {
+                    Button(action: {
+                        print("수정하기")
+                    }) {
+                        Label("수정하기", systemImage: "pencil")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .resizable()
+                        .frame(width: 24, height: 6)
+                        .padding(.trailing, 2)
+                        .foregroundStyle(Color.black)
                 }
             }
-            
 
             Spacer().frame(height: 24)
 
