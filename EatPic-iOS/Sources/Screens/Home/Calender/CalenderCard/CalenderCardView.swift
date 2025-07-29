@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CalenderCardView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
 
         Spacer().frame(height: 8)
@@ -46,6 +48,8 @@ struct CalenderCardView: View {
                     ) {
                         print("식당 위치 뷰로 이동")
                         // TODO: StoreLocationView로 Navigation
+//                        container.router.push(.storeLocation(makers: markers)
+                        
                     }
                     
                     Divider()
@@ -56,6 +60,7 @@ struct CalenderCardView: View {
                     ) {
                         print("나의 메모 뷰로 이동")
                         // TODO: MyMemoView로 Navigation
+                        container.router.push(.myMemo)
                     }
                     
                     Divider()
@@ -66,6 +71,7 @@ struct CalenderCardView: View {
                     ) {
                         print("레시피 내용 뷰로 이동")
                         // TODO: ReceiptDetailView로 Navigation
+                        container.router.push(.receiptDetail)
                     }
                 }
                 .padding(.vertical, 8)
@@ -105,6 +111,8 @@ struct CalenderCardView: View {
             }
         } right: {
             Menu {
+                // FIXME: 여기 버튼들 개별 뷰로 분리!!!!!!!!!
+                
                 Button(action: {
                     // TODO: 다운로드 액션
                 }, label: {
@@ -131,6 +139,10 @@ struct CalenderCardView: View {
     }
 }
 
+
+
+
 #Preview {
     CalenderCardView()
+        .environmentObject(DIContainer())
 }

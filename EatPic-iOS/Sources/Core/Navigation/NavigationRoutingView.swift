@@ -15,6 +15,9 @@ enum NavigationRoute: Equatable, Hashable {
     case notification
     case emailLoginView
     case signUpEmailView
+    case myMemo
+//    case storeLocation(markers: ?)
+    case receiptDetail
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -41,6 +44,12 @@ struct NavigationRoutingView: View {
                 EmailLoginView()
             case .signUpEmailView:
                 SignupEmailView()
+            case .myMemo:
+                MyMemoView()
+//            case .storeLocation(let markers):
+//                StoreLocationView(markers: markers)
+            case .receiptDetail:
+                ReceiptDetailView()
             }
         }
         .environmentObject(container)
