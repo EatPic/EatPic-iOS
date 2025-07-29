@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+struct MonthVisiblePreferenceKey: PreferenceKey {
+    static var defaultValue: [Date: CGFloat] = [:]
+
+    static func reduce(value: inout [Date: CGFloat], nextValue: () -> [Date: CGFloat]) {
+        value.merge(nextValue(), uniquingKeysWith: { $1 })
+    }
+}
+
 /// 달력을 무한 스크롤로 여러 달을 연속적으로 보여주는 뷰입니다.
 /// 사용자는 상하 스크롤을 통해 여러 달의 캘린더를 탐색할 수 있습니다.
 struct CalendarScrollView: View {
@@ -19,8 +27,12 @@ struct CalendarScrollView: View {
         }
     }()
 
-    /// 초기 로딩에서 과거 달을 한 번만 prepend하기 위한 플래그입니다.
-    @State private var initialLoadCompleted = false
+    /// 초기 로딩에서 onAppear 중복 호출 방지하기 위한 플래그
+    @State private var isPrepending = false
+    @State private var showLoadingIndicator = false
+    @State private var isScrollLimited = false
+    
+    private let maxPrependCount = 24 // 24 * 4개월 = 8년
 
     /// 현재 사용하는 캘린더 인스턴스입니다.
     private let calendar = Calendar.current
@@ -28,22 +40,54 @@ struct CalendarScrollView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 32) {
-                    ForEach(months, id: \.self) { month in
-                        /// 각 월마다 CalendarView를 렌더링하며,
-                        /// onAppear 시에 무한 스크롤 처리를 위한 로직이 실행됩니다.
-                        CalendarView(month: month) { selectedDate in
-                            print("Selected: \(selectedDate)")
+                VStack {
+                    if showLoadingIndicator {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .padding(.bottom, 8)
                         }
-                        .id(month)
-                        .onAppear {
-                            reloadData(month: month, proxy: proxy)
+                    
+                    LazyVStack(spacing: 32) {
+                        ForEach(months, id: \.self) { month in
+                            /// 각 월마다 CalendarView를 렌더링하며,
+                            /// onAppear 시에 무한 스크롤 처리를 위한 로직이 실행됩니다.
+                            CalendarView(month: month) { selectedDate in
+                                print("Selected: \(selectedDate)")
+                            }
+                            .background(
+                                GeometryReader { geo in
+                                    Color.clear
+                                        .preference(
+                                            key: MonthVisiblePreferenceKey.self,
+                                            value: [
+                                                month: geo.frame(in: .named("scroll")).minY
+                                            ]
+                                        )
+                                }
+                            )
+                            .id(month)
+                            .onAppear {
+                                reloadData(month: month, proxy: proxy)
+                            }
                         }
+                        .padding(.vertical)
                     }
                 }
-                .padding(.vertical)
             }
+            .coordinateSpace(name: "scroll")
+            .onPreferenceChange(MonthVisiblePreferenceKey.self) { values in
+                guard let firstMonth = months.first,
+                      let firstMonthY = values[firstMonth] else { return }
+                
+                // 기준치보다 firstMonth의 Y값이 크면 스크롤 상단에 도달한 것으로 판단
+                if firstMonthY > -30, !isPrepending, !isScrollLimited {
+                    reloadData(month: firstMonth, proxy: proxy)
+                }
+            }
+            // 스크롤뷰 자체에도 애니메이션을 제거하여 빠른 스크롤 시 버벅거림 제거
+            .transaction { $0.disablesAnimations = true }
         }
+        .background(Color.white)
         .customCenterNavigationBar {
             Text("캘린더")
                 .font(.title2)
@@ -57,15 +101,26 @@ struct CalendarScrollView: View {
     ///   - month: 현재 onAppear된 월
     ///   - proxy: 스크롤 위치를 제어하기 위한 ScrollViewProxy
     private func reloadData(month: Date, proxy: ScrollViewProxy) {
-        if month == months.first,
-           months.count < 100, // 무한 루프 방지 조건도 추가
-           !initialLoadCompleted {
-            initialLoadCompleted = true
+        guard !isPrepending, !isScrollLimited else { return }
+        
+        if month == months.first {
+            isPrepending = true
+            isScrollLimited = true
+            showLoadingIndicator = true
+            
             let currentTop = month
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                prependPreviousMonths(to: currentTop) {
-                    DispatchQueue.main.async {
+            prependPreviousMonths(to: currentTop) {
+                DispatchQueue.main.async {
+                    // 스크롤 복구시 생기는 버벅거림을 제거하기 위해 애니메이션 비활성화
+                    withAnimation(.none) {
                         proxy.scrollTo(currentTop, anchor: .top)
+                    }
+                    isPrepending = false
+                    
+                    // ProgressView 잠시 후 숨김
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        showLoadingIndicator = false
+                        isScrollLimited = false
                     }
                 }
             }
@@ -94,7 +149,10 @@ struct CalendarScrollView: View {
         let newMonths = (1...4).compactMap {
             calendar.date(byAdding: .month, value: -$0, to: reference)
         }.reversed()
-        months.insert(contentsOf: newMonths, at: 0)
+        // 빠른 스크롤시 새로운 월들이 버벅거리며 생기는 문제 제거를 위해 애니메이션 제거
+        withAnimation(.none) {
+            months.insert(contentsOf: newMonths, at: 0)
+        }
         
         DispatchQueue.main.asyncAfter(
             deadline: .now() + 0.01, execute: onComplete)
