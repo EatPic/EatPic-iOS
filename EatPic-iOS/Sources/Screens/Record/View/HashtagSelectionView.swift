@@ -1,18 +1,21 @@
 //
-//  HashtagView.swift
+//  HashtagSelectionView.swift
 //  EatPic-iOS
 //
-//  Created by 이은정 on 7/29/25.
+//  Created by 이은정 on 7/30/25.
 //
 
 import SwiftUI
 
-
-struct HashtagView: View {
+struct HashtagSelectionView: View {
+    
     // MARK: - Property
+    
+    /// 해시태그 선택 기능 및 상태를 관리하는 ViewModel
     @StateObject private var viewModel = HashtagSelectViewModel()
     
     // MARK: - Body
+    
     var body: some View {
         VStack {
             // 캐릭터 이미지
@@ -41,33 +44,41 @@ struct HashtagView: View {
             VStack(alignment: .leading, spacing: 8) {
                 // 첫 번째 행 (4개)
                 HStack(spacing: 8) {
-                    ForEach(Array(viewModel.hashtags.prefix(4))) { hashtag in
+                    ForEach(0..<4, id: \.self) { index in
+                        let hashtag = viewModel.hashtags[index]
                         HashtagButton(
-                            hashtagName: hashtag.name,
-                            state: hashtag.state
+                            hashtagName: hashtag,
+                            isSelected: viewModel.isHashtagSelected(hashtag)
                         ) {
-                            // TODO: 해시태그 토글 로직 구현
-                            print("해시태그 \(hashtag.name) 클릭됨")
+                            viewModel.toggleHashtag(hashtag)
                         }
                     }
                 }
                 
                 // 두 번째 행 (4개)
                 HStack(spacing: 8) {
-                    ForEach(Array(viewModel.hashtags.dropFirst(4).prefix(4))) { hashtag in
+                    ForEach(4..<8, id: \.self) { index in
+                        let hashtag = viewModel.hashtags[index]
                         HashtagButton(
-                            hashtagName: hashtag.name,
-                            state: hashtag.state
+                            hashtagName: hashtag,
+                            isSelected: viewModel.isHashtagSelected(hashtag)
                         ) {
-                            // TODO: 해시태그 토글 로직 구현
-                            print("해시태그 \(hashtag.name) 클릭됨")
+                            viewModel.toggleHashtag(hashtag)
                         }
                     }
                 }
                 
                 // 세 번째 행 (5개)
                 HStack(spacing: 8) {
-                    // FIXME: HashtagViewModel안에 들어가있는
+                    ForEach(8..<13, id: \.self) { index in
+                        let hashtag = viewModel.hashtags[index]
+                        HashtagButton(
+                            hashtagName: hashtag,
+                            isSelected: viewModel.isHashtagSelected(hashtag)
+                        ) {
+                            viewModel.toggleHashtag(hashtag)
+                        }
+                    }
                 }
             }
             
@@ -75,7 +86,7 @@ struct HashtagView: View {
             
             // 직접 추가하기 버튼
             Button(action: {
-                // TODO: BottomSheetView 열리는 로직
+                viewModel.addCustomHashtagButtonTapped()
             }, label: {
                 HStack {
                     Text("직접 추가하기")
@@ -105,8 +116,7 @@ struct HashtagView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                // TODO: 다음 페이지로 넘어가는 로직
-                print("다음 페이지로 넘어가는 로직")
+                // TODO: 다음 화면 이동 Navigation (이 작동 함수도 뷰모델에?)
             }
         }
         .padding(.horizontal, 16)
@@ -116,26 +126,26 @@ struct HashtagView: View {
 // MARK: 해시태그 버튼
 private struct HashtagButton: View {
     let hashtagName: String
-    let state: HashtagButtonState
+    let isSelected: Bool
     let hashtagBtnAction: () -> Void
     
     var body: some View {
         Button(action: hashtagBtnAction) {
             Text("#\(hashtagName)")
                 .font(.dsCallout)
-                .foregroundStyle(state.textColor)
+                .foregroundStyle(isSelected ? Color.green060 : .gray050)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(state.backgroundColor)
+                .background(isSelected ? Color.green010 : .white)
                 .cornerRadius(50)
                 .overlay(
                     RoundedRectangle(cornerRadius: 50)
-                        .stroke(state.borderColor, lineWidth: 1)
+                        .stroke(isSelected ? Color.green060 : .gray050, lineWidth: 1)
                 )
         }
     }
 }
 
 #Preview {
-    HashtagView()
+    HashtagSelectionView()
 }
