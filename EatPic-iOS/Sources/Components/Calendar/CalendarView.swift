@@ -11,6 +11,24 @@ struct EatPicDayMeta {
     var img: Image?
 }
 
+extension EatPicDayMeta {
+    /// 날짜별로 다른 이미지를 제공하는 더미 데이터
+    static var dummyByDate: [Date: EatPicDayMeta] {
+        let calendar = Calendar.current
+        var result: [Date: EatPicDayMeta] = [:]
+
+        // 예시: 오늘과 오늘 + 1일 뒤에 이미지 존재
+        let today = calendar.startOfDay(for: Date())
+        
+        if let future = calendar.date(byAdding: .day, value: 1, to: today) {
+            result[today] = EatPicDayMeta(img: Image(.Calendar.img))
+            result[future] = EatPicDayMeta(img: Image(.Calendar.img))
+        }
+
+        return result
+    }
+}
+
 struct CalendarDay: Identifiable {
     var id: UUID = .init()
     let day: Int
@@ -24,43 +42,9 @@ protocol CalendarDateProviding {
     func numberOfDays(in date: Date) -> Int
 }
 
-protocol CalendarUseCase {
-    func hasImage(for date: Date) -> Bool
-    func fetchImages(for month: Date) async throws -> [Date: Image]
-}
-
-// MARK: - EatPicCalendarUseCase Implementation
-final class EatPicCalendarUseCase: CalendarUseCase {
-    private var imageStore: [Date: Image] = [:]
-    private let calendar: Calendar
-
-    init(calendar: Calendar = .current) {
-        self.calendar = calendar
-    }
-
-    func hasImage(for date: Date) -> Bool {
-        imageStore.keys.contains {
-            calendar.isDate($0, inSameDayAs: date)
-        }
-    }
-
-    func fetchImages(for month: Date) async throws -> [Date: Image] {
-        // TODO: [25.07.29] 실제 이미지를 불러오는 로직으로 변경 필요 - 리버/이재원
-        var results: [Date: Image] = [:]
-        var components = calendar.dateComponents([.year, .month], from: month)
-        components.day = 10
-
-        if let targetDate = calendar.date(from: components) {
-            results[targetDate] = Image(systemName: "photo")
-        }
-
-        imageStore = results
-        return results
-    }
-}
-
 final class CalendarDateProvider: CalendarDateProviding {
     private let calendar: Calendar
+    private var metaDict = EatPicDayMeta.dummyByDate
 
     init(calendar: Calendar = .current) {
         self.calendar = calendar
@@ -114,7 +98,9 @@ final class CalendarDateProvider: CalendarDateProviding {
             components.minute = 0
             components.second = 0
             guard let date = calendar.date(from: components) else { return nil }
-            return CalendarDay(day: day, date: date, isCurrentMonth: true)
+            // TODO: [25.07.29] 실제 API에서 받아온 데이터로 변환 필요 - 리버/이재원
+            let meta = metaDict[calendar.startOfDay(for: date)]
+            return CalendarDay(day: day, date: date, isCurrentMonth: true, meta: meta)
         }
     }
 
@@ -143,20 +129,17 @@ class CalendarViewModel {
     var selectedDate: Date
     private let calendar: Calendar
     private let dateProvider: CalendarDateProviding
-    private let calendarUseCase: CalendarUseCase
     
     init(
         currentMonth: Date = Date(),
         selectedDate: Date = Date(),
         calendar: Calendar = .current,
-        dateProvider: CalendarDateProviding = CalendarDateProvider(),
-        calendarUseCase: CalendarUseCase
+        dateProvider: CalendarDateProviding = CalendarDateProvider()
     ) {
         self.currentMonth = currentMonth
         self.selectedDate = selectedDate
         self.calendar = calendar
         self.dateProvider = dateProvider
-        self.calendarUseCase = calendarUseCase
     }
     
     var days: [CalendarDay] {
@@ -179,10 +162,6 @@ class CalendarViewModel {
         } else {
             selectedDate = date
         }
-    }
-    
-    func hasImage(for date: Date) -> Bool {
-        calendarUseCase.hasImage(for: date)
     }
 }
 
@@ -215,10 +194,14 @@ struct Cell: View {
     }
     
     private var textColor: Color {
-        if calendarDay.isCurrentMonth {
-            return Color.gray080
+        if calendarDay.meta?.img != nil {
+            return Color.white
         } else {
-            return Color.gray080.opacity(0.2)
+            if calendarDay.isCurrentMonth {
+                return Color.gray080
+            } else {
+                return Color.gray080.opacity(0.2)
+            }
         }
     }
     
@@ -233,8 +216,7 @@ struct Cell: View {
 
 struct CalendarView: View {
     
-    @State var viewModel: CalendarViewModel = .init(
-        calendarUseCase: EatPicCalendarUseCase())
+    @State var viewModel: CalendarViewModel = .init()
     
     private let cellTapAction: () -> Void
     
