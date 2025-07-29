@@ -18,9 +18,9 @@ struct RecomPicCardView: View {
                 onEllipsisTapped: {
                     Button(role: .destructive, action: {
                         print("신고하기")
-                    }) {
+                    }, label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
-                    }
+                    })
                 },
                 postImage: Image(systemName: "square.fill"),
                 myMemo: "오늘은 샐러드를 먹었습니다~"
