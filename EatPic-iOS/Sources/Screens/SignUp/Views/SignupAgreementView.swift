@@ -95,19 +95,22 @@ struct SignupAgreementView: View {
     /// 약관동의 체크 리스트
     /// - 버튼의 액션에 따라 상태 토글 적용
     private var agreementList: some View {
-        ForEach(Array(viewModel.agreementList.enumerated()), id: \.element.id) { index, item in
+        ForEach(
+            Array(viewModel.agreementList.enumerated()),
+            id: \.element.id
+        ) { index, item in
             Button(action: {
                 viewModel.toggleAgreement(at: index)
             }) {
-                    HStack {
-                        Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(item.isChecked ? .green060 : .gray050)
-                        Text("\(item.title)")
-                            .foregroundColor(Color.gray080)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray050)
-                    }
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(item.isChecked ? .green060 : .gray050)
+                    Text("\(item.title)")
+                        .foregroundColor(Color.gray080)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray050)
+                }
             }
         }
     }
@@ -118,7 +121,7 @@ struct SignupAgreementView: View {
     private var nextButton: some View {
         PrimaryButton(
             // 약관동의 필수사항 체크 됐을시 색 바꾸기
-            color: .green060,
+            color: viewModel.isRequiredAllChecked ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
             textColor: .gray040,

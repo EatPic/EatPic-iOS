@@ -29,6 +29,13 @@ class AgreementViewModel {
         )
     ]
     
+    /// AgreementView (다음 버튼에서 사용) 필수 항목만 체크되었는지 확인하는 프로퍼티
+    var isRequiredAllChecked: Bool {
+        agreementList
+            .filter { $0.isRequired } // 1. 필수 항목만 추림
+            .allSatisfy { $0.isChecked } // 2. 모두 체크되었는지 확인
+    }
+    
     /// 체크 표시 토글
     func toggleAgreement(at index: Int) {
         agreementList[index].isChecked.toggle()
