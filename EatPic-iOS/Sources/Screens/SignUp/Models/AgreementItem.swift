@@ -12,7 +12,7 @@ struct AgreementItem: Identifiable, Hashable {
     let id = UUID()
     let title: String
     let isRequired: Bool // 약관동의 (필수/선택)
-    let isChecked: Bool
+    var isChecked: Bool
     let type: AgreementType // 약관 동의 타입
 }
 
