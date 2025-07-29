@@ -147,31 +147,32 @@ struct Cell: View {
     
     var body: some View {
         ZStack {
-            if isSelected {
-                Rectangle()
-                    .fill(Color.yellow.opacity(0.6))
-                    .frame(width: 26, height: 27)
-                    .transition(.scale.combined(with: .opacity))
-            }
-
+            Rectangle()
+                .fill(rectangleFillColor)
+                .frame(width: 43, height: 43)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            
             Text("\(calendarDay.day)")
-                .font(.caption)
+                .font(.dsHeadline)
                 .foregroundStyle(textColor)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.selectedDate)
         }
-        .frame(height: 30)
-        .onTapGesture {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.5, blendDuration: 0)) {
-                viewModel.changeSelectedDate(calendarDay.date)
-            }
-        }
+        .frame(height: 50)
     }
     
     private var textColor: Color {
         if calendarDay.isCurrentMonth {
-            return Color.black
+            return Color.gray080
         } else {
-            return Color.gray.opacity(0.7)
+            return Color.gray080.opacity(0.2)
+        }
+    }
+    
+    private var rectangleFillColor: Color {
+        if calendarDay.isCurrentMonth {
+            return Color.gray020
+        } else {
+            return Color.gray020.opacity(0.2)
         }
     }
 }
@@ -204,7 +205,7 @@ struct CalendarView: View {
                 viewModel.currentMonth,
                 formatter: calendarHeaderDateFormatter
             )
-                .font(.title3)
+                .font(.dsTitle2)
                 .foregroundStyle(Color.black)
             
             Button(action: {
@@ -230,10 +231,10 @@ struct CalendarView: View {
                         ? Color.red
                         : index == 6 // 토요일
                         ? Color.blue
-                        : Color.gray
+                        : Color.black
                     ) // 일요일, 토요일, 평일 색 따로 두기
                     .frame(maxWidth: .infinity)
-                    .font(.caption)
+                    .font(.dsFootnote)
             }
             .padding(.bottom, 30) // 요일 아래 여백
             
@@ -245,7 +246,16 @@ struct CalendarView: View {
                     calendarDay.date,
                     inSameDayAs: viewModel.selectedDate
                 )
-                Cell(calendarDay: calendarDay, isSelected: isSelectedDate, viewModel: viewModel)
+                Button {
+                    print("\(calendarDay.date)")
+                } label: {
+                    Cell(
+                        calendarDay: calendarDay,
+                        isSelected: isSelectedDate,
+                        viewModel: viewModel
+                    )
+                }
+
 
             }
         })
