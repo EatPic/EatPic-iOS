@@ -44,6 +44,11 @@ struct CalendarScrollView: View {
                 .padding(.vertical)
             }
         }
+        .customCenterNavigationBar {
+            Text("캘린더")
+                .font(.title2)
+                .foregroundStyle(Color.gray080)
+        }
     }
     
     /// 월이 처음 보일 때 이전 월을 prepend하거나,
