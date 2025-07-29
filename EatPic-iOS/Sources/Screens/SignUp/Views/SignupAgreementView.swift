@@ -12,7 +12,7 @@ struct SignupAgreementView: View {
     // MARK: - Property
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
-    @State var viewModel: SignUpViewModel
+    @State var viewModel: AgreementViewModel
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
@@ -31,6 +31,8 @@ struct SignupAgreementView: View {
         VStack(alignment: .leading, spacing: 40) {
             Spacer().frame(height: 40)
             topContents
+            
+            agreementList
             Spacer()
             nextButton
             Spacer().frame(height: 40)
@@ -74,14 +76,14 @@ struct SignupAgreementView: View {
                 ZStack {
                     // 버튼배경 테두리
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray040)
+                        .stroke(Color.gray050)
                     
                     // 버튼 내부 텍스트 및 이미지
                     HStack(alignment: .center, spacing: 14) {
                         Image(systemName: "checkmark")
-                            .foregroundStyle(Color.gray040)
+                            .foregroundStyle(Color.gray050)
                         Text("서비스 이용약관 전체동의")
-                            .foregroundStyle(Color.gray040)
+                            .foregroundStyle(Color.gray050)
                     }
                 }
                 .frame(height: 58)
@@ -90,12 +92,33 @@ struct SignupAgreementView: View {
     
     // MARK: - MiddleContents (약관동의 리스트)
     
+    /// 약관동의 체크 리스트
+    /// - 버튼의 액션에 따라 상태 토글 적용
+    private var agreementList: some View {
+        ForEach(Array(viewModel.agreementList.enumerated()), id: \.element.id) { index, item in
+            Button(action: {
+                viewModel.toggleAgreement(at: index)
+            }) {
+                    HStack {
+                        Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(item.isChecked ? .green060 : .gray050)
+                        Text("\(item.title)")
+                            .foregroundColor(Color.gray080)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray050)
+                    }
+            }
+        }
+    }
+    
     // MARK: - BottomContents (화면 이동 다음 버튼)
     
     /// 약관체크 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+            // 약관동의 필수사항 체크 됐을시 색 바꾸기
+            color: .green060,
             text: "다음",
             font: .dsTitle3,
             textColor: .gray040,

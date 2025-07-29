@@ -11,16 +11,28 @@ import Foundation
 @Observable
 class AgreementViewModel {
     var agreementList: [AgreementItem] = [
-        AgreementItem(title: "이용약관 동의 (필수)", isRequired: true, isChecked: false, type: .service),
-        AgreementItem(title: "개인정보처리방침 동의 (필수)", isRequired: true, isChecked: false, type: .privacy),
-                AgreementItem(title: "마케팅 정보 수신 동의 (선택)", isRequired: false, isChecked: false, type: .marketing)
+        AgreementItem(
+            title: "이용약관 동의 (필수)",
+            isRequired: true,
+            isChecked: false,
+            type: .service),
+        AgreementItem(
+            title: "개인정보처리방침 동의 (필수)",
+            isRequired: true,
+            isChecked: false,
+            type: .privacy),
+        AgreementItem(
+            title: "마케팅 정보 수신 동의 (선택)",
+            isRequired: false,
+            isChecked: false,
+            type: .marketing
+        )
     ]
     
     /// 체크 표시 토글
     func toggleAgreement(at index: Int) {
         agreementList[index].isChecked.toggle()
     }
-    
     
     /// 전체 동의 기능
     func checkAll(_ isChecked: Bool) {
