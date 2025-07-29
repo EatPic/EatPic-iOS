@@ -96,14 +96,14 @@ struct SearchBarView: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.gray020)
-                .overlay(
+                .overlay(alignment: .center) {
                     Group {
                         if let strokeColor {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(strokeColor, lineWidth: 1)
                         }
                     }
-                )
+                }
         )
     }
 }
@@ -133,7 +133,10 @@ fileprivate struct StatefulPreviewWrapper<Value>: View {
     @State var value: Value
     var content: (Binding<Value>) -> AnyView
     
-    init(_ initialValue: Value, content: @escaping (Binding<Value>) -> some View) {
+    init(
+        _ initialValue: Value,
+        content: @escaping (Binding<Value>) -> some View
+    ) {
         _value = State(initialValue: initialValue)
         self.content = { binding in AnyView(content(binding)) }
     }
