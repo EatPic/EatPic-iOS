@@ -95,7 +95,7 @@ struct SearchBarView: View {
         .frame(width: .infinity, height: 40)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color.gray020)
+                .fill(backgroundColor)
                 .overlay(
                     Group {
                         if let strokeColor {
