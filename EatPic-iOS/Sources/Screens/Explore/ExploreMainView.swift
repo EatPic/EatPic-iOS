@@ -21,6 +21,7 @@ struct ExploreMainView: View {
             exploreFeed()
         }
         .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
     
     private func searchBar() -> some View {
