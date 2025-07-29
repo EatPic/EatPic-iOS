@@ -15,16 +15,9 @@ struct CalenderCardView: View {
         Spacer().frame(height: 8)
         
         VStack {
+            
             // 당일 식사 사진들
-            // FIXME: 당일 식사 사진 띄워주는 Carousel 뷰 구현 (아래 VStack은 추후 삭제)
-            VStack {
-                Spacer().frame(height: 36)
-                
-                RoundedRectangle(cornerRadius: 20)
-                    .frame(width: 300, height: 300)
-                
-                Spacer().frame(height: 43)
-            }
+            CarouselView()
             
             // 레시피 링크 ~ 메모 등의 버튼 뷰 4개
             ZStack {

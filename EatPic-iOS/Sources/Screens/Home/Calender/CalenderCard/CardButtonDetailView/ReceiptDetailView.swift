@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct ReceiptDetailView: View {
-    // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 레시피 내용)
     @State var receiptText = ""
 
     var body: some View {
@@ -18,7 +17,6 @@ struct ReceiptDetailView: View {
             Spacer().frame(height: 32)
             
             TextAreaView(
-                // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 레시피 내용)
                 text: $receiptText,
                 height: 417
             )

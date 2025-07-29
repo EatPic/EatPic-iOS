@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct MyMemoView: View {
-    // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 메모 내용)
     @State var myMemo = ""
 
     var body: some View {
@@ -17,9 +16,7 @@ struct MyMemoView: View {
         VStack {
             Spacer().frame(height: 32)
             
-            
             TextAreaView(
-                // FIXME: 여기 Text내용은 이미 서버에서 불러와져야 하는 내용임 (PicCardView를 기록했었을 때 저장됐어야 했을 메모 내용)
                 text: $myMemo,
                 height: 417
             )
