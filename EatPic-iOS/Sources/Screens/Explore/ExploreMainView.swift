@@ -7,7 +7,9 @@
 
 import SwiftUI
 
+// 메인 탐색(Explore) 화면 뷰
 struct ExploreMainView: View {
+    // 검색창에 입력되는 텍스트 상태
     @State var searchText: String = ""
     
     let columns: [GridItem] = [
@@ -24,6 +26,7 @@ struct ExploreMainView: View {
         .padding(.top, 16)
     }
     
+    /// 검색 바 구성 뷰
     private func searchBar() -> some View {
         SearchBarView(
             text: $searchText,
@@ -40,6 +43,7 @@ struct ExploreMainView: View {
         )
     }
     
+    /// 피드 전체 영역: ScrollView + LazyVGrid 구성
     private func exploreFeed() -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 9, content: {
@@ -51,6 +55,7 @@ struct ExploreMainView: View {
         .scrollIndicators(.hidden)
     }
     
+    /// 각 피드 카드 뷰: 게시물 이미지 + 댓글/공감 수
     private func explorePicCard() -> some View {
         GeometryReader { geometry in
             ZStack {
