@@ -18,34 +18,36 @@ struct MonthVisiblePreferenceKey: PreferenceKey {
 /// 달력을 무한 스크롤로 여러 달을 연속적으로 보여주는 뷰입니다.
 /// 사용자는 상하 스크롤을 통해 여러 달의 캘린더를 탐색할 수 있습니다.
 struct CalendarScrollView: View {
-    /// 화면에 표시될 월의 배열입니다. 초기에는 현재 월부터 4개월이 로딩됩니다.
-    @State private var months: [Date] = {
-        let calendar = Calendar.current
-        let base = calendar.startOfMonth(for: Date())
-        return (0..<4).compactMap {
-            calendar.date(byAdding: .month, value: $0, to: base)
-        }
-    }()
-
+    /// 화면에 표시될 월의 배열입니다. 초기에는 현재 월부터 `initailMonthCount`개월이 로딩됩니다.
+    @State private var months: [Date]
     /// 초기 로딩에서 onAppear 중복 호출 방지하기 위한 플래그
     @State private var isPrepending = false
     @State private var showLoadingIndicator = false
     @State private var isScrollLimited = false
-    
-    private let maxPrependCount = 24 // 24 * 4개월 = 8년
 
     /// 현재 사용하는 캘린더 인스턴스입니다.
     private let calendar = Calendar.current
+    private let initailMonthCount: Int = 4
+    private let reachTopThreshold: CGFloat = 50
+    
+    init() {
+        let calendar = Calendar.current
+        let base = calendar.startOfMonth(for: Date())
+        self.months = (0..<initailMonthCount).compactMap {
+            calendar.date(byAdding: .month, value: $0, to: base)
+        }
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack {
                     if showLoadingIndicator {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                                .padding(.bottom, 8)
-                        }
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .tint(Color.gray060)
+                            .padding(.bottom, 8)
+                    }
                     
                     LazyVStack(spacing: 32) {
                         ForEach(months, id: \.self) { month in
@@ -79,8 +81,8 @@ struct CalendarScrollView: View {
                 guard let firstMonth = months.first,
                       let firstMonthY = values[firstMonth] else { return }
                 
-                // 기준치보다 firstMonth의 Y값이 크면 스크롤 상단에 도달한 것으로 판단
-                if firstMonthY > -30, !isPrepending, !isScrollLimited {
+                // `reachTopThreshold`보다 firstMonth의 Y값이 크면 스크롤 상단에 도달한 것으로 판단
+                if firstMonthY > -reachTopThreshold, !isPrepending, !isScrollLimited {
                     reloadData(month: firstMonth, proxy: proxy)
                 }
             }
@@ -117,28 +119,30 @@ struct CalendarScrollView: View {
                     }
                     isPrepending = false
                     
-                    // ProgressView 잠시 후 숨김
+                    // 상단 도달시 무분별한 스크롤 방지를 위한 `ProgressView` 실행
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         showLoadingIndicator = false
                         isScrollLimited = false
                     }
                 }
             }
-        } else if month == months.last {
-            loadMoreMonths()
         }
+        // 하단 무한 스크롤은 잇픽 캘린더 뷰 특성상 필요없다고 판단 - 리버/이재원
+//        else if month == months.last {
+//            loadMoreMonths()
+//        }
     }
 
-    /// 현재 마지막 월 이후의 4개월을 추가합니다.
+    /// 현재 마지막 월 이후의 `initailMonthCount`개월을 추가합니다.
     private func loadMoreMonths() {
         guard let last = months.last else { return }
-        let newMonths = (1...4).compactMap {
+        let newMonths = (1...initailMonthCount).compactMap {
             calendar.date(byAdding: .month, value: $0, to: last)
         }
         months.append(contentsOf: newMonths)
     }
     
-    /// 현재 첫 월 이전의 4개월을 prepend합니다.
+    /// 현재 첫 월 이전의 `initailMonthCount`개월을 prepend합니다.
     /// - Parameters:
     ///   - reference: 기준이 되는 날짜 (현재 첫 번째 월)
     ///   - onComplete: prepend 후에 실행될 콜백
@@ -146,7 +150,7 @@ struct CalendarScrollView: View {
         to reference: Date,
         onComplete: @escaping () -> Void
     ) {
-        let newMonths = (1...4).compactMap {
+        let newMonths = (1...initailMonthCount).compactMap {
             calendar.date(byAdding: .month, value: -$0, to: reference)
         }.reversed()
         // 빠른 스크롤시 새로운 월들이 버벅거리며 생기는 문제 제거를 위해 애니메이션 제거
