@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 유저 정보를 담는 모델
 struct User: Identifiable {
     let id: UUID
     let profileImage: Image?
@@ -15,32 +16,38 @@ struct User: Identifiable {
     var isFollow: Bool
 }
 
+/// 팔로워 / 팔로잉 목록을 보여주는 메인 뷰
 struct FollowListView: View {
     
+    /// 팔로워/팔로잉 탭 구분을 위한 enum
     enum FollowSegment: String, CaseIterable {
         case followers = "팔로워"
         case followings = "팔로잉"
     }
-    
+    // MARK: - Properties
     @Namespace var name
     @State private var selected: FollowSegment = .followers
     @State private var searchText = ""
     
+    // 샘플 팔로워 유저 리스트
     @State private var followers: [User] = [
         User(id: UUID(), profileImage: nil, nickname: "홍길동", userId: "@hong", isFollow: true),
         User(id: UUID(), profileImage: nil, nickname: "김영희", userId: "@young", isFollow: false)
     ]
     
+    // 샘플 팔로잉 유저 리스트
     @State private var followings: [User] = [
         User(id: UUID(), profileImage: nil, nickname: "이철수", userId: "@cheolsoo", isFollow: true),
         User(id: UUID(), profileImage: nil, nickname: "박민수", userId: "@minsu", isFollow: true)
     ]
     
+    // MARK: - Body
+    
     var body: some View {
         VStack {
-            segmentedView()
+            segmentedView() // 상단 탭
             
-            SearchBarView(
+            SearchBarView( // 검색창
                 text: $searchText,
                 placeholder: "닉네임 또는 아이디로 검색",
                 showsDeleteButton: false,
@@ -56,14 +63,17 @@ struct FollowListView: View {
             .padding(.top, 15)
             .padding(.bottom, 14)
             
-            userListView()
+            userListView() // 유저 리스트
         }
         .padding(.horizontal, 16)
         .customCenterNavigationBar {
-            Text("아이디")
+            Text("아이디") // 커스텀 네비게이션바 제목
         }
     }
     
+    // MARK: - Segment View
+    
+    /// 팔로워 / 팔로잉 탭을 구성하는 뷰
     private func segmentedView() -> some View {
         HStack(spacing: 0) {
             ForEach(FollowSegment.allCases, id: \.self) { segment in
@@ -98,6 +108,7 @@ struct FollowListView: View {
         }
     }
     
+    /// 각 탭별 유저 수 계산
     private func userCount(for segment: FollowSegment) -> Int {
         switch segment {
         case .followers:
@@ -107,6 +118,9 @@ struct FollowListView: View {
         }
     }
     
+    // MARK: - Filtered User List
+    
+    /// 검색어에 따라 필터링된 유저 리스트
     private var filteredUsers: [User] {
         let list = selected == .followers ? followers : followings
         if searchText.isEmpty {
@@ -119,6 +133,9 @@ struct FollowListView: View {
         }
     }
     
+    // MARK: - User List View
+        
+    /// 필터링된 유저 리스트를 보여주는 ScrollView
     private func userListView() -> some View {
         ScrollView {
             LazyVStack(spacing: 20) {
@@ -129,6 +146,7 @@ struct FollowListView: View {
         }
     }
     
+    /// 한 명의 유저를 표시하는 행 뷰
     private func userRowView(user: User) -> some View {
         HStack(spacing: 16) {
             ProfileImageView(image: user.profileImage, size: 47)
@@ -174,6 +192,7 @@ struct FollowListView: View {
         }
     }
     
+    /// 팔로우 상태 토글 로직
     private func toggleFollow(for user: User) {
         if selected == .followers {
             if let index = followers.firstIndex(where: { $0.id == user.id }) {
