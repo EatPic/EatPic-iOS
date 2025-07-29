@@ -38,23 +38,23 @@ struct CalendarDay: Identifiable {
 }
 
 protocol CalendarDateProviding {
-    func generateDays(for month: Date) -> [CalendarDay]
+    func generateBaseDays(for month: Date) -> [CalendarDay]
     func numberOfDays(in date: Date) -> Int
 }
 
 final class CalendarDateProvider: CalendarDateProviding {
     private let calendar: Calendar
-    private var metaDict = EatPicDayMeta.dummyByDate
 
     init(calendar: Calendar = .current) {
         self.calendar = calendar
     }
 
-    func generateDays(for month: Date) -> [CalendarDay] {
+    func generateBaseDays(for month: Date) -> [CalendarDay] {
         var days: [CalendarDay] = []
         days.append(contentsOf: makeLeadingDays(month))
         days.append(contentsOf: makeCurrentMonthDays(month))
-        days.append(contentsOf: makeTrailingDays(startCount: days.count, month: month))
+        days.append(
+            contentsOf: makeTrailingDays(startCount: days.count, month: month))
         return days
     }
 
@@ -98,9 +98,7 @@ final class CalendarDateProvider: CalendarDateProviding {
             components.minute = 0
             components.second = 0
             guard let date = calendar.date(from: components) else { return nil }
-            // TODO: [25.07.29] 실제 API에서 받아온 데이터로 변환 필요 - 리버/이재원
-            let meta = metaDict[calendar.startOfDay(for: date)]
-            return CalendarDay(day: day, date: date, isCurrentMonth: true, meta: meta)
+            return CalendarDay(day: day, date: date, isCurrentMonth: true)
         }
     }
 
@@ -129,7 +127,8 @@ class CalendarViewModel {
     var selectedDate: Date
     private let calendar: Calendar
     private let dateProvider: CalendarDateProviding
-    
+    private var metaDict: [Date: EatPicDayMeta] = EatPicDayMeta.dummyByDate
+
     init(
         currentMonth: Date = Date(),
         selectedDate: Date = Date(),
@@ -141,25 +140,32 @@ class CalendarViewModel {
         self.calendar = calendar
         self.dateProvider = dateProvider
     }
-    
+
     var days: [CalendarDay] {
-        dateProvider.generateDays(for: currentMonth)
+        dateProvider.generateBaseDays(for: currentMonth).map { baseDay in
+            let meta = metaDict[calendar.startOfDay(for: baseDay.date)]
+            return CalendarDay(
+                day: baseDay.day,
+                date: baseDay.date,
+                isCurrentMonth: baseDay.isCurrentMonth,
+                meta: meta
+            )
+        }
     }
     
+    func updateMeta(_ newMeta: [Date: EatPicDayMeta]) {
+        self.metaDict = newMeta
+    }
+
     func changeMonth(by value: Int) {
-        let calendar = Calendar.current
         if let newMonth = calendar.date(
             byAdding: .month, value: value, to: currentMonth) {
             currentMonth = newMonth
         }
     }
     
-    /// 사용자가 날짜를 선택했을 때, 기존 선택된 날짜와 비교하여 필요할 경우에만 선택 날짜를 갱신할 수 있도록 합니다. 달력 앱에서 불필요한 상태 업데이트를 방지하고, 성능을 높이기 위해 자주 사용하는 방식이에요!
-    /// - Parameter date: 선택한 날짜 업데이트
     public func changeSelectedDate(_ date: Date) {
-        if calendar.isDate(selectedDate, inSameDayAs: date) {
-            return
-        } else {
+        if !calendar.isDate(selectedDate, inSameDayAs: date) {
             selectedDate = date
         }
     }
@@ -287,7 +293,7 @@ struct CalendarView: View {
                 id: \.id
             ) { calendarDay in
                 Button {
-                    print("\(calendarDay.date)")
+                    print(dayFormatter.string(from: calendarDay.date))
                     cellTapAction()
                 } label: {
                     Cell(
@@ -301,18 +307,26 @@ struct CalendarView: View {
     }
     
     /// 요일 이름 한글로 가져오기
-    let localizedWeekdaySymbols: [String] = {
+    private let localizedWeekdaySymbols: [String] = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.shortWeekdaySymbols ?? []
     }()
     
     /// 헤더 날짜 표시 포맷터
-    let calendarHeaderDateFormatter: DateFormatter = {
+    private let calendarHeaderDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM"
         return formatter
     }()
+    
+    // 아시아/서울 시각으로 날짜 표시
+    private var dayFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd HH:mm"
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        return formatter
+    }
 }
 
 #Preview {
