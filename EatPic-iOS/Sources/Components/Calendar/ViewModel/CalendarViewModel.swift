@@ -5,7 +5,7 @@
 //  Created by jaewon Lee on 7/29/25.
 //
 
-import Foundation
+import SwiftUI
 
 /// 캘린더 뷰의 상태와 데이터를 관리하는 ViewModel입니다.
 ///
@@ -66,5 +66,21 @@ class CalendarViewModel {
         if !calendar.isDate(selectedDate, inSameDayAs: date) {
             selectedDate = date
         }
+    }
+    
+    /// 특정 날짜에 해당하는 이미지를 반환합니다.
+    ///
+    /// - Parameter date: 조회할 날짜
+    /// - Returns: 이미지가 있을 경우 해당 이미지, 없으면 nil
+    func image(for date: Date) -> Image? {
+        metaDict[calendar.startOfDay(for: date)]?.img
+    }
+
+    /// 특정 날짜에 이미지가 있는지 여부를 반환합니다.
+    ///
+    /// - Parameter date: 조회할 날짜
+    /// - Returns: 이미지 존재 여부
+    func hasImage(for date: Date) -> Bool {
+        metaDict[calendar.startOfDay(for: date)]?.img != nil
     }
 }

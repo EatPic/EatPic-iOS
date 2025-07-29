@@ -14,18 +14,20 @@ struct Cell: View {
     
     var body: some View {
         ZStack {
-            if let image = calendarDay.meta?.img {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 43, height: 43)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            } else {
-                Rectangle()
-                    .fill(rectangleFillColor)
-                    .frame(width: 43, height: 43)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            Group {
+                if viewModel.hasImage(for: calendarDay.date),
+                   calendarDay.isCurrentMonth,
+                   let image = viewModel.image(for: calendarDay.date) {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Rectangle()
+                        .fill(rectangleFillColor)
+                }
             }
+            .frame(width: 43, height: 43)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             
             Text("\(calendarDay.day)")
                 .font(.dsHeadline)
@@ -36,7 +38,8 @@ struct Cell: View {
     }
     
     private var textColor: Color {
-        if calendarDay.meta?.img != nil {
+        if viewModel.hasImage(for: calendarDay.date),
+           calendarDay.isCurrentMonth {
             return Color.white
         } else {
             if calendarDay.isCurrentMonth {
