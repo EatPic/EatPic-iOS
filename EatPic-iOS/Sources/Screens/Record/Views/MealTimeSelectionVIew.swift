@@ -128,7 +128,6 @@ struct MealTimeSelectView: View {
             }
             .disabled(selectedMeal == nil) // selectedMeal이 비어있을 경우 버튼 동작 비활성화
         }
-        .padding(.horizontal, 16)
         .customNavigationBar {
             Text("Pic 카드 기록")
         } right: {
@@ -138,6 +137,7 @@ struct MealTimeSelectView: View {
                 Image("Record/btn_home_close")
             })
         }
+        .padding(.horizontal, 16)
     }
 }
 

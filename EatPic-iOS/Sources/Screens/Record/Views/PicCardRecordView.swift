@@ -14,7 +14,7 @@
 
 import SwiftUI
 
-struct PicCardWritingView: View {
+struct PicCardRecordView: View {
     var body: some View {
         VStack {
             PicCardWriteView()
@@ -36,5 +36,5 @@ struct PicCardWritingView: View {
 }
 
 #Preview {
-    PicCardWritingView()
+    PicCardRecordView()
 }

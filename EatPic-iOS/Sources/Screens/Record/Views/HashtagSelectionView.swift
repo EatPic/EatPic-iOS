@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HashtagSelectionView: View {
+    @EnvironmentObject private var container: DIContainer
     
     // 해시 태그 데이터
     private let hashtags = [
@@ -123,7 +124,8 @@ struct HashtagSelectionView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                // TODO: 다음 화면 이동
+                // TODO: PicCardRecordView로 이동
+                container.router.push(.picCardRecordView)
             }
         }
         .padding(.horizontal, 16)
@@ -184,5 +186,3 @@ private struct HashtagButton: View {
 #Preview {
     HashtagSelectionView()
 }
-
-
