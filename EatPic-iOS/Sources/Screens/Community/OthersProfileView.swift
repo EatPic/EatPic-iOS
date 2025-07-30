@@ -142,7 +142,7 @@ struct OthersProfileView: View {
             }
             
             VStack {
-                Text("0")
+                Text("2")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로워")
@@ -154,7 +154,7 @@ struct OthersProfileView: View {
             }
             
             VStack {
-                Text("0")
+                Text("2")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로잉")
@@ -167,22 +167,33 @@ struct OthersProfileView: View {
         }
     }
     
+    private var userCards: [PicCard] {
+        return sampleCards.filter { $0.user == user }
+    }
+    
     private func userFeedView() -> some View {
-        LazyVGrid(columns: columns, spacing: 4, content: {
-            ForEach(0..<10) { index in
-                Rectangle()
-                    .fill(Color.gray030)
-                    .aspectRatio(1, contentMode: .fit)
-            }
-        })
-        .padding(.horizontal, 16)
+        GeometryReader { geometry in
+            let availableWidth = geometry.size.width - 32 // 좌우 패딩 16씩 제외
+            let spacing: CGFloat = 8 // 총 spacing (4 * 2)
+            let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
+            LazyVGrid(columns: columns, spacing: 4, content: {
+                ForEach(userCards) { card in
+                    card.image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .clipped()
+                }
+            })
+            .padding(.horizontal, 16)
+        }
     }
 }
 
 #Preview {
     OthersProfileView(user: CommunityUser(
-            id: "hong",
-            nickname: "홍길동",
+            id: "id1",
+            nickname: "아이디1",
             imageName: nil,
             isCurrentUser: true
         ))
