@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CommunityMainView: View {
     
-    @State private var selectedUser: User = sampleUsers[0]
+    @State private var selectedUser: CommunityUser = sampleUsers[0]
     
     var body: some View {
         ScrollView {
@@ -24,7 +24,7 @@ struct CommunityMainView: View {
     
     // 필터링된 카드 리스트
     private var filteredCards: [PicCard] {
-        if selectedUser.name == "전체" {
+        if selectedUser.nickname == "전체" {
             return sampleCards
         } else {
             return sampleCards.filter { $0.user == selectedUser }
@@ -42,7 +42,7 @@ struct CommunityMainView: View {
                             borderColor: user == selectedUser ? .pink050 : .gray040,
                             borderWidth: 3
                         )
-                        Text(user.name)
+                        Text(user.id)
                             .font(.dsSubhead)
                             .foregroundStyle(Color.gray080)
                     }
@@ -64,7 +64,7 @@ struct CommunityMainView: View {
             ForEach (filteredCards) { card in
                 PicCardView(
                     profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
-                    profileID: card.user.name,
+                    profileID: card.user.id,
                     time: card.time,
                     menuContent: {
                         Button(role: .destructive, action: {

@@ -10,16 +10,17 @@ import SwiftUI
 
 // MARK: - Models
 
-struct User: Identifiable, Equatable {
-    let id = UUID()
-    let name: String
+struct CommunityUser: Identifiable, Equatable {
+    let uuid = UUID()
+    let id: String
+    let nickname: String
     let profileImage: Image?
     let isCurrentUser: Bool
 }
 
 struct PicCard: Identifiable {
     let id = UUID()
-    let user: User
+    let user: CommunityUser
     let time: String
     let image: Image
     let memo: String
@@ -27,12 +28,13 @@ struct PicCard: Identifiable {
 
 // MARK: - Sample Data
 
-let sampleUsers: [User] = [
-    User(name: "전체", profileImage: Image("Community/grid_selected"), isCurrentUser: false),
-    User(name: "나", profileImage: nil, isCurrentUser: true),
-    User(name: "아이디1", profileImage: nil, isCurrentUser: false),
-    User(name: "아이디2", profileImage: nil, isCurrentUser: false),
-    User(name: "아이디3", profileImage: nil, isCurrentUser: false)
+let sampleUsers: [CommunityUser] = [
+    CommunityUser(id: "전체", nickname: "전체",
+                  profileImage: Image("Community/grid_selected"), isCurrentUser: false),
+    CommunityUser(id: "나", nickname: "나", profileImage: nil, isCurrentUser: true),
+    CommunityUser(id: "id1", nickname: "아이디1", profileImage: nil, isCurrentUser: false),
+    CommunityUser(id: "id2", nickname: "아이디2", profileImage: nil, isCurrentUser: false),
+    CommunityUser(id: "id3", nickname: "아이디3", profileImage: nil, isCurrentUser: false)
 ]
 
 let sampleCards: [PicCard] = [
