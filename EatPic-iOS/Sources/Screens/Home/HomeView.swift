@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject private var container: DIContainer
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                TopView()
+                
+                Spacer().frame(height: 40)
+                
+                topBar
                 
                 MealStatusView()
                 
@@ -26,15 +30,8 @@ struct HomeView: View {
         }
         .background(Color.gray030.ignoresSafeArea())
     }
-}
-
-// MARK: 홈 뷰 상단 제목 + 캘린더 알림 버튼 뷰
-private struct TopView: View {
-    @EnvironmentObject private var container: DIContainer
     
-    var body: some View {
-        Spacer().frame(height: 40)
-        
+    private var topBar: some View {
         HStack(alignment: .top) {
             Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
                 .font(.dsTitle2)
