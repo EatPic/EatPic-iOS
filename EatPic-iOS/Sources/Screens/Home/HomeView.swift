@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -24,23 +25,13 @@ struct HomeView: View {
             .padding(.horizontal, 16)
         }
         .background(Color.gray030.ignoresSafeArea())
-        .customNavigationBar(title: {
-            HStack {
-                Circle().frame(width: 32, height: 32)
-                Text("Title")
-            }
-        }, right: {
-            Button {
-                print("오른쪽 버튼")
-            } label: {
-                Image(systemName: "gearshape")
-            }
-        })
     }
 }
 
 // MARK: 홈 뷰 상단 제목 + 캘린더 알림 버튼 뷰
 private struct TopView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
         Spacer().frame(height: 40)
         
@@ -52,7 +43,9 @@ private struct TopView: View {
             Spacer()
             
             Button {
+                // FIXME: 추후 Calenderview 로 이동해야함
                 print("캘린더로 이동")
+                container.router.push(.calenderCardView)
             } label: {
                 Image("Home/btn_home_calender")
                     .resizable()
@@ -63,6 +56,7 @@ private struct TopView: View {
             
             Button {
                 print("알림으로 이동")
+                container.router.push(.notificationView)
             } label: {
                 Image("Home/btn_home_notification")
                     .resizable()
