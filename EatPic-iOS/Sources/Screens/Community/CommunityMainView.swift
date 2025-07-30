@@ -62,7 +62,7 @@ struct CommunityMainView: View {
     // 카드 리스트 뷰
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
-            ForEach (filteredCards) { card in
+            ForEach(filteredCards) { card in
                 PicCardView(
                     profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
                     profileID: card.user.id,
