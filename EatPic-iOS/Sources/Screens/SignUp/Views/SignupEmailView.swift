@@ -64,13 +64,22 @@ struct SignupEmailView: View {
     
     /// 이메일 회원가입 뷰 텍스트 필드
     private var signupEmailTextField: some View {
-        FormTextField(
-            fieldType: SignUpFieldType.email,
-            focusedField: $focus,
-            currentField: .email,
-            text: $viewModel.email,
-            isValid: viewModel.isEmailValid
-        )
+        VStack(alignment: .leading, spacing: 8) {
+            FormTextField(
+                fieldType: SignUpFieldType.email,
+                focusedField: $focus,
+                currentField: .email,
+                text: $viewModel.email,
+                isValid: viewModel.isEmailValid
+            )
+            
+            // 유효성 검사 실패 시 하단에 메시지 노출
+            if let error = viewModel.emailErrorMessage {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
+            }
+        }
     }
     
     // MARK: - BottomContents(화면 이동 버튼)
@@ -78,7 +87,7 @@ struct SignupEmailView: View {
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+            color: viewModel.isEmailValid ? .green060 :.gray020,
             text: "다음",
             font: .dsTitle3,
             textColor: .gray040,
