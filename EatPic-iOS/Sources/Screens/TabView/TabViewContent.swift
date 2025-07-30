@@ -40,7 +40,7 @@ struct TabViewContent: View {
 
         // 탐색 탭 화면: 탐색 관련 화면을 연결
         case .explore:
-            Text("explore")
+            ExploreMainView()
 
         // 마이페이지 탭 화면: 마이페이지 관련 화면을 연결
         case .myPage:
