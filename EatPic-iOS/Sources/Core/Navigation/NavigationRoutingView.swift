@@ -21,6 +21,7 @@ enum NavigationRoute: Equatable, Hashable {
     case myMemoView
     case receiptDetailView
     case exploreMainView
+//    case storeLocationView(markers: [Marker])
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -59,6 +60,8 @@ struct NavigationRoutingView: View {
                 ReceiptDetailView()
             case .exploreMainView:
                 ExploreMainView()
+//            case .storeLocationView(let markers):
+//                StoreLocationView(markers: markers)
                 
             }
         }

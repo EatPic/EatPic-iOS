@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct MyBadgeStatusAllView: View{
+struct MyBadgeStatusAllView: View {
     
     let getBadgeStatus: String
     // TODO: 음 근데 이거 매개변수 처리하면 안되긴 하죠? 어떻게 각각의 progress 값을 각각 받아야 할지
+    // 음 매개변수로 각각 받을수 잇게 모델안에 넣어서... 일단 나중에
     
     var body: some View {
-        VStack{
+        VStack {
             Spacer().frame(height: 32)
             
             HStack {
