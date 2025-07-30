@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CommunityMainView: View {
     
-    @State private var selectedUser: User = sampleUsers[0]
+    @State private var selectedUser: CommunityUser = sampleUsers[0]
     
     var body: some View {
         ScrollView {
