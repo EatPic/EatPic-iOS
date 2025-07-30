@@ -148,5 +148,5 @@ struct MyBadgeStatusAllView: View{
 }
 
 #Preview {
-    MyBadgeStatusAllView(getBadgeStatus: "3")  // ← 올바른 수정
+    MyBadgeStatusAllView(getBadgeStatus: "3")
 }

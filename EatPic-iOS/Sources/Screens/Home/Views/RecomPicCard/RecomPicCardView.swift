@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// FIXME: 추천 픽카드 고대로 가져와야하므로,, Model, ViewModel 공유해야함
+// FIXME: 추천 픽카드 고대로 가져와야하므로,, Model, ViewModel 공유해야함? 맞나 이게 
 struct RecomPicCardView: View {
     var body: some View {
         VStack {
@@ -15,7 +15,7 @@ struct RecomPicCardView: View {
                 profileImage: Image(systemName: "circle.fill"),
                 profileID: "아이디",
                 time: "오후 6:30",
-                onEllipsisTapped: {
+                menuContent: {
                     Button(role: .destructive, action: {
                         print("신고하기")
                     }, label: {
