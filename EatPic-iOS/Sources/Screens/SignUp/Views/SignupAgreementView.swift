@@ -70,20 +70,33 @@ struct SignupAgreementView: View {
         
         Button(
             action: {
-                print("전체동의 선택") /// 전체 동의 액션 구현
+                let shouldCheck = !viewModel.agreementList.allSatisfy {
+                    $0.isChecked
+                }
+                viewModel.checkAll(shouldCheck)
             },
             label: {
                 ZStack {
                     // 버튼배경 테두리
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray050)
+                        .stroke(
+                            viewModel.agreementList.allSatisfy { $0.isChecked }
+                            ? Color.green060
+                            : Color.gray050)
                     
                     // 버튼 내부 텍스트 및 이미지
                     HStack(alignment: .center, spacing: 14) {
                         Image(systemName: "checkmark")
-                            .foregroundStyle(Color.gray050)
+                            .foregroundStyle(
+                                viewModel.agreementList
+                                    .allSatisfy { $0.isChecked }
+                                ? Color.green060
+                                : Color.gray050)
                         Text("서비스 이용약관 전체동의")
-                            .foregroundStyle(Color.gray050)
+                            .foregroundStyle(
+                                viewModel.agreementList.allSatisfy { $0.isChecked }
+                                ? Color.green060
+                                : Color.gray050)
                     }
                 }
                 .frame(height: 58)
@@ -128,7 +141,7 @@ struct SignupAgreementView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-                /// 약관동의 통과시 화면 이동 구현 예정
+                /// 약관동의 통과시 화면 이동 구현 예정 (필수사항 체크 유효성 검사하기)
                 print("다음화면이동")
             })
     }
