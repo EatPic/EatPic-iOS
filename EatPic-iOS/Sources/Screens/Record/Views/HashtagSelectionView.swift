@@ -137,7 +137,7 @@ struct HashtagSelectionView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                // FIXME: 기존에 내가 열고 있던 화면으로 Navigation (????)
+                // FIXME: Home뷰로 네비게이션
             }, label: {
                 Image("Record/btn_home_close")
             })
