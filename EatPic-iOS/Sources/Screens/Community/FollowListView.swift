@@ -26,7 +26,7 @@ struct FollowListView: View {
     }
     // MARK: - Properties
     @Namespace var name
-    @State private var selected: FollowSegment = .followers
+    @State private var selected: FollowSegment
     @State private var searchText = ""
     
     // 샘플 팔로워 유저 리스트
@@ -40,6 +40,11 @@ struct FollowListView: View {
         FollowUser(id: "cheolsoo", nickname: "이철수", profileImage: nil, isFollow: true),
         FollowUser(id: "minsu", nickname: "박민수", profileImage: nil, isFollow: true)
     ]
+    
+    // 초기 selected 값을 주입받는 init
+    init(selected: FollowSegment = .followers) {
+        _selected = State(initialValue: selected)
+    }
     
     // MARK: - Body
     
@@ -134,7 +139,7 @@ struct FollowListView: View {
     }
     
     // MARK: - User List View
-        
+    
     /// 필터링된 유저 리스트를 보여주는 ScrollView
     private func userListView() -> some View {
         ScrollView {

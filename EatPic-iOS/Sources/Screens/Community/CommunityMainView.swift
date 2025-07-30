@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CommunityMainView: View {
     
+    @EnvironmentObject private var container: DIContainer
     @State private var selectedUser: CommunityUser = sampleUsers[0]
     
     var body: some View {
@@ -74,7 +75,10 @@ struct CommunityMainView: View {
                         }
                     },
                     postImage: card.image,
-                    myMemo: card.memo
+                    myMemo: card.memo,
+                    onProfileTap: {
+                        container.router.push(.userProfile(user: card.user))
+                    }
                 )
             }
         }

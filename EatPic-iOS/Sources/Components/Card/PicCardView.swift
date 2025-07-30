@@ -14,6 +14,7 @@ import SwiftUI
 ///   - menuContent: 메뉴버튼(eclipsis) 클릭 시 나타날 버튼목록 커스텀
 ///   - postImage: 업로드 이미지
 ///   - myMemo: 사용자가 작성하는 '나의 메모'
+///   - onProfileTap: 프로필 탭했을 시 프로필뷰로 넘어가는 코드 작성 위함
 struct PicCardView<Content: View>: View {
     
     // MARK: property
@@ -23,6 +24,7 @@ struct PicCardView<Content: View>: View {
     let menuContent: () -> Content
     let postImage: Image
     let myMemo: String
+    let onProfileTap: (() -> Void)?
     
     // MARK: init
     init(
@@ -31,7 +33,8 @@ struct PicCardView<Content: View>: View {
         time: String,
         @ViewBuilder menuContent: @escaping () -> Content,
         postImage: Image,
-        myMemo: String
+        myMemo: String,
+        onProfileTap: (() -> Void)? = nil // 기본값 nil
     ) {
         self.profileImage = profileImage
         self.profileID = profileID
@@ -39,6 +42,7 @@ struct PicCardView<Content: View>: View {
         self.menuContent = menuContent
         self.postImage = postImage
         self.myMemo = myMemo
+        self.onProfileTap = onProfileTap
     }
     
     // MARK: body
@@ -50,6 +54,9 @@ struct PicCardView<Content: View>: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 36, height: 36)
+                    .onTapGesture {
+                        onProfileTap?()
+                    }
                 
                 VStack(alignment: .leading) {
                     Text(profileID)
