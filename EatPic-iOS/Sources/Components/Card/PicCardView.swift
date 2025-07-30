@@ -67,9 +67,11 @@ struct PicCardView<Content: View>: View {
                 } label: {
                     Image(systemName: "ellipsis")
                         .resizable()
-                        .frame(width: 24, height: 6)
-                        .padding(.trailing, 2)
+                        .frame(width: 24, height: 5)
                         .foregroundStyle(Color.black)
+                        .padding(.trailing, 2)
+                        .padding([.leading, .top, .bottom], 16) // 실제 터치 영역 넓히기
+                        .contentShape(Rectangle()) // 패딩 영역까지 터치 인식
                 }
             }
             
