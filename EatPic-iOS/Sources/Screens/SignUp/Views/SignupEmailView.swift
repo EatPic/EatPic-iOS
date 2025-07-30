@@ -7,11 +7,12 @@
 
 import SwiftUI
 
+/// 이메일 회원가입 뷰
 struct SignupEmailView: View {
     // MARK: - Property
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
-    @State var viewModel: SignUpViewModel
+    @State var viewModel: SignupEmailViewModel
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?

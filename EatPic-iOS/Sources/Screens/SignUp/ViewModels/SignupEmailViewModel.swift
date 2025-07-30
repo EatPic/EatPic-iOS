@@ -1,15 +1,15 @@
 //
-//  SignUpViewModel.swift
+//  LoginViewModel.swift
 //  EatPic-iOS
 //
-//  Created by 송승윤 on 7/31/25.
+//  Created by 송승윤 on 7/14/25.
 //
 
 import Foundation
 
 /// 로그인 화면 초기 ViewModel
 @Observable
-class SignUpViewModel {
+class SignupEmailViewModel {
     
     // MARK: - Property
     
