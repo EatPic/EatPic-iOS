@@ -129,6 +129,15 @@ struct MealTimeSelectView: View {
             .disabled(selectedMeal == nil) // selectedMeal이 비어있을 경우 버튼 동작 비활성화
         }
         .padding(.horizontal, 16)
+        .customNavigationBar {
+            Text("Pic 카드 기록")
+        } right: {
+            Button(action: {
+                // FIXME: 기존에 내가 열고 있던 화면으로 Navigation (????)
+            }, label: {
+                Image("Record/btn_home_close")
+            })
+        }
     }
 }
 

@@ -127,6 +127,15 @@ struct HashtagSelectionView: View {
             }
         }
         .padding(.horizontal, 16)
+        .customNavigationBar {
+            Text("Pic 카드 기록")
+        } right: {
+            Button(action: {
+                // FIXME: 기존에 내가 열고 있던 화면으로 Navigation (????)
+            }, label: {
+                Image("Record/btn_home_close")
+            })
+        }
     }
     
     // MARK: - Helper Functions
