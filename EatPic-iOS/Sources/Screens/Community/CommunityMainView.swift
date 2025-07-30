@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct CommunityMainView: View {
+    
+    @State private var selectedUser: User = sampleUsers[0]
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 40) {
@@ -19,65 +22,35 @@ struct CommunityMainView: View {
         .scrollIndicators(.hidden)
     }
     
+    // 필터링된 카드 리스트
+    private var filteredCards: [PicCard] {
+        if selectedUser.name == "전체" {
+            return sampleCards
+        } else {
+            return sampleCards.filter { $0.user == selectedUser }
+        }
+    }
+    
     private func userListView() -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 16) {
-                VStack(spacing: 16) {
-                    ProfileImageView(
-                        image: Image("Community/grid_selected"),
-                        size: 64,
-                        borderColor: .pink050,
-                        borderWidth: 3
-                    )
-                    Text("전체")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Color.gray080)
+                ForEach(sampleUsers) { user in
+                    VStack(spacing: 16) {
+                        ProfileImageView(
+                            image: user.profileImage,
+                            size: 64,
+                            borderColor: user == selectedUser ? .pink050 : .gray040,
+                            borderWidth: 3
+                        )
+                        Text(user.name)
+                            .font(.dsSubhead)
+                            .foregroundStyle(Color.gray080)
+                    }
+                    .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
+                    .onTapGesture {
+                        selectedUser = user
+                    }
                 }
-                .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
-                VStack(spacing: 16) {
-                    ProfileImageView(
-                        size: 64,
-                        borderColor: .gray040,
-                        borderWidth: 3
-                    )
-                    Text("나")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Color.gray080)
-                }
-                .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
-                VStack(spacing: 16) {
-                    ProfileImageView(
-                        size: 64,
-                        borderColor: .gray040,
-                        borderWidth: 3
-                    )
-                    Text("아이디")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Color.gray080)
-                }
-                .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
-                VStack(spacing: 16) {
-                    ProfileImageView(
-                        size: 64,
-                        borderColor: .gray040,
-                        borderWidth: 3
-                    )
-                    Text("아이디")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Color.gray080)
-                }
-                .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
-                VStack(spacing: 16) {
-                    ProfileImageView(
-                        size: 64,
-                        borderColor: .gray040,
-                        borderWidth: 3
-                    )
-                    Text("아이디")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Color.gray080)
-                }
-                .padding(EdgeInsets(top: 12, leading: 4, bottom: 0, trailing: 2))
             }
             .padding(.horizontal, 16)
             .frame(maxHeight: 112)
@@ -85,35 +58,25 @@ struct CommunityMainView: View {
         .scrollIndicators(.hidden)
     }
     
+    // 카드 리스트 뷰
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
-            PicCardView(
-                profileImage: Image(systemName: "circle.fill"),
-                profileID: "아이디",
-                time: "오후 6:30",
-                menuContent: {
-                    Button(role: .destructive, action: {
-                        print("신고하기")
-                    }) {
-                        Label("신고하기", systemImage: "exclamationmark.bubble")
-                    }
-                },
-                postImage: Image("Community/testImage"),
-                myMemo: "오늘은 샐러드를 먹었습니다~")
-            
-            PicCardView(
-                profileImage: Image(systemName: "circle.fill"),
-                profileID: "아이디",
-                time: "오후 6:30",
-                menuContent: {
-                    Button(role: .destructive, action: {
-                        print("신고하기")
-                    }) {
-                        Label("신고하기", systemImage: "exclamationmark.bubble")
-                    }
-                },
-                postImage: Image("Community/testImage"),
-                myMemo: "오늘은 샐러드를 먹었습니다~")
+            ForEach (filteredCards) { card in
+                PicCardView(
+                    profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
+                    profileID: card.user.name,
+                    time: card.time,
+                    menuContent: {
+                        Button(role: .destructive, action: {
+                            print("신고하기")
+                        }) {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    },
+                    postImage: card.image,
+                    myMemo: card.memo
+                )
+            }
         }
         .padding(.horizontal, 16)
     }
