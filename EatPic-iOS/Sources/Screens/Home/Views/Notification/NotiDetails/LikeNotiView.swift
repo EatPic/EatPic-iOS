@@ -35,7 +35,7 @@ struct LikeNotiView: View {
             
             Spacer()
             
-            // 게시글 사진.. ( << 어케 불러옴?)
+            // FIXME: 게시글 사진.. ( << 어케 불러옴?)
             RoundedRectangle(cornerRadius: 4)
                 .frame(width: 47, height: 47)
         }

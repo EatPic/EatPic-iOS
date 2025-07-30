@@ -5,6 +5,7 @@
 //  Created by 이은정 on 7/29/25.
 //
 
+// FIXME: 각 Carousel 사진마다 개별 뷰 보여줘야하는거 아닌가..? 아니아니 개별뷰가 아니라 각각의 사진마다 상단바의 시간도 다르고 아래 뜨는 버튼눌럿을때 나오는 내용이 달라져야하는디 흠
 import SwiftUI
 
 struct CarouselView: View {
