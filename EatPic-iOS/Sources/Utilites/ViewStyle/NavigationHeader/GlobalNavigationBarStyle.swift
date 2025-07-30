@@ -35,6 +35,7 @@ enum GlobalNavigationBarStyle {
         let backButtonAppearance = UIBarButtonItemAppearance()
         backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
         appearance.backButtonAppearance = backButtonAppearance
+        appearance.backgroundColor = UIColor.white
 
         /// 설정한 Appearance를 모든 UINavigationBar에 적용(전역 설정)
         UINavigationBar.appearance().standardAppearance = appearance
