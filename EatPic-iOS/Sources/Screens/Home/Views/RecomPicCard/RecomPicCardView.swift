@@ -25,6 +25,8 @@ struct RecomPicCardView: View {
                 postImage: Image(systemName: "square.fill"),
                 myMemo: "오늘은 샐러드를 먹었습니다~"
             )
+            
+            Spacer()
         }
         .padding(.horizontal, 16)
         .customNavigationBar {

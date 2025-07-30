@@ -15,9 +15,13 @@ enum NavigationRoute: Equatable, Hashable {
     case notification
     case emailLoginView
     case signUpEmailView
-    case myMemo
-//    case storeLocation(markers: ?)
-    case receiptDetail
+    case homeView
+    case myBadgeStatusAllView(getBadgeStatus: String)
+    case picCardEditView
+    case calenderCardView
+    case myMemoView
+    case receiptDetailView
+    case exploreMainView
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -44,12 +48,21 @@ struct NavigationRoutingView: View {
                 EmailLoginView()
             case .signUpEmailView:
                 SignupEmailView()
-            case .myMemo:
+            case .homeView:
+                HomeView()
+            case .myBadgeStatusAllView(let getBadgeStatus):
+                MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
+            case .picCardEditView:
+                PicCardEditView()
+            case .calenderCardView:
+                CalenderCardView()
+            case .myMemoView:
                 MyMemoView()
-//            case .storeLocation(let markers):
-//                StoreLocationView(markers: markers)
-            case .receiptDetail:
+            case .receiptDetailView:
                 ReceiptDetailView()
+            case .exploreMainView:
+                ExploreMainView()
+                
             }
         }
         .environmentObject(container)

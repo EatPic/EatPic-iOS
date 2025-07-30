@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MyBadgeStatusAllView: View{
     
-    let getBadgeStatus: String // 음 근데 이거 매개변수 처리하면 안되긴 하죠?
+    let getBadgeStatus: String
+    // TODO: 음 근데 이거 매개변수 처리하면 안되긴 하죠? 어떻게 각각의 progress 값을 각각 받아야 할지
     
     var body: some View {
         VStack{

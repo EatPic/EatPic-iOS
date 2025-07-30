@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct MyBadgeStatusHomeView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
-        
         VStack {
             HStack {
                 Text("나의 뱃지 현황")
@@ -19,6 +20,8 @@ struct MyBadgeStatusHomeView: View {
                 Spacer()
                 
                 Button(action: {
+                    // TODO: RecomPicCardView로 Navigation
+                    container.router.push(.myBadgeStatusAllView(getBadgeStatus: "6"))
                     print("전체보기")
                 }, label: {
                     Text("전체보기 >")

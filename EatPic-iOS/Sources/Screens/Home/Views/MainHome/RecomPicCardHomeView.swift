@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RecomPicCardHomeView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     @StateObject private var viewModel = RecomPicCardViewModel()
     
     let rows = [GridItem(.fixed(103))]
@@ -22,7 +24,8 @@ struct RecomPicCardHomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    print("전체보기")
+                    // TODO: ExploreMainView로 Navigation
+                    container.router.push(.exploreMainView)
                 }, label: {
                     Text("전체보기 >")
                         .foregroundStyle(Color.green060)

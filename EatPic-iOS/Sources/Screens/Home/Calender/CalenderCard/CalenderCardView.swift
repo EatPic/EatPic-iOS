@@ -40,7 +40,7 @@ struct CalenderCardView: View {
                         buttonName: "식당 위치"
                     ) {
                         print("식당 위치 뷰로 이동")
-                        // TODO: StoreLocationView로 Navigation
+                        // TODO: StoreLocationView로 Navigation << 이거 계속 안되는디 ㅜㅜ
 //                        container.router.push(.storeLocation(makers: markers)
                         
                     }
@@ -53,7 +53,7 @@ struct CalenderCardView: View {
                     ) {
                         print("나의 메모 뷰로 이동")
                         // TODO: MyMemoView로 Navigation
-                        container.router.push(.myMemo)
+                        container.router.push(.myMemoView)
                     }
                     
                     Divider()
@@ -64,7 +64,7 @@ struct CalenderCardView: View {
                     ) {
                         print("레시피 내용 뷰로 이동")
                         // TODO: ReceiptDetailView로 Navigation
-                        container.router.push(.receiptDetail)
+                        container.router.push(.receiptDetailView)
                     }
                 }
                 .padding(.vertical, 8)

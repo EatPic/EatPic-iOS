@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PicCardEditView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
         VStack {
             // 상단바
@@ -20,7 +22,8 @@ struct PicCardEditView: View {
                 Spacer().frame(width: 119)
                 
                 Button(action: {
-                    // TODO: RecomPicCardView로 Navigation
+                    // TODO: CalenderCardView로 Navigation
+                    container.router.push(.calenderCardView)
                 }, label: {
                     Image("Home/btn_home_close")
                 })
