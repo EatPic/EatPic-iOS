@@ -36,7 +36,8 @@ struct TabViewContent: View {
 
         // 글쓰기 탭 화면: 글쓰기 관련 화면을 연결
         case .writePost:
-            Text("writePost")
+            MealTimeSelectView()
+            // FIXME: CameraModelView() 이후 앨범 또는 카메라 사진 받은 후 -> HashtagSelectionView로 이동
 
         // 탐색 탭 화면: 탐색 관련 화면을 연결
         case .explore:

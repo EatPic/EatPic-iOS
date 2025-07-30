@@ -16,6 +16,8 @@ enum MealType: String, CaseIterable {
 
 struct MealTimeSelectView: View {
     
+    @EnvironmentObject private var container: DIContainer
+    
     // 식사 시간 선택 버튼을 위한
     @State private var selectedMeal: MealType?
     
@@ -28,10 +30,15 @@ struct MealTimeSelectView: View {
             
             Spacer().frame(height: 36)
             
-            // 질문
-            Text("이번에 기록할 \n식사는 언제 드신 건가요?")
-                .font(.dsTitle2)
-                .frame(maxWidth: .infinity, alignment: .leading) // 왼쪽 정렬
+            HStack {
+                // 질문
+                Text("이번에 기록할 \n식사는 언제 드신 건가요?")
+                    .font(.dsTitle2)
+                    .foregroundStyle(.black)
+                    .frame(alignment: .leading)
+      
+                Spacer()
+            }
             
             Spacer().frame(height: 32)
             
@@ -45,10 +52,11 @@ struct MealTimeSelectView: View {
                         action: {
                             if selectedMeal == .breakfast {
                                 selectedMeal = nil  // 같은 버튼 클릭 시 해제
+                                print("버튼 선택 해제")
                             } else {
                                 selectedMeal = .breakfast  // 다른 버튼 선택
+                                print("아침 선택")
                             }
-                            print("선택된 식사: \(selectedMeal?.rawValue ?? "선택 안됨")")
                         }
                     )
                     
@@ -58,10 +66,11 @@ struct MealTimeSelectView: View {
                         action: {
                             if selectedMeal == .lunch {
                                 selectedMeal = nil  // 같은 버튼 클릭 시 해제
+                                print("버튼 선택 해제")
                             } else {
-                                selectedMeal = .lunch  // 다른 버튼 선택
+                                selectedMeal = .lunch // 버튼 클릭 시
+                                print("점심 선택")
                             }
-                            print("선택된 식사: \(selectedMeal?.rawValue ?? "선택 안됨")")
                         }
                     )
                 }
@@ -74,10 +83,11 @@ struct MealTimeSelectView: View {
                         action: {
                             if selectedMeal == .dinner {
                                 selectedMeal = nil  // 같은 버튼 클릭 시 해제
+                                print("버튼 선택 해제")
                             } else {
                                 selectedMeal = .dinner  // 다른 버튼 선택
+                                print("저녁 선택")
                             }
-                            print("선택된 식사: \(selectedMeal?.rawValue ?? "선택 안됨")")
                         }
                     )
                     
@@ -87,10 +97,11 @@ struct MealTimeSelectView: View {
                         action: {
                             if selectedMeal == .snack {
                                 selectedMeal = nil  // 같은 버튼 클릭 시 해제
+                                print("버튼 선택 해제")
                             } else {
                                 selectedMeal = .snack  // 다른 버튼 선택
+                                print("간식 선택")
                             }
-                            print("선택된 식사: \(selectedMeal?.rawValue ?? "선택 안됨")")
                         }
                     )
                 }
@@ -101,7 +112,7 @@ struct MealTimeSelectView: View {
             // 최하단 버튼 (다음으로 넘어가는 액션)
             PrimaryButton(
                 color: selectedMeal != nil ? .green060 : .gray020,
-                text: "확인",
+                text: "다음",
                 font: .dsTitle3,
                 textColor: selectedMeal != nil ? .white : .gray040,
                 width: 361,
@@ -109,12 +120,13 @@ struct MealTimeSelectView: View {
                 cornerRadius: 10
             ) {
                 if let selectedMeal = selectedMeal {
+                    // TODO: selectedMeal의 정보 저장?
+                    // TODO: HastageSelectionView로 Navigation
+                    container.router.push(.hashtagSelectionView)
                     print("다음 화면으로 이동 - 선택된 식사: \(selectedMeal.rawValue)")
-                } else {
-                    print("식사를 선택해주세요")
                 }
             }
-            .disabled(selectedMeal == nil)
+            .disabled(selectedMeal == nil) // selectedMeal이 비어있을 경우 버튼 동작 비활성화
         }
         .padding(.horizontal, 16)
     }
