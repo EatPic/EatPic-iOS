@@ -78,7 +78,9 @@ struct SignupNicknameView: View {
             fieldType: SignUpFieldType.nickname,
             focusedField: $focus,
             currentField: .nickname,
-            text: $viewModel.nickname)
+            text: $viewModel.nickname,
+            isValid: true
+        )
     }
 
     // MARK: - BottomContents(화면 이동 버튼)

@@ -69,7 +69,9 @@ struct SignupPasswordView: View {
             fieldType: SignUpFieldType.password,
             focusedField: $focus,
             currentField: .password,
-            text: $viewModel.password)
+            text: $viewModel.password,
+            isValid: true
+        )
     }
     
     /// 회원가입 비밀번호 확인 텍스트 필드
@@ -79,7 +81,9 @@ struct SignupPasswordView: View {
             fieldType: SignUpFieldType.password,
             focusedField: $focus,
             currentField: .password,
-            text: $viewModel.password)
+            text: $viewModel.password,
+            isValid: true
+        )
     }
     
     // MARK: - BottomContents(화면 이동 버튼)

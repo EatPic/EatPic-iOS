@@ -79,7 +79,9 @@ struct SignupIdView: View {
             fieldType: SignUpFieldType.id,
             focusedField: $focus,
             currentField: .id,
-            text: $viewModel.id)
+            text: $viewModel.id,
+            isValid: true
+        )
     }
 
     // MARK: - BottomContents(화면 이동 버튼)

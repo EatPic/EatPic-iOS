@@ -68,7 +68,9 @@ struct SignupEmailView: View {
             fieldType: SignUpFieldType.email,
             focusedField: $focus,
             currentField: .email,
-            text: $viewModel.email)
+            text: $viewModel.email,
+            isValid: viewModel.isEmailValid
+        )
     }
     
     // MARK: - BottomContents(화면 이동 버튼)

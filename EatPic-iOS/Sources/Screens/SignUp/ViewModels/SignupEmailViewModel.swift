@@ -28,13 +28,25 @@ class SignupEmailViewModel {
     /// 사용자 입력 아이디
     var id: String = ""
     
-    // MARK: - Logic
-
-    var fieldsNotEmpty: Bool {
-        !email.isEmpty && !password.isEmpty
+    /// 에러 메시지
+    var emailErrorMessage: String? {
+        if email.isEmpty {
+                return nil
+            } else if !isValidEmailFormat {
+                return "유효한 이메일을 입력해주세요."
+            } else if isEmailDuplicate {
+                return "이미 가입된 이메일입니다. 로그인해주세요."
+            } else {
+                return nil
+            }
     }
     
     // MARK: - 이메일 유효성 검사 Function
+    
+    /// 유효성 통과 여부
+    var isEmailValid: Bool {
+        isValidEmailFormat && !isEmailDuplicate
+    }
     
     /// 이메일 형식 유효성 검사 (예: abc @gmail.ac.kr, @naver.com, @hanmail.net)
     var isValidEmailFormat: Bool {
@@ -50,5 +62,9 @@ class SignupEmailViewModel {
     /// 다음 버튼 활성화 여부
     var canProceedWithEmail: Bool {
         isValidEmailFormat && !isEmailDuplicate
+    }
+    
+    var fieldsNotEmpty: Bool {
+        !email.isEmpty && !password.isEmpty
     }
 }
