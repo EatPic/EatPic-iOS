@@ -15,11 +15,16 @@
 import SwiftUI
 
 struct PicCardRecordView: View {
+    // 바텀 시트 표시 여부
+    @State private var showHashtagAddSheet = false
+
+    
     var body: some View {
         VStack {
             PicCardWriteView()
             // FIXME: PicCardWriteView placeholder여백 왜이럼
             // FIXME: PicCardWriteView FocusState으로 처리
+            // FIXME: 모든 버튼 클로저 처리
             // FIXME: PicCardWriteView PrimarybuttonText 매개변수 처리
             // FIXME: PicCardWriteView의 PrimarybuttonAction 매개변수 처리 ( 추후 CommunityMain으로 Navigation )
         }

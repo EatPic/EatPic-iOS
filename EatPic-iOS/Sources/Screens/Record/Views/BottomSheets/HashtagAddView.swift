@@ -12,9 +12,11 @@ struct HashtagAddView: View {
     
     var body: some View {
         VStack {
-//            TopBanner()
-//            
-//            Spacer().frame(height: 50)
+            TopBanner()
+            
+//            Spacer().frame(height: 78)
+//            Spacer().frame(height: 78)
+            Spacer()
             
             HStack {
                 TextAreaView(
@@ -36,34 +38,32 @@ struct HashtagAddView: View {
                 ) {
                     // TODO: 해시태그 추가 액션
                 }
-                
-                Spacer()
             }
             .padding(.horizontal, 19)
         }
     }
 }
-//
-//private struct TopBanner: View {
-//    var body: some View {
-//        VStack {
-//            ZStack {
-//                Text("해시태그 추가")
-//                    .font(.dsTitle2)
-//
-//                HStack {
-//                    Spacer()
-//                    Button(action: {
-//                        // TODO: RecomPicCardView로 Navigation
-//                    }, label: {
-//                        Image("Record/btn_home_close")
-//                    })
-//                }
-//            }
-//            .padding(.horizontal, 19)
-//        }
-//    }
-//}
+
+private struct TopBanner: View {
+    var body: some View {
+        VStack {
+            ZStack {
+                Text("해시태그 추가")
+                    .font(.dsTitle2)
+
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        // TODO: RecomPicCardView로 Navigation
+                    }, label: {
+                        Image("Record/btn_home_close")
+                    })
+                }
+            }
+            .padding(.horizontal, 19)
+        }
+    }
+}
 
 #Preview {
     HashtagAddView()

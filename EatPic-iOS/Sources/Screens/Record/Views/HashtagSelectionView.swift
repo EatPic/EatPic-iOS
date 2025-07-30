@@ -144,7 +144,7 @@ struct HashtagSelectionView: View {
         }
         .sheet(isPresented: $showHashtagAddSheet) {
             BottomSheetView(
-                title: "해시태그 추가",
+                title: "",
                 content: { HashtagAddView() }
             )
             .presentationDetents([.fraction(0.3)])

@@ -21,6 +21,10 @@ struct MealTimeSelectView: View {
     // 식사 시간 선택 버튼을 위한
     @State private var selectedMeal: MealType?
     
+    // 바텀 시트 표시 여부
+    @State private var showHashtagAddSheet = false
+
+    
     var body: some View {
         VStack {
             // 캐릭터 이미지
