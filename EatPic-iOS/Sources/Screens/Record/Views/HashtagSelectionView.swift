@@ -11,7 +11,7 @@ struct HashtagSelectionView: View {
     @EnvironmentObject private var container: DIContainer
     
     // 해시 태그 데이터
-    private let hashtags = [
+    let hashtags = [
         "야식", "브런치", "혼밥", "집밥",
         "식단관리", "자취생", "건강", "맛집",
         "비건", "한식", "양식", "중식", "일식"
@@ -19,6 +19,9 @@ struct HashtagSelectionView: View {
     
     // 선택된 해시태그들
     @State private var selectedHashtags: Set<String> = []
+    
+    // 바텀 시트 표시 여부
+    @State private var showHashtagAddSheet = false
     
     // 최대 선택 가능한 개수
     private let maxSelectionCount = 3
@@ -94,7 +97,7 @@ struct HashtagSelectionView: View {
             
             // 직접 추가하기 버튼
             Button(action: {
-                // TODO: 해시태그 추가 바텀 시트 뷰 열림 액션
+                showHashtagAddSheet = true
             }, label: {
                 HStack {
                     Text("직접 추가하기")
@@ -116,10 +119,10 @@ struct HashtagSelectionView: View {
             
             // 최하단 버튼
             PrimaryButton(
-                color: .green060,
+                color: selectedHashtags.isEmpty != true ? .green060 : .gray020,
                 text: "확인",
                 font: .dsTitle3,
-                textColor: .white,
+                textColor: selectedHashtags.isEmpty != true ? .white : .gray040,
                 width: 361,
                 height: 48,
                 cornerRadius: 10
@@ -127,6 +130,7 @@ struct HashtagSelectionView: View {
                 // TODO: PicCardRecordView로 이동
                 container.router.push(.picCardRecordView)
             }
+            .disabled(selectedHashtags.isEmpty) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
         }
         .padding(.horizontal, 16)
         .customNavigationBar {
@@ -137,6 +141,13 @@ struct HashtagSelectionView: View {
             }, label: {
                 Image("Record/btn_home_close")
             })
+        }
+        .sheet(isPresented: $showHashtagAddSheet) {
+            BottomSheetView(
+                title: "해시태그 추가",
+                content: { HashtagAddView() }
+            )
+            .presentationDetents([.fraction(0.3)])
         }
     }
     
