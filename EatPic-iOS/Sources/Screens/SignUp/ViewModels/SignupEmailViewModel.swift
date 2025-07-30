@@ -59,11 +59,6 @@ class SignupEmailViewModel {
         registeredEmails.contains(email.lowercased())
     }
     
-    /// 다음 버튼 활성화 여부
-    var canProceedWithEmail: Bool {
-        isValidEmailFormat && !isEmailDuplicate
-    }
-    
     var fieldsNotEmpty: Bool {
         !email.isEmpty && !password.isEmpty
     }
