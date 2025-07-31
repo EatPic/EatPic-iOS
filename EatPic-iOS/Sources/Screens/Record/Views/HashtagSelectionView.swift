@@ -127,8 +127,7 @@ struct HashtagSelectionView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                // TODO: PicCardRecordView로 이동
-                container.router.push(.picCardRecordView)
+                container.router.push(.picCardRecord)
             }
             .disabled(selectedHashtags.isEmpty) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
         }

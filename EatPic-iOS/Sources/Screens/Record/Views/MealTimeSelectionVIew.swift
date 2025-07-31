@@ -124,9 +124,8 @@ struct MealTimeSelectView: View {
                 cornerRadius: 10
             ) {
                 if let selectedMeal = selectedMeal {
-                    // TODO: selectedMeal의 정보 저장?
-                    // TODO: HastageSelectionView로 Navigation
-                    container.router.push(.hashtagSelectionView)
+                    // TODO: [25.07.30] selectedMeal의 정보 저장 - 비엔/이은정
+                    container.router.push(.hashtagSelection)
                     print("다음 화면으로 이동 - 선택된 식사: \(selectedMeal.rawValue)")
                 }
             }
