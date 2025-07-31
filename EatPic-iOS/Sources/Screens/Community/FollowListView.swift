@@ -8,11 +8,11 @@
 import SwiftUI
 
 /// 유저 정보를 담는 모델
-struct User: Identifiable {
-    let id: UUID
-    let profileImage: Image?
+struct FollowUser: Identifiable {
+    let uuid = UUID()
+    let id: String
     let nickname: String
-    let userId: String
+    let profileImage: Image?
     var isFollow: Bool
 }
 
@@ -26,20 +26,25 @@ struct FollowListView: View {
     }
     // MARK: - Properties
     @Namespace var name
-    @State private var selected: FollowSegment = .followers
+    @State private var selected: FollowSegment
     @State private var searchText = ""
     
     // 샘플 팔로워 유저 리스트
-    @State private var followers: [User] = [
-        User(id: UUID(), profileImage: nil, nickname: "홍길동", userId: "@hong", isFollow: true),
-        User(id: UUID(), profileImage: nil, nickname: "김영희", userId: "@young", isFollow: false)
+    @State private var followers: [FollowUser] = [
+        FollowUser(id: "hong", nickname: "홍길동", profileImage: nil, isFollow: true),
+        FollowUser(id: "young", nickname: "김영희", profileImage: nil, isFollow: false)
     ]
     
     // 샘플 팔로잉 유저 리스트
-    @State private var followings: [User] = [
-        User(id: UUID(), profileImage: nil, nickname: "이철수", userId: "@cheolsoo", isFollow: true),
-        User(id: UUID(), profileImage: nil, nickname: "박민수", userId: "@minsu", isFollow: true)
+    @State private var followings: [FollowUser] = [
+        FollowUser(id: "cheolsoo", nickname: "이철수", profileImage: nil, isFollow: true),
+        FollowUser(id: "minsu", nickname: "박민수", profileImage: nil, isFollow: true)
     ]
+    
+    // 초기 selected 값을 주입받는 init
+    init(selected: FollowSegment = .followers) {
+        _selected = State(initialValue: selected)
+    }
     
     // MARK: - Body
     
@@ -121,20 +126,20 @@ struct FollowListView: View {
     // MARK: - Filtered User List
     
     /// 검색어에 따라 필터링된 유저 리스트
-    private var filteredUsers: [User] {
+    private var filteredUsers: [FollowUser] {
         let list = selected == .followers ? followers : followings
         if searchText.isEmpty {
             return list
         } else {
             return list.filter {
                 $0.nickname.localizedCaseInsensitiveContains(searchText) ||
-                $0.userId.localizedCaseInsensitiveContains(searchText)
+                $0.id.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
     
     // MARK: - User List View
-        
+    
     /// 필터링된 유저 리스트를 보여주는 ScrollView
     private func userListView() -> some View {
         ScrollView {
@@ -147,7 +152,7 @@ struct FollowListView: View {
     }
     
     /// 한 명의 유저를 표시하는 행 뷰
-    private func userRowView(user: User) -> some View {
+    private func userRowView(user: FollowUser) -> some View {
         HStack(spacing: 16) {
             ProfileImageView(image: user.profileImage, size: 47)
             
@@ -155,7 +160,7 @@ struct FollowListView: View {
                 Text(user.nickname)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.black)
-                Text(user.userId)
+                Text("@"+user.id)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.gray060)
             }
@@ -193,7 +198,7 @@ struct FollowListView: View {
     }
     
     /// 팔로우 상태 토글 로직
-    private func toggleFollow(for user: User) {
+    private func toggleFollow(for user: FollowUser) {
         if selected == .followers {
             if let index = followers.firstIndex(where: { $0.id == user.id }) {
                 followers[index].isFollow.toggle()
