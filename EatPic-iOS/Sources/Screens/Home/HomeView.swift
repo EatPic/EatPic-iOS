@@ -42,7 +42,7 @@ struct HomeView: View {
             Button {
                 // FIXME: 추후 Calenderview 로 이동해야함
                 print("캘린더로 이동")
-                container.router.push(.calenderCardView)
+                container.router.push(.calender)
             } label: {
                 Image("Home/btn_home_calender")
                     .resizable()
@@ -53,7 +53,7 @@ struct HomeView: View {
             
             Button {
                 print("알림으로 이동")
-                container.router.push(.notificationView)
+                container.router.push(.notification)
             } label: {
                 Image("Home/btn_home_notification")
                     .resizable()

@@ -17,7 +17,7 @@ struct CalenderCardView: View {
         VStack {
             
             // 당일 식사 사진들 캐러셀 뷰
-            // FIXME: 각 Carousel 사진마다 개별 뷰 보여줘야하는거 아닌가..? 아니아니 개별뷰가 아니라 각각의 사진마다 상단바의 시간도 다르고 아래 뜨는 버튼눌럿을때 나오는 내용이 달라져야하는디 흠
+            // FIXME: [25.07.29] 각 Carousel 사진마다 개별 뷰 보여줘야함 – 비엔/이은정
             CarouselView()
             
             buttonsView
@@ -40,23 +40,22 @@ struct CalenderCardView: View {
             }
         } right: {
             Menu {
-                // FIXME: 여기 버튼들 개별 뷰로 분리!!!!!!!!!
+                // FIXME: [25.07.30] 버튼을 개별 뷰로 분리하면 조금 더 깔끔해질것같음 – 비엔/이은정
                 
                 Button(action: {
-                    // TODO: 다운로드 액션
+                    // TODO: [25.07.27] 다운로드 액션 – 비엔/이은정
                 }, label: {
                     Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
                 })
                 
                 Button(action: {
-                    // TODO: PicCardEditView로 네비게이션
-                    container.router.push(.picCardEditView)
+                    container.router.push(.picCardEdit)
                 }, label: {
                     Label("수정하기", systemImage: "square.and.pencil")
                 })
                 
                 Button(role: .destructive, action: {
-                    // TODO: 해당 PicCard 삭제 액션
+                    // TODO: [25.07.27] 해당 PicCard 삭제 액션 – 비엔/이은정
                 }, label: {
                     Label("삭제하기", systemImage: "exclamationmark.bubble")
                 })
@@ -80,7 +79,7 @@ struct CalenderCardView: View {
                     buttonName: "레시피 링크"
                 ) {
                     print("레시피 링크 열기")
-                    // TODO: 담아놓은 레시피 Link 연결하여 브라우저에서 열기 < ?
+                    // TODO: [25.07.24] 담아놓은 레시피 Link 연결하여 브라우저에서 열기 – 비엔/이은정
                 }
                 
                 Divider()
@@ -90,9 +89,7 @@ struct CalenderCardView: View {
                     buttonName: "식당 위치"
                 ) {
                     print("식당 위치 뷰로 이동")
-                    // TODO: StoreLocationView로 Navigation << 이거 계속 안되는디 ㅜㅜ
-//                        container.router.push(.storeLocation(makers: markers)
-                    
+                    // TODO: [25.07.29] StoreLocationView로 Navigation << 이거 계속 안되는디 ㅜㅜ – 비엔/이은정
                 }
                 
                 Divider()
@@ -101,9 +98,7 @@ struct CalenderCardView: View {
                 CalenderNavigationButton(
                     buttonName: "나의 메모"
                 ) {
-                    print("나의 메모 뷰로 이동")
-                    // TODO: MyMemoView로 Navigation
-                    container.router.push(.myMemoView)
+                    container.router.push(.myMemo)
                 }
                 
                 Divider()
@@ -112,9 +107,7 @@ struct CalenderCardView: View {
                 CalenderNavigationButton(
                     buttonName: "레시피 내용"
                 ) {
-                    print("레시피 내용 뷰로 이동")
-                    // TODO: ReceiptDetailView로 Navigation
-                    container.router.push(.receiptDetailView)
+                    container.router.push(.receiptDetail)
                 }
             }
             .padding(.vertical, 8)
@@ -129,7 +122,7 @@ struct CalenderCardView: View {
             Spacer().frame(height: 28)
             
             Button {
-                // TODO: 해당 피드 뷰로 Navigation (이건 뭐지???)
+                // TODO: [25.07.23] 해당 피드 뷰로 Navigation – 비엔/이은정
                 print("해당 피드 바로가기 버튼 클릭")
             } label: {
                 HStack {

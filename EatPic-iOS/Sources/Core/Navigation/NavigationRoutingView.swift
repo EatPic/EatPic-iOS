@@ -11,17 +11,19 @@ import SwiftUI
 /// `NavigationStack`의 path 바인딩에 사용되며, 각 화면에 대한 식별자 역할을 합니다.
 /// 새로운 화면을 추가할 경우, 여기에 새로운 case를 추가하면 됩니다.
 enum NavigationRoute: Equatable, Hashable {
+    case calender
     case emailLoginView
     case signUpEmailView
-    case homeView
-    case notificationView
-    case myBadgeStatusAllView(getBadgeStatus: String)
-    case picCardEditView
-    case calenderCardView
-    case myMemoView
-    case receiptDetailView
-    case exploreMainView
-//    case storeLocationView(markers: [Marker])
+    case home
+    case notification
+    case myBadgeStatusAll(getBadgeStatus: String)
+    case picCardEdit
+    case calenderCard
+    case myMemo
+    case receiptDetail
+    case exploreMain
+    case userProfile(user: CommunityUser)
+//    case followList(selected: FollowListView.FollowSegment)
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -40,29 +42,32 @@ struct NavigationRoutingView: View {
     var body: some View {
         Group {
             switch route {
+            case .calender:
+                CalendarScrollView()
+            case .notification:
+                NotificationView()
             case .emailLoginView:
                 EmailLoginView()
             case .signUpEmailView:
                 SignupEmailView()
-            case .homeView:
+            case .home:
                 HomeView()
-            case .notificationView:
-                NotificationView()
-            case .myBadgeStatusAllView(let getBadgeStatus):
+            case .myBadgeStatusAll(let getBadgeStatus):
                 MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
-            case .picCardEditView:
+            case .picCardEdit:
                 PicCardEditView()
-            case .calenderCardView:
+            case .calenderCard:
                 CalenderCardView()
-            case .myMemoView:
+            case .myMemo:
                 MyMemoView()
-            case .receiptDetailView:
+            case .receiptDetail:
                 ReceiptDetailView()
-            case .exploreMainView:
+            case .exploreMain:
                 ExploreMainView()
-//            case .storeLocationView(let markers):
-//                StoreLocationView(markers: markers)
-                
+            case .userProfile(let user):
+                OthersProfileView(user: user)
+//            case .followList(let selected):
+//                FollowListView(selected: selected)
             }
         }
         .environmentObject(container)

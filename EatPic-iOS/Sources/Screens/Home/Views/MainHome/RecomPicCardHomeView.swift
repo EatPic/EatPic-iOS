@@ -25,7 +25,7 @@ struct RecomPicCardHomeView: View {
                 
                 Button(action: {
                     // TODO: ExploreMainView로 Navigation
-                    container.router.push(.exploreMainView)
+                    container.router.push(.exploreMain)
                 }, label: {
                     Text("전체보기 >")
                         .foregroundStyle(Color.green060)

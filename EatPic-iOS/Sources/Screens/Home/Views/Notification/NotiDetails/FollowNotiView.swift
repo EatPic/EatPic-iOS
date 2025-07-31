@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct FollowNotiView: View {
-    let friendNickname: String // FIXME: 이거 나중에 닉네임 UUID? 로 받아오는? 모르겟다.. 주연언니 코드 보기
-    let notiTime: String // FIXME: notiTime 서버에서 받아오는 걸텐디 어떻게...
+    let friendNickname: String // FIXME: [25.07.30] 이거 나중에 닉네임 UUID? 로 받아오는? 주연언니 코드 보기 – 비엔/이은정
+    let notiTime: String // FIXME: [25.07.30] notiTime 서버에서 받아오게 타입 고치기? 상태관리? – 비엔/이은정
     
     @State var noticlickstate: NotiClickState
     @State var followstate: NotiFollowState

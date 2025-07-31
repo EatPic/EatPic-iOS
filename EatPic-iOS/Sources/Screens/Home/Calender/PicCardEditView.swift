@@ -12,25 +12,6 @@ struct PicCardEditView: View {
     
     var body: some View {
         VStack {
-            // FIXME: 아마 삭제 예정 (x버튼 눌렀을때 네비게이션 이동 방식이 왼쪽이 아닌 오른쪽으로 이동하기에 그냥 customNavigationBar 쓰는게 나을듯?
-//            // 상단바
-//            HStack {
-//                Spacer()
-//                
-//                Text("수정하기")
-//                    .font(.dsTitle2)
-//                
-//                Spacer().frame(width: 119)
-//                
-//                Button(action: {
-//                    // TODO: CalenderCardView로 Navigation
-//                    container.router.push(.calenderCardView)
-//                }, label: {
-//                    Image("Home/btn_home_close")
-//                })
-//            }
-//            .padding(.horizontal, 16)
-            
             PicCardWriteView()
         }
         .customNavigationBar(title: {

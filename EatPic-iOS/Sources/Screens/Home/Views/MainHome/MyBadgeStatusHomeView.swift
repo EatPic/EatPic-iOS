@@ -21,7 +21,7 @@ struct MyBadgeStatusHomeView: View {
                 
                 Button(action: {
                     // TODO: RecomPicCardView로 Navigation
-                    container.router.push(.myBadgeStatusAllView(getBadgeStatus: "6"))
+                    container.router.push(.myBadgeStatusAll(getBadgeStatus: "6"))
                     print("전체보기")
                 }, label: {
                     Text("전체보기 >")

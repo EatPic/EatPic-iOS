@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// FIXME: 추천 픽카드 고대로 가져와야하므로,, Model, ViewModel 공유해야함? 맞나 이게 
+// FIXME: [25.07.30] 추천 픽카드 내용을 Model, ViewModel 공유? - 비엔/이은정
 struct RecomPicCardView: View {
     var body: some View {
         VStack {

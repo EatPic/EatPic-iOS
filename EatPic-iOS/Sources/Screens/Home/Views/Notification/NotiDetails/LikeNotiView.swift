@@ -35,7 +35,8 @@ struct LikeNotiView: View {
             
             Spacer()
             
-            // FIXME: 게시글 사진.. ( << 어케 불러옴?)
+            // FIXME: [25.07.30] 게시글 사진 불러올수 있도록 Image로 변경 - 비엔/이은정
+            // FIXME: [25.07.30] 게시글 사진 불러올수 있도록 ...? - 비엔/이은정
             RoundedRectangle(cornerRadius: 4)
                 .frame(width: 47, height: 47)
         }
