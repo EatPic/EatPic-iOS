@@ -12,6 +12,7 @@ struct CommunityMainView: View {
     @EnvironmentObject private var container: DIContainer
     @State private var selectedUser: CommunityUser = sampleUsers[0]
     @Bindable private var toastVM = ToastViewModel()
+    @State private var isShowingReportBottomSheet = false
     
     var body: some View {
         ScrollView {
@@ -24,6 +25,9 @@ struct CommunityMainView: View {
         .scrollIndicators(.hidden)
         .toastView(viewModel: toastVM)
         .padding(.horizontal, 16)
+        .sheet(isPresented: $isShowingReportBottomSheet) {
+                    reportBottomSheetView()
+                }
     }
     
     // 필터링된 카드 리스트
@@ -72,6 +76,7 @@ struct CommunityMainView: View {
                     time: card.time,
                     menuContent: {
                         Button(role: .destructive, action: {
+                            isShowingReportBottomSheet = true
                             print("신고하기")
                         }) {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
@@ -108,6 +113,89 @@ struct CommunityMainView: View {
             Spacer()
         }
         .frame(height: 157)
+    }
+    
+    // 신고 바텀시트 뷰
+    private func reportBottomSheetView() -> some View {
+        BottomSheetView(
+            title: "신고하기",
+            subtitle: {
+                VStack(spacing: 16) {
+                    Text("해당 Pic 카드를 신고하는 이유")
+                        .font(.dsTitle2)
+                        .foregroundStyle(Color.gray080)
+                    Text("회원님의 신고는 익명으로 처리됩니다")
+                        .font(.dsFootnote)
+                        .foregroundStyle(Color.gray060)
+                }
+            },
+            content: {
+                let reportTypes = [
+                    "욕설 또는 비방",
+                    "음란성/선정적 내용",
+                    "도배 또는 광고성 게시물",
+                    "거짓 정보 또는 허위 사실",
+                    "불쾌감을 주는 이미지 또는 언행",
+                    "저작권 침해"
+                ]
+                
+                VStack(spacing: 0) {
+                    ForEach(reportTypes, id: \.self) { reportType in
+                        reportListView(reportType: reportType)
+                            
+                    }
+                }
+            })
+    }
+    
+    private func reportListView(reportType: String) -> some View {
+        VStack(spacing: 0) {
+            Divider().foregroundStyle(Color.gray030)
+            HStack {
+                Text(reportType)
+                    .font(.dsBody)
+                    .foregroundColor(.black)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray050)
+            }
+            .padding(.top, 20)
+            .padding(.bottom, 16)
+            .padding(.leading, 28)
+            .padding(.trailing, 16)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                handleReport(reportType)
+            }
+        }
+    }
+    
+    // 신고 버튼 컴포넌트
+    private func reportButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                Divider().foregroundStyle(Color.gray030)
+                HStack {
+                    Text(title)
+                        .font(.dsBody)
+                        .foregroundColor(.black)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray050)
+                }
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+                .padding(.leading, 28)
+                .padding(.trailing, 16)
+            }
+        }
+    }
+    
+    // 신고 처리 함수
+    private func handleReport(_ reportType: String) {
+        print("신고 유형: \(reportType)")
+        isShowingReportBottomSheet = false
+        toastVM.showToast(title: "신고되었습니다.")
     }
 }
 
