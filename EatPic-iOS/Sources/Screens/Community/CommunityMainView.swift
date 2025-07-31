@@ -63,6 +63,7 @@ struct CommunityMainView: View {
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
             ForEach(filteredCards) { card in
+                // FIXME: - 각 user 당 카드 1개만 프로필 이동 및 메뉴 선택 되는 이슈 (원주연, 25.07.31)
                 PicCardView(
                     profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
                     profileID: card.user.id,
