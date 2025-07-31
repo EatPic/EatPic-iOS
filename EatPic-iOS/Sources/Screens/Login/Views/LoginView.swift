@@ -131,10 +131,10 @@ struct LoginView: View {
                 // 네비게이션 액션
                 viewModel.container.router.push(.signUpEmailView)
             })
-        .overlay(
+        .overlay(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray060, lineWidth: 1)
-        )
+        }
     }
     
     private var emailLoginButton: some View {
@@ -149,10 +149,10 @@ struct LoginView: View {
                 // 네비게이션 액션
                 viewModel.container.router.push(.emailLoginView)
             })
-        .overlay(
+        .overlay(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray060, lineWidth: 1)
-        )
+        }
     }
 }
 

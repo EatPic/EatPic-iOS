@@ -54,10 +54,10 @@ struct TextAreaView: View {
             // 테두리
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColor)
-                .overlay(
+                .overlay(alignment: .center) {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(borderColor, lineWidth: 1)
-                )
+                }
             
             // 텍스트 입력
             TextEditor(text: $text)

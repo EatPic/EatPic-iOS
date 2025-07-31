@@ -104,10 +104,10 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                         .font(.dsHeadline)
                         .foregroundColor(badgeType.buttonTextColor)
                         .frame(width: 77, height: 34)
-                        .overlay(
+                        .overlay(alignment: .center) {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(badgeType.buttonBorderColor, lineWidth: 1)
-                        )
+                        }
                 })
                 .background(badgeType.buttonColor)
                 .cornerRadius(10)
