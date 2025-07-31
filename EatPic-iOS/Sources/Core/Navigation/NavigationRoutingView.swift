@@ -46,8 +46,6 @@ struct NavigationRoutingView: View {
                 CalendarScrollView()
             case .notification:
                 NotificationView()
-            case .calendar:
-                CalendarScrollView()
             case .emailLoginView:
                 EmailLoginView()
             case .signUpEmailView:
