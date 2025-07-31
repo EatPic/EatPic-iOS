@@ -34,7 +34,7 @@ struct NavigationRoutingView: View {
         Group {
             switch route {
             case .calendar:
-                EmptyView()
+                CalendarScrollView()
             case .notification:
                 EmptyView()
             case .emailLoginView:
