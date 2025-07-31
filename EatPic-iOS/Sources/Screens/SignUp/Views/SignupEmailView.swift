@@ -94,8 +94,10 @@ struct SignupEmailView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-                /// 이메일 유효성검사 통과시 화면 이동 구현 예정
-                print("다음화면이동")
+                /// 이메일 유효성검사 통과시 화면 이동
+                if viewModel.isEmailValid {
+                    container.router.push(.signupPasswordView)
+                }
             })
     }
 }
