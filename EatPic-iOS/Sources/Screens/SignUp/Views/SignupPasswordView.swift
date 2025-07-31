@@ -117,9 +117,9 @@ struct SignupPasswordView: View {
             cornerRadius: 10,
             action: {
                 // 비밀번호 유효성검사 통과시 화면 이동
-//                if viewModel.isEmailValid {
-//                    container.router.push(.signupPasswordView)
-//                }
+                if viewModel.isPasswordValid {
+                    container.router.push(.signupNicknameView)
+                }
             })
     }
 }
