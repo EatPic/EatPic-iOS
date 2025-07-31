@@ -40,6 +40,10 @@ struct NavigationRoutingView: View {
     var body: some View {
         Group {
             switch route {
+            case .calendar:
+                CalendarScrollView()
+            case .notification:
+                EmptyView()
             case .emailLoginView:
                 EmailLoginView()
             case .signUpEmailView:
