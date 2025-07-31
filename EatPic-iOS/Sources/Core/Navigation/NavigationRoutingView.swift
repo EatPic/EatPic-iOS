@@ -23,7 +23,7 @@ enum NavigationRoute: Equatable, Hashable {
     case receiptDetail
     case exploreMain
     case userProfile(user: CommunityUser)
-//    case followList(selected: FollowListView.FollowSegment)
+    case followList(selected: FollowListView.FollowSegment)
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -46,6 +46,8 @@ struct NavigationRoutingView: View {
                 CalendarScrollView()
             case .notification:
                 NotificationView()
+            case .calendar:
+                CalendarScrollView()
             case .emailLoginView:
                 EmailLoginView()
             case .signUpEmailView:
@@ -66,8 +68,8 @@ struct NavigationRoutingView: View {
                 ExploreMainView()
             case .userProfile(let user):
                 OthersProfileView(user: user)
-//            case .followList(let selected):
-//                FollowListView(selected: selected)
+            case .followList(let selected):
+                FollowListView(selected: selected)
             }
         }
         .environmentObject(container)
