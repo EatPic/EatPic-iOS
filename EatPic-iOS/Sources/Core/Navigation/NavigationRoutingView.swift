@@ -15,8 +15,15 @@ enum NavigationRoute: Equatable, Hashable {
     case notification
     case emailLoginView
     case signUpEmailView
-    case hashtagSelectionView
-    case picCardRecordView
+    case home
+    case myBadgeStatusAll(getBadgeStatus: String)
+    case picCardEdit
+    case calenderCard
+    case myMemo
+    case receiptDetail
+    case exploreMain
+    case hashtagSelection
+    case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
 }
@@ -45,9 +52,23 @@ struct NavigationRoutingView: View {
                 EmailLoginView()
             case .signUpEmailView:
                 SignupEmailView()
-            case .hashtagSelectionView:
+            case .home:
+                HomeView()
+            case .myBadgeStatusAll(let getBadgeStatus):
+                MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
+            case .picCardEdit:
+                PicCardEditView()
+            case .calenderCard:
+                CalenderCardView()
+            case .myMemo:
+                MyMemoView()
+            case .receiptDetail:
+                ReceiptDetailView()
+            case .exploreMain:
+                ExploreMainView()
+            case .hashtagSelection:
                 HashtagSelectionView()
-            case .picCardRecordView:
+            case .picCardRecord:
                 PicCardRecordView()
             case .userProfile(let user):
                 OthersProfileView(user: user)

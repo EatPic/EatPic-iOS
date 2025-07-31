@@ -136,7 +136,7 @@ struct MealTimeSelectView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                // FIXME: Home뷰로 네비게이션
+                container.router.push(.home)
             }, label: {
                 Image("Record/btn_home_close")
             })
