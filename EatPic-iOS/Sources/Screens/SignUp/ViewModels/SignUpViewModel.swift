@@ -22,6 +22,9 @@ class SignUpViewModel {
     /// 사용자 입력 비밀번호
     var password: String = ""
     
+    /// 비밀번호 확인
+    var confirmPassword: String = ""
+    
     /// 사용자 입력 닉네임
     var nickname: String = ""
     
@@ -34,21 +37,21 @@ class SignUpViewModel {
         !email.isEmpty && !password.isEmpty
     }
     
-    // MARK: - 이메일 유효성 검사 Function
+    // MARK: - 비밀번호 유효성 검사 Function
     
-    /// 이메일 형식 유효성 검사 (예: abc @gmail.ac.kr, @naver.com, @hanmail.net)
-    var isValidEmailFormat: Bool {
-        let emailRegEx = #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
-           return NSPredicate(format: "SELF MATCHES %@", emailRegEx).evaluate(with: email)
+    /// 비밀번호 유효성 검사
+    var isPasswordValid: Bool {
+        isPasswordConfirmed && isPasswordCountValid
     }
     
-    /// 이메일 중복 여부 검사 (추후 서버 요청 예정)
-    var isEmailDuplicate: Bool {
-        registeredEmails.contains(email.lowercased())
+    /// 비밀번호 6자리 유효성 검사
+    var isPasswordCountValid: Bool {
+        password.count >= 6
     }
     
-    /// 다음 버튼 활성화 여부
-    var canProceedWithEmail: Bool {
-        isValidEmailFormat && !isEmailDuplicate
+    /// 비밀번호 확인 일치 여부 검사
+    var isPasswordConfirmed: Bool {
+        password == confirmPassword
     }
+    
 }

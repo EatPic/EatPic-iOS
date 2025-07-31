@@ -70,7 +70,7 @@ struct SignupPasswordView: View {
             focusedField: $focus,
             currentField: .password,
             text: $viewModel.password,
-            isValid: true
+            isValid: viewModel.isPasswordCountValid
         )
     }
     
@@ -78,11 +78,11 @@ struct SignupPasswordView: View {
     private var confirmPasswordTextField: some View {
         FormTextField(
             fieldTitle: "비밀번호 확인",
-            fieldType: SignUpFieldType.password,
+            fieldType: SignUpFieldType.confirmPassword,
             focusedField: $focus,
-            currentField: .password,
-            text: $viewModel.password,
-            isValid: true
+            currentField: .confirmPassword,
+            text: $viewModel.confirmPassword,
+            isValid: viewModel.isPasswordConfirmed
         )
     }
     
