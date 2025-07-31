@@ -15,6 +15,7 @@ import SwiftUI
 ///   - postImage: 업로드 이미지
 ///   - myMemo: 사용자가 작성하는 '나의 메모'
 ///   - onProfileTap: 프로필 탭했을 시 프로필뷰로 넘어가는 코드 작성 위함
+///   - toastVM: 토스트 메시지 뷰모델
 struct PicCardView<Content: View>: View {
     
     // MARK: property
@@ -25,6 +26,7 @@ struct PicCardView<Content: View>: View {
     let postImage: Image
     let myMemo: String
     let onProfileTap: (() -> Void)?
+    let toastVM: ToastViewModel
     
     // MARK: init
     init(
@@ -34,7 +36,8 @@ struct PicCardView<Content: View>: View {
         @ViewBuilder menuContent: @escaping () -> Content,
         postImage: Image,
         myMemo: String,
-        onProfileTap: (() -> Void)? = nil // 기본값 nil
+        onProfileTap: (() -> Void)? = nil, // 기본값 nil
+        toastVM: ToastViewModel
     ) {
         self.profileImage = profileImage
         self.profileID = profileID
@@ -43,6 +46,7 @@ struct PicCardView<Content: View>: View {
         self.postImage = postImage
         self.myMemo = myMemo
         self.onProfileTap = onProfileTap
+        self.toastVM = toastVM
     }
     
     // MARK: body
@@ -93,7 +97,7 @@ struct PicCardView<Content: View>: View {
                         .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                     
-                    PicCardItemView()
+                    PicCardItemView(toastVM: toastVM)
                         .frame(maxWidth: .infinity, maxHeight: .infinity,
                                alignment: .bottomLeading)
                 }
@@ -139,6 +143,7 @@ struct PicCardView<Content: View>: View {
             }
         },
         postImage: Image("Community/testImage"),
-        myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를"
+        myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를",
+        toastVM: ToastViewModel()
     )
 }
