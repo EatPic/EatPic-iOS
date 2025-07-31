@@ -67,6 +67,8 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
         switch self {
         case .password:
             return true
+        case .confirmPassword:
+            return true
         default:
             return false
         }

@@ -83,7 +83,9 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                         if fieldType.isSecure {
                             SecureField("", text: $text)
                                 .focused(focusedField, equals: currentField)
-                                .submitLabel(fieldType.submitLabel) // 키보드 리턴 버튼 타입
+                                .submitLabel(
+                                    fieldType.submitLabel
+                                ) // 키보드 리턴 버튼 타입
                         } else {
                             TextField("", text: $text)
                                 .focused(focusedField, equals: currentField)
@@ -103,7 +105,8 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                                 .foregroundStyle(Color.green060)
                                 .padding(.trailing, 14)
                         } else {
-                            Button(action: { text = "" }) {
+                            Button(action: { text = "" })
+                            {
                                 Image(systemName: "xmark.circle")
                                     .foregroundStyle(Color.gray050)
                             }
