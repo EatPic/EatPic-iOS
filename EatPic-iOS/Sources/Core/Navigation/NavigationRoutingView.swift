@@ -12,10 +12,10 @@ import SwiftUI
 /// 새로운 화면을 추가할 경우, 여기에 새로운 case를 추가하면 됩니다.
 enum NavigationRoute: Equatable, Hashable {
     case calender
+    case notification
     case emailLoginView
     case signUpEmailView
     case home
-    case notification
     case myBadgeStatusAll(getBadgeStatus: String)
     case picCardEdit
     case calenderCard
