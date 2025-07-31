@@ -16,11 +16,12 @@ struct ExploreSelectedView: View {
     
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(spacing: 51) {
                 selectedPicCardView()
                 recommendedFeedView()
             }
             .padding(.horizontal, 16)
+            .padding(.top, 16)
         }
         .scrollIndicators(.hidden)
         .customCenterNavigationBar(title: {
@@ -30,7 +31,22 @@ struct ExploreSelectedView: View {
     }
     
     private func selectedPicCardView() -> some View {
-        Text("픽카드")
+        PicCardView(
+            profileImage: Image("Community/itcong"),
+            profileID: "itcong",
+            time: "오후 12:30",
+            menuContent: {
+                Button(role: .destructive, action: {
+                    print("신고하기")
+                }) {
+                    Label("신고하기", systemImage: "exclamationmark.bubble")
+                }
+            },
+            postImage: Image("Community/testImage"),
+            myMemo: "오늘은 샐러드를 먹었습니다~ 계란과 딸기를 많이 넣어 먹었어요~~~~ 다들 좋은 하루 보내세용",
+            onProfileTap: {
+                print("프로필로 이동")
+            })
     }
     
     private func recommendedFeedView() -> some View {

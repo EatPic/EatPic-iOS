@@ -11,6 +11,7 @@ import SwiftUI
 struct ExploreMainView: View {
     // 검색창에 입력되는 텍스트 상태
     @State var searchText: String = ""
+    @EnvironmentObject private var container: DIContainer
     
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
@@ -48,7 +49,11 @@ struct ExploreMainView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 9, content: {
                 ForEach(0..<9) { index in
-                    explorePicCard()
+                    Button {
+                        container.router.push(.exploreSelected)
+                    } label: {
+                        explorePicCard()
+                    }
                 }
             })
         }
