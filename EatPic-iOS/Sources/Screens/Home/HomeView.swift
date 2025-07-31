@@ -40,8 +40,6 @@ struct HomeView: View {
             Spacer()
             
             Button {
-                // FIXME: 추후 Calenderview 로 이동해야함
-                print("캘린더로 이동")
                 container.router.push(.calender)
             } label: {
                 Image("Home/btn_home_calender")
