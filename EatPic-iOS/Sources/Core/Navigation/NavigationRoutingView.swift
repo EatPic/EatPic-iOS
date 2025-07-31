@@ -22,6 +22,8 @@ enum NavigationRoute: Equatable, Hashable {
     case myMemo
     case receiptDetail
     case exploreMain
+    case hashtagSelection
+    case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
 }
@@ -69,6 +71,10 @@ struct NavigationRoutingView: View {
             ReceiptDetailView()
         case .exploreMain:
             ExploreMainView()
+        case .hashtagSelection:
+            HashtagSelectionView()
+        case .picCardRecord:
+            PicCardRecordView()
         case .userProfile(let user):
             OthersProfileView(user: user)
         case .followList(let selected):
