@@ -26,7 +26,7 @@ struct FollowListView: View {
     }
     // MARK: - Properties
     @Namespace var name
-    @State private var selected: FollowSegment = .followers
+    @State private var selected: FollowSegment
     @State private var searchText = ""
     
     // 샘플 팔로워 유저 리스트
@@ -40,6 +40,10 @@ struct FollowListView: View {
         User(id: UUID(), profileImage: nil, nickname: "이철수", userId: "@cheolsoo", isFollow: true),
         User(id: UUID(), profileImage: nil, nickname: "박민수", userId: "@minsu", isFollow: true)
     ]
+    
+    init(selected: FollowSegment) {
+        _selected = State(initialValue: selected)
+    }
     
     // MARK: - Body
     
@@ -207,5 +211,5 @@ struct FollowListView: View {
 }
 
 #Preview {
-    FollowListView()
+    FollowListView(selected: .followers)
 }

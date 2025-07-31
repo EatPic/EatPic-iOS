@@ -71,10 +71,8 @@ struct NavigationRoutingView: View {
             ExploreMainView()
         case .userProfile(let user):
             OthersProfileView(user: user)
-        case .followList:
-            // 연관값(selected)은 다른 화면에서 사용되고 있음
-            // 현재 이 뷰에서는 내부에서 초기화하므로 사용하지 않음
-            FollowListView()
+        case .followList(let selected):
+            FollowListView(selected: selected)
         }
     }
 }
