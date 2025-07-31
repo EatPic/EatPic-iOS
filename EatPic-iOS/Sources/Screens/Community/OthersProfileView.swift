@@ -150,7 +150,7 @@ struct OthersProfileView: View {
                     .foregroundStyle(Color.gray080)
             }
             .onTapGesture {
-//                container.router.push(.followList(selected: .followers))
+                container.router.push(.followList(selected: .followers))
             }
             
             VStack {
@@ -162,7 +162,7 @@ struct OthersProfileView: View {
                     .foregroundStyle(Color.gray080)
             }
             .onTapGesture {
-//                container.router.push(.followList(selected: .followings))
+                container.router.push(.followList(selected: .followings))
             }
         }
     }
