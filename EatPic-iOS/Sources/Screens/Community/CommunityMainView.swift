@@ -11,6 +11,7 @@ struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
     @State private var selectedUser: CommunityUser = sampleUsers[0]
+    @Bindable private var toastVM = ToastViewModel()
     
     var body: some View {
         ScrollView {
@@ -21,6 +22,8 @@ struct CommunityMainView: View {
             }
         }
         .scrollIndicators(.hidden)
+        .toastView(viewModel: toastVM)
+        .padding(.horizontal, 16)
     }
     
     // 필터링된 카드 리스트
@@ -53,7 +56,6 @@ struct CommunityMainView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
             .frame(maxHeight: 112)
         }
         .scrollIndicators(.hidden)
@@ -79,11 +81,11 @@ struct CommunityMainView: View {
                     myMemo: card.memo,
                     onProfileTap: {
                         container.router.push(.userProfile(user: card.user))
-                    }
+                    },
+                    toastVM: toastVM
                 )
             }
         }
-        .padding(.horizontal, 16)
     }
     
     private func lastContentView() -> some View {
