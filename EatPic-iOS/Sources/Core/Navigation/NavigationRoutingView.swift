@@ -11,10 +11,17 @@ import SwiftUI
 /// `NavigationStack`의 path 바인딩에 사용되며, 각 화면에 대한 식별자 역할을 합니다.
 /// 새로운 화면을 추가할 경우, 여기에 새로운 case를 추가하면 됩니다.
 enum NavigationRoute: Equatable, Hashable {
-    case calendar
+    case calender
     case notification
     case emailLoginView
     case signUpEmailView
+    case home
+    case myBadgeStatusAll(getBadgeStatus: String)
+    case picCardEdit
+    case calenderCard
+    case myMemo
+    case receiptDetail
+    case exploreMain
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
 }
@@ -35,14 +42,28 @@ struct NavigationRoutingView: View {
     var body: some View {
         Group {
             switch route {
-            case .calendar:
+            case .calender:
                 CalendarScrollView()
             case .notification:
-                EmptyView()
+                NotificationView()
             case .emailLoginView:
                 EmailLoginView()
             case .signUpEmailView:
                 SignupEmailView()
+            case .home:
+                HomeView()
+            case .myBadgeStatusAll(let getBadgeStatus):
+                MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
+            case .picCardEdit:
+                PicCardEditView()
+            case .calenderCard:
+                CalenderCardView()
+            case .myMemo:
+                MyMemoView()
+            case .receiptDetail:
+                ReceiptDetailView()
+            case .exploreMain:
+                ExploreMainView()
             case .userProfile(let user):
                 OthersProfileView(user: user)
             case .followList(let selected):
