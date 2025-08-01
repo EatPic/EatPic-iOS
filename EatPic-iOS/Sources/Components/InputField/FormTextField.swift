@@ -86,11 +86,13 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                                 .submitLabel(
                                     fieldType.submitLabel
                                 ) // 키보드 리턴 버튼 타입
+                                .autocapitalization(.none)
                         } else {
                             TextField("", text: $text)
                                 .focused(focusedField, equals: currentField)
                                 .keyboardType(fieldType.keyboardType) // 키보드 타입
                                 .submitLabel(fieldType.submitLabel)
+                                .autocapitalization(.none)
                         }
                     }
                     .padding(.horizontal, 16) // 텍스트 필드 패딩 설정
