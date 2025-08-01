@@ -39,6 +39,15 @@ class SignUpIdViewModel {
     
     // MARK: - 아이디 유효성 검사 Func
     
+    /// 아이디 유효성 검사
+    var isIdValid: Bool {
+        return !id.isEmpty &&
+        id.count >= 5 &&
+        !containsSpecialCharacters(id) &&
+        !containsKoreanCharacters(id) &&
+        !isIdDuplicate(id)
+    }
+    
     /// 특수문자 포함 여부
     private func containsSpecialCharacters(_ text: String) -> Bool {
         let regex = "[~!@#$%^&*()_+=\\[\\]{}|\\\\:;\"'<>,.?/]"
