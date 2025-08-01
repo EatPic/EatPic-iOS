@@ -15,14 +15,14 @@ struct SignupComplementView: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
-            Spacer().frame(height: 32)
+        VStack(alignment: .leading) {
+            Spacer().frame(height: 83)
             signupComplementTitle
-            Spacer()
+            Spacer().frame(height: 52)
             logoImage
-            Spacer()
+            Spacer().frame(height: 165)
             startButton
-            Spacer().frame(height: 40)
+            Spacer()
         }
         .padding(.horizontal, 16)
     }
