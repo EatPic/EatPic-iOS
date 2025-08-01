@@ -56,7 +56,7 @@ class SignUpIdViewModel {
 
     /// 한글 포함 여부
     private func containsKoreanCharacters(_ text: String) -> Bool {
-        let regex = "[가-힣]"
+        let regex = "[가-힣ㄱ-ㅎㅏ-ㅣ]"
         return text.range(of: regex, options: .regularExpression) != nil
     }
 
