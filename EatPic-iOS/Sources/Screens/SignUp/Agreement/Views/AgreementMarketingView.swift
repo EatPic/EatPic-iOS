@@ -10,14 +10,20 @@ import SwiftUI
 struct AgreementMarketingView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 44) {
-            Text("이용약관 동의 (필수)")
+            
+            Spacer().frame(height: 20)
+            
+            Text("마케팅 정보 수신 동의")
                 .font(.dsTitle2)
             
-            Text(TermsOfService.content)
+            Text(TermsOfMarketing.content)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray080)
+            
+            Spacer()
         }
         .customCenterNavigationBar {
+            EmptyView()
         }
         .padding(.horizontal, 17)
     }

@@ -9,7 +9,23 @@ import SwiftUI
 
 struct AgreementPrivacyView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading, spacing: 44) {
+            
+            Spacer().frame(height: 20)
+            
+            Text("개인정보 수집 및 이용 동의 (필수)")
+                .font(.dsTitle2)
+            
+            Text(TermsOfPrivacy.content)
+                .font(.dsSubhead)
+                .foregroundStyle(Color.gray080)
+            
+            Spacer()
+        }
+        .customCenterNavigationBar {
+            EmptyView()
+        }
+        .padding(.horizontal, 17)
     }
 }
 
