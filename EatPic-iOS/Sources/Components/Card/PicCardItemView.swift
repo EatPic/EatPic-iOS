@@ -28,6 +28,9 @@ struct PicCardItemView: View {
     /// 리액션 바 표시 여부
     @State private var isShowingReactionBar: Bool = false
     
+    /// 댓글창 표시 여부
+    @State private var isShowingCommentSheet: Bool = false
+    
     /// 외부에서 전달받은 토스트 뷰모델
     let toastVM: ToastViewModel
     

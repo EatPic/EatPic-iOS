@@ -16,6 +16,7 @@ import SwiftUI
 ///   - myMemo: 사용자가 작성하는 '나의 메모'
 ///   - onProfileTap: 프로필 탭했을 시 프로필뷰로 넘어가는 코드 작성 위함
 ///   - toastVM: 토스트 메시지 뷰모델
+///   - onItemAction: 카드 아이템 액션 콜백
 struct PicCardView<Content: View>: View {
     
     // MARK: property
@@ -27,6 +28,7 @@ struct PicCardView<Content: View>: View {
     let myMemo: String
     let onProfileTap: (() -> Void)?
     let toastVM: ToastViewModel
+    let onItemAction: ((PicCardItemActionType) -> Void)?
     
     // MARK: init
     init(
@@ -37,7 +39,8 @@ struct PicCardView<Content: View>: View {
         postImage: Image,
         myMemo: String,
         onProfileTap: (() -> Void)? = nil, // 기본값 nil
-        toastVM: ToastViewModel
+        toastVM: ToastViewModel,
+        onItemAction: ((PicCardItemActionType) -> Void)? = nil
     ) {
         self.profileImage = profileImage
         self.profileID = profileID
@@ -47,6 +50,7 @@ struct PicCardView<Content: View>: View {
         self.myMemo = myMemo
         self.onProfileTap = onProfileTap
         self.toastVM = toastVM
+        self.onItemAction = onItemAction
     }
     
     // MARK: body
@@ -97,7 +101,7 @@ struct PicCardView<Content: View>: View {
                         .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                     
-                    PicCardItemView(toastVM: toastVM)
+                    PicCardItemView(toastVM: toastVM, onAction: onItemAction)
                         .frame(maxWidth: .infinity, maxHeight: .infinity,
                                alignment: .bottomLeading)
                 }
