@@ -9,9 +9,7 @@ import SwiftUI
 
 struct MyBadgeStatusAllView: View {
     
-    let getBadgeStatus: String
-    // TODO: 음 근데 이거 매개변수 처리하면 안되긴 하죠? 어떻게 각각의 progress 값을 각각 받아야 할지
-    // 음 매개변수로 각각 받을수 잇게 모델안에 넣어서... 일단 나중에
+    @StateObject private var viewModel = MyBadgeStatusViewModel()
     
     var body: some View {
         VStack {
@@ -25,120 +23,37 @@ struct MyBadgeStatusAllView: View {
                 Spacer().frame(width: 7)
                 
                 Group {
-                    Text("\(getBadgeStatus)")
+                    Text(viewModel.getBadgeStatus())
                         .font(.dsTitle3)
                         .foregroundColor(Color.green060)
                     
                     +
                     
-                    Text("/10")
+                    Text("/\(viewModel.totalBadges)")
                         .font(.dsTitle3)
                         .foregroundColor(Color.gray060)
                 }
             }
             
             // 획득 뱃지 현황
-            // 5행 2열
             ScrollView {
-                LazyVStack {
-                    Spacer().frame(height: 32)
-                    
-                    // 1행
-                    HStack {
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ],
+                    spacing: 24
+                ) {
+                    ForEach(viewModel.badgeItems) { badgeItem in
                         BadgeView(
-                            state: .progress(progress: 0.4,
-                                             icon: Image(systemName: "star.fill")
-                                            ),
-                            badgeName: "혼밥러"
-                        )
-                        
-                        Spacer().frame(width: 40)
-                        
-                        BadgeView(
-                            state: .progress(progress: 0.4,
-                                             icon: Image(systemName: "star.fill")
-                                            ),
-                            badgeName: "혼밥러"
+                            state: badgeItem.state,
+                            badgeName: badgeItem.name
                         )
                     }
-                    
-                    Spacer().frame(height: 24)
-                    
-                    // 2행
-                    HStack {
-                        BadgeView(
-                            state: .progress(progress: 0.4,
-                                             icon: Image(systemName: "star.fill")
-                                            ),
-                            badgeName: "혼밥러"
-                        )
-                        
-                        Spacer().frame(width: 40)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                    }
-                    
-                    Spacer().frame(height: 24)
-                    
-                    // 3행
-                    HStack {
-                        BadgeView(
-                            state: .progress(progress: 0.4,
-                                             icon: Image(systemName: "star.fill")
-                                            ),
-                            badgeName: "혼밥러"
-                        )
-                        
-                        Spacer().frame(width: 40)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                    }
-                    
-                    Spacer().frame(height: 24)
-                    
-                    // 4행
-                    HStack {
-                        BadgeView(
-                            state: .progress(progress: 0.4,
-                                             icon: Image(systemName: "star.fill")
-                                            ),
-                            badgeName: "혼밥러"
-                        )
-                        
-                        Spacer().frame(width: 40)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                    }
-                    
-                    Spacer().frame(height: 24)
-                    
-                    // 5행
-                    HStack {
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        
-                        Spacer().frame(width: 40)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                    }
-                    
-                    Spacer().frame(height: 48)
-                    
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 32)
+                .padding(.bottom, 48)
             }
         }
         .customNavigationBar {
@@ -150,5 +65,5 @@ struct MyBadgeStatusAllView: View {
 }
 
 #Preview {
-    MyBadgeStatusAllView(getBadgeStatus: "3")
+    MyBadgeStatusAllView()
 }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyBadgeStatusHomeView: View {
     @EnvironmentObject private var container: DIContainer
+    @StateObject private var viewModel = MyBadgeStatusViewModel()
     
     var body: some View {
         VStack {
@@ -20,8 +21,7 @@ struct MyBadgeStatusHomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    // TODO: RecomPicCardView로 Navigation
-                    container.router.push(.myBadgeStatusAll(getBadgeStatus: "6"))
+                    container.router.push(.myBadgeStatusAll)
                     print("전체보기")
                 }, label: {
                     Text("전체보기 >")
@@ -34,53 +34,14 @@ struct MyBadgeStatusHomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 8) {
                     
-                    Spacer().frame(height: 24)
-                    
-                    Group {
-                        
+                    ForEach(viewModel.badgeItems) { badgeItem in
                         BadgeView(
-                            state: .progress(progress: 0.4, icon: Image(systemName: "star.fill")),
-                            badgeName: "혼밥러"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .progress(progress: 0.4, icon: Image(systemName: "star.fill")),
-                            badgeName: "혼밥러"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
+                            state: badgeItem.state,
+                            badgeName: badgeItem.name
                         )
                         .scaleEffect(0.77)
                         .frame(width: 100)
                     }
-                    
                 }
             }
         }
@@ -94,4 +55,5 @@ struct MyBadgeStatusHomeView: View {
 
 #Preview {
     MyBadgeStatusHomeView()
+        .environmentObject(DIContainer())
 }
