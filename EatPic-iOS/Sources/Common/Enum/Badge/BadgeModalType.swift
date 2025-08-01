@@ -5,7 +5,6 @@
 //  Created by 이은정 on 7/19/25.
 //
 
-
 import SwiftUI
 
 /// 뱃지 모달의 상태에 따라 UI 속성을 지정하는 Enum
