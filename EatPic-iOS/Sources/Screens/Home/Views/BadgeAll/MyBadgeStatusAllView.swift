@@ -28,7 +28,8 @@ struct MyBadgeStatusAllView: View {
                 EmptyView()
             }
             
-            // 배지 모달
+            // 배지 모달 - 전체 화면 위에 표시
+            // FIXME: [25.08.01] 네비게이션 바 아래에 모달 뷰가 뜨는데 어케 해결? 내 코드에서만 해결하면 안될듯 다른 코드도 마찬가지 일듯 (또는 그냥 모든 모달 뷰에서 뒷배경을 없애고 네비게이션바가 있는 경우의 뷰에만 모달을 위로 좀 이동시키는 코드? < 이게 가능해요?) - 비엔/이은정
             if showingBadgeModal, let badge = selectedBadge {
                 BadgeProgressModalView(
                     badgeType: viewModel.createBadgeModalType(for: badge),
