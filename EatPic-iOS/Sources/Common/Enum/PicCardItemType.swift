@@ -38,11 +38,11 @@ enum PicCardItemType {
             if let emoji = selected?.emoji {
                 Text(emoji)
                     .font(.dsHeadline)
-                    .background(
+                    .background(alignment: .center) {
                         Circle()
                             .foregroundStyle(.white)
                             .frame(width: 32, height: 32)
-                        )
+                    }
                     .padding(8)
             } else {
                 Image("icon_emotion")

@@ -59,7 +59,9 @@ struct EmailLoginView: View {
                 fieldType: SignUpFieldType.email,
                 focusedField: $focus,
                 currentField: .email,
-                text: $viewModel.email)
+                text: $viewModel.email,
+                isValid: viewModel.fieldsNotEmpty
+            )
             
             /// 비밀번호 텍스트필드 및 타이틀
             FormTextField(
@@ -67,7 +69,9 @@ struct EmailLoginView: View {
                 fieldType: SignUpFieldType.password,
                 focusedField: $focus,
                 currentField: .password,
-                text: $viewModel.password)
+                text: $viewModel.password,
+                isValid: true
+            )
         }
     }
 

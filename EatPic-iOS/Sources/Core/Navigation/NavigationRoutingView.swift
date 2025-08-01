@@ -15,6 +15,10 @@ enum NavigationRoute: Equatable, Hashable {
     case notification
     case emailLoginView
     case signUpEmailView
+    case signupPasswordView
+    case signupNicknameView
+    case signupIdView
+    case signupProfileView
     case home
     case myBadgeStatusAll(getBadgeStatus: String)
     case picCardEdit
@@ -57,6 +61,14 @@ struct NavigationRoutingView: View {
             EmailLoginView()
         case .signUpEmailView:
             SignupEmailView()
+        case .signupPasswordView:
+            SignupPasswordView()
+        case .signupNicknameView:
+            SignupNicknameView()
+        case .signupIdView:
+            SignupIdView()
+        case .signupProfileView:
+            SignupProfileView()
         case .home:
             HomeView()
         case .myBadgeStatusAll(let getBadgeStatus):

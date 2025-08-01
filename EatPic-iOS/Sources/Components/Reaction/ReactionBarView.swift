@@ -48,12 +48,13 @@ struct ReactionBarView: View {
                 .padding(.horizontal, 10)
                 .padding(.top, 6)
                 .padding(.bottom, 3)
-                .background(
+                .background(alignment: .center) {
                     Circle()
                         .fill(selectedReaction == reaction ?
                               Color.pink060 : Color.black.opacity(0.8))
-                )
-                .frame(width: 40, height: 40)
+                    
+                        .frame(width: 40, height: 40)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: 40)

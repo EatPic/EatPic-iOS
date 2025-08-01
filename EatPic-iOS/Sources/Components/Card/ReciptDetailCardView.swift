@@ -99,11 +99,11 @@ struct RecipeDetailCardView: View {
                     .foregroundStyle(.white)
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
-                    .background(
+                    .background(alignment: .center) {
                         RoundedRectangle(cornerRadius: 100)
                             .fill(.black)
                             .stroke(.white, lineWidth: 1)
-                    )
+                    }
             }
         }
         .padding(.leading, 17)
@@ -118,7 +118,10 @@ struct RecipeDetailCardView: View {
                 } label: {
                     Image("icon_link")
                         .padding(5)
-                        .background(Circle().fill(Color.white))
+                        .background(alignment: .center) {Circle().fill(
+                            Color.white
+                        )
+                        }
                 }
             }
             
@@ -134,7 +137,8 @@ struct RecipeDetailCardView: View {
                     }
                     .padding(.vertical, 5)
                     .padding(.horizontal, 8)
-                    .background(Color.white.cornerRadius(50))
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 50))
                 }
             }
         }
