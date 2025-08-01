@@ -9,7 +9,17 @@ import SwiftUI
 
 struct AgreementServiceView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading, spacing: 44) {
+            Text("이용약관 동의 (필수)")
+                .font(.dsTitle2)
+            
+            Text(TermsOfService.content)
+                .font(.dsSubhead)
+                .foregroundStyle(Color.gray080)
+        }
+        .customCenterNavigationBar {
+        }
+        .padding(.horizontal, 17)
     }
 }
 
