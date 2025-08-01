@@ -42,40 +42,43 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-        Group {
-            switch route {
-            case .calender:
-                CalendarScrollView()
-            case .notification:
-                NotificationView()
-            case .emailLoginView:
-                EmailLoginView()
-            case .signUpEmailView:
-                SignupEmailView()
-            case .home:
-                HomeView()
-            case .myBadgeStatusAll(let getBadgeStatus):
-                MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
-            case .picCardEdit:
-                PicCardEditView()
-            case .calenderCard:
-                CalenderCardView()
-            case .myMemo:
-                MyMemoView()
-            case .receiptDetail:
-                ReceiptDetailView()
-            case .exploreMain:
-                ExploreMainView()
-            case .hashtagSelection:
-                HashtagSelectionView()
-            case .picCardRecord:
-                PicCardRecordView()
-            case .userProfile(let user):
-                OthersProfileView(user: user)
-            case .followList(let selected):
-                FollowListView(selected: selected)
-            }
+        routingView
+            .environmentObject(container)
+    }
+    
+    @ViewBuilder
+    private var routingView: some View {
+        switch route {
+        case .calender:
+            CalendarScrollView()
+        case .notification:
+            NotificationView()
+        case .emailLoginView:
+            EmailLoginView()
+        case .signUpEmailView:
+            SignupEmailView()
+        case .home:
+            HomeView()
+        case .myBadgeStatusAll(let getBadgeStatus):
+            MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
+        case .picCardEdit:
+            PicCardEditView()
+        case .calenderCard:
+            CalenderCardView()
+        case .myMemo:
+            MyMemoView()
+        case .receiptDetail:
+            ReceiptDetailView()
+        case .exploreMain:
+            ExploreMainView()
+        case .hashtagSelection:
+            HashtagSelectionView()
+        case .picCardRecord:
+            PicCardRecordView()
+        case .userProfile(let user):
+            OthersProfileView(user: user)
+        case .followList(let selected):
+            FollowListView(selected: selected)
         }
-        .environmentObject(container)
     }
 }
