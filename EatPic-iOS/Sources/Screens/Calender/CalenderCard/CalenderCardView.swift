@@ -29,7 +29,7 @@ struct CalenderCardView: View {
         .customNavigationBar {
             VStack(spacing: 4) {
                 // TODO: Calender 날짜 + 식사 시간(아침/점심/저녁/간식) 불러와야 함
-                Text("7월 1일 아침")
+                Text("8월 1일 아침")
                     .font(.dsTitle2)
                     .foregroundColor(Color.gray080)
                 

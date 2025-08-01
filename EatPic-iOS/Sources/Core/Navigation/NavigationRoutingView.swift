@@ -15,6 +15,10 @@ enum NavigationRoute: Equatable, Hashable {
     case notification
     case emailLoginView
     case signUpEmailView
+    case signupPasswordView
+    case signupNicknameView
+    case signupIdView
+    case signupProfileView
     case home
     case myBadgeStatusAll(getBadgeStatus: String)
     case picCardEdit
@@ -42,40 +46,51 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-        Group {
-            switch route {
-            case .calender:
-                CalendarScrollView()
-            case .notification:
-                NotificationView()
-            case .emailLoginView:
-                EmailLoginView()
-            case .signUpEmailView:
-                SignupEmailView()
-            case .home:
-                HomeView()
-            case .myBadgeStatusAll(let getBadgeStatus):
-                MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
-            case .picCardEdit:
-                PicCardEditView()
-            case .calenderCard:
-                CalenderCardView()
-            case .myMemo:
-                MyMemoView()
-            case .receiptDetail:
-                ReceiptDetailView()
-            case .exploreMain:
-                ExploreMainView()
-            case .hashtagSelection:
-                HashtagSelectionView()
-            case .picCardRecord:
-                PicCardRecordView()
-            case .userProfile(let user):
-                OthersProfileView(user: user)
-            case .followList(let selected):
-                FollowListView(selected: selected)
-            }
+        routingView
+            .environmentObject(container)
+    }
+    
+    @ViewBuilder
+    private var routingView: some View {
+        switch route {
+        case .calender:
+            CalendarScrollView()
+        case .notification:
+            NotificationView()
+        case .emailLoginView:
+            EmailLoginView()
+        case .signUpEmailView:
+            SignupEmailView()
+        case .signupPasswordView:
+            SignupPasswordView()
+        case .signupNicknameView:
+            SignupNicknameView()
+        case .signupIdView:
+            SignupIdView()
+        case .signupProfileView:
+            SignupProfileView()
+        case .home:
+            HomeView()
+        case .myBadgeStatusAll(let getBadgeStatus):
+            MyBadgeStatusAllView(getBadgeStatus: getBadgeStatus)
+        case .picCardEdit:
+            PicCardEditView()
+        case .calenderCard:
+            CalenderCardView()
+        case .myMemo:
+            MyMemoView()
+        case .receiptDetail:
+            ReceiptDetailView()
+        case .exploreMain:
+            ExploreMainView()
+        case .hashtagSelection:
+            HashtagSelectionView()
+        case .picCardRecord:
+            PicCardRecordView()
+        case .userProfile(let user):
+            OthersProfileView(user: user)
+        case .followList(let selected):
+            FollowListView(selected: selected)
         }
-        .environmentObject(container)
     }
 }

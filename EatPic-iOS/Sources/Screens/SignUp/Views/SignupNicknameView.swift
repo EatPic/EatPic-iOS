@@ -11,7 +11,7 @@ struct SignupNicknameView: View {
     // MARK: - Property
 
     /// 유효성검사 로직 맡고있는 ViewModel
-    @State var viewModel: SignUpViewModel
+    @State var viewModel: SignUpNicknameViewModel
 
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
@@ -74,11 +74,22 @@ struct SignupNicknameView: View {
     }
     /// 회원가입 닉네임 정보입력 뷰 텍스트 필드
     private var signupNicknameTextField: some View {
-        FormTextField(
-            fieldType: SignUpFieldType.nickname,
-            focusedField: $focus,
-            currentField: .nickname,
-            text: $viewModel.nickname)
+        VStack(alignment: .leading, spacing: 8) {
+            FormTextField(
+                fieldType: SignUpFieldType.nickname,
+                focusedField: $focus,
+                currentField: .nickname,
+                text: $viewModel.nickname,
+                isValid: viewModel.isNicknameValid
+            )
+            
+            /// 유효성 검사 실패시 에러 메시지
+            if let error = viewModel.nicknameErrorMessage {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
+            }
+        }
     }
 
     // MARK: - BottomContents(화면 이동 버튼)
@@ -86,15 +97,17 @@ struct SignupNicknameView: View {
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+            color: viewModel.isNicknameValid ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
-            textColor: .gray040,
+            textColor: viewModel.isNicknameValid ? .white : .gray040,
             height: 50,
             cornerRadius: 10,
             action: {
                 /// 닉네임 유효성검사 통과시 화면 이동 구현 예정
-                print("다음화면이동")
+                if viewModel.isNicknameValid {
+                    container.router.push(.signupIdView)
+                }
             })
     }
 }

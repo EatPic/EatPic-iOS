@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CommunityMainView: View {
-    
+
     @EnvironmentObject private var container: DIContainer
     @State private var selectedUser: CommunityUser = sampleUsers[0]
     @Bindable private var toastVM = ToastViewModel()
