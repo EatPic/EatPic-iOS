@@ -35,6 +35,9 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     /// 텍스트 입력 바인딩
     @Binding var text: String
     
+    /// 유효성 검사 통과 여부 변수
+    let isValid: Bool
+    
     // MARK: - Init
     
     /// 초기화 함수 (Binding 타입을 @Binding 변수로 연결)
@@ -43,13 +46,15 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
         fieldType: T,
         focusedField: FocusState<T?>.Binding,
         currentField: T,
-        text: Binding<String>
+        text: Binding<String>,
+        isValid: Bool
     ) {
         self.fieldTitle = fieldTitle
         self.fieldType = fieldType
         self.focusedField = focusedField
         self.currentField = currentField
         self._text = text
+        self.isValid = isValid
     }
     
     // MARK: - Body
@@ -60,8 +65,8 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
             /// 텍스트 필드 상단 타이틀
             if let title = fieldTitle {
                 Text(title)
-                .font(fieldType.titleFont)
-                .foregroundStyle(fieldType.titleTextColor)
+                    .font(fieldType.titleFont)
+                    .foregroundStyle(fieldType.titleTextColor)
             }
             
             /// 텍스트 필드 속성 지정
@@ -73,30 +78,49 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                         .padding(.horizontal, 16)
                 }
                 
-                Group {
-                    if fieldType.isSecure {
-                        SecureField("", text: $text)
-                            .focused(focusedField, equals: currentField)
-                            .submitLabel(fieldType.submitLabel) // 키보드 리턴 버튼 타입
-                            .padding(.horizontal, 16) // 텍스트 필드 패딩 설정
-                            .padding(.vertical, 14)
-                    } else {
-                        TextField("", text: $text)
-                            .focused(focusedField, equals: currentField)
-                            .keyboardType(fieldType.keyboardType) // 키보드 타입
-                            .submitLabel(fieldType.submitLabel)
-                            .padding(.horizontal, 16) // 텍스트 필드 패딩 설정
-                            .padding(.vertical, 14)
+                HStack {
+                    Group {
+                        if fieldType.isSecure {
+                            SecureField("", text: $text)
+                                .focused(focusedField, equals: currentField)
+                                .submitLabel(
+                                    fieldType.submitLabel
+                                ) // 키보드 리턴 버튼 타입
+                        } else {
+                            TextField("", text: $text)
+                                .focused(focusedField, equals: currentField)
+                                .keyboardType(fieldType.keyboardType) // 키보드 타입
+                                .submitLabel(fieldType.submitLabel)
+                        }
                     }
-                }
-                
+                    .padding(.horizontal, 16) // 텍스트 필드 패딩 설정
+                    .padding(.vertical, 14)
+                    
+                    Spacer()
+                    
+                    // 텍스트가 있으면 x 버튼, 유효성 통과 시 check 아이콘
+                    if !text.isEmpty {
+                        if isValid {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(Color.green060)
+                                .padding(.trailing, 14)
+                        } else {
+                            Button(action: { text = "" })
+                            {
+                                Image(systemName: "xmark.circle")
+                                    .foregroundStyle(Color.gray050)
+                            }
+                            .padding(.trailing, 14)
+                        }
+                    }
+                } //: 텍스트 필드 HStack
             } //: ZStack
-            .background(
+            .background(alignment: .center) {
                 RoundedRectangle(
                     cornerRadius: FormTextFieldConstants.cornerRadiusDegree)
                 .stroke(borderColor,
                         lineWidth: FormTextFieldConstants.rectangleLinewidth)
-            )
+            }
             .frame(
                 height: FormTextFieldConstants.rectangleHeight
             ) // ZStack 높이: 직사각형 + 텍스트
@@ -105,6 +129,9 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     
     /// 포커스된 필드에 따른 박스 테두리 배경색 설정
     private var borderColor: Color {
+        if !isValid && !text.isEmpty {
+            return .pink070
+        }
         return focusedField.wrappedValue == currentField ? Color.green060 : Color.gray040
     }
 }

@@ -23,11 +23,12 @@ struct TabViewContent: View {
         // 홈 탭 화면: 예시로 버튼 클릭 시 calendar 화면으로 이동
         // 예시이므로 HomeView 완성시 지우고 HomeView 추가하면 됩니다.(주석도 함께 지워주세요!)
         case .home:
-            Button {
-                container.router.push(.calendar)
-            } label: {
-                Text("Home")
-            }
+            HomeView()
+//            Button {
+//                container.router.push(.calendar)
+//            } label: {
+//                Text("Home")
+//            }
 
         // 커뮤니티 탭 화면: 커뮤니티 관련 화면을 연결
         // Home과 마찬가지로 화면이 완성되었다면, 지우고 ComunityView를 연결하면 됩니다.
@@ -36,7 +37,8 @@ struct TabViewContent: View {
             
         // 글쓰기 탭 화면: 글쓰기 관련 화면을 연결
         case .writePost:
-            Text("writePost")
+            MealTimeSelectView()
+            // FIXME: [25.07.30] CameraModelView() 이후 앨범 또는 카메라 사진 받은 후 -> HashtagSelectionView로 이동 - 비엔/이은정
 
         // 탐색 탭 화면: 탐색 관련 화면을 연결
         case .explore:
