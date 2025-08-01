@@ -49,7 +49,7 @@ class SignUpNicknameViewModel {
     
     /// 특수문자 포함 여부
     private func containsSpecialCharacters(_ text: String) -> Bool {
-        let regex = "[^가-힣]"
+        let regex = "[~!@#$%^&*()_+=\\[\\]{}|\\\\;:'\",.<>/?`]"
         return text.range(of: regex, options: .regularExpression) != nil
     }
     
