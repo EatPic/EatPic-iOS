@@ -30,7 +30,7 @@ struct ExploreMainView: View {
     private func searchBar() -> some View {
         SearchBarView(
             text: $searchText,
-            placeholder: "계정 또는 해시태그 검색",
+            placeholder: "",
             showsDeleteButton: false,
             backgroundColor: .white,
             strokeColor: .gray080,

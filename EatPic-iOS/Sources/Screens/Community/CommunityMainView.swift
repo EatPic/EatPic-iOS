@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CommunityMainView: View {
-    
+
+    @EnvironmentObject private var container: DIContainer
     @State private var selectedUser: CommunityUser = sampleUsers[0]
     
     var body: some View {
@@ -24,7 +25,7 @@ struct CommunityMainView: View {
     
     // 필터링된 카드 리스트
     private var filteredCards: [PicCard] {
-        if selectedUser.name == "전체" {
+        if selectedUser.nickname == "전체" {
             return sampleCards
         } else {
             return sampleCards.filter { $0.user == selectedUser }
@@ -42,7 +43,7 @@ struct CommunityMainView: View {
                             borderColor: user == selectedUser ? .pink050 : .gray040,
                             borderWidth: 3
                         )
-                        Text(user.name)
+                        Text(user.id)
                             .font(.dsSubhead)
                             .foregroundStyle(Color.gray080)
                     }
@@ -61,10 +62,11 @@ struct CommunityMainView: View {
     // 카드 리스트 뷰
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
-            ForEach (filteredCards) { card in
+            ForEach(filteredCards) { card in
+                // FIXME: - 각 user 당 카드 1개만 프로필 이동 및 메뉴 선택 되는 이슈 (원주연, 25.07.31)
                 PicCardView(
                     profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
-                    profileID: card.user.name,
+                    profileID: card.user.id,
                     time: card.time,
                     menuContent: {
                         Button(role: .destructive, action: {
@@ -74,7 +76,10 @@ struct CommunityMainView: View {
                         }
                     },
                     postImage: card.image,
-                    myMemo: card.memo
+                    myMemo: card.memo,
+                    onProfileTap: {
+                        container.router.push(.userProfile(user: card.user))
+                    }
                 )
             }
         }

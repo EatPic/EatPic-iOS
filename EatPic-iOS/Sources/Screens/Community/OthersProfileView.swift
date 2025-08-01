@@ -37,12 +37,14 @@ import SwiftUI
  */
 
 struct OthersProfileView: View {
+    let user: CommunityUser
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 4),
         GridItem(.flexible(minimum: 0), spacing: 4),
         GridItem(.flexible(minimum: 0), spacing: 4)
     ]
     
+    @EnvironmentObject private var container: DIContainer
     @State private var isFollowed: Bool = false
     
     var body: some View {
@@ -94,6 +96,7 @@ struct OthersProfileView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis")
+                        .foregroundStyle(Color.black)
                 }
             })
         }
@@ -103,14 +106,15 @@ struct OthersProfileView: View {
     private func userProfileView() -> some View {
         VStack {
             Spacer().frame(height: 8)
-            ProfileImageView(image: Image(systemName: "circle.fill"),size: 100)
+            ProfileImageView(image: user.profileImage ?? Image(systemName: "person.fill"),
+                             size: 100)
         
             Spacer().frame(height: 16)
             
-            Text("닉네임")
+            Text(user.nickname)
                 .font(.dsTitle3)
                 .foregroundStyle(Color.gray080)
-            Text("@아이디")
+            Text("@"+user.id)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray060)
             Spacer().frame(height: 18)
@@ -138,37 +142,59 @@ struct OthersProfileView: View {
             }
             
             VStack {
-                Text("0")
+                Text("2")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로워")
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            .onTapGesture {
+                container.router.push(.followList(selected: .followers))
+            }
             
             VStack {
-                Text("0")
+                Text("2")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로잉")
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            .onTapGesture {
+                container.router.push(.followList(selected: .followings))
+            }
         }
     }
     
+    private var userCards: [PicCard] {
+        return sampleCards.filter { $0.user == user }
+    }
+    
     private func userFeedView() -> some View {
-        LazyVGrid(columns: columns, spacing: 4, content: {
-            ForEach(0..<10) { index in
-                Rectangle()
-                    .fill(Color.gray030)
-                    .aspectRatio(1, contentMode: .fit)
-            }
-        })
-        .padding(.horizontal, 16)
+        GeometryReader { geometry in
+            let availableWidth = geometry.size.width - 32 // 좌우 패딩 16씩 제외
+            let spacing: CGFloat = 8 // 총 spacing (4 * 2)
+            let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
+            LazyVGrid(columns: columns, spacing: 4, content: {
+                ForEach(userCards) { card in
+                    card.image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .clipped()
+                }
+            })
+            .padding(.horizontal, 16)
+        }
     }
 }
 
 #Preview {
-    OthersProfileView()
+    OthersProfileView(user: CommunityUser(
+            id: "id1",
+            nickname: "아이디1",
+            imageName: nil,
+            isCurrentUser: true
+        ))
 }

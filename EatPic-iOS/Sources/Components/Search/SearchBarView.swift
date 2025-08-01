@@ -92,7 +92,8 @@ struct SearchBarView: View {
         .padding(.vertical, 8)
         .padding(.leading, 16)
         .padding(.trailing, 8)
-        .frame(width: .infinity, height: 40)
+        .frame(height: 40)
+        .frame(maxWidth: .infinity)
         .background(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColor)
