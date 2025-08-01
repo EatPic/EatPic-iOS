@@ -44,7 +44,12 @@ class SignUpNicknameViewModel {
     
     /// 닉네임 유효성 검사
     var isNicknameValid: Bool {
-        nicknameErrorMessage == nil
+        return !nickname.isEmpty &&
+        nickname.count >= 2 &&
+        !containsSpecialCharacters(nickname) &&
+        !containsEnglishLetters(nickname) &&
+        !containsDigits(nickname) &&
+        !isNicknameDuplicate(nickname)
     }
     
     /// 특수문자 포함 여부
