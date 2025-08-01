@@ -28,13 +28,13 @@ class SignUpNicknameViewModel {
         } else if nickname.count < 2 {
             return "닉네임은 2자 이상이어야 합니다."
         } else if containsSpecialCharacters(nickname) {
-            return "닉네임에 특수문자를 사용할 수 없습니다."
+            return "특수문자를 사용할 수 없습니다."
         } else if containsEnglishLetters(nickname) {
-            return "닉네임에 영문을 사용할 수 없습니다."
+            return "영문은 사용할 수 없습니다."
         } else if containsDigits(nickname) {
             return "닉네임에 숫자를 사용할 수 없습니다."
         } else if isNicknameDuplicate(nickname) {
-            return "이미 사용 중인 닉네임입니다."
+            return "이미 사용중인 닉네임입니다."
         } else {
             return nil
         }

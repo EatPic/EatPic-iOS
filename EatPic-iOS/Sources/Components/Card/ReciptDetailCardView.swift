@@ -99,11 +99,11 @@ struct RecipeDetailCardView: View {
                     .foregroundStyle(.white)
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
-                    .background(
+                    .background(alignment: .center) {
                         RoundedRectangle(cornerRadius: 100)
                             .fill(.black)
                             .stroke(.white, lineWidth: 1)
-                    )
+                    }
             }
         }
         .padding(.leading, 17)
