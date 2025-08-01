@@ -1,17 +1,13 @@
 //
-//  ExploreMainView.swift
+//  ExploreSelectedView.swift
 //  EatPic-iOS
 //
-//  Created by 원주연 on 7/29/25.
+//  Created by 원주연 on 7/31/25.
 //
 
 import SwiftUI
 
-// 메인 탐색(Explore) 화면 뷰
-struct ExploreMainView: View {
-    // 검색창에 입력되는 텍스트 상태
-    @State var searchText: String = ""
-    @EnvironmentObject private var container: DIContainer
+struct ExploreSelectedView: View {
     
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
@@ -19,48 +15,54 @@ struct ExploreMainView: View {
         ]
     
     var body: some View {
-        VStack(spacing: 20) {
-            searchBar()
-            exploreFeed()
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 16)
-    }
-    
-    /// 검색 바 구성 뷰
-    private func searchBar() -> some View {
-        SearchBarView(
-            text: $searchText,
-            placeholder: "",
-            showsDeleteButton: false,
-            backgroundColor: .white,
-            strokeColor: .gray080,
-            onSubmit: {
-                print("onSubmit")
-            },
-            onChange: {_ in 
-                print("onChange")
-            }
-        )
-    }
-    
-    /// 피드 전체 영역: ScrollView + LazyVGrid 구성
-    private func exploreFeed() -> some View {
         ScrollView {
+            VStack(spacing: 51) {
+                selectedPicCardView()
+                recommendedFeedView()
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+        }
+        .scrollIndicators(.hidden)
+        .customCenterNavigationBar(title: {
+            Text("탐색")
+                .font(.dsTitle2)
+        })
+    }
+    
+    private func selectedPicCardView() -> some View {
+        PicCardView(
+            profileImage: Image("Community/itcong"),
+            profileID: "itcong",
+            time: "오후 12:30",
+            menuContent: {
+                Button(role: .destructive, action: {
+                    print("신고하기")
+                }) {
+                    Label("신고하기", systemImage: "exclamationmark.bubble")
+                }
+            },
+            postImage: Image("Community/testImage"),
+            myMemo: "오늘은 샐러드를 먹었습니다~ 계란과 딸기를 많이 넣어 먹었어요~~~~ 다들 좋은 하루 보내세용",
+            onProfileTap: {
+                print("프로필로 이동")
+            })
+    }
+    
+    private func recommendedFeedView() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("더 찾아보기")
+                .font(.dsTitle3)
+                .foregroundStyle(.black)
+            
             LazyVGrid(columns: columns, spacing: 9, content: {
                 ForEach(0..<9) { index in
-                    Button {
-                        container.router.push(.exploreSelected)
-                    } label: {
-                        explorePicCard()
-                    }
+                    explorePicCard()
                 }
             })
         }
-        .scrollIndicators(.hidden)
     }
     
-    /// 각 피드 카드 뷰: 게시물 이미지 + 댓글/공감 수
     private func explorePicCard() -> some View {
         GeometryReader { geometry in
             ZStack {
@@ -94,5 +96,5 @@ struct ExploreMainView: View {
 }
 
 #Preview {
-    ExploreMainView()
+    ExploreSelectedView()
 }
