@@ -19,6 +19,7 @@ enum NavigationRoute: Equatable, Hashable {
     case signupNicknameView
     case signupIdView
     case signupProfileView
+    case signupAgreementView
     case agreementMarketingView
     case agreementPrivacyView
     case agreementServiceView
@@ -73,6 +74,8 @@ struct NavigationRoutingView: View {
             SignupIdView()
         case .signupProfileView:
             SignupProfileView()
+        case .signupAgreementView:
+            SignupAgreementView()
         case .agreementMarketingView:
             AgreementMarketingView()
         case .agreementPrivacyView:

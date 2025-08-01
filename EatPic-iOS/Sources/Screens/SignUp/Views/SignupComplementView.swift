@@ -44,9 +44,13 @@ struct SignupComplementView: View {
     
     /// 앱 로고
     private var logoImage: some View {
-        Image(.logo)
-            .resizable()
-            .frame(width: 258, height: 258)
+        HStack {
+            Spacer()
+            Image(.logo)
+                .resizable()
+                .frame(width: 258, height: 258)
+            Spacer()
+        }
     }
 
     /// 회원가입 완료 버튼
