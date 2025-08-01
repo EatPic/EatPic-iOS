@@ -152,7 +152,7 @@ struct SignupAgreementView: View {
             action: {
                 /// 약관동의 통과시 화면 이동 구현 예정 (필수사항 체크 유효성 검사하기)
                 if viewModel.isRequiredAllChecked {
-                    print("가입완료 버튼")
+                    container.router.push(.signupComplementView)
                 }
             })
     }

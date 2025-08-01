@@ -22,6 +22,7 @@ enum NavigationRoute: Equatable, Hashable {
     case agreementMarketingView
     case agreementPrivacyView
     case agreementServiceView
+    case signupComplementView
     case home
     case myBadgeStatusAll(getBadgeStatus: String)
     case picCardEdit
@@ -78,6 +79,8 @@ struct NavigationRoutingView: View {
             AgreementPrivacyView()
         case .agreementServiceView:
             AgreementServiceView()
+        case .signupComplementView:
+            SignupComplementView()
         case .home:
             HomeView()
         case .myBadgeStatusAll(let getBadgeStatus):
