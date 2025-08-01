@@ -57,7 +57,6 @@ class SignUpViewModel {
         return nil
     }
     
-    
     // MARK: - 비밀번호 유효성 검사 Func
     
     /// 비밀번호 유효성 검사
