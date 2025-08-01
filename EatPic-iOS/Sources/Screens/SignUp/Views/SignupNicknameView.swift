@@ -100,7 +100,7 @@ struct SignupNicknameView: View {
             color: viewModel.isNicknameValid ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
-            textColor: .gray040,
+            textColor: viewModel.isNicknameValid ? .white : .gray040,
             height: 50,
             cornerRadius: 10,
             action: {

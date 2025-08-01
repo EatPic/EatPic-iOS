@@ -137,7 +137,7 @@ struct SignupAgreementView: View {
             color: viewModel.isRequiredAllChecked ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
-            textColor: .gray040,
+            textColor: viewModel.isRequiredAllChecked ? .white : .gray040,
             height: 50,
             cornerRadius: 10,
             action: {
