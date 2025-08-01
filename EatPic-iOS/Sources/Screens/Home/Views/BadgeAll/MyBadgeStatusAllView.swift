@@ -10,19 +10,37 @@ import SwiftUI
 struct MyBadgeStatusAllView: View {
     
     @StateObject private var viewModel = MyBadgeStatusViewModel()
+    @State private var selectedBadge: BadgeItem?
+    @State private var showingBadgeModal = false
     
     var body: some View {
-        VStack {
-            Spacer().frame(height: 32)
+        ZStack {
+            VStack {
+                Spacer().frame(height: 32)
+                
+                titleBar
+                
+                badgeScroll
+            }
+            .customNavigationBar {
+                Text("활동 뱃지")
+            } right: {
+                EmptyView()
+            }
             
-            titleBar
-            
-            badgeScroll
-        }
-        .customNavigationBar {
-            Text("활동 뱃지")
-        } right: {
-            EmptyView()
+            // 배지 모달
+            if showingBadgeModal, let badge = selectedBadge {
+                BadgeProgressModalView(
+                    badgeType: viewModel.createBadgeModalType(for: badge),
+                    closeBtnAction: {
+                        showingBadgeModal = false
+                        selectedBadge = nil
+                    },
+                    badgeSize: 130,
+                    badgeTitle: badge.name,
+                    badgeDescription: viewModel.getBadgeDescription(for: badge.name)
+                )
+            }
         }
     }
     
@@ -66,6 +84,10 @@ struct MyBadgeStatusAllView: View {
                         state: badgeItem.state,
                         badgeName: badgeItem.name
                     )
+                    .onTapGesture {
+                        selectedBadge = badgeItem
+                        showingBadgeModal = true
+                    }
                 }
             }
             .padding(.horizontal, 35)

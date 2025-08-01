@@ -33,4 +33,39 @@ class MyBadgeStatusViewModel: ObservableObject {
     func getBadgeStatus() -> String {
         return "\(acquiredBadges)"
     }
+    
+    // MARK: - Helper Methods
+    
+    /// 배지 상태에 따른 모달 타입을 생성합니다
+    /// - Parameter badge: 선택된 배지 아이템
+    /// - Returns: BadgeModalType
+    func createBadgeModalType(for badge: BadgeItem) -> BadgeModalType {
+        switch badge.state {
+        case .progress(let progress, let icon):
+            return .badgeUnlocked(progress: progress, icon: icon)
+        case .locked:
+            return .badgeLocked
+        }
+    }
+    
+    /// 배지 이름에 따른 설명을 반환합니다
+    /// - Parameter badgeName: 배지 이름
+    /// - Returns: 배지 설명 텍스트
+    func getBadgeDescription(for badgeName: String) -> String {
+        return badgeDescriptions[badgeName] ?? "" 
+    }
+    
+    /// 배지별 설명 딕셔너리
+    private let badgeDescriptions: [String: String] = [
+        "한끼했당": "설명~",
+        "공유왕": "설명~",
+        "삼시세끼": "설명~",
+        "기록마스터": "설명~",
+        "혼밥러": "설명~",
+        "꾸준왕": "설명~",
+        "맛집왕": "설명~",
+        "레시피왕": "설명~",
+        "공감왕": "설명~",
+        "사진장인": "설명~"
+    ]
 } 

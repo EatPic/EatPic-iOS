@@ -10,6 +10,8 @@ import SwiftUI
 struct MyBadgeStatusHomeView: View {
     @EnvironmentObject private var container: DIContainer
     @StateObject private var viewModel = MyBadgeStatusViewModel()
+    @Binding var selectedBadge: BadgeItem?
+    @Binding var showingBadgeModal: Bool
     
     var body: some View {
         VStack {
@@ -56,6 +58,10 @@ struct MyBadgeStatusHomeView: View {
                     )
                     .scaleEffect(0.77)
                     .frame(width: 100)
+                    .onTapGesture {
+                        selectedBadge = badgeItem
+                        showingBadgeModal = true
+                    }
                 }
             }
         }
@@ -63,6 +69,9 @@ struct MyBadgeStatusHomeView: View {
 }
 
 #Preview {
-    MyBadgeStatusHomeView()
-        .environmentObject(DIContainer())
+    MyBadgeStatusHomeView(
+        selectedBadge: .constant(nil),
+        showingBadgeModal: .constant(false)
+    )
+    .environmentObject(DIContainer())
 }
