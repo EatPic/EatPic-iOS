@@ -113,7 +113,16 @@ struct SignupAgreementView: View {
             id: \.element.id
         ) { index, item in
             Button(action: {
-                viewModel.toggleAgreement(at: index)
+                viewModel.toggleAgreement(at: index) // 상태 토글
+                
+                switch item.type { // 화면 이동
+                case .service:
+                    container.router.push(.agreementServiceView)
+                case .privacy:
+                    container.router.push(.agreementPrivacyView)
+                case .marketing:
+                    container.router.push(.agreementMarketingView)
+                }
             }) {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
@@ -142,7 +151,9 @@ struct SignupAgreementView: View {
             cornerRadius: 10,
             action: {
                 /// 약관동의 통과시 화면 이동 구현 예정 (필수사항 체크 유효성 검사하기)
-                print("다음화면이동")
+                if viewModel.isRequiredAllChecked {
+                    container.router.push(.signupComplementView)
+                }
             })
     }
 }
