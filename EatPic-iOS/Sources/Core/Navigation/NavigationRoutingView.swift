@@ -18,6 +18,7 @@ enum NavigationRoute: Equatable, Hashable {
     case signupPasswordView
     case signupNicknameView
     case signupIdView
+    case signupProfileView
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -50,6 +51,8 @@ struct NavigationRoutingView: View {
                 SignupNicknameView()
             case .signupIdView:
                 SignupIdView()
+            case .signupProfileView:
+                SignupProfileView()
             }
         }
         .environmentObject(container)
