@@ -97,7 +97,7 @@ struct SignupNicknameView: View {
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.isNicknameValid ? .green060 :.gray020,
+            color: viewModel.isNicknameValid ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
             textColor: .gray040,
@@ -105,7 +105,9 @@ struct SignupNicknameView: View {
             cornerRadius: 10,
             action: {
                 /// 닉네임 유효성검사 통과시 화면 이동 구현 예정
-                print("다음화면이동")
+                if viewModel.isNicknameValid {
+                    container.router.push(.signupIdView)
+                }
             })
     }
 }
