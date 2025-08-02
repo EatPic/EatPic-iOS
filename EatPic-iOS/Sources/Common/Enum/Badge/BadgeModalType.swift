@@ -19,7 +19,13 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
     var badgeView: AnyView {
         switch self {
         case .badgeUnlocked(let progress, let icon):
-            return AnyView(CircleProgressView(progress: progress, size: 128, icon: icon))
+            let badgeCircleSize = 130 * 0.92 // locked와 badge크기 맞추기 위한 값
+            return AnyView(CircleProgressView(
+                progress: progress,
+                lineWidth: badgeCircleSize * 0.09,
+                size: badgeCircleSize,
+                icon: icon
+            ))
         case .badgeLocked:
             return AnyView(LockBadgeView(size: 130))
         }
