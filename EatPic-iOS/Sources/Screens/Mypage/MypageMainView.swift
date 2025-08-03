@@ -11,9 +11,11 @@ struct MypageMainView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
             topSetupButton
-            Text("mypage")
+            middleContents
             Spacer()
         }
+        .padding(.horizontal, 16)
+        .background(Color.gray020)
     }
     
     // MARK: - TopContentes(상단 콘텐츠)
@@ -38,6 +40,7 @@ struct MypageMainView: View {
     private var middleContents: some View {
         VStack(alignment: .center, spacing: 16) {
             middleProfileImage
+            Spacer().frame(height: 16)
             middleNickname
             middleIntroduction
             middleFollowButton
@@ -46,7 +49,7 @@ struct MypageMainView: View {
     
     /// 중앙 프로필 이미지
     private var middleProfileImage: some View {
-        Image("itcong")
+        Image("Community/itcong")
             .frame(width: 100, height: 100)
     }
     
@@ -64,7 +67,10 @@ struct MypageMainView: View {
     
     /// 마이페이지 프로필 사용자 한줄소개 텍스트
     private var middleIntroduction: some View {
-        Text("안녕하세요 밥 먹는거 좋아하는 잇콩입니다")
+        (
+        Text("안녕하세요 밥 먹는거 좋아하는 잇콩입니다\n")
+        + Text("밥을 정말 좋아합니다.")
+        )
             .font(.dsCaption1)
     }
     
@@ -79,10 +85,12 @@ struct MypageMainView: View {
                 Text("0\n")
                 + Text("팔로워")
                 )
+                .foregroundStyle(Color.black)
                 .multilineTextAlignment(.center)
             }
 
             Spacer()
+            
             Button {
                 print("팔로잉 선택")
             } label: {
@@ -90,12 +98,15 @@ struct MypageMainView: View {
                 Text("0\n")
                 + Text("팔로잉")
                 )
+                .foregroundStyle(Color.black)
                 .multilineTextAlignment(.center)
             }
 
             Spacer()
         }
     }
+    
+    // MARK: - Bottom Contents
 }
 
 #Preview {
