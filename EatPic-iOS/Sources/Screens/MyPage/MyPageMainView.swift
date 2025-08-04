@@ -10,25 +10,28 @@ import SwiftUI
 struct MyPageMainView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
+            Spacer().frame(height: 12)
             topSetupButton
+            Spacer()
             middleContents
+            bottomContents
             Spacer()
         }
         .padding(.horizontal, 16)
-        .background(Color.gray020)
+        .background(Color.gray020.ignoresSafeArea())
     }
     
     // MARK: - TopContentes(상단 콘텐츠)
     
     /// 상단 설정 버튼
     private var topSetupButton: some View {
-        HStack {
+        HStack(alignment: .top) {
             Spacer()
             Button(
                 action: {print("설정클릭")},
                 label: {
                     Image(systemName: "gearshape.fill")
-                        .frame(width: 24, height: 24)
+                        .font(.system(size: 24))
                 })
             .foregroundStyle(Color.black)
         }
@@ -40,7 +43,6 @@ struct MyPageMainView: View {
     private var middleContents: some View {
         VStack(alignment: .center, spacing: 16) {
             middleProfileImage
-            Spacer().frame(height: 16)
             middleNickname
             middleIntroduction
             middleFollowButton
@@ -51,40 +53,46 @@ struct MyPageMainView: View {
     private var middleProfileImage: some View {
         Image("Community/itcong")
             .frame(width: 100, height: 100)
+            .padding(.bottom, 16)
     }
     
     /// 마이페이지 프로필 닉네임 및 아이디
     private var middleNickname: some View {
-        (
-        Text("잇콩\n")
-            .font(.dsTitle3)
-        + Text("itcong")
-            .font(.dsSubhead)
-            .foregroundStyle(Color.gray040)
-        )
+        VStack {
+            Text("잇콩")
+                .font(.dsTitle3)
+
+            Text("itcong")
+                .font(.dsSubhead)
+                .foregroundStyle(Color.gray040)
+        }
+        .multilineTextAlignment(.center)
+    }
+
+    /// 마이페이지 프로필 사용자 한줄소개 텍스트
+    private var middleIntroduction: some View {
+        VStack {
+            Text("안녕하세요 밥 먹는거 좋아하는 잇콩입니다")
+            Text("밥을 정말 좋아합니다.")
+        }
+        .font(.dsCaption1)
         .multilineTextAlignment(.center)
     }
     
-    /// 마이페이지 프로필 사용자 한줄소개 텍스트
-    private var middleIntroduction: some View {
-        (
-        Text("안녕하세요 밥 먹는거 좋아하는 잇콩입니다\n")
-        + Text("밥을 정말 좋아합니다.")
-        )
-            .font(.dsCaption1)
-    }
-    
-    /// 마이페이지 팔로워 및 팔로워 버튼
+    /// 마이페이지 팔로워 및 팔로잉 버튼
     private var middleFollowButton: some View {
         HStack {
             Spacer()
+            
             Button {
                 print("팔로워 선택")
             } label: {
-                (
-                Text("0\n")
-                + Text("팔로워")
-                )
+                VStack(spacing: 2) {
+                    Text("0")
+                        .font(.dsTitle3)
+                    Text("팔로워")
+                        .font(.dsCaption1)
+                }
                 .foregroundStyle(Color.black)
                 .multilineTextAlignment(.center)
             }
@@ -94,10 +102,12 @@ struct MyPageMainView: View {
             Button {
                 print("팔로잉 선택")
             } label: {
-                (
-                Text("0\n")
-                + Text("팔로잉")
-                )
+                VStack(spacing: 2) {
+                    Text("0")
+                        .font(.dsTitle3)
+                    Text("팔로잉")
+                        .font(.dsCaption1)
+                }
                 .foregroundStyle(Color.black)
                 .multilineTextAlignment(.center)
             }
@@ -107,6 +117,36 @@ struct MyPageMainView: View {
     }
     
     // MARK: - Bottom Contents
+    private var bottomContents: some View {
+        VStack(spacing: 16) {
+            MyPageCardView(
+                iconName: "card",
+                title: "전체 Pic 카드",
+                description: "나의 전체 Pic 카드 확인해보기",
+                countText: "0개"
+            ) {
+                print("전체 카드 클릭")
+            }
+
+            MyPageCardView(
+                iconName: "bookmark",
+                title: "저장한 Pic 카드",
+                description: "내가 저장한 Pic 카드 확인해보기",
+                countText: "0개"
+            ) {
+                print("저장 카드 클릭")
+            }
+
+            MyPageCardView(
+                iconName: "badge",
+                title: "활동 배지",
+                description: "지금까지 모은 뱃지 확인해보기",
+                countText: "0개"
+            ) {
+                print("배지 클릭")
+            }
+        }
+    }
 }
 
 #Preview {
