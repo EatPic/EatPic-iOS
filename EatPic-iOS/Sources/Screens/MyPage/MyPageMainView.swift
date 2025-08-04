@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MypageMainView: View {
+struct MyPageMainView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
             topSetupButton
@@ -110,5 +110,5 @@ struct MypageMainView: View {
 }
 
 #Preview {
-    MypageMainView()
+    MyPageMainView()
 }
