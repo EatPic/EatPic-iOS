@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 마이페이지 메인 화면 View
 struct MyPageMainView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
@@ -39,7 +40,7 @@ struct MyPageMainView: View {
     
     // MARK: - Middle Contents(중앙 콘텐츠)
     
-    /// 중앙 컨텐츠
+    /// 중앙 컨텐츠 (프로필 이미지, 닉네임 및 아이디, 한줄소개, 팔로워/팔로잉 버튼)
     private var middleContents: some View {
         VStack(alignment: .center, spacing: 16) {
             middleProfileImage
@@ -117,6 +118,8 @@ struct MyPageMainView: View {
     }
     
     // MARK: - Bottom Contents
+    
+    /// 바텀 카드뷰 공용컴포넌트 호출
     private var bottomContents: some View {
         VStack(spacing: 16) {
             MyPageCardView(
