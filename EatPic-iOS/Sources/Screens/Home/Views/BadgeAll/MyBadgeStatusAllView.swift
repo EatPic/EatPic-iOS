@@ -86,6 +86,7 @@ struct MyBadgeStatusAllView: View {
                         state: badgeItem.state,
                         badgeName: badgeItem.name
                     )
+                    // 배지 탭 
                     .onTapGesture {
                         selectedBadge = badgeItem
                         showingBadgeModal = true
