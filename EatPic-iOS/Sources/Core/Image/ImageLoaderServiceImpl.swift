@@ -16,14 +16,15 @@ enum ImageLoadState {
     case failure(Error)
 }
 
-protocol ImageLoaderService: ObservableObject {
+protocol ImageLoaderService {
     var state: ImageLoadState { get }
     func loadImage(from urlString: String?)
     func cancel()
 }
 
+@Observable
 final class ImageLoaderServiceImpl: ImageLoaderService {
-    @Published private(set) var state: ImageLoadState = .idle
+    private(set) var state: ImageLoadState = .idle
     private var currentTask: DownloadTask?
     
     func loadImage(from urlString: String?) {
