@@ -30,6 +30,9 @@ struct TextAreaView: View {
     /// 텍스트의 색상
     let textColor: Color
     
+    
+    @FocusState private var isFocused: Bool
+    
     // MARK: - Init
     init(
         text: Binding<String>,
@@ -56,7 +59,8 @@ struct TextAreaView: View {
                 .fill(backgroundColor)
                 .overlay(alignment: .center) {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(borderColor, lineWidth: 1)
+                        .stroke(isFocused ? Color.green060 : borderColor,
+                                lineWidth: isFocused ? 1 : 1)
                 }
             
             // TextField
@@ -66,6 +70,7 @@ struct TextAreaView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
                 .lineLimit(nil) // 줄 제한 없음
+                .focused($isFocused)
             
             // Placeholder
             if text.isEmpty {
@@ -81,6 +86,7 @@ struct TextAreaView: View {
         .frame(height: height)
     }
 }
+
 
 #Preview {
     @Previewable @State var myMemo = ""
