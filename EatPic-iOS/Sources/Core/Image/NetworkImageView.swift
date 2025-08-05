@@ -52,8 +52,8 @@ struct NetworkImageView: View {
                 Text("이미지 로드 실패")
             }
         }
-        .onAppear {
-            loader.loadImage(from: url)
+        .task {
+            await loader.loadImage(from: url)
         }
         .onDisappear {
             loader.cancel()

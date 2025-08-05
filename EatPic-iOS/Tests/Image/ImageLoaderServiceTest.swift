@@ -25,7 +25,7 @@ struct ImageLoaderServiceTest {
                 """
         
         // when
-        loader.loadImage(from: urlString)
+        await loader.loadImage(from: urlString)
         try await Task.sleep(nanoseconds: 2_000_000_000)
         
         // then
@@ -38,12 +38,12 @@ struct ImageLoaderServiceTest {
     }
 
     @Test("잘못된 URL을 입력하면 failure 상태가 되어야 한다.")
-    func testInvalidURL() {
+    func testInvalidURL() async {
         // given
         let loader = ImageLoaderServiceImpl()
         
         // when
-        loader.loadImage(from: "valid url")
+        await loader.loadImage(from: "valid url")
         
         // then
         switch loader.state {
@@ -68,7 +68,7 @@ struct ImageLoaderServiceTest {
         }
         try await cache.store(dummyImage, forKey: testKey)
         
-        loader.loadImage(from: testKey)
+        await loader.loadImage(from: testKey)
         
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
