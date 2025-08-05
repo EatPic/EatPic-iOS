@@ -40,7 +40,7 @@ struct HomeView: View {
             Spacer()
             
             Button {
-                container.router.push(.calender)
+                container.router.push(.calendar)
             } label: {
                 Image("Home/btn_home_calender")
                     .resizable()
