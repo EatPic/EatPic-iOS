@@ -21,6 +21,7 @@ struct CalenderCardView: View {
             // 당일 식사 사진들 캐러셀 뷰
             // FIXME: [25.07.29] 각 Carousel 사진마다 개별 뷰 보여줘야함 – 비엔/이은정
             CarouselView()
+                .padding(.horizontal, -32) // 패딩 무시
             
             buttonsView
             
@@ -70,6 +71,7 @@ struct CalenderCardView: View {
         }
         .toastView(viewModel: toastVM)
         .padding(.horizontal, 16)
+        .padding(.horizontal, 16)
     }
     
     // MARK: 레시피 링크 ~ 메모 등의 하단 버튼 뷰 4개
@@ -118,7 +120,9 @@ struct CalenderCardView: View {
             .padding(.vertical, 8)
         }
         .background(Color.gray030.ignoresSafeArea())
+        .padding(.horizontal, -32) // 패딩 무시
     }
+    
     
     // MARK: 해당 피드 바로가기 버튼 있는 뷰
     private var goToFeed: some View {
