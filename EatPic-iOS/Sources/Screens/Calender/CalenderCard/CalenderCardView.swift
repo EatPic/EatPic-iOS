@@ -10,6 +10,8 @@ import SwiftUI
 struct CalenderCardView: View {
     @EnvironmentObject private var container: DIContainer
     
+    @Bindable private var toastVM = ToastViewModel()
+    
     var body: some View {
 
         Spacer().frame(height: 8)
@@ -43,6 +45,7 @@ struct CalenderCardView: View {
                 // FIXME: [25.07.30] 버튼을 개별 뷰로 분리하면 조금 더 깔끔해질것같음 – 비엔/이은정
                 
                 Button(action: {
+                    toastVM.showToast(title: "사진이 저장되었습니다.")
                     // TODO: [25.07.27] 다운로드 액션 – 비엔/이은정
                 }, label: {
                     Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
@@ -65,6 +68,8 @@ struct CalenderCardView: View {
                     .frame(width: 24, height: 24)
             }
         }
+        .toastView(viewModel: toastVM)
+        .padding(.horizontal, 16)
     }
     
     // MARK: 레시피 링크 ~ 메모 등의 하단 버튼 뷰 4개
