@@ -46,7 +46,7 @@ struct TabViewContent: View {
 
         // 마이페이지 탭 화면: 마이페이지 관련 화면을 연결
         case .myPage:
-            Text("myPage")
+            MyPageMainView()
         }
     }
 }
