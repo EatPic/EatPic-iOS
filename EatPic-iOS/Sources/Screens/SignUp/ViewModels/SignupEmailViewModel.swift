@@ -1,5 +1,4 @@
 //
-//  LoginViewModel.swift
 //  EatPic-iOS
 //
 //  Created by 송승윤 on 7/14/25.

@@ -16,6 +16,12 @@ class LoginViewModel {
     
     /// 의존성 주입 컨테이너
     var container: DIContainer
+    
+    /// 사용자 입력 이메일
+    var email: String = ""
+    
+    /// 사용자 입력 비밀번호
+    var password: String = ""
 
     // MARK: - Init
     
@@ -23,5 +29,11 @@ class LoginViewModel {
     /// - container: DIContainer주입 받아 서비스 사용 (네비게이션 등)
     init(container: DIContainer) {
         self.container = container
+    }
+    
+    // MARK: - Func
+    
+    var fieldsNotEmpty: Bool {
+        !email.isEmpty && !password.isEmpty
     }
 }

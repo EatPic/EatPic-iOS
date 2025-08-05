@@ -7,11 +7,11 @@
 
 import SwiftUI
 
+/// 회원가입 비밀번호 입력 뷰
 struct SignupPasswordView: View {
     // MARK: - Property
     
-    /// 로그인 기능 및 상태를 관리하는 ViewModel
-    @State var viewModel: SignUpViewModel
+    @State var viewModel: SignupPasswordViewModel
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
