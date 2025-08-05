@@ -59,14 +59,13 @@ struct TextAreaView: View {
                         .stroke(borderColor, lineWidth: 1)
                 }
             
-            // 텍스트 입력
-            TextEditor(text: $text)
+            // TextField
+            TextField("", text: $text, axis: .vertical)
                 .foregroundColor(textColor)
                 .font(.dsBody)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
-                .background(Color.clear)
-                .scrollContentBackground(.hidden)
+                .lineLimit(nil) // 줄 제한 없음
             
             // Placeholder
             if text.isEmpty {
@@ -75,6 +74,8 @@ struct TextAreaView: View {
                     .font(.dsBody)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
+                    .allowsHitTesting(false) // 터치 이벤트 무시
+                
             }
         }
         .frame(height: height)
