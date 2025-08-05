@@ -22,9 +22,6 @@ struct AgreementServiceView: View {
             
             Spacer()
         }
-        .customCenterNavigationBar {
-            EmptyView()
-        }
         .padding(.horizontal, 17)
     }
 }

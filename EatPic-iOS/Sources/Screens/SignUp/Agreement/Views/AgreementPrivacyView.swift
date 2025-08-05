@@ -22,9 +22,6 @@ struct AgreementPrivacyView: View {
             
             Spacer()
         }
-        .customCenterNavigationBar {
-            EmptyView()
-        }
         .padding(.horizontal, 17)
     }
 }
