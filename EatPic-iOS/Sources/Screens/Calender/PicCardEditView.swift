@@ -12,7 +12,7 @@ struct PicCardEditView: View {
     
     var body: some View {
         VStack {
-            PicCardWriteView()
+            PicCardWriteView(primaryButtonText: "수정하기")
         }
         .customNavigationBar(title: {
             HStack {

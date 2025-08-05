@@ -30,7 +30,6 @@ struct TextAreaView: View {
     /// 텍스트의 색상
     let textColor: Color
     
-    
     @FocusState private var isFocused: Bool
     
     // MARK: - Init
