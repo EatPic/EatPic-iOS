@@ -100,7 +100,7 @@ struct SignupProfileView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-                print("다음화면이동")
+                container.router.push(.signupAgreementView)
             })
     }
 }
