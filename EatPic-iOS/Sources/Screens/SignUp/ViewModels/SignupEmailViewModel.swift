@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// 로그인 화면 초기 ViewModel
+/// 이메일로 회원가입 ViewModel
 @Observable
 class SignupEmailViewModel {
     
@@ -18,15 +18,6 @@ class SignupEmailViewModel {
     
     /// 사용자 입력 이메일
     var email: String = ""
-    
-    /// 사용자 입력 비밀번호
-    var password: String = ""
-    
-    /// 사용자 입력 닉네임
-    var nickname: String = ""
-    
-    /// 사용자 입력 아이디
-    var id: String = ""
     
     /// 에러 메시지
     var emailErrorMessage: String? {
@@ -57,9 +48,5 @@ class SignupEmailViewModel {
     /// 이메일 중복 여부 검사 (추후 서버 요청 예정)
     var isEmailDuplicate: Bool {
         registeredEmails.contains(email.lowercased())
-    }
-    
-    var fieldsNotEmpty: Bool {
-        !email.isEmpty && !password.isEmpty
     }
 }

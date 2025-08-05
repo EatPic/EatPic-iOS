@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// 로그인 화면 초기 ViewModel
+/// ID로 회원가입 ViewModel
 @Observable
 class SignUpIdViewModel {
     
