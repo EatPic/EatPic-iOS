@@ -57,7 +57,13 @@ let sampleCards: [PicCard] = [
     PicCard(user: sampleUsers[1], time: "오후 3:10",
             image: Image("Community/testImage2"), memo: "아침엔 스무디"),
     PicCard(user: sampleUsers[3], time: "오후 2:00",
-            image: Image("Community/testImage3"), memo: "오랜만에 피자!")
+            image: Image("Community/testImage3"), memo: "오랜만에 피자!"),
+    PicCard(user: sampleUsers[2], time: "오후 6:30",
+            image: Image("Community/testImage"), memo: "오늘은 샐러드 먹음"),
+    PicCard(user: sampleUsers[2], time: "오후 3:10",
+            image: Image("Community/testImage2"), memo: "아침엔 스무디 먹음"),
+    PicCard(user: sampleUsers[2], time: "오후 2:00",
+            image: Image("Community/testImage3"), memo: "오랜만에 피자 먹음"),
 ]
 
 let sampleComments: [Comment] = [

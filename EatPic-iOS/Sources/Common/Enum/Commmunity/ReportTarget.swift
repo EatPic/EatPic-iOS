@@ -10,6 +10,7 @@ import Foundation
 enum ReportTarget {
     case picCard
     case comment
+    case profile
     
     var subtitle: String {
         switch self {
@@ -17,6 +18,8 @@ enum ReportTarget {
             return "해당 Pic 카드를 신고하는 이유"
         case .comment:
             return "해당 댓글을 신고하는 이유"
+        case .profile:
+            return "해당 프로필을 신고하는 이유"
         }
     }
 }
