@@ -13,8 +13,6 @@ import Foundation
 class LoginViewModel {
     
     // MARK: - Property
-
-//    var flow: SignupFlowViewModel
     
     /// 사용자 입력 이메일
     var email: String = ""
@@ -22,14 +20,6 @@ class LoginViewModel {
     /// 사용자 입력 비밀번호
     var password: String = ""
 
-    // MARK: - Init
-    
-    /// - Parameters:
-    /// - container: DIContainer주입 받아 서비스 사용 (네비게이션 등)
-//    init(flow: SignupFlowViewModel) {
-//        self.flow = flow
-//    }
-//    
     // MARK: - Func
     
     var fieldsNotEmpty: Bool {
