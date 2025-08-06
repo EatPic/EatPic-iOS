@@ -49,6 +49,7 @@ struct NetworkImageView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             case .failure:
+                // TODO: [25.08.06] 이미지 로드 실패 이미지로 대체 예정 - 리버/이재원
                 Text("이미지 로드 실패")
             }
         }

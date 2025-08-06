@@ -48,7 +48,7 @@ struct ImageLoaderServiceTest {
         // then
         switch loader.state {
         case .failure(let error):
-            #expect(error is URLError)
+            #expect(error is KingfisherError)
         default:
             XCTFail("에러 상태가 되어야 한다.")
         }
