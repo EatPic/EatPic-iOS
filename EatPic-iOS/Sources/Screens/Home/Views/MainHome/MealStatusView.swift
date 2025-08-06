@@ -10,37 +10,18 @@ import SwiftUI
 // MARK: - 메인 뷰
 struct MealStatusView: View {
     @StateObject private var viewModel = MealStatusViewModel()
+    @State private var isEditMode = false
     
     var body: some View {
         VStack {
-            // 상단 제목 + 버튼
-            HStack {
-                Text("오늘의 식사 현황")
-                    .font(.dsTitle3)
-                    .foregroundColor(.gray080)
-
-                Spacer().frame(height: 24)
-                
-                Menu {
-                    Button(action: {
-                        // TODO: ZStack으로 현재 사진이 들어간 부분 위에 x 표시 떠야함, 그리고 그 x표시 누르면 사진 삭제 되어야함 < 어케 해야할지????
-                        print("수정하기")
-                    }, label: {
-                        Label("수정하기", systemImage: "pencil")
-                    })
-                } label: {
-                    Image("Home/btn_home_ellipsis")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                }
-            }
+            topBarView
 
             Spacer().frame(height: 24)
 
             // 식사 항목 리스트
             HStack(spacing: 6) {
                 ForEach(viewModel.mealStatus) { meal in
-                    MealItemView(mymeal: meal)
+                    MealItemView(mymeal: meal, isEditMode: isEditMode)
                 }
                 Spacer()
             }
@@ -50,15 +31,53 @@ struct MealStatusView: View {
         .background(.white)
         .cornerRadius(15)
     }
+    
+    private var topBarView: some View {
+        // 상단 제목 + 버튼
+        HStack {
+            Text("오늘의 식사 현황")
+                .font(.dsTitle3)
+                .foregroundColor(.gray080)
+
+            Spacer().frame(height: 24)
+            
+            if isEditMode {
+                // 수정 모드일 때: 수정완료 버튼
+                Button(action: {
+                    isEditMode = false
+                    print("수정완료")
+                }, label: {
+                    Text("수정완료")
+                        .font(.dsSubhead)
+                        .foregroundColor(.green060)
+                })
+            } else {
+                // 일반 모드일 때: Menu 버튼
+                Menu {
+                    Button(action: {
+                        isEditMode.toggle()
+                        print("수정하기 모드: \(isEditMode ? "켜짐" : "꺼짐")")
+                    }, label: {
+                        Label("수정하기", systemImage: "pencil")
+                    })
+                } label: {
+                    Image("Home/btn_home_ellipsis")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Meal 기록됐느냐 안됐느냐 상태에 따른 뷰
 private struct MealItemView: View {
     let mymeal: MealStatusModel
+    let isEditMode: Bool
     
     var body: some View {
         if mymeal.isRecorded {
-            RecordedMealView(meal: mymeal)
+            RecordedMealView(meal: mymeal, isEditMode: isEditMode)
         } else {
             EmptyMealView(meal: mymeal)
         }
@@ -103,6 +122,7 @@ private struct EmptyMealView: View {
 // MARK: - 기록된 Meal 뷰
 private struct RecordedMealView: View {
     let meal: MealStatusModel
+    let isEditMode: Bool
 
     var body: some View {
         VStack {
@@ -118,16 +138,33 @@ private struct RecordedMealView: View {
 
             Spacer().frame(height: 10)
 
-            if let imageName = meal.imageName {
-                Image(imageName) // Model에서 가져온 이미지
-                    .resizable()
-                    .frame(width: 76, height: 76)
-                    .cornerRadius(10)
-            } else {
-                // 기본 이미지 또는 placeholder
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.green010)
-                    .frame(width: 76, height: 76)
+            ZStack {
+                if let imageName = meal.imageName {
+                    Image(imageName) // Model에서 가져온 이미지
+                        .resizable()
+                        .frame(width: 76, height: 76)
+                        .cornerRadius(10)
+                }
+//                else {
+//                    // 기본 이미지 또는 placeholder
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color.green010)
+//                        .frame(width: 76, height: 76)
+//                }
+                
+                // 수정 모드일 때 삭제 아이콘 오버레이
+                if isEditMode {
+                    Color.black.opacity(0.5)
+                        .frame(width: 76, height: 76)
+                        .cornerRadius(10)
+                    
+                    Image("Home/btn_home_deleted")
+                        .resizable()
+                        .frame(width: 32, height: 32)
+                        .foregroundColor(.white)
+//                        .zIndex(1) // 최상위로 올림
+
+                }
             }
         }
     }
