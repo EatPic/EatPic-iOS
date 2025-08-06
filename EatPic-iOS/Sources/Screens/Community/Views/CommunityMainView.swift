@@ -29,8 +29,8 @@ struct CommunityMainView: View {
                 onReport: viewModel.handleReport,
                 target: .picCard
             )
-                .presentationDetents([.large, .fraction(0.7)])
-                .presentationDragIndicator(.hidden)
+            .presentationDetents([.large, .fraction(0.7)])
+            .presentationDragIndicator(.hidden)
         }
         .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
             CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
@@ -75,11 +75,25 @@ struct CommunityMainView: View {
                     profileID: card.user.id,
                     time: card.time,
                     menuContent: {
-                        Button(role: .destructive, action: {
-                            viewModel.isShowingReportBottomSheet = true
-                            print("신고하기")
-                        }) {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        if viewModel.isMyCard(card) {
+                            // 내가 작성한 카드일 때
+                            Button(action: { viewModel.saveCardToPhotos(card) }) {
+                                Label("사진 앱에 저장", systemImage: "arrow.down.to.line")
+                            }
+                            Button(action: { viewModel.editCard(card) }) {
+                                Label("수정하기", systemImage: "square.and.pencil")
+                            }
+                            Button(role: .destructive, action: { viewModel.deleteCard(card) }) {
+                                Label("삭제하기", systemImage: "trash")
+                            }
+                        } else {
+                            // 다른 사람이 작성한 카드일 때
+                            Button(role: .destructive, action: {
+                                viewModel.isShowingReportBottomSheet = true
+                                print("신고하기")
+                            }) {
+                                Label("신고하기", systemImage: "exclamationmark.bubble")
+                            }
                         }
                     },
                     postImage: card.image,
