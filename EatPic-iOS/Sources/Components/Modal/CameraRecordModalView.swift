@@ -86,114 +86,111 @@ struct CameraRecordModalView: View {
     
     // MARK: - Body
     var body: some View {
-        ZStack {
-            /// 모달 아래 어둡게 처리된 배경
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
+        VStack {
+            // 나가기 x 버튼
+            HStack {
+                Spacer()
             
-            VStack {
-                // 나가기 x 버튼
-                HStack {
-                    Spacer()
-                
-                    Button(action: {
-                        print("모달 나가기 동작")
-                        closeBtnAction()
-                    }, label: {
-                        Image("Modal/btn_close")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                    })
-                }
-                .padding(.horizontal, 16)
-                
-                Spacer().frame(height: 8)
-                
-                /// 모달 제목 메시지
-                Text(messageTitle)
-                    .foregroundColor(messageTitleColor)
-                    .font(.dsTitle2)
-                
-                Spacer().frame(height: 8)
-               
-                /// 모달 설명 메시지
-                Text(messageDescription)
-                    .foregroundColor(messageDescriptionColor)
-                    .font(.dsSubhead)
-                
-                Spacer().frame(height: 32)
-
-                /// 하단 버튼 두개
-                HStack {
-                    Spacer()
-                    
-                    VStack {
-                        /// 카메라  버튼
-                        Button(action: {
-                            print("카메라")
-                        }, label: {
-                            
-                            ZStack {
-                                // 배경 버튼
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(buttonColor)
-                                    .frame(width: 70, height: 70)
-                                
-                                // 버튼 가운데 이미지
-                                cameraButtonImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 32, height: 32)
-                            }
-                        })
-                        
-                        Spacer().frame(height: 11)
-                        
-                        /// 카메라 텍스트
-                        Text(cameraText)
-                        .font(.dsBold15)
-                    }
-                    
-                    Spacer().frame(width: 40)
-                    
-                    VStack {
-                        /// 앨범  버튼
-                        Button(action: {
-                            print("앨범")
-                        }, label: {
-                            
-                            ZStack {
-                                // 배경 버튼
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(buttonColor)
-                                    .frame(width: 70, height: 70)
-
-                                // 버튼 가운데 이미지
-                                albumButtonImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 32, height: 32)
-                            }
-                        })
-                        
-                        Spacer().frame(height: 11)
-                        
-                        /// 앨범 텍스트
-                        Text(albumText)
-                        .font(.dsBold15)
-                    }
-                    
-                    Spacer()
-                    
-                }
+                Button(action: {
+                    print("모달 나가기 동작")
+                    closeBtnAction()
+                }, label: {
+                    Image("Modal/btn_close")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                })
             }
-            .padding(.top, 18)
-            .padding(.bottom, 44)
-            .frame(width: 270)
-            .background(.white)
-            .cornerRadius(10)
+            .padding(.horizontal, 16)
+            
+            Spacer().frame(height: 8)
+            
+            /// 모달 제목 메시지
+            Text(messageTitle)
+                .foregroundColor(messageTitleColor)
+                .font(.dsTitle2)
+            
+            Spacer().frame(height: 8)
+           
+            /// 모달 설명 메시지
+            Text(messageDescription)
+                .foregroundColor(messageDescriptionColor)
+                .font(.dsSubhead)
+            
+            Spacer().frame(height: 32)
+
+            /// 하단 버튼 두개
+            HStack {
+                Spacer()
+                
+                VStack {
+                    /// 카메라  버튼
+                    Button(action: {
+                        print("카메라")
+                        cameraBtnAction()
+                    }, label: {
+                        
+                        ZStack {
+                            // 배경 버튼
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(buttonColor)
+                                .frame(width: 70, height: 70)
+                            
+                            // 버튼 가운데 이미지
+                            cameraButtonImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 32, height: 32)
+                        }
+                    })
+                    
+                    Spacer().frame(height: 11)
+                    
+                    /// 카메라 텍스트
+                    Text(cameraText)
+                    .font(.dsBold15)
+                }
+                
+                Spacer().frame(width: 40)
+                
+                VStack {
+                    /// 앨범  버튼
+                    Button(action: {
+                        print("앨범")
+                        albumBtnAction()
+                    }, label: {
+                        
+                        ZStack {
+                            // 배경 버튼
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(buttonColor)
+                                .frame(width: 70, height: 70)
+
+                            // 버튼 가운데 이미지
+                            albumButtonImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 32, height: 32)
+                        }
+                    })
+                    
+                    Spacer().frame(height: 11)
+                    
+                    /// 앨범 텍스트
+                    Text(albumText)
+                    .font(.dsBold15)
+                }
+                
+                Spacer()
+                
+            }
+            
+            Spacer()
         }
+        .padding(.top, 18)
+        .padding(.bottom, 44)
+        .padding(.horizontal, 16)
+        .background(Color.white.ignoresSafeArea())
     }
 }
 

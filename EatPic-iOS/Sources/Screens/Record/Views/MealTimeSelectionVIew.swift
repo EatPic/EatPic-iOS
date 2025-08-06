@@ -125,7 +125,7 @@ struct MealTimeSelectView: View {
             ) {
                 if let selectedMeal = selectedMeal {
                     // TODO: [25.07.30] selectedMeal의 정보 저장 - 비엔/이은정
-                    container.router.push(.hashtagSelection)
+                    container.router.push(.hashtagSelection(selectedMeal: selectedMeal))
                     print("다음 화면으로 이동 - 선택된 식사: \(selectedMeal.rawValue)")
                 }
             }
@@ -135,7 +135,7 @@ struct MealTimeSelectView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                container.router.push(.home)
+                container.router.popToRoot()
             }, label: {
                 Image("Record/btn_home_close")
             })

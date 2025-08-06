@@ -10,12 +10,14 @@ import SwiftUI
 // MARK: PicCard 내용 기록 뷰
 struct PicCardWriteView: View {
     let primaryButtonText: String
+    let onSave: ((String, String, Bool) -> Void)?
     
     init(
-        primaryButtonText: String
+        primaryButtonText: String,
+        onSave: ((String, String, Bool) -> Void)? = nil
     ) {
         self.primaryButtonText = primaryButtonText
-        
+        self.onSave = onSave
     }
     
     @State private var myMemo: String = ""
@@ -100,6 +102,8 @@ struct PicCardWriteView: View {
                 cornerRadius: 10,
                 action: {
                     print("\(primaryButtonText)")
+                    // 저장 콜백 호출
+                    onSave?(myMemo, receiptDetail, isSharedToFeed)
                 }
             )
             

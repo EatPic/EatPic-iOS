@@ -20,25 +20,52 @@ struct PicCardRecordView: View {
 
     @EnvironmentObject private var container: DIContainer
     
+    let selectedMeal: MealType
+    let selectedHashtags: [String]
+    
+    // MARK: - Init
+    init(selectedMeal: MealType, selectedHashtags: [String]) {
+        self.selectedMeal = selectedMeal
+        self.selectedHashtags = selectedHashtags
+    }
+    
     var body: some View {
         VStack {
-            PicCardWriteView(primaryButtonText: "저장하기")
-            // FIXME: [25.07.30] 모든 버튼 클로저 처리
-            // FIXME: [25.07.30] - 비엔/이은정 PicCardWriteView PrimarybuttonText 매개변수 처리 - 비엔/이은정
-            // FIXME: [25.07.30] PicCardWriteView의 PrimarybuttonAction 매개변수 처리 ( 추후 CommunityMain으로 Navigation ) - 비엔/이은정
+            PicCardWriteView(
+                primaryButtonText: "저장하기",
+                onSave: { myMemo, receiptDetail, isSharedToFeed in
+                    savePicCard(myMemo: myMemo,
+                                receiptDetail: receiptDetail,
+                                isSharedToFeed: isSharedToFeed)
+                }
+            )
         }
         .customNavigationBar {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                container.router.push(.home)
+                container.router.popToRoot()
             }, label: {
                 Image("Record/btn_home_close")
             })
         }
     }
+    
+    // MARK: - 저장 로직
+    private func savePicCard(myMemo: String, receiptDetail: String, isSharedToFeed: Bool) {
+        // TODO: [25.08.07] 실제 데이터 저장 로직 구현 - 비엔/이은정
+        print("Pic 카드 저장:")
+        print("- 선택된 식사 시간: \(selectedMeal.rawValue)")
+        print("- 선택된 해시태그: \(selectedHashtags)")
+        print("- 나의 메모: \(myMemo)")
+        print("- 레시피 내용: \(receiptDetail)")
+        print("- 피드 공유 여부: \(isSharedToFeed)")
+        
+        // 저장 완료 후 MainTab 화면으로 돌아가기
+        container.router.popToRoot()
+    }
 }
 
-#Preview {
-    PicCardRecordView()
-}
+//#Preview {
+//    PicCardRecordView()
+//}

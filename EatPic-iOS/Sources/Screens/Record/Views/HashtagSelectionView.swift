@@ -10,6 +10,8 @@ import SwiftUI
 struct HashtagSelectionView: View {
     @EnvironmentObject private var container: DIContainer
     
+    let selectedMeal: MealType
+    
     // 해시 태그 데이터
     let hashtags = [
         "야식", "브런치", "혼밥", "집밥",
@@ -25,6 +27,11 @@ struct HashtagSelectionView: View {
     
     // 최대 선택 가능한 개수
     private let maxSelectionCount = 3
+
+    // MARK: - Init
+    init(selectedMeal: MealType) {
+        self.selectedMeal = selectedMeal
+    }
 
     // MARK: - Body
     var body: some View {
@@ -127,7 +134,8 @@ struct HashtagSelectionView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                container.router.push(.picCardRecord)
+                container.router.push(.picCardRecord(selectedMeal: selectedMeal,
+                                                     selectedHashtags: Array(selectedHashtags)))
             }
             .disabled(selectedHashtags.isEmpty) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
         }
@@ -193,6 +201,6 @@ private struct HashtagButton: View {
     }
 }
 
-#Preview {
-    HashtagSelectionView()
-}
+//#Preview {
+//    HashtagSelectionView()
+//}
