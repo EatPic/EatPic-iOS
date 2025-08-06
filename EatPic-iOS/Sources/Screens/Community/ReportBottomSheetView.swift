@@ -11,13 +11,16 @@ struct ReportBottomSheetView: View {
     @Binding var isShowing: Bool
     let onReport: (String) -> Void
     
+    // 신고 대상 (PicCard or Comment)
+        let target: ReportTarget
+    
     var body: some View {
         ScrollView {
             BottomSheetView(
                 title: "신고하기",
                 subtitle: {
                     VStack(spacing: 16) {
-                        Text("해당 Pic 카드를 신고하는 이유")
+                        Text(target.subtitle)
                             .font(.dsTitle2)
                             .foregroundStyle(Color.gray080)
                         Text("회원님의 신고는 익명으로 처리됩니다")

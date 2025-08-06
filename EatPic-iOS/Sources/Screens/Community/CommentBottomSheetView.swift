@@ -25,6 +25,21 @@ struct CommentBottomSheetView: View {
                                     commentText: comment.text,
                                     time: comment.time
                                 )
+                                .contextMenu{
+                                    if viewModel.isMyComment(comment) {
+                                        Button(role: .destructive) {
+                                            viewModel.deleteComment(comment)
+                                        } label: {
+                                            Label("삭제하기", systemImage: "trash")
+                                        }
+                                    } else {
+                                        Button(role: .destructive) {
+                                            viewModel.reportComment(comment)
+                                        } label: {
+                                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                                        }
+                                    }
+                                }
                             }
                             Spacer()
                         }
@@ -36,6 +51,17 @@ struct CommentBottomSheetView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             commentPostView()
+        }
+        .toastView(viewModel: viewModel.toastVM)
+        .padding(.horizontal, 16)
+        .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
+            ReportBottomSheetView(
+                isShowing: $viewModel.isShowingReportBottomSheet,
+                onReport: viewModel.handleReport,
+                target: .comment // Enum을 사용하여 댓글 신고용으로 지정
+            )
+            .presentationDetents([.large, .fraction(0.7)])
+            .presentationDragIndicator(.hidden)
         }
     }
     
@@ -79,7 +105,6 @@ struct CommentBottomSheetView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 16)
         .padding(.top, 14)
         .padding(.bottom, 10)
         .frame(height: 85)
@@ -95,7 +120,7 @@ struct CommentBottomSheetView: View {
             HStack {
                 // 댓글 텍스트 필드
                 TextField("댓글 달기...", text: $viewModel.commentText)
-                    .font(.system(size: 14, weight: .regular, design: .default))
+                    .font(.dsBody)
                 
                 // 전송 버튼
                 Button(action: {
@@ -121,7 +146,8 @@ struct CommentBottomSheetView: View {
             .frame(height: 48)
         }
         .background(Color.white)
+        .padding(.bottom, 16)
+        .padding(.top, 6)
         .frame(maxWidth: .infinity)
-        .padding(16)
     }
 }
