@@ -11,18 +11,14 @@ struct EmailLoginView: View {
     // MARK: - Property
     
     /// 로그인 기능 및 상태를 관리하는 ViewModel
-
-    @State var viewModel: LoginViewModel
+    @State var viewModel: LoginViewModel = .init()
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
     
-    // MARK: - Init
+    @EnvironmentObject var container: DIContainer
     
-    /// 기본 생성자 내부에서 ViewModel 인스턴스 생성
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
-        }
+    
     // MARK: - Body
     
     var body: some View {
@@ -119,11 +115,11 @@ struct EmailLoginView: View {
 struct EmailLoginView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            EmailLoginView(container: .init())
+            EmailLoginView()
                 .previewDevice("iPhone SE (3rd generation)")
                 .previewDisplayName("iPhone SE 3rd")
 
-            EmailLoginView(container: .init())
+            EmailLoginView()
                 .previewDevice("iPhone 16 Pro Max")
                 .previewDisplayName("iPhone 16 Pro Max")
         }

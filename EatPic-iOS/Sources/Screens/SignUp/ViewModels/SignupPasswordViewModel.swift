@@ -9,15 +9,20 @@ import Foundation
 
 /// 회원가입 비밀번호 입력창 ViewModel
 @Observable
-class SignupPasswordViewModel {
+class SignupPasswordViewModel: SignupFlowViewModel {
     
     // MARK: - Property
     
     /// 사용자 입력 비밀번호
-    var password: String = ""
+    override var password: String {
+        get { super.password }
+        set { super.password = newValue }
+    }
     
-    /// 비밀번호 확인
-    var confirmPassword: String = ""
+    override var confirmPassword: String {
+        get { super.confirmPassword}
+        set { super.confirmPassword = newValue }
+    }
     
     // MARK: - Error Message
     

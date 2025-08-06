@@ -7,17 +7,11 @@
 
 import Foundation
 
-/// 로그인 화면 초기 ViewModel
+/// 회원가입 플로우 중앙 뷰 모델
+
 @Observable
-class SignUpViewModel {
-    
-    // MARK: - Property
-    
-    /// 가입된 사용자 이메일 테스트용 데이터
-    let registeredEmails = ["test@example.com", "abc@gmail.com"]
-    
-    /// 이미 등록된 닉네임 테스트용 데이터
-    let registeredNicknames = ["홍길동", "김철수"]
+class SignupFlowViewModel {
+    // MARK: - Property (상태만 저장)
     
     /// 사용자 입력 이메일
     var email: String = ""
@@ -34,9 +28,6 @@ class SignUpViewModel {
     /// 사용자 입력 아이디
     var id: String = ""
 
-    // MARK: - Func
+    // MARK: - Func (API 호출 및 키체인 저장)
     
-    var fieldsNotEmpty: Bool {
-        !email.isEmpty && !password.isEmpty
-    }
 }
