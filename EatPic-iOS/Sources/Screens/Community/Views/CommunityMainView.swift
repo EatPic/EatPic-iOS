@@ -12,11 +12,6 @@ struct CommunityMainView: View {
     @EnvironmentObject private var container: DIContainer
     @State private var viewModel = CommunityMainViewModel()
     
-//    @State private var selectedUser: CommunityUser = sampleUsers[0]
-//    @Bindable private var toastVM = ToastViewModel()
-//    @State private var isShowingReportBottomSheet = false
-//    @State private var isShowingCommentBottomSheet: Bool = false
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 40) {
@@ -31,7 +26,8 @@ struct CommunityMainView: View {
         .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
             ReportBottomSheetView(
                 isShowing: $viewModel.isShowingReportBottomSheet,
-                onReport: viewModel.handleReport
+                onReport: viewModel.handleReport,
+                target: .picCard
             )
                 .presentationDetents([.large, .fraction(0.7)])
                 .presentationDragIndicator(.hidden)
@@ -42,15 +38,6 @@ struct CommunityMainView: View {
                 .presentationDragIndicator(.hidden)
         }
     }
-    
-    // 필터링된 카드 리스트
-//    private var filteredCards: [PicCard] {
-//        if selectedUser.nickname == "전체" {
-//            return sampleCards
-//        } else {
-//            return sampleCards.filter { $0.user == selectedUser }
-//        }
-//    }
     
     private func userListView() -> some View {
         ScrollView(.horizontal) {
@@ -102,16 +89,6 @@ struct CommunityMainView: View {
                     },
                     toastVM: viewModel.toastVM,
                     onItemAction: viewModel.handleCardAction
-//                        { action in
-//                        switch action {
-//                        case .bookmark(let isOn):
-//                            print("북마크 상태: \(isOn)")
-//                        case .comment:
-//                            isShowingCommentBottomSheet = true  // 여기서 true로 설정
-//                        case .reaction(let selected, let counts):
-//                            print("선택된 리액션: \(String(describing: selected)), 리액션 수: \(counts)")
-//                        }
-//                    }
                 )
             }
         }
