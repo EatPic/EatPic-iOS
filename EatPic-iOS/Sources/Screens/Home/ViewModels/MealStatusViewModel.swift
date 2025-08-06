@@ -15,4 +15,10 @@ class MealStatusViewModel: ObservableObject {
         MealStatusModel(mealTime: "저녁", isRecorded: false), // imageName 없음
         MealStatusModel(mealTime: "간식", isRecorded: false)  
     ]
+    
+    func deleteMealRecord(meal: MealStatusModel) {
+        if let idx = mealStatus.firstIndex(where: { $0.id == meal.id }) {
+            mealStatus[idx] = MealStatusModel(mealTime: meal.mealTime, isRecorded: false)
+        }
+    }
 }

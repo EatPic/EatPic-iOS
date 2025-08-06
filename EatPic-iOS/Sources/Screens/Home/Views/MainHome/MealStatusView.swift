@@ -21,7 +21,13 @@ struct MealStatusView: View {
             // 식사 항목 리스트
             HStack(spacing: 6) {
                 ForEach(viewModel.mealStatus) { meal in
-                    MealItemView(mymeal: meal, isEditMode: isEditMode)
+                    MealItemView(
+                        mymeal: meal,
+                        isEditMode: isEditMode,
+                        onDelete: {
+                            viewModel.deleteMealRecord(meal: meal)
+                        }
+                    )
                 }
                 Spacer()
             }
@@ -74,10 +80,11 @@ struct MealStatusView: View {
 private struct MealItemView: View {
     let mymeal: MealStatusModel
     let isEditMode: Bool
+    let onDelete: () -> Void
     
     var body: some View {
         if mymeal.isRecorded {
-            RecordedMealView(meal: mymeal, isEditMode: isEditMode)
+            RecordedMealView(meal: mymeal, isEditMode: isEditMode, onDelete: onDelete)
         } else {
             EmptyMealView(meal: mymeal)
         }
@@ -123,13 +130,13 @@ private struct EmptyMealView: View {
 private struct RecordedMealView: View {
     let meal: MealStatusModel
     let isEditMode: Bool
+    let onDelete: () -> Void
 
     var body: some View {
         VStack {
             ZStack {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.green050)
-
                 Text(meal.mealTime)
                     .font(.dsBold15)
                     .foregroundColor(.white)
@@ -140,30 +147,29 @@ private struct RecordedMealView: View {
 
             ZStack {
                 if let imageName = meal.imageName {
-                    Image(imageName) // Model에서 가져온 이미지
+                    Image(imageName)
                         .resizable()
                         .frame(width: 76, height: 76)
                         .cornerRadius(10)
+                } else {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.green010)
+                        .frame(width: 76, height: 76)
                 }
-//                else {
-//                    // 기본 이미지 또는 placeholder
-//                    RoundedRectangle(cornerRadius: 10)
-//                        .fill(Color.green010)
-//                        .frame(width: 76, height: 76)
-//                }
-                
-                // 수정 모드일 때 삭제 아이콘 오버레이
                 if isEditMode {
                     Color.black.opacity(0.5)
                         .frame(width: 76, height: 76)
                         .cornerRadius(10)
-                    
+                        .onTapGesture {
+                            onDelete()
+                        }
                     Image("Home/btn_home_deleted")
                         .resizable()
                         .frame(width: 32, height: 32)
                         .foregroundColor(.white)
-//                        .zIndex(1) // 최상위로 올림
-
+                        .onTapGesture {
+                            onDelete()
+                        }
                 }
             }
         }
