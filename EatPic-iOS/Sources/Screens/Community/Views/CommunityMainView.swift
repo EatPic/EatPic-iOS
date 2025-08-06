@@ -139,24 +139,6 @@ struct CommunityMainView: View {
         .frame(height: 157)
     }
     
-    // 댓글 바텀시트 뷰
-//    
-//    private func commentPostView() -> some View {
-//        HStack(alignment: .center, spacing: 16) {
-//            // 프로필 이미지
-//            Circle()
-//                .fill(Color.gray040)
-//                .frame(width: 40, height: 40)
-//            
-//            // 댓글 텍스트 필드
-//            TextField("댓글 달기...", text: .constant(""))
-//                .font(.system(size: 14, weight: .regular, design: .default))
-//        }
-//        .background(Color.white)
-//        .frame(maxWidth: .infinity)
-//        .padding(16)
-//    }
-    
     // 신고 버튼 컴포넌트
     private func reportButton(title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -177,13 +159,6 @@ struct CommunityMainView: View {
             }
         }
     }
-    
-//    // 신고 처리 함수
-//    private func handleReport(_ reportType: String) {
-//        print("신고 유형: \(reportType)")
-//        isShowingReportBottomSheet = false
-//        toastVM.showToast(title: "신고되었습니다.")
-//    }
 }
 
 #Preview {
