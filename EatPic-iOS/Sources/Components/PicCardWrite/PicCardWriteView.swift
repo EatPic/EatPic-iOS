@@ -189,7 +189,7 @@ private struct ShareToFeedButton: View {
             Toggle("", isOn: $isOn)
                 .toggleStyle(SwitchToggleStyle(tint: .pink060))
                 .labelsHidden()
-                .onChange(of: isOn) { oldValue, newValue in
+                .onChange(of: isOn) { _, newValue in
                     action(newValue)
                 }
                 
