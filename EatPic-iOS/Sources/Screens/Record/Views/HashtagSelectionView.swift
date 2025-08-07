@@ -66,6 +66,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -79,6 +82,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -92,6 +98,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -144,7 +153,7 @@ struct HashtagSelectionView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                container.router.push(.home)
+                container.router.popToRoot()
             }, label: {
                 Image("Record/btn_home_close")
             })
@@ -182,6 +191,7 @@ struct HashtagSelectionView: View {
 private struct HashtagButton: View {
     let hashtagName: String
     let isSelected: Bool
+    let isDisabled: Bool
     let hashtagBtnAction: () -> Void
     
     var body: some View {
@@ -198,6 +208,7 @@ private struct HashtagButton: View {
                         .stroke(isSelected ? Color.green060 : .gray050, lineWidth: 1)
                 )
         }
+        .disabled(isDisabled)
     }
 }
 
