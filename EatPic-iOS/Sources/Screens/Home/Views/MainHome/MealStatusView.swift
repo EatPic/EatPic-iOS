@@ -10,21 +10,59 @@ import SwiftUI
 // MARK: - 메인 뷰
 struct MealStatusView: View {
     @StateObject private var viewModel = MealStatusViewModel()
+    @State private var isEditMode = false
     
     var body: some View {
         VStack {
-            // 상단 제목 + 버튼
-            HStack {
-                Text("오늘의 식사 현황")
-                    .font(.dsTitle3)
-                    .foregroundColor(.gray080)
+            topBarView
 
-                Spacer().frame(height: 24)
-                
+            Spacer().frame(height: 24)
+
+            // 식사 항목 리스트
+            HStack(spacing: 6) {
+                ForEach(viewModel.mealStatus) { meal in
+                    MealItemView(
+                        mymeal: meal,
+                        isEditMode: isEditMode,
+                        onDelete: {
+                            viewModel.deleteMealRecord(meal: meal)
+                        }
+                    )
+                }
+                Spacer()
+            }
+        }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 19)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+    }
+    
+    private var topBarView: some View {
+        // 상단 제목 + 버튼
+        HStack {
+            Text("오늘의 식사 현황")
+                .font(.dsTitle3)
+                .foregroundStyle(Color.gray080)
+
+            Spacer().frame(height: 24)
+            
+            if isEditMode {
+                // 수정 모드일 때: 수정완료 버튼
+                Button(action: {
+                    isEditMode = false
+                    print("수정완료")
+                }, label: {
+                    Text("수정완료")
+                        .font(.dsSubhead)
+                        .foregroundStyle(Color.green060)
+                })
+            } else {
+                // 일반 모드일 때: Menu 버튼
                 Menu {
                     Button(action: {
-                        // TODO: ZStack으로 현재 사진이 들어간 부분 위에 x 표시 떠야함, 그리고 그 x표시 누르면 사진 삭제 되어야함 < 어케 해야할지????
-                        print("수정하기")
+                        isEditMode.toggle()
+                        print("수정하기 모드: \(isEditMode ? "켜짐" : "꺼짐")")
                     }, label: {
                         Label("수정하기", systemImage: "pencil")
                     })
@@ -34,31 +72,19 @@ struct MealStatusView: View {
                         .frame(width: 24, height: 24)
                 }
             }
-
-            Spacer().frame(height: 24)
-
-            // 식사 항목 리스트
-            HStack(spacing: 6) {
-                ForEach(viewModel.mealStatus) { meal in
-                    MealItemView(mymeal: meal)
-                }
-                Spacer()
-            }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 19)
-        .background(.white)
-        .cornerRadius(15)
     }
 }
 
 // MARK: - Meal 기록됐느냐 안됐느냐 상태에 따른 뷰
 private struct MealItemView: View {
     let mymeal: MealStatusModel
+    let isEditMode: Bool
+    let onDelete: () -> Void
     
     var body: some View {
         if mymeal.isRecorded {
-            RecordedMealView(meal: mymeal)
+            RecordedMealView(meal: mymeal, isEditMode: isEditMode, onDelete: onDelete)
         } else {
             EmptyMealView(meal: mymeal)
         }
@@ -77,7 +103,7 @@ private struct EmptyMealView: View {
 
                 Text(meal.mealTime)
                     .font(.dsBold15)
-                    .foregroundColor(.gray060)
+                    .foregroundStyle(Color.gray060)
             }
             .frame(width: 60, height: 26)
 
@@ -103,31 +129,48 @@ private struct EmptyMealView: View {
 // MARK: - 기록된 Meal 뷰
 private struct RecordedMealView: View {
     let meal: MealStatusModel
+    let isEditMode: Bool
+    let onDelete: () -> Void
 
     var body: some View {
         VStack {
             ZStack {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.green050)
-
                 Text(meal.mealTime)
                     .font(.dsBold15)
-                    .foregroundColor(.white)
+                    .foregroundStyle(Color.white)
             }
             .frame(width: 60, height: 26)
 
             Spacer().frame(height: 10)
 
-            if let imageName = meal.imageName {
-                Image(imageName) // Model에서 가져온 이미지
-                    .resizable()
-                    .frame(width: 76, height: 76)
-                    .cornerRadius(10)
-            } else {
-                // 기본 이미지 또는 placeholder
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.green010)
-                    .frame(width: 76, height: 76)
+            ZStack {
+                if let imageName = meal.imageName {
+                    Image(imageName)
+                        .resizable()
+                        .frame(width: 76, height: 76)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                } else {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.green010)
+                        .frame(width: 76, height: 76)
+                }
+                if isEditMode {
+                    Color.black.opacity(0.5)
+                        .frame(width: 76, height: 76)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .onTapGesture {
+                            onDelete()
+                        }
+                    Image("Home/btn_home_deleted")
+                        .resizable()
+                        .frame(width: 32, height: 32)
+                        .foregroundStyle(Color.white)
+                        .onTapGesture {
+                            onDelete()
+                        }
+                }
             }
         }
     }
