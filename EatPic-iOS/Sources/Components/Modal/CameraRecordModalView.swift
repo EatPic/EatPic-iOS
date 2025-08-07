@@ -107,14 +107,14 @@ struct CameraRecordModalView: View {
             
             /// 모달 제목 메시지
             Text(messageTitle)
-                .foregroundColor(messageTitleColor)
+                .foregroundStyle(messageTitleColor)
                 .font(.dsTitle2)
             
             Spacer().frame(height: 8)
            
             /// 모달 설명 메시지
             Text(messageDescription)
-                .foregroundColor(messageDescriptionColor)
+                .foregroundStyle(messageDescriptionColor)
                 .font(.dsSubhead)
             
             Spacer().frame(height: 32)
