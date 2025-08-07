@@ -123,17 +123,17 @@ struct SignupAgreementView: View {
                 case .marketing:
                     container.router.push(.agreementMarketingView)
                 }
-            }) {
+            }, label: {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(item.isChecked ? .green060 : .gray050)
+                        .foregroundStyle(item.isChecked ? Color.green060 : Color.gray050)
                     Text("\(item.title)")
-                        .foregroundColor(Color.gray080)
+                        .foregroundStyle(Color.gray080)
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray050)
+                        .foregroundStyle(Color.gray050)
                 }
-            }
+            })
         }
     }
     

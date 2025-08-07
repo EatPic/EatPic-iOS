@@ -72,7 +72,7 @@ struct BadgeView: View {
             // 뱃지 이름
             Text(badgeName)
                 .font(.dsSubhead)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
         }
         .frame(width: 130, height: 156)
     }

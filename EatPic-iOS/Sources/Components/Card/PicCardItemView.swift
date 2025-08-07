@@ -20,7 +20,7 @@ struct PicCardItemView: View {
     @State private var commentCount: Int = 0
     
     /// 선택된 리액션 이모지
-    @State private var selectedReaction: ReactionType? = nil
+    @State private var selectedReaction: ReactionType?
     
     /// 리액션별 개수
     @State private var reactionCounts: [ReactionType: Int] = [:]
@@ -35,7 +35,7 @@ struct PicCardItemView: View {
     let toastVM: ToastViewModel
     
     /// 외부에서 전달된 콜백 액션
-    var onAction: ((PicCardItemActionType) -> Void)? = nil
+    var onAction: ((PicCardItemActionType) -> Void)?
     
     // 초기화 메서드
     init(toastVM: ToastViewModel, onAction: ((PicCardItemActionType) -> Void)? = nil) {

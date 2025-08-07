@@ -72,7 +72,7 @@ struct DecisionModalView: View {
             VStack {
                 /// 모달 메시지
                 Text(message)
-                    .foregroundColor(messageColor)
+                    .foregroundStyle(messageColor)
                             .font(.dsHeadline)
                 
                 Spacer().frame(height: 41)
@@ -111,7 +111,7 @@ struct DecisionModalView: View {
             .padding(.bottom, 12)
             .padding(.horizontal, 16)
             .background(.white)
-            .cornerRadius(10)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }

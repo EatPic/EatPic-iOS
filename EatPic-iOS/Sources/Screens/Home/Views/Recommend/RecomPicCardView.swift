@@ -35,7 +35,7 @@ struct RecomPicCardView: View {
         .customNavigationBar {
             Text("Pic 카드")
                 .font(.dsTitle2)
-                .foregroundColor(Color.gray080)
+                .foregroundStyle(Color.gray080)
         } right: {
             EmptyView()
         }

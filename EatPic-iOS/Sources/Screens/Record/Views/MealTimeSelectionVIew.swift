@@ -24,7 +24,6 @@ struct MealTimeSelectView: View {
     // 바텀 시트 표시 여부
     @State private var showHashtagAddSheet = false
 
-    
     var body: some View {
         VStack {
             // 캐릭터 이미지
@@ -195,10 +194,10 @@ private struct MealButton: View {
             .frame(width: 170, height: 100)
             .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(
+            .overlay(alignment: .center) {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(borderColor, lineWidth: 1)
-            )
+            }
         }
     }
 }

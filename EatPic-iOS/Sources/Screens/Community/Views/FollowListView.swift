@@ -31,14 +31,38 @@ struct FollowListView: View {
     
     // 샘플 팔로워 유저 리스트
     @State private var followers: [User] = [
-        User(id: UUID(), profileImage: nil, nickname: "홍길동", userId: "@hong", isFollow: true),
-        User(id: UUID(), profileImage: nil, nickname: "김영희", userId: "@young", isFollow: false)
+        User(
+            id: UUID(),
+            profileImage: nil,
+            nickname: "홍길동",
+            userId: "@hong",
+            isFollow: true
+        ),
+        User(
+            id: UUID(),
+            profileImage: nil,
+            nickname: "김영희",
+            userId: "@young",
+            isFollow: false
+        )
     ]
     
     // 샘플 팔로잉 유저 리스트
     @State private var followings: [User] = [
-        User(id: UUID(), profileImage: nil, nickname: "이철수", userId: "@cheolsoo", isFollow: true),
-        User(id: UUID(), profileImage: nil, nickname: "박민수", userId: "@minsu", isFollow: true)
+        User(
+            id: UUID(),
+            profileImage: nil,
+            nickname: "이철수",
+            userId: "@cheolsoo",
+            isFollow: true
+        ),
+        User(
+            id: UUID(),
+            profileImage: nil,
+            nickname: "박민수",
+            userId: "@minsu",
+            isFollow: true
+        )
     ]
     
     init(selected: FollowSegment) {
@@ -88,8 +112,8 @@ struct FollowListView: View {
                         Text("\(userCount(for: segment)) \(segment.rawValue)")
                             .font(.footnote)
                             .fontWeight(.medium)
-                            .foregroundColor(selected == segment ?
-                                .gray080 : .gray050)
+                            .foregroundStyle(selected == segment ?
+                                             Color.gray080 : Color.gray050)
                         ZStack {
                             Capsule()
                                 .fill(Color.clear)

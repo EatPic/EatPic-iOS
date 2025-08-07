@@ -66,6 +66,6 @@ struct PicCardRecordView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    PicCardRecordView()
-//}
+// }

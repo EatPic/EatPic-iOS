@@ -18,7 +18,6 @@ struct EmailLoginView: View {
     
     @EnvironmentObject var container: DIContainer
     
-    
     // MARK: - Body
     
     var body: some View {

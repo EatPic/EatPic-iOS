@@ -27,7 +27,7 @@ struct ReceiptDetailView: View {
         .customNavigationBar {
             Text("레시피 내용")
                 .font(.dsTitle2)
-                .foregroundColor(Color.gray080)
+                .foregroundStyle(Color.gray080)
         } right: {
             EmptyView()
         }
