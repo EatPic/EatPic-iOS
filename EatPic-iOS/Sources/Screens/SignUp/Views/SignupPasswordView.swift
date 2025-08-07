@@ -64,22 +64,44 @@ struct SignupPasswordView: View {
     
     /// 회원가입 비밀번호 입력 텍스트 필드
     private var signupPasswordTextField: some View {
-        FormTextField(
-            fieldTitle: "비밀번호 입력",
-            fieldType: SignUpFieldType.password,
-            focusedField: $focus,
-            currentField: .password,
-            text: $viewModel.password)
+        VStack(alignment: .leading, spacing: 8) {
+            FormTextField(
+                fieldTitle: "비밀번호 입력",
+                fieldType: SignUpFieldType.password,
+                focusedField: $focus,
+                currentField: .password,
+                text: $viewModel.password,
+                isValid: viewModel.isPasswordCountValid
+            )
+            
+            // 유효성 검사 실패 시 하단에 메시지 노출
+            if let error = viewModel.passwordErrorMessage {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
+            }
+        }
     }
     
     /// 회원가입 비밀번호 확인 텍스트 필드
     private var confirmPasswordTextField: some View {
-        FormTextField(
-            fieldTitle: "비밀번호 확인",
-            fieldType: SignUpFieldType.password,
-            focusedField: $focus,
-            currentField: .password,
-            text: $viewModel.password)
+        VStack(alignment: .leading, spacing: 8) {
+            FormTextField(
+                fieldTitle: "비밀번호 확인",
+                fieldType: SignUpFieldType.confirmPassword,
+                focusedField: $focus,
+                currentField: .confirmPassword,
+                text: $viewModel.confirmPassword,
+                isValid: viewModel.isPasswordConfirmed
+            )
+            
+            // 유효성 검사 실패 시 하단에 메시지 노출
+            if let error = viewModel.confirmPasswordErrorMessage {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
+            }
+        }
     }
     
     // MARK: - BottomContents(화면 이동 버튼)
@@ -87,15 +109,17 @@ struct SignupPasswordView: View {
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+            color: viewModel.isPasswordValid ? .green060 : .gray020,
             text: "다음",
             font: .dsTitle3,
-            textColor: .gray040,
+            textColor: viewModel.isPasswordValid ? .white : .gray040,
             height: 50,
             cornerRadius: 10,
             action: {
-                /// 비밀번호 유효성검사 통과시 화면 이동 구현 예정
-                print("다음화면이동")
+                // 비밀번호 유효성검사 통과시 화면 이동
+                if viewModel.isPasswordValid {
+                    container.router.push(.signupNicknameView)
+                }
             })
     }
 }

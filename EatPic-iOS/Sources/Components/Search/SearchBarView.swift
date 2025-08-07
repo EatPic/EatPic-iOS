@@ -94,7 +94,7 @@ struct SearchBarView: View {
         .padding(.trailing, 8)
         .frame(height: 40)
         .frame(maxWidth: .infinity)
-        .background(
+        .background(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColor)
                 .overlay(alignment: .center) {
@@ -105,7 +105,7 @@ struct SearchBarView: View {
                         }
                     }
                 }
-        )
+        }
     }
 }
 

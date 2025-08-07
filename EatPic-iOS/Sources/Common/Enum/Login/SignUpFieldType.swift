@@ -59,13 +59,15 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     // placeholder 텍스트 컬러
     var placeholderTextColor: Color {
-        return Color.gray080
+        return Color.gray050
     }
     
     /// 보안 입력 여부 (비밀번호면 true)
     var isSecure: Bool {
         switch self {
         case .password:
+            return true
+        case .confirmPassword:
             return true
         default:
             return false

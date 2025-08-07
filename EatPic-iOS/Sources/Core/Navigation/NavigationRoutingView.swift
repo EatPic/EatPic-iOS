@@ -11,10 +11,19 @@ import SwiftUI
 /// `NavigationStack`의 path 바인딩에 사용되며, 각 화면에 대한 식별자 역할을 합니다.
 /// 새로운 화면을 추가할 경우, 여기에 새로운 case를 추가하면 됩니다.
 enum NavigationRoute: Equatable, Hashable {
-    case calender
+    case calendar
     case notification
     case emailLoginView
     case signUpEmailView
+    case signupPasswordView
+    case signupNicknameView
+    case signupIdView
+    case signupProfileView
+    case signupAgreementView
+    case agreementMarketingView
+    case agreementPrivacyView
+    case agreementServiceView
+    case signupComplementView
     case home
     case myBadgeStatusAll
     case picCardEdit
@@ -26,6 +35,7 @@ enum NavigationRoute: Equatable, Hashable {
     case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
+    case exploreSelected
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -42,6 +52,7 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
+      
         routingView
             .environmentObject(container)
     }
@@ -49,7 +60,7 @@ struct NavigationRoutingView: View {
     @ViewBuilder
     private var routingView: some View {
         switch route {
-        case .calender:
+        case .calendar:
             CalendarScrollView()
         case .notification:
             NotificationView()
@@ -57,6 +68,24 @@ struct NavigationRoutingView: View {
             EmailLoginView()
         case .signUpEmailView:
             SignupEmailView()
+        case .signupPasswordView:
+            SignupPasswordView()
+        case .signupNicknameView:
+            SignupNicknameView()
+        case .signupIdView:
+            SignupIdView()
+        case .signupProfileView:
+            SignupProfileView()
+        case .signupAgreementView:
+            SignupAgreementView()
+        case .agreementMarketingView:
+            AgreementMarketingView()
+        case .agreementPrivacyView:
+            AgreementPrivacyView()
+        case .agreementServiceView:
+            AgreementServiceView()
+        case .signupComplementView:
+            SignupComplementView()
         case .home:
             HomeView()
         case .myBadgeStatusAll:
@@ -79,6 +108,8 @@ struct NavigationRoutingView: View {
             OthersProfileView(user: user)
         case .followList(let selected):
             FollowListView(selected: selected)
+        case .exploreSelected:
+            ExploreSelectedView()
         }
     }
 }

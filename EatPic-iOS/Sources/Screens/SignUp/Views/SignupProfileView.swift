@@ -93,14 +93,14 @@ struct SignupProfileView: View {
     /// 유효성 검사 통과시 버튼의 색상 바뀌도록 구현 예정
     private var nextButton: some View {
         PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+            color: .green060,
             text: "다음",
             font: .dsTitle3,
-            textColor: .gray040,
+            textColor: .white,
             height: 50,
             cornerRadius: 10,
             action: {
-                print("다음화면이동")
+                container.router.push(.signupAgreementView)
             })
     }
 }
