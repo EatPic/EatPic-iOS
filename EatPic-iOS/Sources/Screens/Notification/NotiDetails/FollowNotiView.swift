@@ -85,7 +85,7 @@ struct FollowNotiView: View {
                 .frame(width: 64, height: 28)
         })
         .background(followstate.followButtonColor)
-        .cornerRadius(5)
+        .clipShape(RoundedRectangle(cornerRadius: 5))
     }
 }
 

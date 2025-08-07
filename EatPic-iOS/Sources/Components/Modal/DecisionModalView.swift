@@ -111,7 +111,7 @@ struct DecisionModalView: View {
             .padding(.bottom, 12)
             .padding(.horizontal, 16)
             .background(.white)
-            .cornerRadius(10)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }

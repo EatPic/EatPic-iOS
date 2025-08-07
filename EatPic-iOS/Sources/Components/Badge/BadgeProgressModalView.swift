@@ -110,12 +110,12 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                         }
                 })
                 .background(badgeType.buttonColor)
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .frame(width: 270, height: 338)
             .padding(.bottom, 16)
             .background(.white)
-            .cornerRadius(10)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }

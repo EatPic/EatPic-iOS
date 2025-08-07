@@ -85,7 +85,7 @@ struct AlertModalView: View {
             .padding(.bottom, 16)
             .frame(width: 270)
             .background(.white)
-            .cornerRadius(15)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
         }
     }
 }

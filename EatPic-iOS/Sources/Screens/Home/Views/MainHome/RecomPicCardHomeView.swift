@@ -41,7 +41,7 @@ struct RecomPicCardHomeView: View {
                         Image(cards.imageName)
                             .resizable()
                             .frame(width: 103, height: 103)
-                            .cornerRadius(10)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
             }
@@ -50,7 +50,7 @@ struct RecomPicCardHomeView: View {
         .padding(.horizontal, 19)
         .frame(height: 183)
         .background(.white)
-        .cornerRadius(15)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
     }
 }
 
