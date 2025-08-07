@@ -9,6 +9,8 @@ import SwiftUI
 
 // FIXME: [25.07.30] 추천 픽카드 내용을 Model, ViewModel 공유? - 비엔/이은정
 struct RecomPicCardView: View {
+    @Bindable private var toastVM = ToastViewModel() // 북마크 토스트메세지를 위해 추가했습니다 !!! (원주연)
+    
     var body: some View {
         VStack {
             PicCardView(
@@ -23,7 +25,8 @@ struct RecomPicCardView: View {
                     })
                 },
                 postImage: Image(systemName: "square.fill"),
-                myMemo: "오늘은 샐러드를 먹었습니다~"
+                myMemo: "오늘은 샐러드를 먹었습니다~",
+                toastVM: toastVM // 북마크 토스트메세지를 위해 추가했습니다 !!! (원주연)
             )
             
             Spacer()

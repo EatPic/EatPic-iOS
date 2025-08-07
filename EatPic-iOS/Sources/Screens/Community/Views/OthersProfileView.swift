@@ -14,22 +14,22 @@ import SwiftUI
  - 유저의 피드(Post) 이미지들을 그리드 형식으로 나열하여 보여줍니다.
  - 팔로우/언팔로우 버튼을 통해 상태를 토글할 수 있습니다.
  - 우측 상단 메뉴 버튼을 통해 '차단하기', '신고하기' 기능을 제공할 수 있습니다 (현재 액션 미구현).
-
+ 
  ## 주요 UI 구성
  - `ScrollView` 내에 전체 UI를 감싸며 스크롤 가능
  - `userProfileView()` : 프로필 관련 정보와 소개글, 통계 정보 등 표시
  - `PrimaryButton` : 팔로우/언팔로우 상태에 따라 색상과 텍스트 변경
  - `userFeedView()` : 피드 이미지(사각형 placeholder)를 3열 그리드로 구성
  - `customNavigationBar(title:right:)` : 우측 상단에 메뉴 버튼 (ellipsis)
-
+ 
  ## 상태 변수
  - `@State private var isFollowed` : 현재 팔로우 상태를 나타내며 버튼의 UI 및 동작에 반영됩니다.
-
+ 
  ## 커스텀 뷰 사용
  - `PrimaryButton` : 재사용 가능한 버튼 컴포넌트
  - `ProfileImageView` : 프로필 이미지를 원형 등으로 표현하는 뷰
  - `.customNavigationBar` : 사용자 정의 네비게이션 바 Modifier
-
+ 
  ## 추후 확장
  - 실제 유저 데이터 연결 (닉네임, 아이디, 소개글, 팔로워 수 등)
  - 피드 이미지와 관련된 동작(탭 시 상세 보기 등)
@@ -38,6 +38,7 @@ import SwiftUI
 
 struct OthersProfileView: View {
     let user: CommunityUser
+    let toastVM = ToastViewModel()
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 4),
         GridItem(.flexible(minimum: 0), spacing: 4),
@@ -46,6 +47,7 @@ struct OthersProfileView: View {
     
     @EnvironmentObject private var container: DIContainer
     @State private var isFollowed: Bool = false
+    @State private var isShowingReportBottomSheet: Bool = false
     
     var body: some View {
         ScrollView {
@@ -88,10 +90,14 @@ struct OthersProfileView: View {
                 Text("")
             }, right: {
                 Menu {
-                    Button(role: .destructive) { } label: {
+                    Button(role: .destructive) {
+                        
+                    } label: {
                         Label("차단하기", systemImage: "hand.raised.slash")
                     }
-                    Button(role: .destructive) {} label: {
+                    Button(role: .destructive) {
+                        isShowingReportBottomSheet = true
+                    } label: {
                         Label("신고하기", systemImage: "info.circle")
                     }
                 } label: {
@@ -100,7 +106,27 @@ struct OthersProfileView: View {
                 }
             })
         }
+        .toastView(viewModel: toastVM)
+        .padding(.horizontal, 16)
         .scrollIndicators(.hidden)
+        .sheet(isPresented: $isShowingReportBottomSheet) {
+            ReportBottomSheetView(
+                isShowing: $isShowingReportBottomSheet,
+                onReport: handleProfileReport, // 신고 처리 함수 연결
+                target: .profile // 프로필 신고용으로 지정
+            )
+            .presentationDetents([.large, .fraction(0.7)])
+            .presentationDragIndicator(.hidden)
+        }
+    }
+    
+    // 신고 처리를 위한 함수
+    private func handleProfileReport(_ reportType: String) {
+        toastVM.showToast(title: "신고되었습니다.")
+        print("프로필 신고: \(user.id) - 유형: \(reportType)")
+        // TODO: 실제 신고 API 호출 로직 구현
+        // API 호출 후 바텀 시트 닫기
+        isShowingReportBottomSheet = false
     }
     
     private func userProfileView() -> some View {
@@ -108,7 +134,7 @@ struct OthersProfileView: View {
             Spacer().frame(height: 8)
             ProfileImageView(image: user.profileImage ?? Image(systemName: "person.fill"),
                              size: 100)
-        
+            
             Spacer().frame(height: 16)
             
             Text(user.nickname)
@@ -122,7 +148,6 @@ struct OthersProfileView: View {
             Text("소개글입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ")
                 .font(.dsCaption1)
                 .foregroundStyle(Color.gray060)
-                .padding(.horizontal, 16)
             Spacer().frame(height: 16)
             
             followerCountView()
@@ -173,7 +198,7 @@ struct OthersProfileView: View {
     
     private func userFeedView() -> some View {
         GeometryReader { geometry in
-            let availableWidth = geometry.size.width - 32 // 좌우 패딩 16씩 제외
+            let availableWidth = geometry.size.width/* - 32*/ // 좌우 패딩 16씩 제외
             let spacing: CGFloat = 8 // 총 spacing (4 * 2)
             let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
             LazyVGrid(columns: columns, spacing: 4, content: {
@@ -185,16 +210,15 @@ struct OthersProfileView: View {
                         .clipped()
                 }
             })
-            .padding(.horizontal, 16)
         }
     }
 }
 
 #Preview {
     OthersProfileView(user: CommunityUser(
-            id: "id1",
-            nickname: "아이디1",
-            imageName: nil,
-            isCurrentUser: true
-        ))
+        id: "id1",
+        nickname: "아이디1",
+        imageName: nil,
+        isCurrentUser: true
+    ))
 }

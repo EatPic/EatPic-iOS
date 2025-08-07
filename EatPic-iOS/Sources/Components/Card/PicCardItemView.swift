@@ -28,8 +28,20 @@ struct PicCardItemView: View {
     /// 리액션 바 표시 여부
     @State private var isShowingReactionBar: Bool = false
     
+    /// 댓글창 표시 여부
+    @State private var isShowingCommentSheet: Bool = false
+    
+    /// 외부에서 전달받은 토스트 뷰모델
+    let toastVM: ToastViewModel
+    
     /// 외부에서 전달된 콜백 액션
     var onAction: ((PicCardItemActionType) -> Void)?
+    
+    // 초기화 메서드
+    init(toastVM: ToastViewModel, onAction: ((PicCardItemActionType) -> Void)? = nil) {
+        self.toastVM = toastVM
+        self.onAction = onAction
+    }
     
     /// 렌더링 될 각 버튼 항목 구성
     private var items: [PicCardItemType] {
@@ -84,6 +96,7 @@ struct PicCardItemView: View {
         case .bookmark:
             isBookmarked.toggle()
             onAction?(.bookmark(isOn: isBookmarked))
+            isBookmarked ? toastVM.showToast(title: "Pic 카드가 저장되었습니다.") : nil
         case .comment:
             onAction?(.comment(count: commentCount))
         case .reaction:
@@ -96,7 +109,7 @@ struct PicCardItemView: View {
 }
 
 #Preview {
-    PicCardItemView { action in
+    PicCardItemView(toastVM: ToastViewModel()) { action in
         switch action {
         case .bookmark(let isOn):
             print("북마크 상태: \(isOn)")
