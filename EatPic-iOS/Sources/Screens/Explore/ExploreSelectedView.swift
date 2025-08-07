@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ExploreSelectedView: View {
     
+    @Bindable private var toastVM = ToastViewModel()
+    
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
         GridItem(.flexible(minimum: 0), spacing: 9.5)
@@ -46,7 +48,9 @@ struct ExploreSelectedView: View {
             myMemo: "오늘은 샐러드를 먹었습니다~ 계란과 딸기를 많이 넣어 먹었어요~~~~ 다들 좋은 하루 보내세용",
             onProfileTap: {
                 print("프로필로 이동")
-            })
+            },
+            toastVM: toastVM
+        )
     }
     
     private func recommendedFeedView() -> some View {
