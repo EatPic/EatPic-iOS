@@ -21,7 +21,7 @@ struct CalenderCardView: View {
             // 당일 식사 사진들 캐러셀 뷰
             // FIXME: [25.07.29] 각 Carousel 사진마다 개별 뷰 보여줘야함 – 비엔/이은정
             CarouselView()
-                .padding(.horizontal, -32) // 패딩 무시
+                .padding(.horizontal, -16) // 패딩 무시
             
             buttonsView
             
@@ -43,10 +43,8 @@ struct CalenderCardView: View {
             }
         } right: {
             Menu {
-                // FIXME: [25.07.30] 버튼을 개별 뷰로 분리하면 조금 더 깔끔해질것같음 – 비엔/이은정
-                
                 Button(action: {
-                    toastVM.showToast(title: "사진이 저장되었습니다.")
+                    toastVM.showToast(title: "사진 앱에 저장되었습니다.")
                     // TODO: [25.07.27] 다운로드 액션 – 비엔/이은정
                 }, label: {
                     Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
@@ -70,7 +68,6 @@ struct CalenderCardView: View {
             }
         }
         .toastView(viewModel: toastVM)
-        .padding(.horizontal, 16)
         .padding(.horizontal, 16)
     }
     
@@ -96,7 +93,7 @@ struct CalenderCardView: View {
                     buttonName: "식당 위치"
                 ) {
                     print("식당 위치 뷰로 이동")
-                    // TODO: [25.07.29] StoreLocationView로 Navigation << 이거 계속 안되는디 ㅜㅜ – 비엔/이은정
+                    // TODO: [25.07.29] StoreLocationView로 Navigation – 비엔/이은정
                 }
                 
                 Divider()
@@ -120,7 +117,7 @@ struct CalenderCardView: View {
             .padding(.vertical, 8)
         }
         .background(Color.gray030.ignoresSafeArea())
-        .padding(.horizontal, -32) // 패딩 무시
+        .padding(.horizontal, -16) // 패딩 무시
     }
     
     
