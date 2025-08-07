@@ -46,10 +46,10 @@ struct ReportBottomSheetView: View {
             HStack {
                 Text(reportType)
                     .font(.dsBody)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray050)
+                    .foregroundStyle(Color.gray050)
             }
             .padding(.top, 20)
             .padding(.bottom, 16)
