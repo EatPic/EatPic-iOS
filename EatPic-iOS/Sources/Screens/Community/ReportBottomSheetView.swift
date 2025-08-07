@@ -49,7 +49,7 @@ struct ReportBottomSheetView: View {
                     .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.gray050)
+                    .foregroundStyle(Color.gray050)
             }
             .padding(.top, 20)
             .padding(.bottom, 16)
