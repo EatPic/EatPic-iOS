@@ -53,20 +53,20 @@ struct MyBadgeStatusAllView: View {
         HStack {
             Text("잇콩님이 획득한 배지 현황")
                 .font(.dsBody)
-                .foregroundColor(Color.gray080)
+                .foregroundStyle(Color.gray080)
             
             Spacer().frame(width: 7)
             
             Group {
                 Text(viewModel.getBadgeStatus())
                     .font(.dsTitle3)
-                    .foregroundColor(Color.green060)
+                    .foregroundStyle(Color.green060)
                 
                 +
                 
                 Text("/\(viewModel.totalBadges)")
                     .font(.dsTitle3)
-                    .foregroundColor(Color.gray060)
+                    .foregroundStyle(Color.gray060)
             }
         }
     }
