@@ -10,6 +10,8 @@ import SwiftUI
 struct HashtagSelectionView: View {
     @EnvironmentObject private var container: DIContainer
     
+    let selectedMeal: MealType
+    
     // 해시 태그 데이터
     let hashtags = [
         "야식", "브런치", "혼밥", "집밥",
@@ -25,6 +27,11 @@ struct HashtagSelectionView: View {
     
     // 최대 선택 가능한 개수
     private let maxSelectionCount = 3
+
+    // MARK: - Init
+    init(selectedMeal: MealType) {
+        self.selectedMeal = selectedMeal
+    }
 
     // MARK: - Body
     var body: some View {
@@ -46,7 +53,7 @@ struct HashtagSelectionView: View {
             // 작은 텍스트
             Text("최대 3개를 선택할 수 있어요")
                 .font(.dsFootnote)
-                .foregroundColor(.gray060)
+                .foregroundStyle(Color.gray060)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer().frame(height: 32)
@@ -59,6 +66,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -72,6 +82,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -85,6 +98,9 @@ struct HashtagSelectionView: View {
                         HashtagButton(
                             hashtagName: hashtags[index],
                             isSelected: selectedHashtags.contains(hashtags[index]),
+                            isDisabled: selectedHashtags
+                                .count >= maxSelectionCount && !selectedHashtags
+                                .contains(hashtags[index]),
                             hashtagBtnAction: {
                                 toggleHashtag(hashtags[index])
                             }
@@ -102,7 +118,7 @@ struct HashtagSelectionView: View {
                 HStack {
                     Text("직접 추가하기")
                         .font(.dsSubhead)
-                        .foregroundColor(.gray060)
+                        .foregroundStyle(Color.gray060)
                     
                     Spacer()
                     
@@ -112,7 +128,7 @@ struct HashtagSelectionView: View {
                 .padding(.vertical, 8)
                 .frame(width: 135, height: 38)
                 .background(Color.gray020)
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             })
             
             Spacer().frame(height: 51)
@@ -127,7 +143,8 @@ struct HashtagSelectionView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                container.router.push(.picCardRecord)
+                container.router.push(.picCardRecord(selectedMeal: selectedMeal,
+                                                     selectedHashtags: Array(selectedHashtags)))
             }
             .disabled(selectedHashtags.isEmpty) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
         }
@@ -136,7 +153,7 @@ struct HashtagSelectionView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                container.router.push(.home)
+                container.router.popToRoot()
             }, label: {
                 Image("Record/btn_home_close")
             })
@@ -174,6 +191,7 @@ struct HashtagSelectionView: View {
 private struct HashtagButton: View {
     let hashtagName: String
     let isSelected: Bool
+    let isDisabled: Bool
     let hashtagBtnAction: () -> Void
     
     var body: some View {
@@ -184,15 +202,16 @@ private struct HashtagButton: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(isSelected ? Color.green010 : .white)
-                .cornerRadius(50)
+                .clipShape(RoundedRectangle(cornerRadius: 50))
                 .overlay(
                     RoundedRectangle(cornerRadius: 50)
                         .stroke(isSelected ? Color.green060 : .gray050, lineWidth: 1)
                 )
         }
+        .disabled(isDisabled)
     }
 }
 
-#Preview {
-    HashtagSelectionView()
-}
+//#Preview {
+//    HashtagSelectionView()
+//}
