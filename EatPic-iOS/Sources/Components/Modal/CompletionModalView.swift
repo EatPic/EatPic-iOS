@@ -64,7 +64,7 @@ struct CompletionModalView: View {
             VStack {
                 /// 모달 메시지
                 Text(message)
-                    .foregroundColor(messageColor)
+                    .foregroundStyle(messageColor)
 //                    .font(.koBold(size: 22))
                     .font(.dsHeadline)
                 

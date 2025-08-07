@@ -86,14 +86,14 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                 Spacer().frame(height: 16)
 
                 Text(badgeTitle)
-                    .foregroundColor(badgeTitleColor)
+                    .foregroundStyle(badgeTitleColor)
                     .font(.dsTitle3)
 
                 Spacer().frame(height: 8)
 
                 Text(badgeDescription)
                     .padding(.horizontal, 45)
-                    .foregroundColor(badgeDescriptionColor)
+                    .foregroundStyle(badgeDescriptionColor)
                     .font(.dsFootnote)
                     .multilineTextAlignment(.center)
 
@@ -102,7 +102,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                 Button(action: {}, label: {
                     Text("\(badgeType.progressText)/10회")
                         .font(.dsHeadline)
-                        .foregroundColor(badgeType.buttonTextColor)
+                        .foregroundStyle(badgeType.buttonTextColor)
                         .frame(width: 77, height: 34)
                         .overlay(alignment: .center) {
                             RoundedRectangle(cornerRadius: 10)

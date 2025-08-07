@@ -32,7 +32,7 @@ struct PicCardWriteView: View {
             
             Text("나의 메모")
                 .font(.dsHeadline)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
             
             Spacer().frame(height: 8)
             
@@ -46,7 +46,7 @@ struct PicCardWriteView: View {
             
             Text("레시피 내용")
                 .font(.dsHeadline)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
             
             Spacer().frame(height: 8)
             
@@ -140,7 +140,7 @@ private struct AddButtonView: View {
             
             Text(btnTitle)
                 .font(.dsBody)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
             
             Spacer()
             
@@ -180,13 +180,13 @@ private struct ShareToFeedButton: View {
             
             Text("피드에 공유하기")
                 .font(.dsBody)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
             
             Spacer().frame(width: 12)
                      
             Text("피드에 공유하기")
                 .font(.dsCaption1)
-                .foregroundColor(.gray060)
+                .foregroundStyle(Color.gray060)
             
             Spacer()
             

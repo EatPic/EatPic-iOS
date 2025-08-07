@@ -32,11 +32,11 @@ struct MyPageCardView: View {
                         
                         Text(title)
                             .font(.dsFootnote)
-                            .foregroundColor(.gray080)
+                            .foregroundStyle(Color.gray080)
                     }
                     Text(description)
                         .font(.dsTitle3)
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
 
                 Spacer()
@@ -44,10 +44,10 @@ struct MyPageCardView: View {
                 // 우측: 숫자 + 화살표
                 HStack(spacing: 4) {
                     Text(countText)
-                        .foregroundColor(.pink060)
+                        .foregroundStyle(Color.pink060)
                         .font(.dsHeadline)
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                 }
             }
             .padding()

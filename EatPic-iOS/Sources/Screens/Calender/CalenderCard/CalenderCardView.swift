@@ -34,12 +34,12 @@ struct CalenderCardView: View {
                 // TODO: Calender 날짜 + 식사 시간(아침/점심/저녁/간식) 불러와야 함
                 Text("8월 1일 아침")
                     .font(.dsTitle2)
-                    .foregroundColor(Color.gray080)
+                    .foregroundStyle(Color.gray080)
                 
                 // TODO: 해당 PicCard가 저장된 시간 불러와야 함
                 Text("오후 1시 10분")
                     .font(.dsFootnote)
-                    .foregroundColor(Color.gray060)
+                    .foregroundStyle(Color.gray060)
             }
         } right: {
             Menu {

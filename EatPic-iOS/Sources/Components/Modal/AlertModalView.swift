@@ -57,14 +57,14 @@ struct AlertModalView: View {
             VStack {
                 /// 모달 제목 메시지
                 Text(messageTitle)
-                    .foregroundColor(messageColor)
+                    .foregroundStyle(messageColor)
                     .font(.dsTitle3)
                 
                 Spacer().frame(height: 36)
                 
                 /// 모달 설명 메시지
                 Text(messageDescription)
-                    .foregroundColor(messageColor)
+                    .foregroundStyle(messageColor)
                     .font(.dsCallout)
                     .frame(maxWidth: .infinity, alignment: .center)
                 

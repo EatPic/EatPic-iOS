@@ -103,7 +103,7 @@ struct PicCardView<Content: View>: View {
             // 사용자 메모 (나의 메모)
             Text(myMemo)
                 .font(.dsSubhead)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
                 .frame(alignment: .leading)
         }
     }

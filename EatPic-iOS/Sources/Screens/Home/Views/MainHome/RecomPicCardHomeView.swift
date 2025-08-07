@@ -19,7 +19,7 @@ struct RecomPicCardHomeView: View {
             HStack {
                 Text("추천 Pic카드")
                     .font(.dsTitle3)
-                    .foregroundColor(.gray080)
+                    .foregroundStyle(Color.gray080)
                 
                 Spacer()
                 

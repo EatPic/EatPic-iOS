@@ -55,11 +55,11 @@ struct CommentNotiView: View {
     private var notiMessage: some View {
         VStack(alignment: .leading) {
             Text("\(friendNickname) 님이 회원님의 식사 기록에 댓글을 남겼습니다.")
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
                 .font(.dsFootnote)
             
             Text("\(notiTime) 전")
-                .foregroundColor(.gray060)
+                .foregroundStyle(Color.gray060)
                 .font(.dsFootnote)
         }
     }

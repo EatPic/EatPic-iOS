@@ -64,7 +64,7 @@ struct TextAreaView: View {
             
             // TextField
             TextField("", text: $text, axis: .vertical)
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
                 .font(.dsBody)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
@@ -74,7 +74,7 @@ struct TextAreaView: View {
             // Placeholder
             if text.isEmpty {
                 Text(placeholder)
-                    .foregroundColor(.gray050)
+                    .foregroundStyle(Color.gray050)
                     .font(.dsBody)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
