@@ -24,7 +24,6 @@ struct MealTimeSelectView: View {
     // 바텀 시트 표시 여부
     @State private var showHashtagAddSheet = false
 
-    
     var body: some View {
         VStack {
             // 캐릭터 이미지

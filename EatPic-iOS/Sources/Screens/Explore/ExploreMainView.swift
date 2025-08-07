@@ -48,7 +48,7 @@ struct ExploreMainView: View {
     private func exploreFeed() -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 9, content: {
-                ForEach(0..<9) { index in
+                ForEach(0..<9) { _ in
                     Button {
                         container.router.push(.exploreSelected)
                     } label: {

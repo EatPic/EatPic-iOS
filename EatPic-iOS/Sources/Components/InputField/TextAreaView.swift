@@ -86,7 +86,6 @@ struct TextAreaView: View {
     }
 }
 
-
 #Preview {
     @Previewable @State var myMemo = ""
     

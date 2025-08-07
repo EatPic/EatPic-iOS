@@ -20,7 +20,7 @@ struct PicCardItemView: View {
     @State private var commentCount: Int = 0
     
     /// 선택된 리액션 이모지
-    @State private var selectedReaction: ReactionType? = nil
+    @State private var selectedReaction: ReactionType?
     
     /// 리액션별 개수
     @State private var reactionCounts: [ReactionType: Int] = [:]
@@ -29,7 +29,7 @@ struct PicCardItemView: View {
     @State private var isShowingReactionBar: Bool = false
     
     /// 외부에서 전달된 콜백 액션
-    var onAction: ((PicCardItemActionType) -> Void)? = nil
+    var onAction: ((PicCardItemActionType) -> Void)?
     
     /// 렌더링 될 각 버튼 항목 구성
     private var items: [PicCardItemType] {

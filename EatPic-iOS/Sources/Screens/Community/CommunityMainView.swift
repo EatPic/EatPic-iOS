@@ -71,9 +71,9 @@ struct CommunityMainView: View {
                     menuContent: {
                         Button(role: .destructive, action: {
                             print("신고하기")
-                        }) {
+                        }, label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
-                        }
+                        })
                     },
                     postImage: card.image,
                     myMemo: card.memo,

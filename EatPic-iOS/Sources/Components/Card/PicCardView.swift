@@ -121,22 +121,22 @@ struct PicCardView<Content: View>: View {
         menuContent: {
             Button(action: {
                 print("사진 앱에 저장")
-            }) {
+            }, label: {
                 Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
-            }
+            })
             
             Button(action: {
                 print("수정하기")
-            }) {
+            }, label: {
                 Label("수정하기", systemImage: "square.and.pencil")
-            }
+            })
             
             // role을 destructive로 설정 시, 빨간 버튼으로 만들 수 있음
             Button(role: .destructive, action: {
                 print("삭제하기")
-            }) {
+            }, label: {
                 Label("삭제하기", systemImage: "exclamationmark.bubble")
-            }
+            })
         },
         postImage: Image("Community/testImage"),
         myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를"

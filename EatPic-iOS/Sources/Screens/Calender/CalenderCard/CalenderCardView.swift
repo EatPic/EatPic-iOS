@@ -120,7 +120,6 @@ struct CalenderCardView: View {
         .padding(.horizontal, -16) // 패딩 무시
     }
     
-    
     // MARK: 해당 피드 바로가기 버튼 있는 뷰
     private var goToFeed: some View {
         VStack {

@@ -9,4 +9,4 @@ struct BadgeItem: Identifiable {
         self.state = state
         self.name = name
     }
-} 
+}

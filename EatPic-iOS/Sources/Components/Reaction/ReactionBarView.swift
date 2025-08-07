@@ -88,7 +88,7 @@ struct ReactionBarView: View {
 }
 
 #Preview {
-    @Previewable @State var selected: ReactionType? = nil
+    @Previewable @State var selected: ReactionType?
     @Previewable @State var counts: [ReactionType: Int] = [
         .thumbsUp: 102,
         .heart: 98,

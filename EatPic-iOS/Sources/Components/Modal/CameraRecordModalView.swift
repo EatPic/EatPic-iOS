@@ -57,7 +57,7 @@ struct CameraRecordModalView: View {
     
     // MARK: - Init
     init(
-        closeBtnAction : @escaping () -> Void,
+        closeBtnAction: @escaping () -> Void,
         messageTitle: String = "Pic 카드 기록",
         messageTitleColor: Color = .black,
         messageDescription: String = "기록할 방법을 선택해주세요",
@@ -67,8 +67,8 @@ struct CameraRecordModalView: View {
         albumButtonImage: Image = Image("Modal/ic_record_album"),
         buttonColor: Color = .gray020,
         albumText: String = "사진 앨범",
-        cameraBtnAction : @escaping () -> Void,
-        albumBtnAction : @escaping () -> Void
+        cameraBtnAction: @escaping () -> Void,
+        albumBtnAction: @escaping () -> Void
     ) {
         self.closeBtnAction = closeBtnAction
         self.messageTitle = messageTitle

@@ -73,10 +73,9 @@ struct SearchBarView: View {
                     .onSubmit {
                         onSubmit?()
                     }
-                    .onChange(of: text) { newValue in
-                        onChange?(newValue)
-                    }
-            }
+                    .onChange(of: text) {
+                        onChange?(text)  // text는 클로저 내부에서 직접 접근
+                    }            }
             
             Spacer()
             
