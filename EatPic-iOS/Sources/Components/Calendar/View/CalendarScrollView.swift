@@ -56,7 +56,7 @@ struct CalendarScrollView: View {
                             CalendarView(month: month) { selectedDate in
                                 print("Selected: \(selectedDate)")
                             }
-                            .background(
+                            .background(alignment: .center) {
                                 GeometryReader { geo in
                                     Color.clear
                                         .preference(
@@ -66,7 +66,7 @@ struct CalendarScrollView: View {
                                             ]
                                         )
                                 }
-                            )
+                                }
                             .id(month)
                             .onAppear {
                                 reloadData(month: month, proxy: proxy)

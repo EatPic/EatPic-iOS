@@ -65,7 +65,8 @@ struct HashtagSelectionView: View {
                     ForEach(0..<4, id: \.self) { index in
                         HashtagButton(
                             hashtagName: hashtags[index],
-                            isSelected: selectedHashtags.contains(hashtags[index]),
+                            isSelected: selectedHashtags
+                                .contains(hashtags[index]),
                             isDisabled: selectedHashtags
                                 .count >= maxSelectionCount && !selectedHashtags
                                 .contains(hashtags[index]),
@@ -81,7 +82,8 @@ struct HashtagSelectionView: View {
                     ForEach(4..<8, id: \.self) { index in
                         HashtagButton(
                             hashtagName: hashtags[index],
-                            isSelected: selectedHashtags.contains(hashtags[index]),
+                            isSelected: selectedHashtags
+                                .contains(hashtags[index]),
                             isDisabled: selectedHashtags
                                 .count >= maxSelectionCount && !selectedHashtags
                                 .contains(hashtags[index]),
@@ -97,7 +99,8 @@ struct HashtagSelectionView: View {
                     ForEach(8..<13, id: \.self) { index in
                         HashtagButton(
                             hashtagName: hashtags[index],
-                            isSelected: selectedHashtags.contains(hashtags[index]),
+                            isSelected: selectedHashtags
+                                .contains(hashtags[index]),
                             isDisabled: selectedHashtags
                                 .count >= maxSelectionCount && !selectedHashtags
                                 .contains(hashtags[index]),
@@ -143,10 +146,18 @@ struct HashtagSelectionView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                container.router.push(.picCardRecord(selectedMeal: selectedMeal,
-                                                     selectedHashtags: Array(selectedHashtags)))
+                container.router.push(
+.picCardRecord(
+    selectedMeal: selectedMeal,
+    selectedHashtags: Array(
+        selectedHashtags
+    )
+)
+                )
             }
-            .disabled(selectedHashtags.isEmpty) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
+            .disabled(
+                selectedHashtags.isEmpty
+            ) // selectedHashtags가 비어있을 경우 버튼 동작 비활성화
         }
         .padding(.horizontal, 16)
         .customNavigationBar {
@@ -203,10 +214,13 @@ private struct HashtagButton: View {
                 .padding(.vertical, 10)
                 .background(isSelected ? Color.green010 : .white)
                 .clipShape(RoundedRectangle(cornerRadius: 50))
-                .overlay(
+                .overlay(alignment: .center) {
                     RoundedRectangle(cornerRadius: 50)
-                        .stroke(isSelected ? Color.green060 : .gray050, lineWidth: 1)
-                )
+                        .stroke(
+                            isSelected ? Color.green060 : .gray050,
+                            lineWidth: 1
+                        )
+                }
         }
         .disabled(isDisabled)
     }
