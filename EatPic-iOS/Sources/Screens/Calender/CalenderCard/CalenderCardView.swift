@@ -87,7 +87,7 @@ struct CalenderCardView: View {
                 }
                 
                 Divider()
-                    .frame(width: .infinity)
+                    .frame(maxWidth: .infinity)
                 
                 CalenderNavigationButton(
                     buttonName: "식당 위치"
@@ -97,7 +97,7 @@ struct CalenderCardView: View {
                 }
                 
                 Divider()
-                    .frame(width: .infinity)
+                    .frame(maxWidth: .infinity)
                 
                 CalenderNavigationButton(
                     buttonName: "나의 메모"
@@ -106,7 +106,7 @@ struct CalenderCardView: View {
                 }
                 
                 Divider()
-                    .frame(width: .infinity)
+                    .frame(maxWidth: .infinity)
                 
                 CalenderNavigationButton(
                     buttonName: "레시피 내용"
