@@ -194,7 +194,7 @@ private struct MealButton: View {
             .padding(.horizontal, 20)
             .frame(width: 170, height: 100)
             .background(backgroundColor)
-            .cornerRadius(10)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(borderColor, lineWidth: 1)

@@ -53,7 +53,7 @@ struct HashtagSelectionView: View {
             // 작은 텍스트
             Text("최대 3개를 선택할 수 있어요")
                 .font(.dsFootnote)
-                .foregroundColor(.gray060)
+                .foregroundStyle(Color.gray060)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer().frame(height: 32)
@@ -118,7 +118,7 @@ struct HashtagSelectionView: View {
                 HStack {
                     Text("직접 추가하기")
                         .font(.dsSubhead)
-                        .foregroundColor(.gray060)
+                        .foregroundStyle(Color.gray060)
                     
                     Spacer()
                     
@@ -128,7 +128,7 @@ struct HashtagSelectionView: View {
                 .padding(.vertical, 8)
                 .frame(width: 135, height: 38)
                 .background(Color.gray020)
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             })
             
             Spacer().frame(height: 51)
@@ -202,7 +202,7 @@ private struct HashtagButton: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(isSelected ? Color.green010 : .white)
-                .cornerRadius(50)
+                .clipShape(RoundedRectangle(cornerRadius: 50))
                 .overlay(
                     RoundedRectangle(cornerRadius: 50)
                         .stroke(isSelected ? Color.green060 : .gray050, lineWidth: 1)
