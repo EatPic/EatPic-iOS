@@ -35,7 +35,7 @@ struct MealStatusView: View {
         .padding(.vertical, 16)
         .padding(.horizontal, 19)
         .background(.white)
-        .cornerRadius(15)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
     }
     
     private var topBarView: some View {
@@ -43,7 +43,7 @@ struct MealStatusView: View {
         HStack {
             Text("오늘의 식사 현황")
                 .font(.dsTitle3)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
 
             Spacer().frame(height: 24)
             
@@ -55,7 +55,7 @@ struct MealStatusView: View {
                 }, label: {
                     Text("수정완료")
                         .font(.dsSubhead)
-                        .foregroundColor(.green060)
+                        .foregroundStyle(Color.green060)
                 })
             } else {
                 // 일반 모드일 때: Menu 버튼
@@ -103,7 +103,7 @@ private struct EmptyMealView: View {
 
                 Text(meal.mealTime)
                     .font(.dsBold15)
-                    .foregroundColor(.gray060)
+                    .foregroundStyle(Color.gray060)
             }
             .frame(width: 60, height: 26)
 
@@ -139,7 +139,7 @@ private struct RecordedMealView: View {
                     .fill(Color.green050)
                 Text(meal.mealTime)
                     .font(.dsBold15)
-                    .foregroundColor(.white)
+                    .foregroundStyle(Color.white)
             }
             .frame(width: 60, height: 26)
 
@@ -150,7 +150,7 @@ private struct RecordedMealView: View {
                     Image(imageName)
                         .resizable()
                         .frame(width: 76, height: 76)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.green010)
@@ -159,14 +159,14 @@ private struct RecordedMealView: View {
                 if isEditMode {
                     Color.black.opacity(0.5)
                         .frame(width: 76, height: 76)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                         .onTapGesture {
                             onDelete()
                         }
                     Image("Home/btn_home_deleted")
                         .resizable()
                         .frame(width: 32, height: 32)
-                        .foregroundColor(.white)
+                        .foregroundStyle(Color.white)
                         .onTapGesture {
                             onDelete()
                         }
