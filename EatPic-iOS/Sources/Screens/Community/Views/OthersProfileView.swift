@@ -37,7 +37,22 @@ import SwiftUI
  */
 
 struct OthersProfileView: View {
-    let user: CommunityUser
+    //    let user: CommunityUser
+    //    let toastVM = ToastViewModel()
+    //    let columns: [GridItem] = [
+    //        GridItem(.flexible(minimum: 0), spacing: 4),
+    //        GridItem(.flexible(minimum: 0), spacing: 4),
+    //        GridItem(.flexible(minimum: 0), spacing: 4)
+    //    ]
+    
+    @Environment(\.dismiss) private var dismiss
+    @State private var viewModel: OthersProfileViewModel
+    @EnvironmentObject private var container: DIContainer
+    
+    //    @State private var isFollowed: Bool = false
+    //    @State private var isShowingReportBottomSheet: Bool = false
+    //    @State private var showBlockModal: Bool = false
+    // MARK: - Properties
     let toastVM = ToastViewModel()
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 4),
@@ -45,12 +60,9 @@ struct OthersProfileView: View {
         GridItem(.flexible(minimum: 0), spacing: 4)
     ]
     
-    @EnvironmentObject private var container: DIContainer
-    @Environment(\.dismiss) private var dismiss
-    
-    @State private var isFollowed: Bool = false
-    @State private var isShowingReportBottomSheet: Bool = false
-    @State private var showBlockModal: Bool = false
+    init(user: CommunityUser) {
+        self._viewModel = State(initialValue: OthersProfileViewModel(user: user))
+    }
     
     var body: some View {
         ZStack {
@@ -59,7 +71,7 @@ struct OthersProfileView: View {
                     userProfileView()
                     Spacer().frame(height: 16)
                     
-                    if isFollowed {
+                    if viewModel.isFollowed {
                         PrimaryButton(
                             color: .gray030,
                             text: "팔로잉",
@@ -69,7 +81,7 @@ struct OthersProfileView: View {
                             height: 28,
                             cornerRadius: 6,
                             action: {
-                                isFollowed.toggle()
+                                viewModel.toggleFollow()
                                 print("unfollow")
                             })
                     } else {
@@ -82,7 +94,7 @@ struct OthersProfileView: View {
                             height: 28,
                             cornerRadius: 6,
                             action: {
-                                isFollowed.toggle()
+                                viewModel.toggleFollow()
                                 print("follow")
                             })
                     }
@@ -95,12 +107,12 @@ struct OthersProfileView: View {
                 }, right: {
                     Menu {
                         Button(role: .destructive) {
-                            showBlockModal = true
+                            viewModel.showBlockModal = true
                         } label: {
                             Label("차단하기", systemImage: "hand.raised.slash")
                         }
                         Button(role: .destructive) {
-                            isShowingReportBottomSheet = true
+                            viewModel.isShowingReportBottomSheet = true
                         } label: {
                             Label("신고하기", systemImage: "info.circle")
                         }
@@ -113,10 +125,14 @@ struct OthersProfileView: View {
             .toastView(viewModel: toastVM)
             .padding(.horizontal, 16)
             .scrollIndicators(.hidden)
-            .sheet(isPresented: $isShowingReportBottomSheet) {
+            .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
-                    isShowing: $isShowingReportBottomSheet,
-                    onReport: handleProfileReport, // 신고 처리 함수 연결
+                    isShowing: $viewModel.isShowingReportBottomSheet,
+                    onReport: { reportType in
+                        // 뷰모델의 신고 처리 함수 호출
+                        viewModel.handleProfileReport(reportType)
+                        toastVM.showToast(title: "신고되었습니다.")
+                    },
                     target: .profile // 프로필 신고용으로 지정
                 )
                 .presentationDetents([.large, .fraction(0.7)])
@@ -124,24 +140,18 @@ struct OthersProfileView: View {
             }
             
             // showBlockModal 상태에 따라 모달 뷰를 띄움
-            if showBlockModal {
+            if viewModel.showBlockModal {
                 DecisionModalView(
-                    message: "\(user.nickname)(\(user.id))님을 차단하시겠어요?",
+                    message: "\(viewModel.user.nickname)(\(viewModel.user.id))님을 차단하시겠어요?",
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "차단",
                     rightBtnColor: .pink070,
                     leftBtnAction: {
-                        showBlockModal = false // 취소 버튼 탭 시 모달 뷰 닫기
+                        viewModel.showBlockModal = false // 취소 버튼 탭 시 모달 뷰 닫기
                     },
                     rightBtnAction: {
-                        isFollowed = false // 팔로우 관계 끊기
-                        showBlockModal = false // 모달 뷰 닫기
-                        
-                        // TODO: 차단 API 호출 로직 구현
-                        print("\(user.nickname) 차단 완료")
-                        
-                        // 토스트 메시지를 보여주고 이전 화면으로 돌아감
+                        viewModel.blockUser()
                         toastVM.showToast(title: "차단되었습니다.")
                         dismiss() // 이전 화면으로 돌아가기
                     }
@@ -150,27 +160,19 @@ struct OthersProfileView: View {
         }
     }
     
-    // 신고 처리를 위한 함수
-    private func handleProfileReport(_ reportType: String) {
-        toastVM.showToast(title: "신고되었습니다.")
-        print("프로필 신고: \(user.id) - 유형: \(reportType)")
-        // TODO: 실제 신고 API 호출 로직 구현
-        // API 호출 후 바텀 시트 닫기
-        isShowingReportBottomSheet = false
-    }
-    
+    // MARK: - View Components
     private func userProfileView() -> some View {
         VStack {
             Spacer().frame(height: 8)
-            ProfileImageView(image: user.profileImage ?? Image(systemName: "person.fill"),
-                             size: 100)
+            ProfileImageView(image: viewModel.user.profileImage ??
+                             Image(systemName: "person.fill"),size: 100)
             
             Spacer().frame(height: 16)
             
-            Text(user.nickname)
+            Text(viewModel.user.nickname)
                 .font(.dsTitle3)
                 .foregroundStyle(Color.gray080)
-            Text("@"+user.id)
+            Text("@"+viewModel.user.id)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray060)
             Spacer().frame(height: 18)
@@ -188,7 +190,7 @@ struct OthersProfileView: View {
     private func followerCountView() -> some View {
         HStack(spacing: 80) {
             VStack {
-                Text("0")
+                Text("\(viewModel.picCardCount)")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("Pic 카드")
@@ -197,7 +199,7 @@ struct OthersProfileView: View {
             }
             
             VStack {
-                Text("2")
+                Text("\(viewModel.followerCount)")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로워")
@@ -209,7 +211,7 @@ struct OthersProfileView: View {
             }
             
             VStack {
-                Text("2")
+                Text("\(viewModel.followingCount)")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.black)
                 Text("팔로잉")
@@ -222,17 +224,17 @@ struct OthersProfileView: View {
         }
     }
     
-    private var userCards: [PicCard] {
-        return sampleCards.filter { $0.user == user }
-    }
+    //    private var userCards: [PicCard] {
+    //        return sampleCards.filter { $0.user == user }
+    //    }
     
     private func userFeedView() -> some View {
         GeometryReader { geometry in
-            let availableWidth = geometry.size.width/* - 32*/ // 좌우 패딩 16씩 제외
+            let availableWidth = geometry.size.width // 좌우 패딩 16씩 제외
             let spacing: CGFloat = 8 // 총 spacing (4 * 2)
             let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
             LazyVGrid(columns: columns, spacing: 4, content: {
-                ForEach(userCards) { card in
+                ForEach(viewModel.userCards) { card in
                     card.image
                         .resizable()
                         .scaledToFill()
