@@ -46,77 +46,107 @@ struct OthersProfileView: View {
     ]
     
     @EnvironmentObject private var container: DIContainer
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var isFollowed: Bool = false
     @State private var isShowingReportBottomSheet: Bool = false
+    @State private var showBlockModal: Bool = false
     
     var body: some View {
-        ScrollView {
-            VStack {
-                userProfileView()
-                Spacer().frame(height: 16)
-                
-                if isFollowed {
-                    PrimaryButton(
-                        color: .gray030,
-                        text: "팔로잉",
-                        font: .dsBold15,
-                        textColor: .gray050,
-                        width: 109,
-                        height: 28,
-                        cornerRadius: 6,
-                        action: {
-                            isFollowed.toggle()
-                            print("unfollow")
-                        })
-                } else {
-                    PrimaryButton(
-                        color: .green060,
-                        text: "팔로우",
-                        font: .dsBold15,
-                        textColor: .white,
-                        width: 109,
-                        height: 28,
-                        cornerRadius: 6,
-                        action: {
-                            isFollowed.toggle()
-                            print("follow")
-                        })
+        ZStack {
+            ScrollView {
+                VStack {
+                    userProfileView()
+                    Spacer().frame(height: 16)
+                    
+                    if isFollowed {
+                        PrimaryButton(
+                            color: .gray030,
+                            text: "팔로잉",
+                            font: .dsBold15,
+                            textColor: .gray050,
+                            width: 109,
+                            height: 28,
+                            cornerRadius: 6,
+                            action: {
+                                isFollowed.toggle()
+                                print("unfollow")
+                            })
+                    } else {
+                        PrimaryButton(
+                            color: .green060,
+                            text: "팔로우",
+                            font: .dsBold15,
+                            textColor: .white,
+                            width: 109,
+                            height: 28,
+                            cornerRadius: 6,
+                            action: {
+                                isFollowed.toggle()
+                                print("follow")
+                            })
+                    }
+                    Spacer().frame(height: 19)
+                    
+                    userFeedView()
                 }
-                Spacer().frame(height: 19)
-                
-                userFeedView()
+                .customNavigationBar(title: {
+                    Text("")
+                }, right: {
+                    Menu {
+                        Button(role: .destructive) {
+                            showBlockModal = true
+                        } label: {
+                            Label("차단하기", systemImage: "hand.raised.slash")
+                        }
+                        Button(role: .destructive) {
+                            isShowingReportBottomSheet = true
+                        } label: {
+                            Label("신고하기", systemImage: "info.circle")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(Color.black)
+                    }
+                })
             }
-            .customNavigationBar(title: {
-                Text("")
-            }, right: {
-                Menu {
-                    Button(role: .destructive) {
+            .toastView(viewModel: toastVM)
+            .padding(.horizontal, 16)
+            .scrollIndicators(.hidden)
+            .sheet(isPresented: $isShowingReportBottomSheet) {
+                ReportBottomSheetView(
+                    isShowing: $isShowingReportBottomSheet,
+                    onReport: handleProfileReport, // 신고 처리 함수 연결
+                    target: .profile // 프로필 신고용으로 지정
+                )
+                .presentationDetents([.large, .fraction(0.7)])
+                .presentationDragIndicator(.hidden)
+            }
+            
+            // showBlockModal 상태에 따라 모달 뷰를 띄움
+            if showBlockModal {
+                DecisionModalView(
+                    message: "\(user.nickname)(\(user.id))님을 차단하시겠어요?",
+                    messageColor: .gray080,
+                    leftBtnText: "취소",
+                    rightBtnText: "차단",
+                    rightBtnColor: .pink070,
+                    leftBtnAction: {
+                        showBlockModal = false // 취소 버튼 탭 시 모달 뷰 닫기
+                    },
+                    rightBtnAction: {
+                        isFollowed = false // 팔로우 관계 끊기
+                        showBlockModal = false // 모달 뷰 닫기
                         
-                    } label: {
-                        Label("차단하기", systemImage: "hand.raised.slash")
+                        // TODO: 차단 API 호출 로직 구현
+                        print("\(user.nickname) 차단 완료")
+                        
+                        // 토스트 메시지를 보여주고 이전 화면으로 돌아감
+                        toastVM.showToast(title: "차단되었습니다.")
+                        dismiss() // 이전 화면으로 돌아가기
                     }
-                    Button(role: .destructive) {
-                        isShowingReportBottomSheet = true
-                    } label: {
-                        Label("신고하기", systemImage: "info.circle")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(Color.black)
-                }
-            })
-        }
-        .toastView(viewModel: toastVM)
-        .padding(.horizontal, 16)
-        .scrollIndicators(.hidden)
-        .sheet(isPresented: $isShowingReportBottomSheet) {
-            ReportBottomSheetView(
-                isShowing: $isShowingReportBottomSheet,
-                onReport: handleProfileReport, // 신고 처리 함수 연결
-                target: .profile // 프로필 신고용으로 지정
-            )
-            .presentationDetents([.large, .fraction(0.7)])
-            .presentationDragIndicator(.hidden)
+                )
+            }
         }
     }
     
