@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 /// 버튼 + 제목 + 설명 + 카메라/사진버튼 + 텍스트로 이루어진 카메라 모달 컴포넌트
 ///
@@ -15,7 +16,11 @@ import SwiftUI
 ///   - messageDescriptionColor: 모달 설명 메시지의 색상입니다.
 ///   - buttonColor: 카메라 및 앨범 버튼의 배경 색상입니다.
 struct CameraRecordModalView: View {
-    @Bindable private var mediaPickekProvider: MediaPickekProvider
+    @Bindable private var mediaPickerProvider: MediaPickerProvider
+    @State private var showCamera = false
+    @State private var showPhotosPicker = false
+    
+    private let maxImgSelectionCount: Int = 5
     
     /// 모달 제목 메시지 색상
     let messageTitleColor: Color
@@ -36,8 +41,8 @@ struct CameraRecordModalView: View {
         self.messageTitleColor = messageTitleColor
         self.messageDescriptionColor = messageDescriptionColor
         self.buttonColor = buttonColor
-        self.mediaPickekProvider = .init(
-            imagePickerService: container.mediaPickerService)
+        self.mediaPickerProvider = .init(
+            mediaPickerService: container.mediaPickerService)
     }
     
     // MARK: - Body
@@ -86,7 +91,7 @@ struct CameraRecordModalView: View {
                     VStack {
                         /// 카메라  버튼
                         Button(action: {
-                            mediaPickekProvider.presentCamera()
+                            mediaPickerProvider.presentCamera()
                         }, label: {
                             
                             ZStack {
@@ -115,7 +120,7 @@ struct CameraRecordModalView: View {
                     VStack {
                         /// 앨범  버튼
                         Button(action: {
-                            mediaPickekProvider.presentPhotoPicker()
+                            showPhotosPicker.toggle()
                         }, label: {
                             
                             ZStack {
@@ -148,6 +153,15 @@ struct CameraRecordModalView: View {
             .frame(width: 270)
             .background(.white)
             .cornerRadius(10)
+            .photosPicker(
+                isPresented: $showPhotosPicker,
+                selection: $mediaPickerProvider.selections,
+                maxSelectionCount: maxImgSelectionCount,
+                matching: .images
+            )
+            .onChange(of: mediaPickerProvider.selections) {
+                mediaPickerProvider.loadImages()
+            }
         }
     }
 }

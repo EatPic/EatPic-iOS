@@ -5,25 +5,49 @@
 //  Created by jaewon Lee on 8/6/25.
 //
 
-import PhotosUI
 import SwiftUI
-import UIKit
+import PhotosUI
+import UniformTypeIdentifiers
+import ImageIO
 
-/// 갤러리 또는 카메라에서 이미지를 가져오는 기능을 추상화한 프로토콜입니다.
-protocol MediaPickerService {
-    /// 갤러리에서 이미지들을 선택합니다.
-    /// - Parameters:
-    ///   - allowsMultipleSelection: 다중 선택 허용 여부
-    ///   - completion: 선택한 이미지 배열
-    func presentPhotoLibrary(
-        allowsMultipleSelection: Bool,
-        completion: @escaping ([UIImage]) -> Void
-    )
+struct PickedImage: Transferable {
+    let uiImage: UIImage
     
-    /// 카메라를 실행하여 이미지를 촬영합니다.
-    func presentCamera(
-        completion: @escaping (UIImage?) -> Void
-    )
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let img = downsampledImage(
+                from: data,
+                maxDimension: MediaPickerConfig.displayMaxDimensions
+            ) else {
+                throw URLError(.cannotDecodeRawData)
+            }
+            return PickedImage(uiImage: img)
+        }
+    }
+}
+
+func downsampledImage(
+    from data: Data,
+    maxDimension: CGFloat
+) -> UIImage? {
+    let cfData = data as CFData
+    guard let src = CGImageSourceCreateWithData(cfData, nil) else {
+        return nil
+    }
+    let options: [NSString: Any] = [
+        kCGImageSourceCreateThumbnailFromImageAlways: true,
+        kCGImageSourceShouldCacheImmediately: true,
+        kCGImageSourceCreateThumbnailWithTransform: true,
+        kCGImageSourceThumbnailMaxPixelSize: Int(maxDimension)
+    ]
+    guard let cgImageSourceThumbnailAtIndex = CGImageSourceCreateThumbnailAtIndex(
+        src, 0, options as CFDictionary) else { return nil }
+    return UIImage(cgImage: cgImageSourceThumbnailAtIndex)
+}
+
+protocol MediaPickerService {
+    /// 카메라 촬영
+    func presentCamera(completion: @escaping (UIImage?) -> Void)
 }
 
 final class MediaPickerServiceImpl: NSObject, MediaPickerService {
@@ -44,26 +68,6 @@ final class MediaPickerServiceImpl: NSObject, MediaPickerService {
         return topViewController
     }
     
-    func presentPhotoLibrary(
-        allowsMultipleSelection: Bool,
-        completion: @escaping ([UIImage]) -> Void
-    ) {
-        guard let viewController = findTopViewController() else {
-            completion([])
-            return
-        }
-        
-        var config = PHPickerConfiguration()
-        config.filter = .images
-        config.selectionLimit = allowsMultipleSelection ? 0 : 1
-        
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = self
-        
-        self.multipleImagesCompletion = completion
-        viewController.present(picker, animated: true)
-    }
-    
     func presentCamera(
         completion: @escaping (UIImage?) -> Void
     ) {
@@ -79,41 +83,6 @@ final class MediaPickerServiceImpl: NSObject, MediaPickerService {
         
         self.singleImageCompletion = completion
         viewController.present(picker, animated: true)
-    }
-
-}
-
-extension MediaPickerServiceImpl: PHPickerViewControllerDelegate {
-    func picker(
-        _ picker: PHPickerViewController,
-        didFinishPicking results: [PHPickerResult]
-    ) {
-        picker.dismiss(animated: true)
-        
-        guard !results.isEmpty else {
-            multipleImagesCompletion?([])
-            return
-        }
-        
-        let providers = results.map(\.itemProvider)
-        var images: [UIImage] = []
-        let dispatchGroup = DispatchGroup()
-        
-        for provider in providers {
-            if provider.canLoadObject(ofClass: UIImage.self) {
-                dispatchGroup.enter()
-                provider.loadObject(ofClass: UIImage.self) { object, _ in
-                    if let image = object as? UIImage {
-                        images.append(image)
-                    }
-                    dispatchGroup.leave()
-                }
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            self.multipleImagesCompletion?(images)
-        }
     }
 }
 
@@ -132,31 +101,57 @@ extension MediaPickerServiceImpl: UIImagePickerControllerDelegate, UINavigationC
     }
 }
 
+/// 이미지 처리 관련 상수를 모아둔 설정 구조체
+enum MediaPickerConfig {
+    static let displayMaxDimensions: CGFloat = 1200
+    
+    static let jpegCompressionQuality: CGFloat = 0.9
+}
+
+@MainActor
 @Observable
-final class MediaPickekProvider {
+final class MediaPickerProvider {
     var images: [UIImage] = []
+    var selections: [PhotosPickerItem] = []  // 갤러리 선택 결과
     
     private let mediaPickerService: MediaPickerService
     
-    init(imagePickerService: MediaPickerService) {
-        self.mediaPickerService = imagePickerService
+    init(mediaPickerService: MediaPickerService) {
+        self.mediaPickerService = mediaPickerService
     }
     
-    /// View에서 호출되며 이미지 선택 기능 실행
     @MainActor
-    func presentPhotoPicker() {
-        mediaPickerService.presentPhotoLibrary(
-            allowsMultipleSelection: true
-        ) { [weak self] newImages in
-            self?.images.append(contentsOf: newImages)
+    func loadImages() {
+        // 갤러리에서 선택 후 다음 선택 시 체크 표시를 지우기 위한 로직
+        let items = selections
+        selections.removeAll()
+
+        Task {
+            var newImages: [UIImage] = []
+            for item in items {
+                if let picked: PickedImage = try? await item.loadTransferable(type: PickedImage.self) {
+                    newImages.append(picked.uiImage)
+                }
+            }
+            // 메인 액터에서 상태 변경
+            images.append(contentsOf: newImages)
         }
     }
     
     @MainActor
     func presentCamera() {
-        mediaPickerService.presentCamera { [weak self] newImage in
-            guard let newImage = newImage else { return }
-            self?.images.append(newImage)
+        mediaPickerService.presentCamera { [weak self] img in
+            guard let self, let img else { return }
+            // 카메라도 크면 재인코딩/다운샘플링
+            let data = img.jpegData(
+                compressionQuality: MediaPickerConfig.jpegCompressionQuality)
+            let downsized = data.flatMap {
+                downsampledImage(
+                    from: $0,
+                    maxDimension: MediaPickerConfig.displayMaxDimensions
+                )
+            } ?? img
+            self.images.append(downsized)
         }
     }
     
@@ -164,4 +159,49 @@ final class MediaPickekProvider {
         guard images.indices.contains(index) else { return }
         images.remove(at: index)
     }
+}
+
+/// MideaPickerProvider Test View
+private struct MediaPickerView: View {
+    @State private var provider = MediaPickerProvider(
+        mediaPickerService: MediaPickerServiceImpl())
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            PhotosPicker(
+                selection: $provider.selections,
+                maxSelectionCount: 0,         // 0 = 무제한
+                matching: .images
+            ) { Text("갤러리에서 선택") }
+            .onChange(of: provider.selections) {
+                provider.loadImages()
+            }
+            
+            Button("카메라로 촬영") {
+                provider.presentCamera()
+            }
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(Array(provider.images.enumerated()), id: \.offset) { idx, img in
+                        Image(uiImage: img)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 120, height: 120)
+                            .clipped()
+                            .overlay(alignment: .topTrailing) {
+                                Button {
+                                    provider.removeImage(at: idx)
+                                } label: { Image(systemName: "xmark.circle.fill") }
+                            }
+                    }
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+#Preview {
+    MediaPickerView()
 }
