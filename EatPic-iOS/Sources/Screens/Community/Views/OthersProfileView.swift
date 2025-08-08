@@ -251,6 +251,7 @@ struct OthersProfileView: View {
         id: "id1",
         nickname: "아이디1",
         imageName: nil,
-        isCurrentUser: true
+        isCurrentUser: true,
+        isFollowed: true
     ))
 }

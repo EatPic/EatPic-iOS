@@ -10,7 +10,7 @@ import Foundation
 @Observable
 final class OthersProfileViewModel {
     var user: CommunityUser
-    var isFollowed: Bool = false
+    var isFollowed: Bool = true
     var showBlockModal: Bool = false
     var isShowingReportBottomSheet: Bool = false
     

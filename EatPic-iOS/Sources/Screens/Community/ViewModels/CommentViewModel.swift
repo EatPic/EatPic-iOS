@@ -20,7 +20,7 @@ final class CommentViewModel {
     // 현재 로그인된 사용자의 정보 (임시)
     private let currentUser = CommunityUser(
         id: "itcong", nickname: "잇콩",
-        imageName: "Community/itcong", isCurrentUser: true)
+        imageName: "Community/itcong", isCurrentUser: true, isFollowed: true)
     
     func postComment() {
         guard !commentText.isEmpty else { return }
