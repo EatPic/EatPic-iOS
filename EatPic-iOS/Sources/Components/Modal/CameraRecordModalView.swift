@@ -8,80 +8,36 @@
 import SwiftUI
 
 /// 버튼 + 제목 + 설명 + 카메라/사진버튼 + 텍스트로 이루어진 카메라 모달 컴포넌트
+///
 /// - Parameters:
-///   - xButtonImage: 모달의 우측 상단에 위치하는 닫기(X) 버튼 이미지입니다.
-///   - messageTitle: 모달 제목 메시지의 내용을 담습니다
+///   - container: DIContainer 객체 주입
 ///   - messageTitleColor: 모달 제목 메시지의 색상입니다.
-///   - messageDescription: 모달 설명 메시지의 내용을 담습니다
 ///   - messageDescriptionColor: 모달 설명 메시지의 색상입니다.
-///   - cameraButtonImage: 카메라 버튼 이미지입니다.
-///   - cameraText: 카메라 버튼 하단에 표시될 텍스트입니다.
-///   - albumButtonImage: 사진 앨범 버튼 이미지입니다.
 ///   - buttonColor: 카메라 및 앨범 버튼의 배경 색상입니다.
-///   - albumText: 앨범 버튼 하단에 표시될 텍스트입니다.
 struct CameraRecordModalView: View {
-    
-    // MARK: - Property
-    let closeBtnAction: () -> Void
-    
-    /// 모달 제목 메시지
-    let messageTitle: String
+    @Bindable private var mediaPickekProvider: MediaPickekProvider
     
     /// 모달 제목 메시지 색상
     let messageTitleColor: Color
     
-    /// 모달 설명 메시지
-    let messageDescription: String
-    
     /// 모달 설명 메시지 색상
     let messageDescriptionColor: Color
-    
-    /// 카메라 버튼 이미지
-    let cameraButtonImage: Image
-    
-    /// 카메라 버튼 하단 텍스트
-    let cameraText: String
-    
-    /// 앨범 버튼 이미지
-    let albumButtonImage: Image
     
     /// 카메라/ 앨범 버튼 색상
     let buttonColor: Color
     
-    /// 앨범 버튼 하단 텍스트
-    let albumText: String
-    
-    let cameraBtnAction: () -> Void
-    
-    let albumBtnAction: () -> Void
-    
     // MARK: - Init
     init(
-        closeBtnAction : @escaping () -> Void,
-        messageTitle: String = "Pic 카드 기록",
+        container: DIContainer,
         messageTitleColor: Color = .black,
-        messageDescription: String = "기록할 방법을 선택해주세요",
         messageDescriptionColor: Color = .gray060,
-        cameraButtonImage: Image = Image("Modal/ic_record_camera"),
-        cameraText: String = "카메라",
-        albumButtonImage: Image = Image("Modal/ic_record_album"),
         buttonColor: Color = .gray020,
-        albumText: String = "사진 앨범",
-        cameraBtnAction : @escaping () -> Void,
-        albumBtnAction : @escaping () -> Void
     ) {
-        self.closeBtnAction = closeBtnAction
-        self.messageTitle = messageTitle
         self.messageTitleColor = messageTitleColor
-        self.messageDescription = messageDescription
         self.messageDescriptionColor = messageDescriptionColor
-        self.cameraButtonImage = cameraButtonImage
-        self.cameraText = cameraText
-        self.albumButtonImage = albumButtonImage
         self.buttonColor = buttonColor
-        self.albumText = albumText
-        self.cameraBtnAction = cameraBtnAction
-        self.albumBtnAction = albumBtnAction
+        self.mediaPickekProvider = .init(
+            imagePickerService: container.mediaPickerService)
     }
     
     // MARK: - Body
@@ -95,10 +51,9 @@ struct CameraRecordModalView: View {
                 // 나가기 x 버튼
                 HStack {
                     Spacer()
-                
+                    
                     Button(action: {
                         print("모달 나가기 동작")
-                        closeBtnAction()
                     }, label: {
                         Image("Modal/btn_close")
                             .resizable()
@@ -111,14 +66,14 @@ struct CameraRecordModalView: View {
                 Spacer().frame(height: 8)
                 
                 /// 모달 제목 메시지
-                Text(messageTitle)
+                Text("Pic 카드 기록")
                     .foregroundColor(messageTitleColor)
                     .font(.dsTitle2)
                 
                 Spacer().frame(height: 8)
                
                 /// 모달 설명 메시지
-                Text(messageDescription)
+                Text("기록할 방법을 선택해주세요")
                     .foregroundColor(messageDescriptionColor)
                     .font(.dsSubhead)
                 
@@ -131,7 +86,7 @@ struct CameraRecordModalView: View {
                     VStack {
                         /// 카메라  버튼
                         Button(action: {
-                            print("카메라")
+                            mediaPickekProvider.presentCamera()
                         }, label: {
                             
                             ZStack {
@@ -141,7 +96,7 @@ struct CameraRecordModalView: View {
                                     .frame(width: 70, height: 70)
                                 
                                 // 버튼 가운데 이미지
-                                cameraButtonImage
+                                Image("Modal/ic_record_camera")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 32, height: 32)
@@ -151,8 +106,8 @@ struct CameraRecordModalView: View {
                         Spacer().frame(height: 11)
                         
                         /// 카메라 텍스트
-                        Text(cameraText)
-                        .font(.dsBold15)
+                        Text("카메라")
+                            .font(.dsBold15)
                     }
                     
                     Spacer().frame(width: 40)
@@ -160,7 +115,7 @@ struct CameraRecordModalView: View {
                     VStack {
                         /// 앨범  버튼
                         Button(action: {
-                            print("앨범")
+                            mediaPickekProvider.presentPhotoPicker()
                         }, label: {
                             
                             ZStack {
@@ -168,9 +123,9 @@ struct CameraRecordModalView: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(buttonColor)
                                     .frame(width: 70, height: 70)
-
+                                
                                 // 버튼 가운데 이미지
-                                albumButtonImage
+                                Image("Modal/ic_record_album")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 32, height: 32)
@@ -180,8 +135,8 @@ struct CameraRecordModalView: View {
                         Spacer().frame(height: 11)
                         
                         /// 앨범 텍스트
-                        Text(albumText)
-                        .font(.dsBold15)
+                        Text("사진 앨범")
+                            .font(.dsBold15)
                     }
                     
                     Spacer()
@@ -198,17 +153,5 @@ struct CameraRecordModalView: View {
 }
 
 #Preview {
-    CameraRecordModalView(
-        closeBtnAction: { print("close") },
-        messageTitle: "Pic 카드 기록",
-        messageDescription: "기록할 방법을 선택해주세요",
-        cameraButtonImage: Image("Modal/ic_record_camera"),
-        cameraText: "카메라",
-        albumButtonImage: Image("Modal/ic_record_album"),
-        buttonColor: .gray020,
-        albumText: "사진 앨범",
-        cameraBtnAction: { print("camera") },
-        albumBtnAction: { print("album") }
-        
-    )
+    CameraRecordModalView(container: .init())
 }
