@@ -180,16 +180,29 @@ struct HashtagSelectionView: View {
         }
         // MARK: - 해시태그 추가 바텀시트
         .sheet(isPresented: $showHashtagAddSheet) {
-            HashtagAddView(
-                hashtagInput: $newHashtagInput,
-                isAddButtonEnabled: isAddButtonEnabled,
-                onAddHashtag: addNewHashtag,
-                onClose: hideAddHashtagSheet
-            )
+            hashtagAddBottomSheetView()
+                .presentationDetents([.fraction(0.3)])
+                .presentationDragIndicator(.hidden)
         }
     }
     
     // MARK: - Private Methods
+    
+    /// 해시태그 추가 바텀시트 뷰를 생성하는 메서드
+    /// - Returns: BottomSheetView로 감싼 HashtagAddView
+    @ViewBuilder
+    private func hashtagAddBottomSheetView() -> some View {
+        BottomSheetView(
+            title: "",
+            content: { 
+                HashtagAddView(
+                    hashtagInput: $newHashtagInput,
+                    isAddButtonEnabled: isAddButtonEnabled,
+                    onAddHashtag: addNewHashtag
+                )
+            }
+        )
+    }
     
     /// 개별 해시태그 버튼을 생성하는 메서드
     /// - Parameter hashtag: 표시할 해시태그 텍스트
@@ -259,12 +272,6 @@ struct HashtagSelectionView: View {
         // 입력값 초기화 및 바텀시트 닫기
         newHashtagInput = ""
         showHashtagAddSheet = false
-    }
-    
-    /// 해시태그 추가 바텀시트를 닫고 입력값을 초기화하는 메서드
-    private func hideAddHashtagSheet() {
-        showHashtagAddSheet = false
-        newHashtagInput = ""
     }
 }
 

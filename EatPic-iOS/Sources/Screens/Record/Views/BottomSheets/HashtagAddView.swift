@@ -11,16 +11,9 @@ struct HashtagAddView: View {
     @Binding var hashtagInput: String
     let isAddButtonEnabled: Bool
     let onAddHashtag: () -> Void
-    let onClose: () -> Void
     
     var body: some View {
         VStack {
-            TopBanner(onClose: onClose)
-            
-//            Spacer().frame(height: 78)
-//            Spacer().frame(height: 78)
-            Spacer()
-            
             HStack {
                 TextAreaView(
                     text: $hashtagInput,
@@ -48,34 +41,10 @@ struct HashtagAddView: View {
     }
 }
 
-private struct TopBanner: View {
-    let onClose: () -> Void
-    
-    var body: some View {
-        VStack {
-            ZStack {
-                Text("해시태그 추가")
-                    .font(.dsTitle2)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        onClose()
-                    }, label: {
-                        Image("Record/btn_home_close")
-                    })
-                }
-            }
-            .padding(.horizontal, 19)
-        }
-    }
-}
-
 #Preview {
     HashtagAddView(
         hashtagInput: .constant(""),
         isAddButtonEnabled: false,
-        onAddHashtag: {},
-        onClose: {}
+        onAddHashtag: {}
     )
 }

@@ -41,6 +41,7 @@ struct RecieptLinkAddView: View {
 }
 
 private struct TopBanner: View {
+    
     var body: some View {
         VStack {
             ZStack {
