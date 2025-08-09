@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct HashtagAddView: View {
-    @State private var hashtagInput: String = ""
+    @Binding var hashtagInput: String
+    let isAddButtonEnabled: Bool
+    let onAddHashtag: () -> Void
+    let onClose: () -> Void
     
     var body: some View {
         VStack {
-            TopBanner()
+            TopBanner(onClose: onClose)
             
 //            Spacer().frame(height: 78)
 //            Spacer().frame(height: 78)
@@ -28,16 +31,17 @@ struct HashtagAddView: View {
                 Spacer().frame(width: 9)
                 
                 PrimaryButton(
-                    color: .green060,
+                    color: isAddButtonEnabled ? .green060 : .gray040,
                     text: "추가",
                     font: .dsHeadline,
-                    textColor: .white,
+                    textColor: isAddButtonEnabled ? .white : .gray060,
                     width: 64,
                     height: 40,
                     cornerRadius: 10
                 ) {
-                    // TODO: 해시태그 추가 액션
+                    onAddHashtag()
                 }
+                .disabled(!isAddButtonEnabled)
             }
             .padding(.horizontal, 19)
         }
@@ -45,6 +49,8 @@ struct HashtagAddView: View {
 }
 
 private struct TopBanner: View {
+    let onClose: () -> Void
+    
     var body: some View {
         VStack {
             ZStack {
@@ -54,7 +60,7 @@ private struct TopBanner: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // TODO: RecomPicCardView로 Navigation
+                        onClose()
                     }, label: {
                         Image("Record/btn_home_close")
                     })
@@ -66,5 +72,10 @@ private struct TopBanner: View {
 }
 
 #Preview {
-    HashtagAddView()
+    HashtagAddView(
+        hashtagInput: .constant(""),
+        isAddButtonEnabled: false,
+        onAddHashtag: {},
+        onClose: {}
+    )
 }

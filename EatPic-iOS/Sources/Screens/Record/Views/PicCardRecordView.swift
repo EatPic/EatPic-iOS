@@ -1,42 +1,34 @@
 //
-//  PicCardWritingView.swift
+//  PicCardRecordView.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/30/25.
 //
 
-//
-//  PicCardEditView.swift
-//  EatPic-iOS
-//
-//  Created by 이은정 on 7/28/25.
-//
-
 import SwiftUI
 
 struct PicCardRecordView: View {
-    // 바텀 시트 표시 여부
-    @State private var showHashtagAddSheet = false
-
     @EnvironmentObject private var container: DIContainer
-    
-    let selectedMeal: MealType
-    let selectedHashtags: [String]
+    @StateObject private var viewModel: PicCardRecordViewModel
     
     // MARK: - Init
     init(selectedMeal: MealType, selectedHashtags: [String]) {
-        self.selectedMeal = selectedMeal
-        self.selectedHashtags = selectedHashtags
+        self._viewModel = StateObject(wrappedValue: PicCardRecordViewModel(
+            selectedMeal: selectedMeal, 
+            selectedHashtags: selectedHashtags
+        ))
     }
     
     var body: some View {
         VStack {
             PicCardWriteView(
-                primaryButtonText: "저장하기",
+                primaryButtonText: viewModel.isSaving ? "저장 중..." : "저장하기",
                 onSave: { myMemo, receiptDetail, isSharedToFeed in
-                    savePicCard(myMemo: myMemo,
-                                receiptDetail: receiptDetail,
-                                isSharedToFeed: isSharedToFeed)
+                    viewModel.savePicCard(
+                        myMemo: myMemo,
+                        receiptDetail: receiptDetail,
+                        isSharedToFeed: isSharedToFeed
+                    )
                 }
             )
         }
@@ -49,38 +41,19 @@ struct PicCardRecordView: View {
                 Image("Record/btn_home_close")
             })
         }
-    }
-    
-    // MARK: - 저장 로직
-    private func savePicCard(myMemo: String, receiptDetail: String, isSharedToFeed: Bool) {
-        // 현재 날짜와 시간 가져오기
-        let currentDate = Date()
-        let dateFormatter = DateFormatter()
-        
-        // 날짜 포맷 (년, 월, 일)
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let savedDate = dateFormatter.string(from: currentDate)
-        
-        // 시간 포맷 (시간, 분)
-        dateFormatter.dateFormat = "HH:mm"
-        let savedTime = dateFormatter.string(from: currentDate)
-        
-        // TODO: [25.08.07] 실제 데이터 저장 로직 구현 - 비엔/이은정
-        // TODO: 뷰모델에 해당 내용 넘김 + 모델에 저장
-        print("Pic 카드 저장:")
-        print("- 저장 날짜: \(savedDate)")
-        print("- 저장 시간: \(savedTime)")
-        print("- 선택된 식사 시간: \(selectedMeal.rawValue)")
-        print("- 선택된 해시태그: \(selectedHashtags)")
-        print("- 나의 메모: \(myMemo)")
-        print("- 레시피 내용: \(receiptDetail)")
-        print("- 피드 공유 여부: \(isSharedToFeed)")
-        
-        // 저장 완료 후 MainTab 화면으로 돌아가기
-        container.router.popToRoot()
+        .onChange(of: viewModel.state) { _, newState in
+            if case .saved = newState {
+                // 저장 완료 후 MainTab 화면으로 돌아가기
+                print("저장 완료! 홈으로 이동합니다.")
+                container.router.popToRoot()
+            }
+        }
+        .alert("저장 실패", isPresented: .constant(viewModel.hasError)) {
+            Button("확인") {
+                viewModel.resetState()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "알 수 없는 오류가 발생했습니다.")
+        }
     }
 }
-
-// #Preview {
-//    PicCardRecordView()
-// }
