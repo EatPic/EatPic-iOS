@@ -13,36 +13,54 @@ struct CommunityMainView: View {
     @State private var viewModel = CommunityMainViewModel()
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 40) {
-                userListView()
-                cardListView()
-                lastContentView()
+        ZStack {
+            ScrollView {
+                VStack(spacing: 40) {
+                    userListView()
+                    cardListView()
+                    lastContentView()
+                }
             }
-        }
-        .scrollIndicators(.hidden)
-        .toastView(viewModel: viewModel.toastVM)
-        .padding(.horizontal, 16)
-        .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
-            ReportBottomSheetView(
-                isShowing: $viewModel.isShowingReportBottomSheet,
-                onReport: viewModel.handleReport,
-                target: .picCard
-            )
-            .presentationDetents([.large, .fraction(0.7)])
-            .presentationDragIndicator(.hidden)
-        }
-        .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
-            CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
+            .scrollIndicators(.hidden)
+            .toastView(viewModel: viewModel.toastVM)
+            .padding(.horizontal, 16)
+            .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
+                ReportBottomSheetView(
+                    isShowing: $viewModel.isShowingReportBottomSheet,
+                    onReport: viewModel.handleReport,
+                    target: .picCard
+                )
                 .presentationDetents([.large, .fraction(0.7)])
                 .presentationDragIndicator(.hidden)
+            }
+            .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
+                CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
+                    .presentationDetents([.large, .fraction(0.7)])
+                    .presentationDragIndicator(.hidden)
+            }
+            
+            if viewModel.showDeleteModal {
+                DecisionModalView(
+                    message: "Pic카드를 정말 삭제하시겠어요?",
+                    messageColor: .gray080,
+                    leftBtnText: "취소",
+                    rightBtnText: "삭제",
+                    rightBtnColor: .pink070,
+                    leftBtnAction: {
+                        viewModel.showDeleteModal = false
+                    },
+                    rightBtnAction: {
+                        viewModel.confirmDeletion()
+                    }
+                )
+            }
         }
     }
     
     private func userListView() -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 16) {
-                ForEach(sampleUsers) { user in
+                ForEach(viewModel.filteredUsers) { user in
                     VStack(spacing: 16) {
                         ProfileImageView(
                             image: user.profileImage,
@@ -77,23 +95,30 @@ struct CommunityMainView: View {
                     menuContent: {
                         if viewModel.isMyCard(card) {
                             // 내가 작성한 카드일 때
-                            Button(action: { viewModel.saveCardToPhotos(card) }) {
+                            Button(action: {
+                                viewModel.saveCardToPhotos(card)
+                            }, label: {
                                 Label("사진 앱에 저장", systemImage: "arrow.down.to.line")
-                            }
-                            Button(action: { viewModel.editCard(card) }) {
+                            })
+                            Button(action: {
+                                viewModel.editCard(card)
+                            }, label: {
                                 Label("수정하기", systemImage: "square.and.pencil")
-                            }
-                            Button(role: .destructive, action: { viewModel.deleteCard(card) }) {
+                            })
+                            Button(role: .destructive,
+                                   action: {
+                                viewModel.showDeleteConfirmation(for: card)
+                            }, label: {
                                 Label("삭제하기", systemImage: "trash")
-                            }
+                            })
                         } else {
                             // 다른 사람이 작성한 카드일 때
                             Button(role: .destructive, action: {
                                 viewModel.isShowingReportBottomSheet = true
                                 print("신고하기")
-                            }) {
+                            }, label: {
                                 Label("신고하기", systemImage: "exclamationmark.bubble")
-                            }
+                            })
                         }
                     },
                     postImage: card.image,
