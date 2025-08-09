@@ -60,7 +60,7 @@ struct CommunityMainView: View {
     private func userListView() -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 16) {
-                ForEach(sampleUsers) { user in
+                ForEach(viewModel.filteredUsers) { user in
                     VStack(spacing: 16) {
                         ProfileImageView(
                             image: user.profileImage,

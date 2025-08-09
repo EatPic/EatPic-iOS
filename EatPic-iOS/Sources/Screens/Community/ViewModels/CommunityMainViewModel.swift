@@ -21,13 +21,30 @@ final class CommunityMainViewModel {
     let toastVM = ToastViewModel()
     
     // MARK: - Computed Properties
-    var filteredCards: [PicCard] {
-        if selectedUser.nickname == "전체" {
-            return sampleCards
-        } else {
-            return sampleCards.filter { $0.user == selectedUser }
+    /// 차단되지 않은 유저들만 필터링한 목록
+        var filteredUsers: [CommunityUser] {
+            return sampleUsers.filter { user in
+                // "전체" 사용자는 항상 포함
+                if user.id == "전체" {
+                    return true
+                }
+                // 차단되지 않은 유저만 포함
+                return !BlockedUsersManager.shared.isBlocked(userId: user.id)
+            }
         }
-    }
+    
+    /// 선택된 유저에 따라 필터링된 카드 목록 (차단된 유저 제외)
+        var filteredCards: [PicCard] {
+            let nonBlockedCards = sampleCards.filter { card in
+                !BlockedUsersManager.shared.isBlocked(userId: card.user.id)
+            }
+            
+            if selectedUser.nickname == "전체" {
+                return nonBlockedCards
+            } else {
+                return nonBlockedCards.filter { $0.user == selectedUser }
+            }
+        }
     
     // MARK: - Actions
     func selectUser(_ user: CommunityUser) {

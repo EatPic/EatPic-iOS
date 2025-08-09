@@ -47,7 +47,8 @@ final class OthersProfileViewModel {
     }
     
     func blockUser() {
-        // TODO: 실제 차단 API 호출 로직 구현
+        // BlockedUsersManager를 통해 차단 처리
+        BlockedUsersManager.shared.blockUser(userId: user.id)
         isFollowed = false
         print("\(user.nickname) 차단 완료")
     }
