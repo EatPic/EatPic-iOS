@@ -8,46 +8,32 @@
 import SwiftUI
 
 /// - Parameters:
-///   - profileImage: 프로필 이미지
-///   - profileID: 프로필 아이디
-///   - time: 픽카드 업로드 시간
+///   - card: 픽카드 데이터
 ///   - menuContent: 메뉴버튼(eclipsis) 클릭 시 나타날 버튼목록 커스텀
-///   - postImage: 업로드 이미지
-///   - myMemo: 사용자가 작성하는 '나의 메모'
-///   - onProfileTap: 프로필 탭했을 시 프로필뷰로 넘어가는 코드 작성 위함
+///   - onProfileTap: 프로필 탭 시 프로필뷰로 이동하는 클로저
 ///   - toastVM: 토스트 메시지 뷰모델
 ///   - onItemAction: 카드 아이템 액션 콜백
 struct PicCardView<Content: View>: View {
     
-    // MARK: property
-    let profileImage: Image
-    let profileID: String
-    let time: String
+    // MARK: - property
+    let card: PicCard
     let menuContent: () -> Content
-    let postImage: Image
-    let myMemo: String
     let onProfileTap: (() -> Void)?
     let toastVM: ToastViewModel
     let onItemAction: ((PicCardItemActionType) -> Void)?
     
-    // MARK: init
+    @State private var isFlipped = false // 카드의 뒤집힌 상태를 관리하는 변수
+    
+    // MARK: - init
     init(
-        profileImage: Image,
-        profileID: String,
-        time: String,
+        card: PicCard,
         @ViewBuilder menuContent: @escaping () -> Content,
-        postImage: Image,
-        myMemo: String,
-        onProfileTap: (() -> Void)? = nil, // 기본값 nil
+        onProfileTap: (() -> Void)? = nil,
         toastVM: ToastViewModel,
         onItemAction: ((PicCardItemActionType) -> Void)? = nil
     ) {
-        self.profileImage = profileImage
-        self.profileID = profileID
-        self.time = time
+        self.card = card
         self.menuContent = menuContent
-        self.postImage = postImage
-        self.myMemo = myMemo
         self.onProfileTap = onProfileTap
         self.toastVM = toastVM
         self.onItemAction = onItemAction
@@ -58,7 +44,7 @@ struct PicCardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 16) {
             // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
-                profileImage
+                card.user.profileImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 36, height: 36)
@@ -67,10 +53,10 @@ struct PicCardView<Content: View>: View {
                     }
                 
                 VStack(alignment: .leading) {
-                    Text(profileID)
+                    Text(card.user.id)
                         .font(.dsHeadline)
                         .foregroundStyle(Color.gray080)
-                    Text(time)
+                    Text(card.time)
                         .font(.dsFootnote)
                         .foregroundStyle(Color.gray060)
                 }
@@ -90,26 +76,28 @@ struct PicCardView<Content: View>: View {
                 }
             }
             
-            // 업로드 이미지 (정사각형 + 모서리 둥글게)
-            // 이미지의 사이즈는 기기의 화면 너비에 따라 달라지도록 설정 (화면 너비를 꽉채우도록)
-            GeometryReader { geometry in
-                ZStack {
-                    postImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: geometry.size.width, height: geometry.size.width)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    
-                    PicCardItemView(toastVM: toastVM, onAction: onItemAction)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity,
-                               alignment: .bottomLeading)
+            // 이미지와 레시피 상세 뷰를 조건부로 렌더링하고 애니메이션 적용
+            ZStack {
+                if !isFlipped {
+                    // 카드 앞면 (이미지)
+                    PicCardFrontView(card: card, toastVM: toastVM, onItemAction: onItemAction)
+                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
+                } else {
+                    // 카드 뒷면 (레시피)
+                    PicCardBackView(card: card)
+                        .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
+                }
+            }
+            .animation(.easeInOut(duration: 0.5), value: isFlipped)
+            .onTapGesture {
+                withAnimation {
+                    isFlipped.toggle()
                 }
             }
             .aspectRatio(1, contentMode: .fit)
-
+            
             // 사용자 메모 (나의 메모)
-            Text(myMemo)
+            Text(card.memo)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray080)
                 .frame(alignment: .leading)
