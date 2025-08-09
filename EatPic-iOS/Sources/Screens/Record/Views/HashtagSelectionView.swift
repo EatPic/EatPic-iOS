@@ -198,7 +198,8 @@ struct HashtagSelectionView: View {
                 HashtagAddView(
                     hashtagInput: $newHashtagInput,
                     isAddButtonEnabled: isAddButtonEnabled,
-                    onAddHashtag: addNewHashtag
+                    onAddHashtag: addNewHashtag,
+                    onClose: {print("닫기")}
                 )
             }
         )
