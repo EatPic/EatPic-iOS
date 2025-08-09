@@ -203,6 +203,21 @@ enum MediaPickerConfig {
     static let jpegCompressionQuality: CGFloat = 0.9
 }
 
+actor ImageWorker {
+    /// 표시용 정규화(예: 1200px, JPEG q=0.9)
+    func normalizeForDisplay(_ image: UIImage) -> UIImage {
+        let quality = MediaPickerConfig.jpegCompressionQuality
+        guard
+            let data = image.jpegData(compressionQuality: quality),
+            let downsized = downsampledImage(
+                from: data,
+                maxDimension: MediaPickerConfig.displayMaxDimensions
+            )
+        else { return image }
+        return downsized
+    }
+}
+
 /// 갤러리/카메라 **선택 상태 + 이미지 리스트**를 관리하는 Provider입니다.
 ///
 /// - Responsibilities:
@@ -223,6 +238,7 @@ final class MediaPickerProvider {
     /// `PhotosPicker`에서 선택된 항목 (임시 상태)
     var selections: [PhotosPickerItem] = []
     
+    private let worker = ImageWorker() // 백그라운드 actor
     /// 카메라 촬영 서비스 의존성
     private let mediaPickerService: MediaPickerService
     
@@ -242,14 +258,17 @@ final class MediaPickerProvider {
         let items = selections
         selections.removeAll() // 재진입 시 체크 표시 초기화
         
-        Task {
-            var newImages: [UIImage] = []
+        Task { // 메인에서 시작하지만 내부 await로 백그라운드 hop
+            var buffer: [UIImage] = []
             for item in items {
-                if let picked: PickedImage = try? await item.loadTransferable(type: PickedImage.self) {
-                    newImages.append(picked.uiImage)
+                if let picked: PickedImage = try? await item.loadTransferable(
+                    type: PickedImage.self) {
+                    buffer.append(picked.uiImage)
                 }
             }
-            images.append(contentsOf: newImages)
+            // 불변 스냅샷으로 캡처
+            let snapshot = buffer
+            images.append(contentsOf: snapshot) // 메인 액터에서 안전
         }
     }
     
@@ -261,18 +280,10 @@ final class MediaPickerProvider {
         mediaPickerService.presentCamera { [weak self] img in
             guard let self, let img else { return }
             
-            // 업로드/표시 정책에 맞게 재인코딩 + 다운샘플링
-            let data = img.jpegData(
-                compressionQuality: MediaPickerConfig.jpegCompressionQuality
-            )
-            let downsized = data.flatMap {
-                downsampledImage(
-                    from: $0,
-                    maxDimension: MediaPickerConfig.displayMaxDimensions
-                )
-            } ?? img
-            
-            self.images.append(downsized)
+            Task {
+                let processed = await self.worker.normalizeForDisplay(img)
+                self.images.append(processed) // 메인 액터에서 처리됨
+            }
         }
     }
     
