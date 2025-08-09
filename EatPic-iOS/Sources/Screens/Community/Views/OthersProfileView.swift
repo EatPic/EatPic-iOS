@@ -9,49 +9,46 @@ import SwiftUI
 
 /**
  # OthersProfileView
- - 다른 유저의 프로필을 보여주는 화면입니다.
- - 해당 유저의 프로필 이미지, 닉네임, 아이디, 소개글, 팔로워/팔로잉/Pic 카드 수 등을 포함합니다.
- - 유저의 피드(Post) 이미지들을 그리드 형식으로 나열하여 보여줍니다.
- - 팔로우/언팔로우 버튼을 통해 상태를 토글할 수 있습니다.
- - 우측 상단 메뉴 버튼을 통해 '차단하기', '신고하기' 기능을 제공할 수 있습니다 (현재 액션 미구현).
+ - 다른 유저의 프로필 화면을 표시합니다.
+ - 프로필 사진, 닉네임, 아이디, 소개글, 팔로잉/팔로워/Pic 카드 수 등의 정보를 보여줍니다.
+ - 사용자의 피드 이미지를 3열 그리드로 배치합니다.
+ - 팔로우/언팔로우 토글 및 차단·신고 기능을 제공합니다.
  
- ## 주요 UI 구성
- - `ScrollView` 내에 전체 UI를 감싸며 스크롤 가능
- - `userProfileView()` : 프로필 관련 정보와 소개글, 통계 정보 등 표시
- - `PrimaryButton` : 팔로우/언팔로우 상태에 따라 색상과 텍스트 변경
- - `userFeedView()` : 피드 이미지(사각형 placeholder)를 3열 그리드로 구성
- - `customNavigationBar(title:right:)` : 우측 상단에 메뉴 버튼 (ellipsis)
+ ## 주요 기능
+ - **팔로우/언팔로우**: PrimaryButton을 통해 상태를 전환하며 UI도 즉시 반영됩니다.
+ - **신고**: `ReportBottomSheetView`를 통해 프로필 신고 사유 선택 → 신고 처리 → 토스트 노출.
+ - **차단**: `DecisionModalView`에서 확인 후 차단 처리 → 토스트 노출 → 2초 뒤 화면 닫기.
+ - **팔로워/팔로잉 목록 이동**: 해당 카운트 영역 탭 시 Router를 통해 이동.
  
- ## 상태 변수
- - `@State private var isFollowed` : 현재 팔로우 상태를 나타내며 버튼의 UI 및 동작에 반영됩니다.
+ ## 상태 관리
+ - `@State private var viewModel`: `OthersProfileViewModel`로 사용자 데이터와 상태를 관리.
+ - `let toastVM`: 신고 및 차단 후 사용자 피드백 토스트 관리.
+ - `@EnvironmentObject private var container`: DIContainer를 통해 Router 및 전역 의존성 접근.
  
- ## 커스텀 뷰 사용
- - `PrimaryButton` : 재사용 가능한 버튼 컴포넌트
- - `ProfileImageView` : 프로필 이미지를 원형 등으로 표현하는 뷰
- - `.customNavigationBar` : 사용자 정의 네비게이션 바 Modifier
+ ## UI 구성
+ - **프로필 영역** (`userProfileView`):
+   - 프로필 이미지, 닉네임, 아이디, 소개글, 팔로워/팔로잉/Pic 카드 수 표시.
+ - **팔로우 버튼**:
+   - 상태에 따라 색상·텍스트 변경.
+ - **피드 영역** (`userFeedView`):
+   - 3열 `LazyVGrid`로 이미지 배치.
+ - **상단 메뉴**:
+   - "차단하기" / "신고하기" 버튼 제공.
+ - **모달 & 바텀시트**:
+   - 차단: `DecisionModalView`
+   - 신고: `ReportBottomSheetView`
+ - **토스트**:
+   - 신고 또는 차단 후 toastVM을 통해 피드백 표시.
  
- ## 추후 확장
- - 실제 유저 데이터 연결 (닉네임, 아이디, 소개글, 팔로워 수 등)
- - 피드 이미지와 관련된 동작(탭 시 상세 보기 등)
- - 차단/신고 기능 구현
+ ## 확장 포인트
+ - 실제 API 연동으로 팔로우, 차단, 신고 처리.
+ - 차단/신고 후 상위 뷰(예: 커뮤니티 메인)와 상태 연동.
+ - 사진 탭 시 상세 보기 화면 연결.
  */
-
 struct OthersProfileView: View {
-    //    let user: CommunityUser
-    //    let toastVM = ToastViewModel()
-    //    let columns: [GridItem] = [
-    //        GridItem(.flexible(minimum: 0), spacing: 4),
-    //        GridItem(.flexible(minimum: 0), spacing: 4),
-    //        GridItem(.flexible(minimum: 0), spacing: 4)
-    //    ]
-    
-    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: OthersProfileViewModel
     @EnvironmentObject private var container: DIContainer
-    
-    //    @State private var isFollowed: Bool = false
-    //    @State private var isShowingReportBottomSheet: Bool = false
-    //    @State private var showBlockModal: Bool = false
+
     // MARK: - Properties
     let toastVM = ToastViewModel()
     let columns: [GridItem] = [
@@ -152,8 +149,12 @@ struct OthersProfileView: View {
                     },
                     rightBtnAction: {
                         viewModel.blockUser()
+                        viewModel.showBlockModal = false
                         toastVM.showToast(title: "차단되었습니다.")
-                        dismiss() // 이전 화면으로 돌아가기
+                        // 2초 후에 화면 닫기 (토스트 메시지 사라진 후)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            container.router.pop()
+                        }
                     }
                 )
             }
@@ -223,11 +224,7 @@ struct OthersProfileView: View {
             }
         }
     }
-    
-    //    private var userCards: [PicCard] {
-    //        return sampleCards.filter { $0.user == user }
-    //    }
-    
+
     private func userFeedView() -> some View {
         GeometryReader { geometry in
             let availableWidth = geometry.size.width // 좌우 패딩 16씩 제외
