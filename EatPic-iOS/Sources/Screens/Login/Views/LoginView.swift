@@ -11,39 +11,44 @@ struct LoginView: View {
     
     // MARK: - Property
     
+    @EnvironmentObject var container: DIContainer
+    @State var loginViewModel: LoginViewModel = .init()
+    
+    var body: some View {
+        NavigationStack(path: $container.router.destinations) {
+            LoginViewContent(
+                loginViewModel: loginViewModel)
+                .navigationDestination(for: NavigationRoute.self, destination: { route in
+                    NavigationRoutingView(route: route)
+                        .environmentObject(container)
+                })
+        }
+    }
+}
+
+private struct LoginViewContent: View {
     /// 로그인 기능 및 상태 관리하는 ViewModel
-    @State var viewModel: LoginViewModel
+    @EnvironmentObject private var container: DIContainer
+    @Bindable private var loginViewModel: LoginViewModel
+    
+    init(loginViewModel: LoginViewModel) {
+        self.loginViewModel = loginViewModel
+    }
     
     // MARK: - Body
     var body: some View {
-        NavigationStack(
-            path: $viewModel.container.router.destinations,
-            root: {
-                VStack(alignment: .center) {
-                    Spacer()
-                    topContents // 로고와 타이틀
-                    Spacer()
-                    middleContents // 소셜 로그인 버튼
-                    Spacer()
-                    bottomContents // 텍스트와 하단 회원가입 버튼
-                    Spacer()
-                }
-                .navigationDestination(
-                    for: NavigationRoute.self,
-                    destination: { route in
-                        NavigationRoutingView(route: route)
-                            .environmentObject(viewModel.container)
-                    })
-            })
+        VStack(alignment: .center) {
+            Spacer()
+            topContents // 로고와 타이틀
+            Spacer()
+            middleContents // 소셜 로그인 버튼
+            Spacer()
+            bottomContents // 텍스트와 하단 회원가입 버튼
+            Spacer()
+        }
+        
     }
-    
-    // MARK: - Init
-    
-    /// DIContainer 초기화
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
-    }
-    
+
     // MARK: - Top Contents (로고와 타이틀)
     
     /// 로그인 화면 상단 컨텐츠 VStack
@@ -129,7 +134,7 @@ struct LoginView: View {
             cornerRadius: 10,
             action: {
                 // 네비게이션 액션
-                viewModel.container.router.push(.signUpEmailView)
+                container.router.push(.signUpEmailView)
             })
         .overlay(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
@@ -147,7 +152,7 @@ struct LoginView: View {
             cornerRadius: 10,
             action: {
                 // 네비게이션 액션
-                viewModel.container.router.push(.emailLoginView)
+                container.router.push(.emailLoginView)
             })
         .overlay(alignment: .center) {
             RoundedRectangle(cornerRadius: 10)
@@ -156,17 +161,6 @@ struct LoginView: View {
     }
 }
 
-/// 다양한 디바이스 확인
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            LoginView(container: .init())
-                .previewDevice("iPhone SE (3rd generation)")
-                .previewDisplayName("iPhone SE 3rd")
-
-            LoginView(container: .init())
-                .previewDevice("iPhone 16 Pro")
-                .previewDisplayName("iPhone 16 Pro")
-        }
-    }
+#Preview {
+    LoginView()
 }

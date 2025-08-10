@@ -15,6 +15,7 @@ import SwiftUI
 ///   - rightBtnText: 오른쪽 버튼의 텍스트입니다
 ///   - leftBtnAction: 왼쪽 버튼의 액션입니다
 ///   - rightBtnAction: 오른쪽 버튼의 액션입니다
+///   - rightBtnColor: 오른쪽 버튼의 배경 색상입니다
 struct DecisionModalView: View {
     
     // MARK: - Property
@@ -31,6 +32,9 @@ struct DecisionModalView: View {
     /// 하단 오른쪽 버튼 텍스트
     let rightBtnText: String
     
+    /// 오른쪽 버튼의 배경 색상
+    let rightBtnColor: Color
+    
     /// 왼쪽 버튼의 액션
     let leftBtnAction: () -> Void
     
@@ -43,6 +47,7 @@ struct DecisionModalView: View {
         messageColor: Color = .black,
         leftBtnText: String,
         rightBtnText: String,
+        rightBtnColor: Color = .green060,
         leftBtnAction: @escaping () -> Void,
         rightBtnAction: @escaping () -> Void
 
@@ -51,6 +56,7 @@ struct DecisionModalView: View {
         self.messageColor = messageColor
         self.leftBtnText = leftBtnText
         self.rightBtnText = rightBtnText
+        self.rightBtnColor = rightBtnColor
         self.leftBtnAction = leftBtnAction
         self.rightBtnAction = rightBtnAction
     }
@@ -66,7 +72,7 @@ struct DecisionModalView: View {
             VStack {
                 /// 모달 메시지
                 Text(message)
-                    .foregroundColor(messageColor)
+                    .foregroundStyle(messageColor)
                             .font(.dsHeadline)
                 
                 Spacer().frame(height: 41)
@@ -90,7 +96,7 @@ struct DecisionModalView: View {
                     
                     /// 긍정 버튼
                     PrimaryButton(
-                        color: .green060,
+                        color: rightBtnColor,
                         text: rightBtnText,
                         font: .dsBold15,
                         textColor: .white,
@@ -105,7 +111,7 @@ struct DecisionModalView: View {
             .padding(.bottom, 12)
             .padding(.horizontal, 16)
             .background(.white)
-            .cornerRadius(10)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }
@@ -116,6 +122,7 @@ struct DecisionModalView: View {
         messageColor: .black,
         leftBtnText: "아니오",
         rightBtnText: "예",
+        rightBtnColor: .green060,
         leftBtnAction: {
             print("아니오 눌림")
         },

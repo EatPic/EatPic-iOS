@@ -60,7 +60,7 @@ struct CircleProgressView: View {
                 icon
                     .resizable()
                     .scaledToFit()
-                    .foregroundColor(.blue)
+                    .foregroundStyle(Color.blue)
                     .frame(width: iconSize, height: iconSize)
             }
         }

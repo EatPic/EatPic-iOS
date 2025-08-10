@@ -9,89 +9,69 @@ import SwiftUI
 
 struct MyBadgeStatusHomeView: View {
     @EnvironmentObject private var container: DIContainer
+    @StateObject private var viewModel = MyBadgeStatusViewModel()
+    @Binding var selectedBadge: BadgeItem?
+    @Binding var showingBadgeModal: Bool
     
     var body: some View {
         VStack {
-            HStack {
-                Text("나의 뱃지 현황")
-                    .font(.dsTitle3)
-                    .foregroundColor(.gray080)
-                
-                Spacer()
-                
-                Button(action: {
-                    // TODO: RecomPicCardView로 Navigation
-                    container.router.push(.myBadgeStatusAll(getBadgeStatus: "6"))
-                    print("전체보기")
-                }, label: {
-                    Text("전체보기 >")
-                        .foregroundStyle(Color.green060)
-                        .font(.dsSubhead)
-                })
-            }
+            titleBar
             
-            // 뱃지 리스트
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 8) {
-                    
-                    Spacer().frame(height: 24)
-                    
-                    Group {
-                        
-                        BadgeView(
-                            state: .progress(progress: 0.4, icon: Image(systemName: "star.fill")),
-                            badgeName: "혼밥러"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .progress(progress: 0.4, icon: Image(systemName: "star.fill")),
-                            badgeName: "혼밥러"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                        
-                        BadgeView(
-                            state: .locked,
-                            badgeName: "기록마스터"
-                        )
-                        .scaleEffect(0.77)
-                        .frame(width: 100)
-                    }
-                    
-                }
-            }
+            badgeScroll
         }
         .padding(.top, 16)
         .padding(.horizontal, 19)
         .frame(height: 202)
         .background(.white)
-        .cornerRadius(15)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+    }
+    
+    // MARK: 해당 뷰의 상단 제목 바
+    private var titleBar: some View {
+        HStack {
+            Text("나의 뱃지 현황")
+                .font(.dsTitle3)
+                .foregroundStyle(Color.gray080)
+            
+            Spacer()
+            
+            Button(action: {
+                container.router.push(.myBadgeStatusAll)
+                print("전체보기")
+            }, label: {
+                Text("전체보기 >")
+                    .foregroundStyle(Color.green060)
+                    .font(.dsSubhead)
+            })
+        }
+    }
+
+    // MARK: 뱃지 스크롤 뷰
+    private var badgeScroll: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 8) {
+                
+                ForEach(viewModel.badgeItems) { badgeItem in
+                    BadgeView(
+                        state: badgeItem.state,
+                        badgeName: badgeItem.name
+                    )
+                    .scaleEffect(0.77)
+                    .frame(width: 100)
+                    .onTapGesture {
+                        selectedBadge = badgeItem
+                        showingBadgeModal = true
+                    }
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    MyBadgeStatusHomeView()
+    MyBadgeStatusHomeView(
+        selectedBadge: .constant(nil),
+        showingBadgeModal: .constant(false)
+    )
+    .environmentObject(DIContainer())
 }

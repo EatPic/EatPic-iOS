@@ -7,17 +7,19 @@
 
 import Foundation
 
-/// 로그인 화면 초기 ViewModel
+/// ID로 회원가입 ViewModel
 @Observable
-class SignUpIdViewModel {
+class SignUpIdViewModel: SignupFlowViewModel {
     
     // MARK: - Property
     
     /// 테스트용 중복 아이디 목록
     let registeredIds = ["test123", "abcde"]
     
-    /// 사용자 입력 아이디
-    var id: String = ""
+    override var id: String {
+        get { super.id }
+        set { super.id = newValue }
+    }
     
     // MARK: - Error Message
     

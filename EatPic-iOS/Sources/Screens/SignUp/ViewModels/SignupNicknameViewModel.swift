@@ -7,9 +7,9 @@
 
 import Foundation
 
-/// 로그인 화면 초기 ViewModel
+/// 닉네임으로 회원가입 ViewModel
 @Observable
-class SignUpNicknameViewModel {
+class SignUpNicknameViewModel: SignupFlowViewModel {
     
     // MARK: - Property
     
@@ -17,8 +17,11 @@ class SignUpNicknameViewModel {
     let registeredNicknames = ["홍길동", "김철수"]
 
     /// 사용자 입력 닉네임
-    var nickname: String = ""
-    
+    override var nickname: String {
+        get { super.nickname }
+        set { super.nickname = newValue }
+    }
+
     // MARK: - Error Message
     
     /// 닉네임 유효성 검사 결과 메시지

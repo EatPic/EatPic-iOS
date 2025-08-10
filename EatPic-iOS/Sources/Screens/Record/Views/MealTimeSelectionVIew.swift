@@ -24,7 +24,6 @@ struct MealTimeSelectView: View {
     // 바텀 시트 표시 여부
     @State private var showHashtagAddSheet = false
 
-    
     var body: some View {
         VStack {
             // 캐릭터 이미지
@@ -125,7 +124,7 @@ struct MealTimeSelectView: View {
             ) {
                 if let selectedMeal = selectedMeal {
                     // TODO: [25.07.30] selectedMeal의 정보 저장 - 비엔/이은정
-                    container.router.push(.hashtagSelection)
+                    container.router.push(.hashtagSelection(selectedMeal: selectedMeal))
                     print("다음 화면으로 이동 - 선택된 식사: \(selectedMeal.rawValue)")
                 }
             }
@@ -135,7 +134,7 @@ struct MealTimeSelectView: View {
             Text("Pic 카드 기록")
         } right: {
             Button(action: {
-                container.router.push(.home)
+                container.router.popToRoot()
             }, label: {
                 Image("Record/btn_home_close")
             })
@@ -194,11 +193,11 @@ private struct MealButton: View {
             .padding(.horizontal, 20)
             .frame(width: 170, height: 100)
             .background(backgroundColor)
-            .cornerRadius(10)
-            .overlay(
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(alignment: .center) {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(borderColor, lineWidth: 1)
-            )
+            }
         }
     }
 }

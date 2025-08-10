@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ExploreSelectedView: View {
     
+    @Bindable private var toastVM = ToastViewModel()
+    
     let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
         GridItem(.flexible(minimum: 0), spacing: 9.5)
@@ -38,15 +40,17 @@ struct ExploreSelectedView: View {
             menuContent: {
                 Button(role: .destructive, action: {
                     print("신고하기")
-                }) {
+                }, label: {
                     Label("신고하기", systemImage: "exclamationmark.bubble")
-                }
+                })
             },
             postImage: Image("Community/testImage"),
             myMemo: "오늘은 샐러드를 먹었습니다~ 계란과 딸기를 많이 넣어 먹었어요~~~~ 다들 좋은 하루 보내세용",
             onProfileTap: {
                 print("프로필로 이동")
-            })
+            },
+            toastVM: toastVM
+        )
     }
     
     private func recommendedFeedView() -> some View {
@@ -56,7 +60,7 @@ struct ExploreSelectedView: View {
                 .foregroundStyle(.black)
             
             LazyVGrid(columns: columns, spacing: 9, content: {
-                ForEach(0..<9) { index in
+                ForEach(0..<9) { _ in
                     explorePicCard()
                 }
             })

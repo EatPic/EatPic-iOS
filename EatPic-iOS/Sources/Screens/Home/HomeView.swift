@@ -9,26 +9,48 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var container: DIContainer
+    @StateObject private var badgeViewModel = MyBadgeStatusViewModel()
+    @State private var showingBadgeModal = false
+    @State private var selectedBadge: BadgeItem?
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                
-                Spacer().frame(height: 40)
-                
-                topBar
-                
-                MealStatusView()
-                
-                RecomPicCardHomeView()
-                
-                MyBadgeStatusHomeView()
-                
-                Spacer()
+        ZStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    
+                    Spacer().frame(height: 40)
+                    
+                    topBar
+                    
+                    MealStatusView()
+                    
+                    RecomPicCardHomeView()
+                    
+                    MyBadgeStatusHomeView(
+                    selectedBadge: $selectedBadge,
+                    showingBadgeModal: $showingBadgeModal
+                )
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
+            .background(Color.gray030.ignoresSafeArea())
+            
+            // 배지 모달
+            if showingBadgeModal, let badge = selectedBadge {
+                BadgeProgressModalView(
+                    badgeType: badgeViewModel.createBadgeModalType(for: badge),
+                    closeBtnAction: {
+                        showingBadgeModal = false
+                        selectedBadge = nil
+                    },
+                    badgeSize: 130,
+                    badgeTitle: badge.name,
+                    badgeDescription: badgeViewModel.getBadgeDescription(for: badge.name)
+                )
+            }
         }
-        .background(Color.gray030.ignoresSafeArea())
     }
     
     private var topBar: some View {

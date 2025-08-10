@@ -14,7 +14,7 @@ import SwiftUI
 /// 3. 원형뱃지 밑에 text값 존재
 /// 뱃지 상태 ( progress : 뱃지 획득 중 ~ 획득 완료) , locked ( 뱃지 획득 이전)
 enum BadgeState {
-    case progress(progress: CGFloat, icon: Image)
+    case progress(progress: Double, icon: Image)
     case locked
 }
 
@@ -48,8 +48,8 @@ struct BadgeView: View {
             // 상태에 따른 뱃지 뷰 표시
             Group {
                 switch state {
-                
-                // progress 케이스의 경우 CircleProgressView 띄우기
+                    
+                    // progress 케이스의 경우 CircleProgressView 띄우기
                 case .progress(let progress, let icon):
                     let badgeCircleSize = size * 0.92 // locked와 badge크기 맞추기 위한 값
                     CircleProgressView(
@@ -58,8 +58,8 @@ struct BadgeView: View {
                         size: badgeCircleSize,
                         icon: icon
                     )
-                
-                // locked 케이스의 경우 LockBadgeView 띄우기
+                    
+                    // locked 케이스의 경우 LockBadgeView 띄우기
                 case .locked:
                     LockBadgeView(
                         size: size
@@ -72,7 +72,7 @@ struct BadgeView: View {
             // 뱃지 이름
             Text(badgeName)
                 .font(.dsSubhead)
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
         }
         .frame(width: 130, height: 156)
     }

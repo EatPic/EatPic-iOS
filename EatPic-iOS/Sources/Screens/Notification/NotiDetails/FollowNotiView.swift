@@ -58,11 +58,11 @@ struct FollowNotiView: View {
     private var notiMessage: some View {
         VStack(alignment: .leading) {
             Text("\(friendNickname) 님이 회원님을 팔로우합니다.")
-                .foregroundColor(.gray080)
+                .foregroundStyle(Color.gray080)
                 .font(.dsFootnote)
             
             Text("\(notiTime) 전")
-                .foregroundColor(.gray060)
+                .foregroundStyle(Color.gray060)
                 .font(.dsFootnote)
         }
     }
@@ -80,12 +80,12 @@ struct FollowNotiView: View {
             followstate = (followstate == .unfollow) ? .follow : .unfollow
         }, label: {
             Text(followstate == .unfollow ? "팔로우" : "팔로잉")
-                .foregroundColor(followstate.followButtonTextColor)
+                .foregroundStyle(followstate.followButtonTextColor)
                 .font(.dsBold15)
                 .frame(width: 64, height: 28)
         })
         .background(followstate.followButtonColor)
-        .cornerRadius(5)
+        .clipShape(RoundedRectangle(cornerRadius: 5))
     }
 }
 

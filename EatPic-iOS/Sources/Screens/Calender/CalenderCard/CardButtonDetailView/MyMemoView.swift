@@ -27,7 +27,7 @@ struct MyMemoView: View {
         .customNavigationBar {
             Text("나의 메모")
                 .font(.dsTitle2)
-                .foregroundColor(Color.gray080)
+                .foregroundStyle(Color.gray080)
         } right: {
             EmptyView()
         }

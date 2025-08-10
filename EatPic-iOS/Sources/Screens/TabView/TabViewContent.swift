@@ -35,11 +35,27 @@ struct TabViewContent: View {
         case .community:
             CommunityMainView()
             
-        // 글쓰기 탭 화면: 글쓰기 관련 화면을 연결
+        // 글쓰기 탭 화면: 카메라 모달을 표시하고, 선택 시 MealTimeSelectView로 이동
         case .writePost:
-            MealTimeSelectView()
-//            CameraRecordModalView(container: container)
-            // FIXME: [25.07.30] CameraModelView() 이후 앨범 또는 카메라 사진 받은 후 -> HashtagSelectionView로 이동 - 비엔/이은정
+            CameraRecordModalView(container: container)
+//            CameraRecordModalView(
+//                closeBtnAction: {
+//                    container.router.popToRoot()
+//                },
+//                messageTitle: "Pic 카드 기록",
+//                messageDescription: "기록할 방법을 선택해주세요",
+//                cameraButtonImage: Image("Modal/ic_record_camera"),
+//                cameraText: "카메라",
+//                albumButtonImage: Image("Modal/ic_record_album"),
+//                buttonColor: .gray020,
+//                albumText: "사진 앨범",
+//                cameraBtnAction: {
+//                    container.router.push(.mealTimeSelection)
+//                },
+//                albumBtnAction: {
+//                    container.router.push(.mealTimeSelection)
+//                }
+//            )
 
         // 탐색 탭 화면: 탐색 관련 화면을 연결
         case .explore:
