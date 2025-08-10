@@ -14,4 +14,11 @@ enum Config {
         }
         return dict
     }()
+    
+    static let baseURL: String = {
+        guard let baseURL = Config.infoDictionary["BASE_URL"] as? String else {
+            fatalError()
+        }
+        return baseURL
+    }()
 }
