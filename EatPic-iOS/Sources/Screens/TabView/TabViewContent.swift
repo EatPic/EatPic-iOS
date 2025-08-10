@@ -37,8 +37,8 @@ struct TabViewContent: View {
             
         // 글쓰기 탭 화면: 글쓰기 관련 화면을 연결
         case .writePost:
-//            MealTimeSelectView()
-            CameraRecordModalView(container: container)
+            MealTimeSelectView()
+//            CameraRecordModalView(container: container)
             // FIXME: [25.07.30] CameraModelView() 이후 앨범 또는 카메라 사진 받은 후 -> HashtagSelectionView로 이동 - 비엔/이은정
 
         // 탐색 탭 화면: 탐색 관련 화면을 연결
