@@ -16,10 +16,15 @@ let swiftLintScript: TargetScript = .pre(
 
 let project = Project(
     name: "EatPic-iOS",
-    settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
-        .release(name: "Release", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
-    ]),
+    settings: .settings(
+        base: [
+            "BASE_URL": "$(BASE_URL)"
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
+            .release(name: "Release", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig") 
+        ]
+    ),
     targets: [
         .target(
             name: "EatPic-iOS",
@@ -37,6 +42,7 @@ let project = Project(
                         "UIColorName": "",
                         "UIImageName": "",
                     ],
+                    "BASE_URL": "$(BASE_URL)"
                 ]
             ),
             sources: ["EatPic-iOS/Sources/**"],
