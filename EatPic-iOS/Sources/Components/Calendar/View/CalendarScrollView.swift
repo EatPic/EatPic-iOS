@@ -6,18 +6,103 @@
 //
 
 import SwiftUI
+import Moya
 
 struct MonthVisiblePreferenceKey: PreferenceKey {
     static var defaultValue: [Date: CGFloat] = [:]
 
-    static func reduce(value: inout [Date: CGFloat], nextValue: () -> [Date: CGFloat]) {
+    static func reduce(
+        value: inout [Date: CGFloat],
+        nextValue: () -> [Date: CGFloat]
+    ) {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
+    }
+}
+
+struct YearMonth: Hashable {
+    let year: Int
+    let month: Int
+}
+
+/// 공통 응답 DTO
+struct APIResponse<T: Codable>: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: T
+}
+
+/// 카드 목록 응답 DTO
+struct CalendarResponse: Codable {
+    let date: String
+    let imageUrl: String
+    let cardId: Int
+}
+
+@Observable
+final class CalendarScrollViewModel {
+    private let homeProvider: MoyaProvider<HomeTargetType>
+    private var loaded: Set<YearMonth> = []
+    
+    init(container: DIContainer) {
+        self.homeProvider = container.apiProviderStore.home()
+    }
+    
+    func fetchCalendarData(year: Int, month: Int) async {
+        let key = YearMonth(year: year, month: month)
+        guard !loaded.contains(key) else { return }
+        
+        do {
+            let response = try await homeProvider.requestAsync(
+                .fetchCalendar(year: year, month: month))
+            let data = try JSONDecoder().decode(
+                APIResponse<[CalendarResponse]>.self, from: response.data)
+            
+            guard data.isSuccess else {
+                throw APIError.server(code: data.code, message: data.message)
+            }
+            
+            print(data)
+            
+            //            await MainActor.run {
+            //                // 상태 업데이트
+            //            }
+        } catch let error as MoyaError {
+            let msg = readable(error)
+            print("MoyaError:", msg)
+        } catch {
+            print("Decode/Other Error:", error.localizedDescription)
+        }
+    }
+    
+    private func readable(_ error: MoyaError) -> String {
+        switch error {
+        case let .statusCode(res): return "서버 오류(\(res.statusCode))"
+        case let .underlying(err, _): return "네트워크 오류: \(err.localizedDescription)"
+        default: return "요청 실패: \(error.localizedDescription)"
+        }
+    }
+}
+
+// MARK: - 에러 보조
+
+enum APIError: LocalizedError {
+    case server(code: String, message: String)
+    
+    var errorDescription: String? {
+        switch self {
+        case let .server(code, message):
+            return "[\(code)] \(message)"
+        }
     }
 }
 
 /// 달력을 무한 스크롤로 여러 달을 연속적으로 보여주는 뷰입니다.
 /// 사용자는 상하 스크롤을 통해 여러 달의 캘린더를 탐색할 수 있습니다.
 struct CalendarScrollView: View {
+    @State private var calendarScrollVM: CalendarScrollViewModel
+    @State private var visibleYM: YearMonth?
+    
     /// 화면에 표시될 월의 배열입니다. 초기에는 현재 월부터 `initailMonthCount`개월이 로딩됩니다.
     @State private var months: [Date]
     /// 초기 로딩에서 onAppear 중복 호출 방지하기 위한 플래그
@@ -30,12 +115,15 @@ struct CalendarScrollView: View {
     private let initailMonthCount: Int = 4
     private let reachTopThreshold: CGFloat = 50
     
-    init() {
+    init(container: DIContainer) {
         let calendar = Calendar.current
         let base = calendar.startOfMonth(for: Date())
         self.months = (0..<initailMonthCount).compactMap {
             calendar.date(byAdding: .month, value: $0, to: base)
         }
+        self._calendarScrollVM = State(
+                initialValue: .init(container: container)
+            )
     }
 
     var body: some View {
@@ -78,16 +166,24 @@ struct CalendarScrollView: View {
             }
             .coordinateSpace(name: "scroll")
             .onPreferenceChange(MonthVisiblePreferenceKey.self) { values in
-                guard let firstMonth = months.first,
-                      let firstMonthY = values[firstMonth] else { return }
+                // 현재 뷰포트(여기선 .named("scroll"))에서 가장 가까운 월을 선택
+                guard let closestMonth = values
+                    .min(by: { abs($0.value) < abs($1.value) })?.key else { return }
                 
-                // `reachTopThreshold`보다 firstMonth의 Y값이 크면 스크롤 상단에 도달한 것으로 판단
-                if firstMonthY > -reachTopThreshold, !isPrepending, !isScrollLimited {
-                    reloadData(month: firstMonth, proxy: proxy)
+                let comp = calendar.dateComponents([.year, .month], from: closestMonth)
+                if let year = comp.year, let month = comp.month {
+                    let next = YearMonth(year: year, month: month)
+                    if next != visibleYM { // 불필요한 중복 방지
+                        visibleYM = next
+                    }
                 }
             }
-            // 스크롤뷰 자체에도 애니메이션을 제거하여 빠른 스크롤 시 버벅거림 제거
-            .transaction { $0.disablesAnimations = true }
+        }
+        .task(id: visibleYM) {
+            guard let yearAndmonth = visibleYM else { return }
+            print(yearAndmonth)
+            await calendarScrollVM.fetchCalendarData(
+                year: yearAndmonth.year, month: yearAndmonth.month)
         }
         .background(Color.white)
         .customCenterNavigationBar {
@@ -174,5 +270,5 @@ private extension Calendar {
 }
 
 #Preview {
-    CalendarScrollView()
+    CalendarScrollView(container: .init())
 }
