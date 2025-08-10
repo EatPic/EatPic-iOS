@@ -5,93 +5,81 @@
 //  Created by 이은정 on 7/25/25.
 //
 
+// TODO: [25.08.10] 바텀 시트뷰로 인한 linkURL & location(longtitude, latitude) 바인딩 값 추가해야함
 import SwiftUI
 
-// MARK: PicCard 내용 기록 뷰
 struct PicCardWriteView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     let primaryButtonText: String
-    let onSave: ((String, String, Bool) -> Void)?
-    
-    init(
-        primaryButtonText: String,
-        onSave: ((String, String, Bool) -> Void)? = nil
-    ) {
-        self.primaryButtonText = primaryButtonText
-        self.onSave = onSave
-    }
-    
-    @State private var myMemo: String = ""
-    @State private var receiptDetail: String = ""
-    @State private var isSharedToFeed: Bool = false
-    
+
+    // ✅ 내부 @State 제거, 외부에서 바인딩으로 주입
+    @Binding var myMemo: String
+    @Binding var receiptDetail: String
+    @Binding var isSharedToFeed: Bool
+
     var body: some View {
-        
         VStack(alignment: .leading) {
-            
             Spacer().frame(height: 24)
-            
+
             Text("나의 메모")
                 .font(.dsHeadline)
                 .foregroundStyle(Color.gray080)
-            
+
             Spacer().frame(height: 8)
-            
+
             TextAreaView(
                 text: $myMemo,
                 placeholder: "잇친들과 공유할 나의 메모를 입력해주세요.",
                 height: 150
             )
-            
+
             Spacer().frame(height: 24)
-            
+
             Text("레시피 내용")
                 .font(.dsHeadline)
                 .foregroundStyle(Color.gray080)
-            
+
             Spacer().frame(height: 8)
-            
+
             TextAreaView(
                 text: $receiptDetail,
                 placeholder: "잇친들과 공유할 레시피 내용을 입력해주세요.",
                 height: 150
             )
-            
+
             Spacer().frame(height: 20)
-            
+
             VStack(spacing: 0) {
                 AddButtonView(
                     btnImage: Image("PicCardWrite/ic_record_link"),
                     btnTitle: "레시피 링크 추가",
                     action: {
+                        // TODO: [25.08.10]  BottomSheetView 추가
+                        // TODO: [25.08.10] 링크 추가했다면 레시피 링크 추가 텍스트 부분에 해당 링크 뜨도록
                         print("링크 추가하기")
-                        // [25.08.05] TODO: 클릭 시 링크 추가 바텀 시트뷰 뜨도록 액션 - 비엔/이은정
-                        // TODO: 바텀시트 뜬 이후 링크 추가 되도록
                     }
                 )
-                
+
                 AddButtonView(
                     btnImage: Image("PicCardWrite/ic_record_map"),
                     btnTitle: "식당 위치 추가",
                     action: {
-                        print("위치 추가하기")
-                        // TODO: 클릭 시 식당위치 추가 바텀 시트뷰 뜨도록 액션
-                        // TODO: 바텀시트 뜬 이후 위치 추가 되도록
+                        // TODO: [25.08.10]  BottomSheetView 추가
+                        // TODO: [25.08.10] 위치 추가했다면 텍스트 부분에 해당 식당 이름 뜨도록
                     }
                 )
-                
+
                 ShareToFeedButton(
                     isOn: $isSharedToFeed,
-                    action: { isShared in
-                        if isShared {
-                            print("피드에 공유하기")
-                        } else {
-                            print("피드에 공유하기 끔")
-                        }
+                    action: { _ in
+                        // TODO: [25.08.10] 피드 공유하기 여부 액션??
                     }
                 )
             }
-            
+
             Spacer().frame(height: 34)
+
             PrimaryButton(
                 color: .green060,
                 text: primaryButtonText,
@@ -99,19 +87,14 @@ struct PicCardWriteView: View {
                 textColor: .white,
                 width: 361,
                 height: 48,
-                cornerRadius: 10,
-                action: {
-                    print("\(primaryButtonText)")
-                    // 저장 콜백 호출
-                    onSave?(myMemo, receiptDetail, isSharedToFeed)
-                }
-            )
-            
+                cornerRadius: 10
+            ) {
+                container.router.popToRoot()
+            }
         }
         .padding(.horizontal, 16)
     }
 }
-
 // MARK: 레시피 링크 또는 식당 위치 추가 공용버튼 뷰
 private struct AddButtonView: View {
     let btnImage: Image
@@ -194,6 +177,11 @@ private struct ShareToFeedButton: View {
                 .toggleStyle(SwitchToggleStyle(tint: .pink060))
                 .labelsHidden()
                 .onChange(of: isOn) { _, newValue in
+                    if newValue {
+                        print("피드 공유하기 on")
+                    } else {
+                        print("피드 공유하기 off")
+                    }
                     action(newValue)
                 }
                 
@@ -204,7 +192,15 @@ private struct ShareToFeedButton: View {
 }
 
 #Preview {
-    PicCardWriteView(
-        primaryButtonText: "수정하기"
+    // 프리뷰 전용 State 값
+    @Previewable @State var memo = "샘플 메모"
+    @Previewable @State var recipe = "샘플 레시피"
+    @Previewable @State var isShared = false
+    
+    return PicCardWriteView(
+        primaryButtonText: "수정하기",
+        myMemo: $memo,
+        receiptDetail: $recipe,
+        isSharedToFeed: $isShared
     )
 }

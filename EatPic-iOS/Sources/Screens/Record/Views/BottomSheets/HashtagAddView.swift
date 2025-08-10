@@ -11,7 +11,6 @@ struct HashtagAddView: View {
     @Binding var hashtagInput: String
     let isAddButtonEnabled: Bool
     let onAddHashtag: () -> Void
-    let onClose: () -> Void
     
     var body: some View {
         VStack {
@@ -46,7 +45,6 @@ struct HashtagAddView: View {
     HashtagAddView(
         hashtagInput: .constant(""),
         isAddButtonEnabled: false,
-        onAddHashtag: {},
-        onClose: {}
+        onAddHashtag: {}
     )
 }
