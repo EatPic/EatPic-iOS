@@ -16,10 +16,15 @@ let swiftLintScript: TargetScript = .pre(
 
 let project = Project(
     name: "EatPic-iOS",
-    settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
-        .release(name: "Release", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
-    ]),
+    settings: .settings(
+        base: [
+            "BASE_URL": "$(BASE_URL)"
+        ],
+        configurations: [
+            .debug(name: "Debug", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig"), 
+            .release(name: "Release", xcconfig: "./EatPic-iOS/Resources/Secrets.xcconfig") 
+        ]
+    ),
     targets: [
         .target(
             name: "EatPic-iOS",
@@ -30,10 +35,14 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "NSLocationWhenInUseUsageDescription": "현재 위치 정보를 활용하여 주변 정보를 제공해 드립니다. 위치 권한을 허용하지 않아도 일부 기능을 사용하실 수 있습니다. 원하실 경우, 위치 권한을 허용해 주세요.",
+                    "NSAppTransportSecurity": [
+                        "NSAllowsArbitraryLoads": true
+                    ],
                     "UILaunchScreen": [
                         "UIColorName": "",
                         "UIImageName": "",
                     ],
+                    "BASE_URL": "$(BASE_URL)"
                 ]
             ),
             sources: ["EatPic-iOS/Sources/**"],
