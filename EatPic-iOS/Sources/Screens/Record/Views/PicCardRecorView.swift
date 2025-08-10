@@ -16,7 +16,6 @@ struct PicCardRecorView: View {
             PicCardWriteView(
                 primaryButtonText: "저장하기",
                 // recordModel의 각 필드에 수동 바인딩을 만들어서 연결
-                // TODO: [25.08.10] 수동바인딩? -> Observable쓰면 자동 바인딩 아닌가
                 myMemo: Binding(
                     get: { viewmodel.recordModel.memo },
                     set: { viewmodel.recordModel.memo = $0 }
@@ -35,6 +34,15 @@ struct PicCardRecorView: View {
             Button { container.router.popToRoot() } label: {
                 Image("Record/btn_home_close")
             }
+        }
+        .onAppear {
+            print("📱 [PicCardRecorView] 화면 나타남!")
+            print("📱 [PicCardRecorView] 현재 ViewModel 데이터:")
+//            print("📱 [PicCardRecorView] - mealTime: \(viewmodel.recordModel.mealTime?.rawValue ?? "nil")")
+            print("📱 [PicCardRecorView] - hashtags: \(viewmodel.recordModel.hashtags)")
+            print("📱 [PicCardRecorView] - memo: \(viewmodel.recordModel.memo)")
+            print("📱 [PicCardRecorView] - recipe: \(viewmodel.recordModel.recipe)")
+            print("📱 [PicCardRecorView] - isShared: \(viewmodel.recordModel.isShared)")
         }
     }
 }

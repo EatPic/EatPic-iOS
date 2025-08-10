@@ -113,7 +113,11 @@ struct HashtagSelectView: View {
             ) {
                 // 여기서 뷰모델에 저장
                 // (확인 버튼 누를 때 ViewModel의 recordModel.hashtags에 최종 반영)
-                viewmodel.recordModel.hashtags = Array(selectedHashtags)
+                print("🏷️ [HashtagSelectView] 저장 전 해시태그: \(viewmodel.recordModel.hashtags)")
+                viewmodel.updateHashtags(Array(selectedHashtags))
+                print("🏷️ [HashtagSelectView] 저장 후 해시태그: \(viewmodel.recordModel.hashtags)")
+                print("🏷️ [HashtagSelectView] ViewModel 해시태그 확인: \(viewmodel.recordModel.hashtags)")
+                
                 // PicCardRecor로 Navigation
                 container.router.push(.picCardRecord(
                     selectedMeal: viewmodel.recordModel.mealTime ?? .breakfast,
@@ -145,10 +149,12 @@ struct HashtagSelectView: View {
         if selectedHashtags.contains(hashtag) {
             // 이미 선택 시 해제
             selectedHashtags.remove(hashtag)
+            print("🏷️ [HashtagSelectView] 해시태그 해제됨: #\(hashtag)")
         } else {
             // 미선택 & 개수 제한 미충족 시 선택
             if selectedHashtags.count < maxSelectionCount {
                 selectedHashtags.insert(hashtag)
+                print("🏷️ [HashtagSelectView] 해시태그 선택됨: #\(hashtag)")
             }
         }
     }

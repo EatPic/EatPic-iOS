@@ -57,7 +57,9 @@ struct MealtimeSelectView: View {
                 cornerRadius: 10
             ) {
                 if let meal = selectedMeal {
+                    print("선택된 식사 시간: \(meal)")
                     viewmodel.updateMealTime(meal)
+//                    print("ViewModel에 저장된 mealTime: \(viewmodel.recordModel.mealTime?.rawValue ?? "nil")")
                     container.router.push(.hashtagSelection(selectedMeal: meal))
                 }
             }
@@ -80,6 +82,11 @@ struct MealtimeSelectView: View {
     // 같은 버튼 누르면 해제, 다시 다른 버튼 누르면 변경
     private func toggle(_ meal: MealTime) {
         selectedMeal = (selectedMeal == meal) ? nil : meal
+        if let selected = selectedMeal {
+            print("🍽️ [MealtimeSelectView] 버튼 선택됨: \(selected)")
+        } else {
+            print("🍽️ [MealtimeSelectView] 버튼 선택 해제됨")
+        }
     }
 }
 

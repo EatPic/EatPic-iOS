@@ -12,6 +12,7 @@ struct PicCardWriteView: View {
     @EnvironmentObject private var container: DIContainer
     
     let primaryButtonText: String
+//    let onPrimaryButtonTap: (() -> Void)?
 
     // ✅ 내부 @State 제거, 외부에서 바인딩으로 주입
     @Binding var myMemo: String
@@ -89,6 +90,7 @@ struct PicCardWriteView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
+//                onPrimaryButtonTap?()
                 container.router.popToRoot()
             }
         }
@@ -191,16 +193,16 @@ private struct ShareToFeedButton: View {
     }
 }
 
-#Preview {
-    // 프리뷰 전용 State 값
-    @Previewable @State var memo = "샘플 메모"
-    @Previewable @State var recipe = "샘플 레시피"
-    @Previewable @State var isShared = false
-    
-    return PicCardWriteView(
-        primaryButtonText: "수정하기",
-        myMemo: $memo,
-        receiptDetail: $recipe,
-        isSharedToFeed: $isShared
-    )
-}
+//#Preview {
+//    // 프리뷰 전용 State 값
+//    @Previewable @State var memo = "샘플 메모"
+//    @Previewable @State var recipe = "샘플 레시피"
+//    @Previewable @State var isShared = false
+//    
+//    PicCardWriteView(
+//        primaryButtonText: "수정하기",
+//        myMemo: $memo,
+//        receiptDetail: $recipe,
+//        isSharedToFeed: $isShared
+//    )
+//}
