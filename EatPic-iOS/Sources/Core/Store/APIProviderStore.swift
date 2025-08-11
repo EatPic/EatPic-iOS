@@ -25,4 +25,8 @@ extension APIProviderStore {
     func user() -> MoyaProvider<UserTargetType> {
         return networkService.testProvider(for: UserTargetType.self)
     }
+    
+    func emailLogin() -> MoyaProvider<AuthTargetType> {
+        return networkService.createProvider(for: AuthTargetType.self)
+    }
 }
