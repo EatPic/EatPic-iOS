@@ -17,16 +17,19 @@ final class DIContainer: ObservableObject {
     
     let userSessionKeychain: UserSessionKeychainService
     let apiProviderStore: APIProviderStore
+    let mediaPickerService: MediaPickerService
     
     init(
         router: NavigationRouter = .init(),
         locationStore: LocationStore = .init(),
-        userSessionKeychain: UserSessionKeychainService = UserSessionKeychainServiceImpl()
+        userSessionKeychain: UserSessionKeychainService = UserSessionKeychainServiceImpl(),
+        mediaPickerService: MediaPickerService = MediaPickerServiceImpl()
     ) {
         self.router = router
         self.locationStore = locationStore
         self.userSessionKeychain = userSessionKeychain
         self.networkService = NetworkServiceImpl(userSessionKeychain: userSessionKeychain)
         self.apiProviderStore = APIProviderStore(networkService: networkService)
+        self.mediaPickerService = mediaPickerService
     }
 }
