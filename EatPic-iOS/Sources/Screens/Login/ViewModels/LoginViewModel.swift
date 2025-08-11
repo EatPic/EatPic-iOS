@@ -17,7 +17,7 @@ class LoginViewModel {
     
     /// 로그인 API 프로파이더
     private let emailLoginProvider: MoyaProvider<AuthTargetType>
-    
+    private let keychain: UserSessionKeychainService // 추가
     /// 사용자 입력 이메일
     var email: String = ""
     
@@ -28,6 +28,7 @@ class LoginViewModel {
     
     init(container: DIContainer) {
         self.emailLoginProvider = container.apiProviderStore.auth()
+        self.keychain = container.userSessionKeychain // 추가
     }
     
     // MARK: - Func
@@ -45,15 +46,38 @@ class LoginViewModel {
                 TokenResponse.self,
                 from: response.data
             )
+            
+            // 키체인에 저장할 UserInfo 생성
+            var userInfo = UserInfo(
+                accessToken: dto.result.accessToken,
+                refreshToken: dto.result.refreshToken
+                // userId, 닉네임 등 여기에 추가
+            )
+            
+            guard keychain.saveSession(userInfo, for: .userSession) else {
+                throw NSError(
+                    domain: "eatpic.auth",
+                    code: -10,
+                    userInfo: [NSLocalizedDescriptionKey: "키체인에 세션 저장 실패"]
+                )
+            }
+            
             print(dto)
-
+            print("keychain load: \(keychain.loadSession(for: .userSession))")
         }
         
         catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
     }
+    
+    func logout() {
+        keychain.deleteSession(for: .userSession) // 키체인에서 세션 삭제
+        // 필요시 추가 로직 작성하면 될듯
+    }
+    
     var fieldsNotEmpty: Bool {
         !email.isEmpty && !password.isEmpty
     }
 }
+

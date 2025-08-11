@@ -10,9 +10,6 @@ import Foundation
 /// 사용자 인증 정보를 담는 모델입니다.
 /// accessToken과 refreshToken은 JWT 기반 인증에서 사용됩니다.
 struct UserInfo: Codable {
-    let role: String
-    let userId: Int
-    let email: String
     /// 서버에서 발급받은 Access Token입니다.
     var accessToken: String?
     
