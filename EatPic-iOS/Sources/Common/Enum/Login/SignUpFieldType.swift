@@ -12,6 +12,12 @@ import SwiftUI
 /// 각 케이스에 따라서 입력필드 상단 텍스트, placeholder, 키보드 타입 지정
 enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
+    /// 로그인뷰에서 사용되는 입력 아이디 필드
+    case loginId
+    
+    /// 로그인뷰에서 사용되는 입력 패스워드 필드
+    case loginPassword
+    
     /// 이메일 입력 필드
     case email
     
@@ -20,7 +26,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     /// 닉네임 입력 필드
     case nickname
-
+    
     /// 비밀번호 확인 입력 필드
     case confirmPassword
     
@@ -39,6 +45,10 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     
     var placeholder: String {
         switch self {
+        case .loginId:
+            return "abc@email.com"
+        case .loginPassword:
+            return "6자리 이상의 비밀번호"
         case .email:
             return "abc@email.com"
         case .password:
@@ -84,12 +94,21 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
             return .default
         }
     }
-
+    
     /// 키보드 asubmit 버튼 스타일 설정
     /// - '.next': 다음 필드로 이동
     /// - `.done`: 입력 완료
     /// - 개발 초기상태에서는 .done으로 임시 고정
     var submitLabel: SubmitLabel {
         .done
+    }
+    
+    var showsValidationIcon: Bool {
+        switch self {
+        case .loginId, .loginPassword:
+            return false   // X 버튼만 나오도록 
+        default:
+            return true    // X + 체크마크 로직
+        }
     }
 }

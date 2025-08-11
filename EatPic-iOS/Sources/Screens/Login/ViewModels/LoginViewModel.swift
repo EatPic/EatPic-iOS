@@ -33,6 +33,8 @@ class LoginViewModel {
     
     // MARK: - Func
     
+    /// 로그인 유효성 검사
+    
     /// 이메일로 로그인 API 요청 함수
     func emailLogin() async {
         /// APIProviderStore에서 제작된 함수 호출
