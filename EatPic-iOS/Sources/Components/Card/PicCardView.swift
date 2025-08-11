@@ -39,18 +39,24 @@ struct PicCardView<Content: View>: View {
         self.onItemAction = onItemAction
     }
     
-    // MARK: body
+    // MARK: - body
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
-                card.user.profileImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 36, height: 36)
-                    .onTapGesture {
-                        onProfileTap?()
-                    }
+                if let profileImage = card.user.profileImage {
+                    profileImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                        .onTapGesture { onProfileTap?() }
+                } else {
+                    Image(systemName: "person.circle.fill") // 기본 이미지로 대체
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                        .onTapGesture { onProfileTap?() }
+                }
                 
                 VStack(alignment: .leading) {
                     Text(card.user.id)
@@ -81,11 +87,9 @@ struct PicCardView<Content: View>: View {
                 if !isFlipped {
                     // 카드 앞면 (이미지)
                     PicCardFrontView(card: card, toastVM: toastVM, onItemAction: onItemAction)
-                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0.0, y: 1.0, z: 0.0))
                 } else {
                     // 카드 뒷면 (레시피)
                     PicCardBackView(card: card)
-                        .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0.0, y: 1.0, z: 0.0))
                 }
             }
             .animation(.easeInOut(duration: 0.5), value: isFlipped)
@@ -96,7 +100,7 @@ struct PicCardView<Content: View>: View {
             }
             .aspectRatio(1, contentMode: .fit)
             
-            // 사용자 메모 (나의 메모)
+            // 사용자 메모
             Text(card.memo)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray080)
@@ -105,37 +109,45 @@ struct PicCardView<Content: View>: View {
     }
 }
 
-#Preview {
-    CommunityMainView()
+// MARK: - PicCardView의 앞면 (기존 postImage와 아이템뷰)
+struct PicCardFrontView: View {
+    let card: PicCard
+    let toastVM: ToastViewModel
+    let onItemAction: ((PicCardItemActionType) -> Void)?
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                card.image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geometry.size.width, height: geometry.size.width)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                
+                PicCardItemView(toastVM: toastVM, onAction: onItemAction)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity,
+                           alignment: .bottomLeading)
+            }
+        }
+    }
 }
 
-#Preview {
-    PicCardView(
-        profileImage: Image(systemName: "circle.fill"),
-        profileID: "아이디",
-        time: "오후 6:29",
-        menuContent: {
-            Button(action: {
-                print("사진 앱에 저장")
-            }, label: {
-                Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
-            })
-            
-            Button(action: {
-                print("수정하기")
-            }, label: {
-                Label("수정하기", systemImage: "square.and.pencil")
-            })
-            
-            // role을 destructive로 설정 시, 빨간 버튼으로 만들 수 있음
-            Button(role: .destructive, action: {
-                print("삭제하기")
-            }, label: {
-                Label("삭제하기", systemImage: "exclamationmark.bubble")
-            })
-        },
-        postImage: Image("Community/testImage"),
-        myMemo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣어 먹었어요~~~~~~다들 제 레시피 보고 따라 만들어주시기길......태그도 남겨주시기르를",
-        toastVM: ToastViewModel()
-    )
+// MARK: - PicCardView의 뒷면 (레시피 상세 뷰)
+struct PicCardBackView: View {
+    let card: PicCard
+    
+    var body: some View {
+        RecipeDetailCardView(
+            backgroundImage: card.image,
+            hashtags: card.hashtags ?? [],
+            recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
+            linkURL: card.recipeUrl,
+            naviButtonAction: {
+                // TODO: - 내비게이션 기능 구현
+                print("내비게이션 버튼 탭")
+            },
+            naviLabel: card.locationText
+        )
+    }
 }
