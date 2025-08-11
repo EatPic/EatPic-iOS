@@ -37,7 +37,8 @@ struct TabViewContent: View {
             
         // 글쓰기 탭 화면: 카메라 모달을 표시하고, 선택 시 MealTimeSelectView로 이동
         case .writePost:
-            CameraRecordModalView(container: container)
+            EmptyView()
+//            CameraRecordModalView(container: container)
 //            CameraRecordModalView(
 //                closeBtnAction: {
 //                    container.router.popToRoot()

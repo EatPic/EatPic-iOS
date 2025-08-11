@@ -10,7 +10,8 @@ struct EatPicIOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LoginView(container: container)
+            MainTabView(container: container)
+//            LoginView(container: container)
                 .environmentObject(container)
         }
     }

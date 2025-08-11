@@ -10,13 +10,56 @@ import SwiftUI
 struct MainTabView: View {
     
     @EnvironmentObject private var container: DIContainer
+    @Bindable private var mediaPickerProvider: MediaPickerProvider
+    
     @State private var selectedTab: TabCase = .home
+    @State private var previousTab: TabCase = .home
+    @State private var showCamera: Bool = false
+    @State private var showPickerDialog = false
+    @State private var showPhotosPicker: Bool = false
+    
+    private let maxImgSelectionCount: Int = 5
+    
+    init(container: DIContainer) {
+        self.mediaPickerProvider = .init(
+            mediaPickerService: container.mediaPickerService)
+    }
     
     var body: some View {
         NavigationStack(path: $container.router.destinations) {
             renderTabView()
                 .navigationDestination(for: NavigationRoute.self) { route in
                     NavigationRoutingView(route: route)
+                }
+                .confirmationDialog(
+                    "기록할 방법을 선택해주세요!",
+                    isPresented: $showPickerDialog,
+                    titleVisibility: .visible
+                ) {
+                    Button("앨범에서 선택") {
+                        showPhotosPicker = true
+                    }
+                    
+                    Button("카메라로 촬영") {
+                        mediaPickerProvider.presentCamera()
+                    }
+                    
+                    Button("취소", role: .cancel) { }
+                }
+                .photosPicker(
+                    isPresented: $showPhotosPicker,
+                    selection: $mediaPickerProvider.selections,
+                    maxSelectionCount: maxImgSelectionCount,
+                    matching: .images
+                )
+                .onChange(of: selectedTab) { _, new in
+                    if new == .writePost {
+                        // 탭 전환 무효화 + 다이얼로그만 띄우기
+                        selectedTab = previousTab
+                        showPickerDialog = true
+                    } else {
+                        previousTab = new
+                    }
                 }
         }
     }
@@ -78,6 +121,6 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(container: .init())
         .environmentObject(DIContainer())
 }

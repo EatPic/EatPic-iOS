@@ -93,7 +93,7 @@ final class MediaPickerProvider {
 ///   - `PhotosPicker`로 갤러리에서 이미지 선택
 ///   - 카메라 촬영
 ///   - 선택/촬영 이미지의 수평 스크롤 프리뷰 및 개별 삭제
-private struct MediaPickerView: View {
+private struct MediaPickerTestView: View {
     @State private var provider = MediaPickerProvider(
         mediaPickerService: MediaPickerServiceImpl()
     )
@@ -140,5 +140,5 @@ private struct MediaPickerView: View {
 }
 
 #Preview {
-    MediaPickerView()
+    MediaPickerTestView()
 }
