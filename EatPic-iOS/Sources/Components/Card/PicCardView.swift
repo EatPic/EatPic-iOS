@@ -11,6 +11,7 @@ import SwiftUI
 ///   - card: 픽카드 데이터
 ///   - menuContent: 메뉴버튼(eclipsis) 클릭 시 나타날 버튼목록 커스텀
 ///   - onProfileTap: 프로필 탭 시 프로필뷰로 이동하는 클로저
+///   - onLocationTap: 위치 버튼 탭 시 지도 뷰로 이동하는 클로저
 ///   - toastVM: 토스트 메시지 뷰모델
 ///   - onItemAction: 카드 아이템 액션 콜백
 struct PicCardView<Content: View>: View {
@@ -19,22 +20,25 @@ struct PicCardView<Content: View>: View {
     let card: PicCard
     let menuContent: () -> Content
     let onProfileTap: (() -> Void)?
+    let onLocationTap: ((Double, Double, String) -> Void)?
     let toastVM: ToastViewModel
     let onItemAction: ((PicCardItemActionType) -> Void)?
     
-    @State private var isFlipped = false // 카드의 뒤집힌 상태를 관리하는 변수
+    @State private var isFlipped = false
     
     // MARK: - init
     init(
         card: PicCard,
         @ViewBuilder menuContent: @escaping () -> Content,
         onProfileTap: (() -> Void)? = nil,
+        onLocationTap: ((Double, Double, String) -> Void)? = nil,
         toastVM: ToastViewModel,
         onItemAction: ((PicCardItemActionType) -> Void)? = nil
     ) {
         self.card = card
         self.menuContent = menuContent
         self.onProfileTap = onProfileTap
+        self.onLocationTap = onLocationTap
         self.toastVM = toastVM
         self.onItemAction = onItemAction
     }
@@ -89,7 +93,7 @@ struct PicCardView<Content: View>: View {
                     PicCardFrontView(card: card, toastVM: toastVM, onItemAction: onItemAction)
                 } else {
                     // 카드 뒷면 (레시피)
-                    PicCardBackView(card: card)
+                    PicCardBackView(card: card, onLocationTap: onLocationTap)
                 }
             }
             .animation(.easeInOut(duration: 0.5), value: isFlipped)
@@ -136,6 +140,7 @@ struct PicCardFrontView: View {
 // MARK: - PicCardView의 뒷면 (레시피 상세 뷰)
 struct PicCardBackView: View {
     let card: PicCard
+    let onLocationTap: ((Double, Double, String) -> Void)?
     
     var body: some View {
         RecipeDetailCardView(
@@ -144,8 +149,19 @@ struct PicCardBackView: View {
             recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
             linkURL: card.recipeUrl,
             naviButtonAction: {
-                // TODO: - 내비게이션 기능 구현
                 print("내비게이션 버튼 탭")
+                // ✅ 수정된 부분: 옵셔널 바인딩을 사용하여 안전하게 값 언래핑
+                if let latitude = card.latitude,
+                   let longitude = card.longitude,
+                   let locationText = card.locationText {
+                    
+                    // ✅ 옵셔널 바인딩에 성공하면 클로저를 실행
+                    onLocationTap?(latitude, longitude, locationText)
+                    
+                } else {
+                    // 위치 정보가 없을 경우 처리
+                    print("위치 정보가 없어 내비게이션을 실행할 수 없습니다.")
+                }
             },
             naviLabel: card.locationText
         )
