@@ -90,24 +90,25 @@ struct CommunityMainView: View {
                     card: card, // card 객체를 통째로 전달
                     menuContent: {
                         if viewModel.isMyCard(card) {
-                            Button(action: { viewModel.saveCardToPhotos(card) }) {
+                            Button(action: { viewModel.saveCardToPhotos(card) }, label: {
                                 Label("사진 앱에 저장", systemImage: "arrow.down.to.line")
-                            }
-                            Button(action: { viewModel.editCard(card) }) {
+                            })
+                            Button(action: { viewModel.editCard(card) },
+                                   label: {
                                 Label("수정하기", systemImage: "square.and.pencil")
-                            }
+                            })
                             Button(role: .destructive, action: {
                                 viewModel.showDeleteConfirmation(for: card)
-                            }) {
+                            }, label: {
                                 Label("삭제하기", systemImage: "trash")
-                            }
+                            })
                         } else {
                             Button(role: .destructive, action: {
                                 viewModel.isShowingReportBottomSheet = true
                                 print("신고하기")
-                            }) {
+                            }, label: {
                                 Label("신고하기", systemImage: "exclamationmark.bubble")
-                            }
+                            })
                         }
                     },
                     onProfileTap: {

@@ -132,7 +132,7 @@ var sampleCards: [PicCard] = [
             latitude: 37.12, longitude: 127.98,
             locationText: "캐나다라마바사아자차카파타하가나다라",
             hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
-            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true)
 ]
 
 var sampleComments: [Comment] = [
