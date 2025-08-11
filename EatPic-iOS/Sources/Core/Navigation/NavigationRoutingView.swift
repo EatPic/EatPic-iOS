@@ -62,7 +62,7 @@ struct NavigationRoutingView: View {
     private var routingView: some View {
         switch route {
         case .calendar:
-            CalendarScrollView()
+            CalendarScrollView(container: container)
         case .notification:
             NotificationView()
         case .emailLoginView:

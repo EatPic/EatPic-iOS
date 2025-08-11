@@ -45,36 +45,41 @@ struct RecipeDetailCardView: View {
     
     // MARK: body
     var body: some View {
-        ZStack {
-            backgroundImageView
-            
-            VStack(alignment: .leading) {
-                hashtagView
+        GeometryReader { geometry in
+            ZStack {
+                backgroundImageView
                 
-                Spacer()
-                
-                Text("레시피")
-                    .font(.dsTitle2)
-                    .foregroundStyle(.white)
-                    .padding(.leading, 20)
-                
-                Spacer().frame(height: 19)
-                
-                Text(recipeDescription)
-                    .font(.dsFootnote)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                
-                Spacer()
-                
-                buttonSection
-                    .padding(.leading, 20)
-                    .padding(.trailing, 17)
+                VStack(alignment: .leading) {
+                    hashtagView
+                    
+                    Spacer()
+                    
+                    Text("레시피")
+                        .font(.dsTitle2)
+                        .foregroundStyle(.white)
+                        .padding(.leading, 20)
+                    
+                    Spacer().frame(height: 19)
+                    
+                    Text(recipeDescription)
+                        .font(.dsFootnote)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 20)
+                    
+                    Spacer()
+                    
+                    buttonSection
+                        .padding(.leading, 20)
+                        .padding(.trailing, 17)
+                }
+                .padding(.top, 19)
+                .padding(.bottom, 23)
+                .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit)
             }
-            .padding(.top, 19)
-            .padding(.bottom, 23)
-            .frame(maxWidth: .infinity)
-            .aspectRatio(1, contentMode: .fit)
+            .frame(width: geometry.size.width, height: geometry.size.width)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20))
         }
     }
     
@@ -147,7 +152,7 @@ struct RecipeDetailCardView: View {
 
 #Preview {
     RecipeDetailCardView(
-        backgroundImage: Image(systemName: "square.fill"),
+        backgroundImage: Image("Community/testImage"),
         hashtags: ["#아침", "#저탄고지", "#다이어트"],
         recipeDescription: "아보카도와 토마토, 그리고 닭가슴살로 구성된 간단한 레시피입니다.",
         linkURL: URL(string: "https://www.example.com"),     // 없으면 nil

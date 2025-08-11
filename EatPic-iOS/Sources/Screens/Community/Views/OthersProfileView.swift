@@ -165,8 +165,9 @@ struct OthersProfileView: View {
     private func userProfileView() -> some View {
         VStack {
             Spacer().frame(height: 8)
-            ProfileImageView(image: viewModel.user.profileImage ??
-                             Image(systemName: "person.fill"),size: 100)
+            ProfileImageView(
+                image: viewModel.user.profileImage ?? Image(systemName: "person.fill"),
+                size: 100)
             
             Spacer().frame(height: 16)
             
