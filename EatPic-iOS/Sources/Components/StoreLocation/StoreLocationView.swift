@@ -36,7 +36,7 @@ struct StoreLocationView: View {
         VStack(alignment: .leading) {
             Spacer().frame(height: 22)
             
-            Text("식당이름")
+            Text(viewModel.makers.first?.title ?? "식당이름")
                 .font(.dsTitle3)
                 .foregroundStyle(.black)
             
