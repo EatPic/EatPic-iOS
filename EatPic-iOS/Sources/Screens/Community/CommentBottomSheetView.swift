@@ -25,7 +25,7 @@ struct CommentBottomSheetView: View {
                                     commentText: comment.text,
                                     time: comment.time
                                 )
-                                .contextMenu{
+                                .contextMenu {
                                     if viewModel.isMyComment(comment) {
                                         Button(role: .destructive) {
                                             viewModel.deleteComment(comment)
