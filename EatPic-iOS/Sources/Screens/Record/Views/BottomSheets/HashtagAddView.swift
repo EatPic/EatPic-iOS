@@ -8,16 +8,12 @@
 import SwiftUI
 
 struct HashtagAddView: View {
-    @State private var hashtagInput: String = ""
+    @Binding var hashtagInput: String
+    let isAddButtonEnabled: Bool
+    let onAddHashtag: () -> Void
     
     var body: some View {
         VStack {
-            TopBanner()
-            
-//            Spacer().frame(height: 78)
-//            Spacer().frame(height: 78)
-            Spacer()
-            
             HStack {
                 TextAreaView(
                     text: $hashtagInput,
@@ -28,37 +24,17 @@ struct HashtagAddView: View {
                 Spacer().frame(width: 9)
                 
                 PrimaryButton(
-                    color: .green060,
+                    color: isAddButtonEnabled ? .green060 : .gray040,
                     text: "추가",
                     font: .dsHeadline,
-                    textColor: .white,
+                    textColor: isAddButtonEnabled ? .white : .gray060,
                     width: 64,
                     height: 40,
                     cornerRadius: 10
                 ) {
-                    // TODO: 해시태그 추가 액션
+                    onAddHashtag()
                 }
-            }
-            .padding(.horizontal, 19)
-        }
-    }
-}
-
-private struct TopBanner: View {
-    var body: some View {
-        VStack {
-            ZStack {
-                Text("해시태그 추가")
-                    .font(.dsTitle2)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // TODO: RecomPicCardView로 Navigation
-                    }, label: {
-                        Image("Record/btn_home_close")
-                    })
-                }
+                .disabled(!isAddButtonEnabled)
             }
             .padding(.horizontal, 19)
         }
@@ -66,5 +42,9 @@ private struct TopBanner: View {
 }
 
 #Preview {
-    HashtagAddView()
+    HashtagAddView(
+        hashtagInput: .constant(""),
+        isAddButtonEnabled: false,
+        onAddHashtag: {}
+    )
 }

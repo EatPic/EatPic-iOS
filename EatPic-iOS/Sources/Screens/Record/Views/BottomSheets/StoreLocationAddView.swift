@@ -12,10 +12,6 @@ struct StoreLocationAddView: View {
     @State var searchText: String = ""
     
     var body: some View {
-        TopBanner()
-        
-        Spacer().frame(height: 78)
-
         HStack {
             // 검색바
             searchBar()
@@ -51,27 +47,6 @@ struct StoreLocationAddView: View {
             onChange: { _ in
                 // TODO: 식당위치 결과 값 가져오기? 액션
             })
-    }
-}
-
-private struct TopBanner: View {
-    var body: some View {
-        VStack {
-            ZStack {
-                Text("식당 위치 추가")
-                    .font(.dsTitle2)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // TODO: RecomPicCardView로 Navigation
-                    }, label: {
-                        Image("Record/btn_home_close")
-                    })
-                }
-            }
-            .padding(.horizontal, 19)
-        }
     }
 }
 
