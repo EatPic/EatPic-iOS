@@ -114,6 +114,16 @@ struct CommunityMainView: View {
                     onProfileTap: {
                         container.router.push(.userProfile(user: card.user))
                     },
+                    onLocationTap: { latitude, longitude, locationText in
+                        // 위치 정보를 확인하고 router로 뷰 이동
+                        container.router.push(
+                            .storeLocation(
+                                latitude: latitude,
+                                longitude: longitude,
+                                title: locationText
+                            )
+                        )
+                    },
                     toastVM: viewModel.toastVM,
                     onItemAction: viewModel.handleCardAction
                 )

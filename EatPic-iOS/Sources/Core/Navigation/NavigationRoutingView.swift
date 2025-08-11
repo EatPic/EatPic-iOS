@@ -37,6 +37,7 @@ enum NavigationRoute: Equatable, Hashable {
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
+    case storeLocation(latitude: Double, longitude: Double, title: String)
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -53,7 +54,7 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-      
+        
         routingView
             .environmentObject(container)
     }
@@ -113,6 +114,13 @@ struct NavigationRoutingView: View {
             FollowListView(selected: selected)
         case .exploreSelected:
             ExploreSelectedView()
+        case .storeLocation(let latitude, let longitude, let title):
+            StoreLocationView(
+                markers: [.init(
+                    coordinate: .init(latitude: latitude, longitude: longitude),
+                    title: title
+                )]
+            )
         }
     }
 }
