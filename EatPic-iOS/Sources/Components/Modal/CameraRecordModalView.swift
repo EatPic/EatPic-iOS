@@ -36,7 +36,7 @@ struct CameraRecordModalView: View {
         container: DIContainer,
         messageTitleColor: Color = .black,
         messageDescriptionColor: Color = .gray060,
-        buttonColor: Color = .gray020,
+        buttonColor: Color = .gray020
     ) {
         self.messageTitleColor = messageTitleColor
         self.messageDescriptionColor = messageDescriptionColor
