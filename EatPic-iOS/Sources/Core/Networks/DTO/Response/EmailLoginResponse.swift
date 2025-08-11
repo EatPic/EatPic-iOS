@@ -12,13 +12,5 @@ struct EmailLoginResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: LoginResult
-}
-
-struct LoginResult: Codable {
-    let role: String
-    let userId: Int
-    let email: String
-    let accessToken: String
-    let refreshToken: String
+    let result: UserInfo
 }

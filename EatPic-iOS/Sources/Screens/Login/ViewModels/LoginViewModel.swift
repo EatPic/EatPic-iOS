@@ -27,7 +27,7 @@ class LoginViewModel {
     // MARK: - Init
     
     init(container: DIContainer) {
-        self.emailLoginProvider = container.apiProviderStore.emailLogin()
+        self.emailLoginProvider = container.apiProviderStore.auth()
     }
     
     // MARK: - Func
@@ -42,10 +42,11 @@ class LoginViewModel {
             )
             
             let dto = try JSONDecoder().decode(
-                EmailLoginResponse.self,
+                TokenResponse.self,
                 from: response.data
             )
             print(dto)
+
         }
         
         catch {

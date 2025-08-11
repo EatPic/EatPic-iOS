@@ -20,7 +20,7 @@ extension AuthTargetType: APITargetType {
         case .login:
             return "api/auth/login/social"
         case .emailLogin:
-            return "/auth/login/social"
+            return "/api/auth/login/email"
         }
     }
 

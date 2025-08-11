@@ -13,7 +13,7 @@ protocol APITargetType: TargetType {}
 extension APITargetType {
     var baseURL: URL {
         // TODO: 추후 실제 URL로 변경 필요
-        guard let url = URL(string: "https://api.eatpic.io") else {
+        guard let url = URL(string: Config.baseURL) else {
             fatalError("Invalid baseURL")
         }
         return url
