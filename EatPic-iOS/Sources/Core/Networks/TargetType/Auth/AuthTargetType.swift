@@ -10,35 +10,46 @@ import Moya
 
 /// 로그인 등의 인증 요청을 위한 API를 정의하는 TargetType입니다.
 enum AuthTargetType {
+    case emailLogin(request: EmailLoginRequest)
     case login(email: String, password: String)
 }
 
 extension AuthTargetType: APITargetType {
     var path: String {
-        return "/auth/login/social"
+        switch self {
+        case .login:
+            return "api/auth/login/social"
+        case .emailLogin:
+            return "/api/auth/login/email"
+        }
     }
 
     var method: Moya.Method {
-        return .post
+        switch self {
+        case .emailLogin, .login:
+            return .post
+        }
     }
 
     var task: Task {
         switch self {
         case let .login(email, password):
             let parameters = ["email": email, "password": password]
-            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+            return .requestParameters(
+                parameters: parameters,
+                encoding: JSONEncoding.default
+            )
+        case .emailLogin(let request):
+            return .requestJSONEncodable(request)
         }
     }
     
     var sampleData: Data {
-        switch self {
-        case .login:
-            return Data("""
+        return Data("""
             {
                 "user_id": 1,
                 "token": "jwt-token"
             }
             """.utf8)
-        }
     }
 }

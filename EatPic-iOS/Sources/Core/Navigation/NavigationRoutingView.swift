@@ -67,7 +67,7 @@ struct NavigationRoutingView: View {
         case .notification:
             NotificationView()
         case .emailLoginView:
-            EmailLoginView()
+            EmailLoginView(container: container)
         case .signUpEmailView:
             SignupEmailView()
         case .signupPasswordView:

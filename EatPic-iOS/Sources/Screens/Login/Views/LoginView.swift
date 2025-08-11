@@ -12,7 +12,14 @@ struct LoginView: View {
     // MARK: - Property
     
     @EnvironmentObject var container: DIContainer
-    @State var loginViewModel: LoginViewModel = .init()
+    @State var loginViewModel: LoginViewModel
+    
+    // MARK: - Init
+    init(container: DIContainer) {
+        self.loginViewModel = .init(container: container)
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         NavigationStack(path: $container.router.destinations) {
@@ -162,5 +169,5 @@ private struct LoginViewContent: View {
 }
 
 #Preview {
-    LoginView()
+    LoginView(container: DIContainer())
 }

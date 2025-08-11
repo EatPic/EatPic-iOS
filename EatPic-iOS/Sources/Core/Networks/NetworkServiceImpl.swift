@@ -36,7 +36,7 @@ class NetworkServiceImpl: @unchecked Sendable, NetworkService {
         additionalPlugins: [PluginType] = []
     ) -> MoyaProvider<T> {
         return MoyaProvider<T>(
-            session: session,
+//            session: session,
             plugins: [loggerPlugin] + additionalPlugins
         )
     }
