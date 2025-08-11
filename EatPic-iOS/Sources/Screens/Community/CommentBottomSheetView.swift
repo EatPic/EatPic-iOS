@@ -25,7 +25,7 @@ struct CommentBottomSheetView: View {
                                     commentText: comment.text,
                                     time: comment.time
                                 )
-                                .contextMenu{
+                                .contextMenu {
                                     if viewModel.isMyComment(comment) {
                                         Button(role: .destructive) {
                                             viewModel.deleteComment(comment)
@@ -125,13 +125,13 @@ struct CommentBottomSheetView: View {
                 // 전송 버튼
                 Button(action: {
                     viewModel.postComment()
-                }) {
+                }, label: {
                     if !viewModel.commentText.isEmpty {
                         Image("Community/send_green")
                     } else {
                         Image("Community/send_gray")
                     }
-                }
+                })
                 .disabled(viewModel.commentText.isEmpty) // 텍스트가 비어있으면 버튼 비활성화
             }
             .padding(.vertical, 6)

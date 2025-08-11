@@ -11,7 +11,6 @@ import SwiftUI
 // MARK: - Models
 
 struct CommunityUser: Identifiable, Hashable, Equatable {
-    let uuid = UUID()
     let id: String
     let nickname: String
     let imageName: String?
@@ -22,12 +21,27 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
     var isFollowed: Bool
 }
 
-struct PicCard: Identifiable {
+struct PicCard: Identifiable, Equatable {
     let id = UUID()
     let user: CommunityUser
     let time: String
     let image: Image
     let memo: String
+    
+    // MARK: - 스웨거 기반으로 추가된 속성들
+    let imageUrl: String?
+    let date: String
+    let meal: String
+    let recipe: String?
+    let recipeUrl: URL?
+    let latitude: Double?
+    let longitude: Double?
+    let locationText: String?
+    let hashtags: [String]?
+    let reactionCount: Int
+    let userReaction: String?
+    let commentCount: Int
+    let bookmarked: Bool
 }
 
 struct Comment: Identifiable {
@@ -57,19 +71,68 @@ var sampleUsers: [CommunityUser] = [
 
 var sampleCards: [PicCard] = [
     PicCard(user: sampleUsers[1], time: "오후 6:30",
-            image: Image("Community/testImage"), memo: "오늘은 샐러드를 먹었습니다~"),
+            image: Image("Community/testImage"), memo: "오늘은 샐러드를 먹었습니다~",
+            imageUrl: nil, date: "2025-07-01", meal: "LUNCH",
+            recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[2], time: "오후 5:20",
-            image: Image("Community/testImage1"), memo: "파스타 먹음"),
+            image: Image("Community/testImage1"), memo: "파스타 먹음",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[1], time: "오후 3:10",
-            image: Image("Community/testImage2"), memo: "아침엔 스무디"),
+            image: Image("Community/testImage2"), memo: "아침엔 스무디",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[3], time: "오후 2:00",
-            image: Image("Community/testImage3"), memo: "오랜만에 피자!"),
+            image: Image("Community/testImage3"), memo: "오랜만에 피자!",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[2], time: "오후 6:30",
-            image: Image("Community/testImage"), memo: "오늘은 샐러드 먹음"),
+            image: Image("Community/testImage"), memo: "오늘은 샐러드 먹음",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[2], time: "오후 3:10",
-            image: Image("Community/testImage2"), memo: "아침엔 스무디 먹음"),
+            image: Image("Community/testImage2"), memo: "아침엔 스무디 먹음",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true),
     PicCard(user: sampleUsers[2], time: "오후 2:00",
-            image: Image("Community/testImage3"), memo: "오랜만에 피자 먹음")
+            image: Image("Community/testImage3"), memo: "오랜만에 피자 먹음",
+            imageUrl: nil, date: "2025-07-01",
+            meal: "LUNCH", recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12, longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"], reactionCount: 123,
+            userReaction: "YUMMY", commentCount: 3, bookmarked: true)
 ]
 
 var sampleComments: [Comment] = [
