@@ -2,6 +2,8 @@ import SwiftUI
 
 @main
 struct EatPicIOSApp: App {
+    /// 앱 흐름 상태 뷰모델
+    @StateObject private var appFlowViewModel: AppFlowViewModel = .init()
     @StateObject private var container: DIContainer = .init()
     
     init() {
@@ -10,8 +12,15 @@ struct EatPicIOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LoginView(container: container)
-                .environmentObject(container)
+            switch appFlowViewModel.appState {
+            case .login:
+                LoginView(container: container, appFlowViewModel: appFlowViewModel)
+                
+            case .tab:
+                MainTabView()
+            }
         }
+        .environmentObject(appFlowViewModel)
+        .environmentObject(container)
     }
 }

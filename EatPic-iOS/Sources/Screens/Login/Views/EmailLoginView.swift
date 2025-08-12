@@ -16,12 +16,12 @@ struct EmailLoginView: View {
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
     
-    @EnvironmentObject var container: DIContainer
+    @EnvironmentObject private var container: DIContainer
     
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
+    /// DIContainer와 앱 흐름 ViewModel(AppFlowViewModel)을 주입받아 초기화
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
+        self.viewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
     }
-    
     
     // MARK: - Body
     
@@ -91,7 +91,7 @@ struct EmailLoginView: View {
                 height: 50,
                 cornerRadius: 10,
                 action: {
-                    // 추후 mainTab으로 연결 예정
+                    // MainTab으로 연결
                     Task {
                         await viewModel.emailLogin()
                     }
@@ -105,36 +105,35 @@ struct EmailLoginView: View {
             }
         }
     }
-}
     
-private var signupButton: some View {
-    HStack(alignment: .center, spacing: 8) {
-        Spacer()
-            
-        Text("아직 계정이 없으신가요?")
-            .font(.dsSubhead)
-            .foregroundStyle(Color.gray060)
-            
-        Button {
-            print("회원가입 이동")
-        } label: {
-            Text("회원가입 하기")
+    private var signupButton: some View {
+        HStack(alignment: .center, spacing: 8) {
+            Spacer()
+                
+            Text("아직 계정이 없으신가요?")
                 .font(.dsSubhead)
-                .foregroundStyle(Color.green060)
-        }
+                .foregroundStyle(Color.gray060)
             
-        Spacer()
+            Button(action: {
+                container.router.push(.signUpEmailView)
+            }, label: {
+                Text("회원가입 하기")
+                    .font(.dsSubhead)
+                    .foregroundStyle(Color.green060)
+            })
+            Spacer()
+        }
     }
 }
-
+    
 struct EmailLoginView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            EmailLoginView(container: .init())
+            EmailLoginView(container: .init(), appFlowViewModel: .init())
                 .previewDevice("iPhone SE (3rd generation)")
                 .previewDisplayName("iPhone SE 3rd")
 
-            EmailLoginView(container: .init())
+            EmailLoginView(container: .init(), appFlowViewModel: .init())
                 .previewDevice("iPhone 16 Pro Max")
                 .previewDisplayName("iPhone 16 Pro Max")
         }

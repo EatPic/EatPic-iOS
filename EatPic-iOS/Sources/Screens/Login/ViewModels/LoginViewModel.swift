@@ -18,6 +18,10 @@ class LoginViewModel {
     /// 로그인 API 프로파이더
     private let emailLoginProvider: MoyaProvider<AuthTargetType>
     private let keychain: UserSessionKeychainService // 추가
+    private let container: DIContainer
+    
+    /// 앱 흐름 상태를 관리하는 AppFlowViewModel
+    private var appFlowViewModel: AppFlowViewModel
     
     /// 사용자 입력 이메일
     var email: String = ""
@@ -25,20 +29,23 @@ class LoginViewModel {
     /// 사용자 입력 비밀번호
     var password: String = ""
     
-    /// 로그인 상태
-    var isLogin: Bool = false
+    /// 로그인 에러 메시지 처리
     var loginError: String?
     
     // MARK: - Init
     
-    init(container: DIContainer) {
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
+        self.container = container
         self.emailLoginProvider = container.apiProviderStore.auth()
-        self.keychain = container.userSessionKeychain // 추가
+        self.keychain = container.userSessionKeychain
+        self.appFlowViewModel = appFlowViewModel
     }
     
     // MARK: - Func
     
     /// 이메일로 로그인 API 요청 함수
+    
+    @MainActor
     func emailLogin() async {
         /// APIProviderStore에서 제작된 함수 호출
         do {
@@ -46,8 +53,6 @@ class LoginViewModel {
             let response = try await emailLoginProvider.requestAsync(
                 .emailLogin(request: request)
             )
-            // 상태 코드가 200~299면 → 그대로 Response를 반환, 그렇지 않으면 → MoyaError.statusCode throw
-            try response.filterSuccessfulStatusCodes()
             
             let dto = try JSONDecoder().decode(
                 TokenResponse.self,
@@ -55,7 +60,7 @@ class LoginViewModel {
             )
             
             // 키체인에 저장할 UserInfo 생성
-            let userInfo = UserInfo (
+            let userInfo = UserInfo(
                 accessToken: dto.result.accessToken,
                 refreshToken: dto.result.refreshToken
                 // userId, 닉네임 등 여기에 추가
@@ -70,15 +75,30 @@ class LoginViewModel {
             }
             
             print(dto)
-            print("keychain load: \(String(describing: keychain.loadSession(for: .userSession)))")
+            print(
+                "keychain load: \(String(describing: keychain.loadSession(for: .userSession)))"
+            )
             
             loginError = nil
-            isLogin = true
+            
+            // API 호출 완료시 뷰 전환
+            await changeView()
+
+            // 2) 다음 틱에서 로그인 스택 정리 (화면엔 안 보임)
+            DispatchQueue.main.async {
+                self.container.router.popToRoot()
+            }
+            
+            print("로그인 성공")
         } catch {
             loginError = "이메일과 비밀번호가 일치하지 않습니다."
-            isLogin = false
             print("로그인 실패:", error.localizedDescription)
         }
+    }
+    
+    /// 로그인 성공 시 앱의 메인 탭 화면으로 상태 전환
+    private func changeView() async {
+        await appFlowViewModel.changeAppState(.tab)
     }
     
     func logout() {
