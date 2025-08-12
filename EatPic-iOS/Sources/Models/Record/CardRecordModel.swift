@@ -11,9 +11,9 @@ public enum MealSlot: String, CaseIterable, Sendable, Equatable {
     case breakfast, lunch, dinner, snack
 }
 
-/// 개발 끼니의 상태
+/// 개별 끼니의 상태
 /// - uploaded: 업로드 완료(체크 고정, 선택 불가)
-/// - selected: 업로드 전 사용자가 현재 선택학 끼니(단일 선택)
+/// - selected: 업로드 전 사용자가 현재 선택한 끼니(단일 선택)
 struct MealCheck {
     let id: MealSlot
     var uploaded: Bool
@@ -57,7 +57,7 @@ struct MealRecordModel {
     /// 현재 선택된 끼니(업로드 전 단일 선택)
     var selectedSlot: MealSlot? { checks.first(where: { $0.selected })?.id }
     
-    // 업로든 안 된 끼니가 존재하는가
+    // 업로드 안 된 끼니가 존재하는가
     var hasSelectable: Bool { checks.contains { !$0.uploaded }}
     
     // MARK: - 조회
@@ -217,4 +217,157 @@ final class MealRecordViewModel: ObservableObject {
     func reset(for date: Date = .now) {
         model = .initial(for: date)
     }
+}
+
+/// 기록하기 플로우의 단계
+public enum RecordStep: Equatable {
+    case mealTime        // 끼니 선택/업로드 잠금 화면 (MealRecordView)
+    case tagSelect       // 태그 선택 (미구현: 후속 단계에서 연결)
+    case note            // 노트 입력 (미구현)
+    case uploading       // 업로드 진행 (미구현)
+    case done            // 완료
+}
+
+typealias MealRecordVMFactory = (_ date: Date) -> MealRecordViewModel
+
+@MainActor
+final class RecordFlowRootViewModel: ObservableObject {
+    private let mealRecordVMFactory: MealRecordVMFactory = { date in
+        MealRecordViewModel(model: .initial(for: date))
+    }
+    
+    @Published private(set) var step: RecordStep = .mealTime
+    @Published private(set) var mealRecordVM: MealRecordViewModel?
+    
+    /// 루트 플로우 시작
+    /// - Parameter date: 오늘 날짜(또는 특정 날짜) 기준으로 시작
+    public func start(date: Date = .now) {
+        self.mealRecordVM = mealRecordVMFactory(date)
+        self.step = .mealTime
+    }
+    
+    // MARK: Flow transitions
+    
+    /// 끼니 선택/업로드 화면에서 "다음"으로 진행할 때 호출
+    /// - 정책: 지금은 태그 선택 단계로 이동시키되, 후에 조건/가드 추가 가능
+    public func proceedFromMealSelection() {
+        self.step = .tagSelect
+    }
+    
+    /// 뒤로 가기
+    public func back() {
+        switch step {
+        case .mealTime:
+            // 플로우 시작 이전으로 나가거나, 외부 라우팅에 위임
+            break
+        case .tagSelect:
+            self.step = .mealTime
+        case .note:
+            self.step = .tagSelect
+        case .uploading:
+            self.step = .note
+        case .done:
+            // 완료에서 뒤로 가면 홈으로 이동해야 함
+            self.step = .mealTime
+        }
+    }
+    
+    // MARK: 확장 여지
+    public func goToNote() { self.step = .note }
+    public func goToUploading() { self.step = .uploading }
+    public func complete() { self.step = .done }
+}
+
+import SwiftUI
+
+struct RecordFlowEntryView: View {
+    @StateObject private var root: RecordFlowRootViewModel = .init()
+    
+    var body: some View {
+        NavigationStack {
+            Group {
+                switch root.step {
+                case .mealTime:
+                    if let viewModel = root.mealRecordVM {
+                        MealRecordScreen(
+                            viewModel: viewModel,
+                            next: { root.proceedFromMealSelection() }
+                        )
+                    }
+                case .tagSelect:
+                    Text("태그 선택 (추가 예정)")
+                        .toolbar { Button("뒤로") { root.back() } }
+                case .note:
+                    Text("노트 입력 (추가 예정)")
+                        .toolbar { Button("뒤로") { root.back() } }
+                case .uploading:
+                    ProgressView("업로드 중…")
+                        .toolbar { Button("뒤로") { root.back() } }
+                case .done:
+                    VStack(spacing: 12) {
+                        Text("업로드 완료 🎉")
+                        Button("다시 기록하기") {
+                            root.start(date: .now)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("기록하기")
+        }
+        .task {
+            if root.mealRecordVM == nil {
+                root.start(date: .now)
+            }
+        }
+    }
+}
+
+/// 기존 데모용 뷰를 실제 화면 컨테이너처럼 감싸는 얇은 래퍼
+private struct MealRecordScreen: View {
+    @ObservedObject var viewModel: MealRecordViewModel
+    let next: () -> Void
+
+    var body: some View {
+        // 기존 MealRecordDemoView의 본문과 거의 동일
+        VStack(spacing: 16) {
+            Text("업로드 완료 \(viewModel.uploadedCount)/\(MealSlot.allCases.count)")
+            ForEach(MealSlot.allCases, id: \.self) { slot in
+                HStack {
+                    Text(title(for: slot))
+                    Spacer()
+                    Button(viewModel.isUploaded(slot) ? "잠금" :
+                           (viewModel.isSelected(slot) ? "선택됨" : "선택")) {
+                        viewModel.select(slot)
+                    }
+                    .disabled(viewModel.isUploaded(slot))
+                    .buttonStyle(.bordered)
+                }.padding()
+            }
+            Button("업로드") {
+                if let slot = viewModel.selectedSlot { viewModel.markUploaded(slot: slot) }
+                next() // 다음 단계로
+            }
+            .disabled(viewModel.selectedSlot == nil)
+            .buttonStyle(.borderedProminent)
+            Spacer()
+        }
+        .padding()
+    }
+
+    private func title(for slot: MealSlot) -> String {
+        switch slot {
+        case .breakfast: 
+            return "아침"
+        case .lunch:
+            return "점심"
+        case .dinner:
+            return "저녁"
+        case .snack:
+            return "간식"
+        }
+    }
+}
+
+#Preview("Flow → MealRecordScreen") {
+    RecordFlowEntryView()
 }
