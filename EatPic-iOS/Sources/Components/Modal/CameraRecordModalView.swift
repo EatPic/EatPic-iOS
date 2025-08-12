@@ -154,8 +154,8 @@ struct CameraRecordModalView: View {
             maxSelectionCount: maxImgSelectionCount,
             matching: .images
         )
-        .onChange(of: mediaPickerProvider.selections) {
-            mediaPickerProvider.loadImages()
+        .onChange(of: mediaPickerProvider.selections) { _, new in
+            mediaPickerProvider.loadImages(from: new)
         }
     }
 }
