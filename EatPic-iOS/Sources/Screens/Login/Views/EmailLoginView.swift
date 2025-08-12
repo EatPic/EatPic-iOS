@@ -16,12 +16,12 @@ struct EmailLoginView: View {
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
     
-    @EnvironmentObject var container: DIContainer
+    @EnvironmentObject private var container: DIContainer
     
-    init(container: DIContainer) {
-        self.viewModel = .init(container: container)
+    /// DIContainer와 앱 흐름 ViewModel(AppFlowViewModel)을 주입받아 초기화
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
+        self.viewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
     }
-    
     
     // MARK: - Body
     
@@ -53,19 +53,19 @@ struct EmailLoginView: View {
         VStack(alignment: .leading, spacing: 32) {
             FormTextField(
                 fieldTitle: "이메일",
-                fieldType: SignUpFieldType.email,
+                fieldType: SignUpFieldType.loginId,
                 focusedField: $focus,
-                currentField: .email,
+                currentField: .loginId,
                 text: $viewModel.email,
-                isValid: viewModel.fieldsNotEmpty
+                isValid: true
             )
             
             /// 비밀번호 텍스트필드 및 타이틀
             FormTextField(
                 fieldTitle: "비밀번호",
-                fieldType: SignUpFieldType.password,
+                fieldType: SignUpFieldType.loginPassword,
                 focusedField: $focus,
-                currentField: .password,
+                currentField: .loginPassword,
                 text: $viewModel.password,
                 isValid: true
             )
@@ -82,50 +82,58 @@ struct EmailLoginView: View {
     }
     
     private var loginButton: some View {
-        PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
-            text: "로그인",
-            font: .dsTitle3,
-            textColor: .gray040,
-            height: 50,
-            cornerRadius: 10,
-            action: {
-                // 추후 mainTab으로 연결 예정
-                Task {
-                    await viewModel.emailLogin()
-                }
-            })
+        VStack(alignment: .leading, spacing: 8) {
+            PrimaryButton(
+                color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+                text: "로그인",
+                font: .dsTitle3,
+                textColor: viewModel.fieldsNotEmpty ? .white : .gray040,
+                height: 50,
+                cornerRadius: 10,
+                action: {
+                    // MainTab으로 연결
+                    Task {
+                        await viewModel.emailLogin()
+                    }
+                })
+            
+            /// 유효성 검사 실패시 에러 메시지
+            if let error = viewModel.loginError {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
+            }
+        }
     }
     
     private var signupButton: some View {
         HStack(alignment: .center, spacing: 8) {
             Spacer()
-            
+                
             Text("아직 계정이 없으신가요?")
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray060)
             
-            Button {
-                print("회원가입 이동")
-            } label: {
+            Button(action: {
+                container.router.push(.signUpEmailView)
+            }, label: {
                 Text("회원가입 하기")
                     .font(.dsSubhead)
                     .foregroundStyle(Color.green060)
-            }
-            
+            })
             Spacer()
         }
     }
 }
-
+    
 struct EmailLoginView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            EmailLoginView(container: .init())
+            EmailLoginView(container: .init(), appFlowViewModel: .init())
                 .previewDevice("iPhone SE (3rd generation)")
                 .previewDisplayName("iPhone SE 3rd")
 
-            EmailLoginView(container: .init())
+            EmailLoginView(container: .init(), appFlowViewModel: .init())
                 .previewDevice("iPhone 16 Pro Max")
                 .previewDisplayName("iPhone 16 Pro Max")
         }

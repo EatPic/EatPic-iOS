@@ -47,7 +47,9 @@ enum NavigationRoute: Equatable, Hashable {
 struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
+    @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
     @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
+
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -69,7 +71,7 @@ struct NavigationRoutingView: View {
         case .notification:
             NotificationView()
         case .emailLoginView:
-            EmailLoginView(container: container)
+            EmailLoginView(container: container, appFlowViewModel: appFlowViewModel)
         case .signUpEmailView:
             SignupEmailView()
         case .signupPasswordView:
