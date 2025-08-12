@@ -61,6 +61,19 @@ struct MainTabView: View {
                         previousTab = new
                     }
                 }
+                .onAppear {
+                    mediaPickerProvider.onDidAddImages = { [weak container] newly in
+                        container?.router.push(.mealTimeSelection(image: newly))
+                        
+                        showPickerDialog = false
+                        showPhotosPicker = false
+                    }
+                }
+                .onChange(of: mediaPickerProvider.selections) { _, new in
+                    mediaPickerProvider.removeAllImages()
+                    mediaPickerProvider.loadImages(from: new)
+                    // 갤러리에서 이전에 선택한 이미지를 모두 제거하기 위한 호출
+                }
         }
     }
     
