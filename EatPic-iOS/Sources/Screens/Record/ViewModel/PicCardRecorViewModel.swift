@@ -29,11 +29,9 @@ final class PicCardRecorViewModel: ObservableObject {
     
     func updateMealTime(_ mealTime: MealTime) {
         recordModel.mealTime = mealTime
-        objectWillChange.send()
     }
     
     func updateHashtags(_ hashtags: [String]) {
         recordModel.hashtags = hashtags
-        objectWillChange.send()
     }
 }
