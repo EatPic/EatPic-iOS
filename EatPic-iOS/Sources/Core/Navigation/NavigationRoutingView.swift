@@ -31,7 +31,7 @@ enum NavigationRoute: Equatable, Hashable {
     case myMemo
     case receiptDetail
     case exploreMain
-    case mealTimeSelection
+    case mealTimeSelection(image: [UIImage])
     case hashtagSelection(selectedMeal: MealTime)
     case picCardRecord(selectedMeal: MealTime, selectedHashtags: [String])
     case userProfile(user: CommunityUser)
@@ -108,9 +108,9 @@ struct NavigationRoutingView: View {
             ExploreMainView()
         case .mealTimeSelection:
             MealtimeSelectView()
-        case .hashtagSelection(let selectedMeal):
+        case .hashtagSelection:
             HashtagSelectView()
-        case .picCardRecord(let selectedMeal, let selectedHashtags):
+        case .picCardRecord:
             PicCardRecorView()
         case .userProfile(let user):
             OthersProfileView(user: user)

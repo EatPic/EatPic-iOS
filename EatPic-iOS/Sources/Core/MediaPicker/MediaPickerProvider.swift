@@ -28,6 +28,8 @@ final class MediaPickerProvider {
     /// `PhotosPicker`에서 선택된 항목 (임시 상태)
     var selections: [PhotosPickerItem] = []
     
+    var onDidAddImages: (([UIImage]) -> Void)?
+    
     private let worker = ImageWorker() // 백그라운드 actor
     /// 카메라 촬영 서비스 의존성
     private let mediaPickerService: MediaPickerService
@@ -39,26 +41,31 @@ final class MediaPickerProvider {
     
     /// `PhotosPicker`로 선택된 항목을 로드하고, UI에 반영합니다.
     ///
+    /// - Parameters:
+    ///     - items: 새롭게 선택된 이미지를 넘겨
+    ///
     /// - Flow:
     ///   1) 현재 `selections`를 스냅샷
     ///   2) `selections.removeAll()`로 **체크 상태 초기화** (다음 재진입 시 이전 체크 표시 방지)
     ///   3) 비동기로 `loadTransferable(type:)` 호출 (내부에서 다운샘플링)
     ///   4) 완료 후 `images`에 추가
-    func loadImages() {
-        let items = selections
-        selections.removeAll() // 재진입 시 체크 표시 초기화
-        
+    func loadImages(from items: [PhotosPickerItem]) {
         Task { // 메인에서 시작하지만 내부 await로 백그라운드 hop
             var buffer: [UIImage] = []
+            buffer.reserveCapacity(items.count)
             for item in items {
-                if let picked: PickedImage = try? await item.loadTransferable(
+                if let picked = try? await item.loadTransferable(
                     type: PickedImage.self) {
                     buffer.append(picked.uiImage)
                 }
             }
             // 불변 스냅샷으로 캡처
             let snapshot = buffer
-            images.append(contentsOf: snapshot) // 메인 액터에서 안전
+            await MainActor.run {
+                guard !buffer.isEmpty else { return }
+                images.append(contentsOf: snapshot) // 메인 액터에서 안전
+                onDidAddImages?(snapshot)
+            }
         }
     }
     
@@ -71,8 +78,11 @@ final class MediaPickerProvider {
             guard let self, let img else { return }
             
             Task {
-                let processed = await self.worker.normalizeForDisplay(img)
-                self.images.append(processed) // 메인 액터에서 처리됨
+                let processedImg = await self.worker.normalizeForDisplay(img)
+                await MainActor.run {
+                    self.images.append(processedImg) // 메인 액터에서 처리됨
+                    self.onDidAddImages?([processedImg])
+                }
             }
         }
     }
@@ -84,6 +94,11 @@ final class MediaPickerProvider {
         guard images.indices.contains(index) else { return }
         images.remove(at: index)
     }
+    
+    /// 선택한 이미지 전체를 삭제합니다.
+    func removeAllSelectionsImages() {
+        selections.removeAll()
+    }
 }
 
 // MARK: - Demo View (개발용 미리보기)
@@ -93,7 +108,7 @@ final class MediaPickerProvider {
 ///   - `PhotosPicker`로 갤러리에서 이미지 선택
 ///   - 카메라 촬영
 ///   - 선택/촬영 이미지의 수평 스크롤 프리뷰 및 개별 삭제
-private struct MediaPickerView: View {
+private struct MediaPickerTestView: View {
     @State private var provider = MediaPickerProvider(
         mediaPickerService: MediaPickerServiceImpl()
     )
@@ -105,11 +120,12 @@ private struct MediaPickerView: View {
                 selection: $provider.selections,
                 maxSelectionCount: 0,         // 0 = 무제한 선택
                 matching: .images
-            ) { Text("갤러리에서 선택") }
-            .onChange(of: provider.selections) {
-                provider.loadImages()
+            ) {
+                Text("갤러리에서 선택")
             }
-            
+            .onChange(of: provider.selections) { _, new in
+                provider.loadImages(from: new)
+            }
             // 카메라 촬영
             Button("카메라로 촬영") {
                 provider.presentCamera()
@@ -140,5 +156,5 @@ private struct MediaPickerView: View {
 }
 
 #Preview {
-    MediaPickerView()
+    MediaPickerTestView()
 }

@@ -17,7 +17,7 @@ struct EatPicIOSApp: App {
                 LoginView(container: container, appFlowViewModel: appFlowViewModel)
                 
             case .tab:
-                MainTabView()
+                MainTabView(container: container)
             }
         }
         .environmentObject(appFlowViewModel)
