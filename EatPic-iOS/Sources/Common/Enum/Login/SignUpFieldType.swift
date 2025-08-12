@@ -75,9 +75,7 @@ enum SignUpFieldType: CaseIterable, FormFieldType, Hashable {
     /// 보안 입력 여부 (비밀번호면 true)
     var isSecure: Bool {
         switch self {
-        case .password:
-            return true
-        case .confirmPassword:
+        case .password, .confirmPassword, .loginPassword:
             return true
         default:
             return false

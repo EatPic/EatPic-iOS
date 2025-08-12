@@ -65,7 +65,7 @@ struct EmailLoginView: View {
                 fieldTitle: "비밀번호",
                 fieldType: SignUpFieldType.loginPassword,
                 focusedField: $focus,
-                currentField: .loginId,
+                currentField: .loginPassword,
                 text: $viewModel.password,
                 isValid: true
             )
@@ -82,39 +82,48 @@ struct EmailLoginView: View {
     }
     
     private var loginButton: some View {
-        PrimaryButton(
-            color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
-            text: "로그인",
-            font: .dsTitle3,
-            textColor: .gray040,
-            height: 50,
-            cornerRadius: 10,
-            action: {
-                // 추후 mainTab으로 연결 예정
-                Task {
-                    await viewModel.emailLogin()
-                }
-            })
-    }
-    
-    private var signupButton: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Spacer()
+        VStack(alignment: .leading, spacing: 8) {
+            PrimaryButton(
+                color: viewModel.fieldsNotEmpty ? .green060 :.gray020,
+                text: "로그인",
+                font: .dsTitle3,
+                textColor: viewModel.fieldsNotEmpty ? .white : .gray040,
+                height: 50,
+                cornerRadius: 10,
+                action: {
+                    // 추후 mainTab으로 연결 예정
+                    Task {
+                        await viewModel.emailLogin()
+                    }
+                })
             
-            Text("아직 계정이 없으신가요?")
-                .font(.dsSubhead)
-                .foregroundStyle(Color.gray060)
-            
-            Button {
-                print("회원가입 이동")
-            } label: {
-                Text("회원가입 하기")
-                    .font(.dsSubhead)
-                    .foregroundStyle(Color.green060)
+            /// 유효성 검사 실패시 에러 메시지
+            if let error = viewModel.loginError {
+                Text(error)
+                    .font(.dsFootnote)
+                    .foregroundStyle(Color.pink070)
             }
-            
-            Spacer()
         }
+    }
+}
+    
+private var signupButton: some View {
+    HStack(alignment: .center, spacing: 8) {
+        Spacer()
+            
+        Text("아직 계정이 없으신가요?")
+            .font(.dsSubhead)
+            .foregroundStyle(Color.gray060)
+            
+        Button {
+            print("회원가입 이동")
+        } label: {
+            Text("회원가입 하기")
+                .font(.dsSubhead)
+                .foregroundStyle(Color.green060)
+        }
+            
+        Spacer()
     }
 }
 

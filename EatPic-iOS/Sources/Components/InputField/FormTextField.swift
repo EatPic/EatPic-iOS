@@ -109,17 +109,20 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                                     .foregroundStyle(Color.green060)
                                     .padding(.trailing, 14)
                             } else {
-                                Button(action: { text = "" }) {
+                                Button(action: { text = "" },
+                                       label: {
                                     Image(systemName: "xmark.circle")
                                         .foregroundStyle(Color.gray050)
-                                }
+                                })
                                 .padding(.trailing, 14)
                             }
                         } else {
-                            Button(action: { text = "" }) {
-                                Image(systemName: "xmark.circle")
-                                    .foregroundStyle(Color.gray050)
-                            }
+                            Button(
+                                action: { text = "" },
+                                label: {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(Color.gray050)
+                                })
                             .padding(.trailing, 14)
                         }
                     }
