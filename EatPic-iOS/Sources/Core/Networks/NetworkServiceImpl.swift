@@ -36,7 +36,16 @@ class NetworkServiceImpl: @unchecked Sendable, NetworkService {
         additionalPlugins: [PluginType] = []
     ) -> MoyaProvider<T> {
         return MoyaProvider<T>(
-//            session: session,
+            session: session,
+            plugins: [loggerPlugin] + additionalPlugins
+        )
+    }
+    
+    func createUnauthenticatedProvider<T: TargetType>(
+        for targetType: T.Type,
+        additionalPlugins: [PluginType]
+    ) -> MoyaProvider<T> {
+        return MoyaProvider<T>(
             plugins: [loggerPlugin] + additionalPlugins
         )
     }

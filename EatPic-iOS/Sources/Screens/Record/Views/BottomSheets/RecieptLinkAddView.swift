@@ -11,7 +11,6 @@ struct RecieptLinkAddView: View {
     @State private var linkInput: String = ""
     
     var body: some View {
-        TopBanner()
         
         Spacer().frame(height: 78)
 
@@ -37,27 +36,6 @@ struct RecieptLinkAddView: View {
             }
         }
         .padding(.horizontal, 19)
-    }
-}
-
-private struct TopBanner: View {
-    var body: some View {
-        VStack {
-            ZStack {
-                Text("레시피 링크 추가")
-                    .font(.dsTitle2)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // TODO: RecomPicCardView로 Navigation
-                    }, label: {
-                        Image("Record/btn_home_close")
-                    })
-                }
-            }
-            .padding(.horizontal, 19)
-        }
     }
 }
 

@@ -74,7 +74,6 @@ class LoginViewModel {
                 )
             }
             
-            print(dto)
             print(
                 "keychain load: \(String(describing: keychain.loadSession(for: .userSession)))"
             )

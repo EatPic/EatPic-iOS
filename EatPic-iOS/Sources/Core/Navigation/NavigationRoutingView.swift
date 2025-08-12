@@ -31,9 +31,9 @@ enum NavigationRoute: Equatable, Hashable {
     case myMemo
     case receiptDetail
     case exploreMain
-    case hashtagSelection(selectedMeal: MealType)
-    case picCardRecord(selectedMeal: MealType, selectedHashtags: [String])
     case mealTimeSelection
+    case hashtagSelection(selectedMeal: MealTime)
+    case picCardRecord(selectedMeal: MealTime, selectedHashtags: [String])
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
@@ -48,6 +48,8 @@ struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
+    @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
+
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -58,6 +60,7 @@ struct NavigationRoutingView: View {
         
         routingView
             .environmentObject(container)
+            .environmentObject(recordViewModel)  // 모든 하위 화면에 전달
     }
     
     @ViewBuilder
@@ -103,12 +106,12 @@ struct NavigationRoutingView: View {
             ReceiptDetailView()
         case .exploreMain:
             ExploreMainView()
-        case .hashtagSelection(let selectedMeal):
-            HashtagSelectionView(selectedMeal: selectedMeal)
-        case .picCardRecord(let selectedMeal, let selectedHashtags):
-            PicCardRecordView(selectedMeal: selectedMeal, selectedHashtags: selectedHashtags)
         case .mealTimeSelection:
-            MealTimeSelectView()
+            MealtimeSelectView()
+        case .hashtagSelection(let selectedMeal):
+            HashtagSelectView()
+        case .picCardRecord(let selectedMeal, let selectedHashtags):
+            PicCardRecorView()
         case .userProfile(let user):
             OthersProfileView(user: user)
         case .followList(let selected):

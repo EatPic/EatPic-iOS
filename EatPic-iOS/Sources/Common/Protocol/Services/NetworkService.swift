@@ -32,6 +32,17 @@ protocol NetworkService {
         additionalPlugins: [PluginType]
     ) -> MoyaProvider<T>
     
+    /// 최초 로그인 및 회원가입 시에 사용합니다.
+    ///
+    /// - Parameters:
+    ///     - targetType: 사용할 TargetType의 타입입니다.
+    ///     - additionalPlugins: 로그, 인증 등 추가적으로 사용할 Moya 플러그인 배열입니다.
+    /// - Returns: 설정된 MoyaProvider 인스턴스를 반환합니다.
+    func createUnauthenticatedProvider<T: TargetType>(
+        for targetType: T.Type,
+        additionalPlugins: [PluginType]
+    ) -> MoyaProvider<T>
+    
     /// 테스트용으로 즉시 응답을 반환하는 Stub MoyaProvider를 생성합니다.
     ///
     /// 이 함수는 실제 네트워크 호출 없이, 지정된 TargetType에 대한 테스트를 수행할 때 사용됩니다.
@@ -51,5 +62,9 @@ protocol NetworkService {
 extension NetworkService {
     func createProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
         return createProvider(for: targetType, additionalPlugins: [])
+    }
+    
+    func createUnauthenticatedProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
+        return createUnauthenticatedProvider(for: targetType, additionalPlugins: [])
     }
 }
