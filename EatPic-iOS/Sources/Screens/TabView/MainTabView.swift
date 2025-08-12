@@ -10,7 +10,7 @@ import SwiftUI
 struct MainTabView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @Bindable private var mediaPickerProvider: MediaPickerProvider
+    @State private var mediaPickerProvider: MediaPickerProvider
     
     @State private var selectedTab: TabCase = .home
     @State private var previousTab: TabCase = .home
@@ -61,7 +61,7 @@ struct MainTabView: View {
                         previousTab = new
                     }
                 }
-                .onAppear {
+                .task {
                     mediaPickerProvider.onDidAddImages = { [weak container] newly in
                         container?.router.push(.mealTimeSelection(image: newly))
                         
@@ -70,9 +70,9 @@ struct MainTabView: View {
                     }
                 }
                 .onChange(of: mediaPickerProvider.selections) { _, new in
-                    mediaPickerProvider.removeAllImages()
                     mediaPickerProvider.loadImages(from: new)
                     // 갤러리에서 이전에 선택한 이미지를 모두 제거하기 위한 호출
+                    mediaPickerProvider.removeAllSelectionsImages()
                 }
         }
     }

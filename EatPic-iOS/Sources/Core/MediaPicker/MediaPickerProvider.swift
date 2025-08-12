@@ -95,9 +95,9 @@ final class MediaPickerProvider {
         images.remove(at: index)
     }
     
-    /// 이미지 전체를 삭제합니다.
-    func removeAllImages() {
-        images.removeAll()
+    /// 선택한 이미지 전체를 삭제합니다.
+    func removeAllSelectionsImages() {
+        selections.removeAll()
     }
 }
 
