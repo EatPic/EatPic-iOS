@@ -118,11 +118,7 @@ struct HashtagSelectView: View {
                 print("🏷️ [HashtagSelectView] 저장 후 해시태그: \(viewmodel.recordModel.hashtags)")
                 print("🏷️ [HashtagSelectView] ViewModel 해시태그 확인: \(viewmodel.recordModel.hashtags)")
                 
-                // PicCardRecor로 Navigation
-                container.router.push(.picCardRecord(
-                    selectedMeal: viewmodel.recordModel.mealTime ?? .breakfast,
-                    selectedHashtags: Array(selectedHashtags)
-                ))
+                // 다음 화면으로 이동
             }
         }
         .padding(.horizontal, 16)

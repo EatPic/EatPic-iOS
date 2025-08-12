@@ -60,7 +60,7 @@ struct MealtimeSelectView: View {
                     print("선택된 식사 시간: \(meal)")
                     viewmodel.updateMealTime(meal)
 //                    print("ViewModel에 저장된 mealTime: \(viewmodel.recordModel.mealTime?.rawValue ?? "nil")")
-                    container.router.push(.hashtagSelection(selectedMeal: meal))
+//                    container.router.push(.hashtagSelection(selectedMeal: meal))
                 }
             }
             // 선택값 없으면 버튼 비활성화
@@ -91,7 +91,7 @@ struct MealtimeSelectView: View {
 }
 
 // MARK: - 식사 시간 버튼 (아침 ~간식)
-struct MealButton: View {
+private struct MealButton: View {
     let mealType: MealTime // 아침, 점심, 저녁, 간식
     let isSelected: Bool // 현재 선택 상태
     let action: () -> Void // 클릭 시 실행할 동작
