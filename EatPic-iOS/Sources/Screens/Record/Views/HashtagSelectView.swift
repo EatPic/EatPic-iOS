@@ -2,7 +2,6 @@ import SwiftUI
 
 struct HashtagSelectView: View {
     @EnvironmentObject private var container: DIContainer
-    @EnvironmentObject private var viewmodel: PicCardRecorViewModel
     
     @State private var availableHashtags: [String] = [
         "야식", "브런치", "혼밥", "집밥",
@@ -111,14 +110,7 @@ struct HashtagSelectView: View {
                 height: 48,
                 cornerRadius: 10
             ) {
-                // 여기서 뷰모델에 저장
-                // (확인 버튼 누를 때 ViewModel의 recordModel.hashtags에 최종 반영)
-                print("🏷️ [HashtagSelectView] 저장 전 해시태그: \(viewmodel.recordModel.hashtags)")
-                viewmodel.updateHashtags(Array(selectedHashtags))
-                print("🏷️ [HashtagSelectView] 저장 후 해시태그: \(viewmodel.recordModel.hashtags)")
-                print("🏷️ [HashtagSelectView] ViewModel 해시태그 확인: \(viewmodel.recordModel.hashtags)")
-                
-                // 다음 화면으로 이동
+                // 내용 저장 및 다음 화면으로 이동
             }
         }
         .padding(.horizontal, 16)

@@ -32,7 +32,7 @@ enum NavigationRoute: Equatable, Hashable {
     case receiptDetail
     case exploreMain
     case mealTimeSelection(image: [UIImage])
-    case hashtagSelection(selectedMeal: MealSlot)
+    case hashtagSelection
     case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
@@ -47,7 +47,6 @@ enum NavigationRoute: Equatable, Hashable {
 struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -55,10 +54,8 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-        
         routingView
             .environmentObject(container)
-            .environmentObject(recordViewModel)  // 모든 하위 화면에 전달
     }
     
     @ViewBuilder
@@ -105,11 +102,25 @@ struct NavigationRoutingView: View {
         case .exploreMain:
             ExploreMainView()
         case .mealTimeSelection(let images):
-            MealRecorView(date: Date(), images: images)
+            let recordFlowViewModel = container.getRecordFlowVM()
+            MealRecorView()
+                .task {
+                    recordFlowViewModel.bootstrapIfNeeded(createdAt: Date(), images: images)
+                }
+                .environmentObject(recordFlowViewModel)
         case .hashtagSelection:
-            HashtagSelectView()
+            if let recordFlowViewModel = container.recordFlowVM {
+                HashtagSelectView().environmentObject(recordFlowViewModel)
+            } else {
+                HashtagSelectView() // fallback: 로그/어설트 추가 필요
+            }
+            
         case .picCardRecord:
-            PicCardRecorView()
+            if let recordFlowViewModel = container.recordFlowVM {
+                PicCardRecorView().environmentObject(recordFlowViewModel)
+            } else {
+                PicCardRecorView()
+            }
         case .userProfile(let user):
             OthersProfileView(user: user)
         case .followList(let selected):
