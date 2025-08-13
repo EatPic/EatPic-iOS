@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Moya
 
 class CommunityMainViewModel: ObservableObject {
     
@@ -20,6 +21,26 @@ class CommunityMainViewModel: ObservableObject {
     private var cardToDelete: PicCard?
     
     let toastVM = ToastViewModel()
+    private let cardProvider: MoyaProvider<CardTargetType>
+        
+    init(container: DIContainer) {
+        // APIProviderStore에서 제작한 함수 호출
+        self.cardProvider = container.apiProviderStore.card()
+    }
+    
+    func fetchFeeds() async  {
+        do {
+            let response = try await cardProvider.requestAsync(
+                .fetchFeeds(cursor: <#T##Int#>, size: <#T##Int#>))
+            let dto = try JSONDecoder().decode(
+                UserInfoResponse.self, from: response.data)
+            
+//            print(user)
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
     
     // MARK: - Computed Properties
     // 사용자 선택 처리
@@ -116,15 +137,15 @@ class CommunityMainViewModel: ObservableObject {
     private func handleReactionAction(
         cardId: UUID, selected: ReactionType?,
         counts: [ReactionType: Int]) {
-        // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
-        let totalCount = counts.values.reduce(0, +)
-        updateCardReactionInfo(
-            cardId: cardId, reactionCount: totalCount,
-            userReaction: selected?.rawValue)
-        
-        print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
-        print("리액션 카운트: \(counts)")
-    }
+            // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
+            let totalCount = counts.values.reduce(0, +)
+            updateCardReactionInfo(
+                cardId: cardId, reactionCount: totalCount,
+                userReaction: selected?.rawValue)
+            
+            print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
+            print("리액션 카운트: \(counts)")
+        }
     
     // 특정 카드의 북마크 상태 업데이트
     func updateCardBookmarkStatus(cardId: UUID, isBookmarked: Bool) {

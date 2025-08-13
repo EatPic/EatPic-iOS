@@ -12,6 +12,10 @@ struct CommunityMainView: View {
     @EnvironmentObject private var container: DIContainer
     @StateObject private var viewModel = CommunityMainViewModel()
     
+    init(container: DIContainer) {
+            self.viewModel = .init(container: container)
+        }
+    
     var body: some View {
         ZStack {
             ScrollView {
