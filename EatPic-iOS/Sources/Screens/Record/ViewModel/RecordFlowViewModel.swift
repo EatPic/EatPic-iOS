@@ -12,7 +12,7 @@ import UIKit
 struct RecordFlowState {
     var images: [UIImage]
     var mealSlot: MealSlot?
-    var hasTags: [String]
+    var hasTags: [HashtagKind]
     var myMemo: String
     var myRecipe: String
     var recipeLink: String?
@@ -98,16 +98,8 @@ final class RecordFlowViewModel: ObservableObject {
         state.mealSlot = slot
     }
 
-    public func setTags(_ tags: [String]) {
+    public func setTags(_ tags: [HashtagKind]) {
         state.hasTags = tags
-    }
-
-    public func toggleTag(_ tag: String) {
-        if let idx = state.hasTags.firstIndex(of: tag) {
-            state.hasTags.remove(at: idx)
-        } else {
-            state.hasTags.append(tag)
-        }
     }
 
     public func setMemo(_ memo: String) {

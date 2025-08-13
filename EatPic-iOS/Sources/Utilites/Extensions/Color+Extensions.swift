@@ -31,4 +31,7 @@ extension Color {
     static let pink050 = Color("pink050")
     static let pink060 = Color("pink060")
     static let pink070 = Color("pink070")
+    
+    // MARK: - White Colors
+    static let white000 = Color("white000")
 }
