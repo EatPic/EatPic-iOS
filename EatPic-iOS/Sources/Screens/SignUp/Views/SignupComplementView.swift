@@ -64,7 +64,14 @@ struct SignupComplementView: View {
             height: 50,
             cornerRadius: 10,
             action: {
-                container.router.popToRoot()
+                Task {
+                    do {
+                        try await viewModel.fetchAuth() // 성공 시에만 다음 줄 호출
+                        await MainActor.run { container.router.popToRoot() }
+                    } catch {
+                        print("회원가입 실패")
+                    }
+                }
             })
     }
 }
