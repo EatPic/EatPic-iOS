@@ -15,8 +15,8 @@ struct LoginView: View {
     @State var loginViewModel: LoginViewModel
     
     // MARK: - Init
-    init(container: DIContainer) {
-        self.loginViewModel = .init(container: container)
+    init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
+        self.loginViewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
     }
     
     // MARK: - Body
@@ -169,5 +169,5 @@ private struct LoginViewContent: View {
 }
 
 #Preview {
-    LoginView(container: DIContainer())
+    LoginView(container: .init(), appFlowViewModel: .init())
 }
