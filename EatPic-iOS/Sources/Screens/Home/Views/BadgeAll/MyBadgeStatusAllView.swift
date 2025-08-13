@@ -10,8 +10,8 @@ import SwiftUI
 
 struct MyBadgeStatusAllView: View {
     
-    @StateObject private var viewModel = MyBadgeStatusViewModel()
-    @State private var selectedBadge: BadgeItem?
+    @State private var viewModel = MyBadgeStatusViewModel()
+    @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @State private var showingBadgeModal = false
     
     var body: some View {
