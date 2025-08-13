@@ -14,9 +14,8 @@ struct SignupRequest: Codable {
     let passwordConfirm: String
     let nameId: String
     let nickname: String
-    let termsAgreed: String
-    let privacyPolicyAgreed: String
-    let marketingAgreed: String
-    let notificationAgreed: String
-    let passwordMatching: String
+    let termsAgreed: Bool
+    let privacyPolicyAgreed: Bool
+    let marketingAgreed: Bool
+    let notificationAgreed: Bool
 }

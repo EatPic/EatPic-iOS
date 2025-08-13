@@ -44,7 +44,6 @@ class LoginViewModel {
     // MARK: - Func
     
     /// 이메일로 로그인 API 요청 함수
-    
     @MainActor
     func emailLogin() async {
         /// APIProviderStore에서 제작된 함수 호출

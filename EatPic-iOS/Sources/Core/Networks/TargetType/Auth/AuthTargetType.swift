@@ -58,4 +58,3 @@ extension AuthTargetType: APITargetType {
                 """.utf8)
     }
 }
-

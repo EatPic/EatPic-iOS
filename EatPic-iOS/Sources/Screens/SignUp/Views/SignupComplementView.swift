@@ -11,6 +11,7 @@ struct SignupComplementView: View {
     // MARK: - Property
 
     @EnvironmentObject private var container: DIContainer
+    @State var viewModel: SignupFlowViewModel = .init()
 
     // MARK: - Body
     
