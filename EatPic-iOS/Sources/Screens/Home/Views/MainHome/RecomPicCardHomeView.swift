@@ -10,7 +10,7 @@ import SwiftUI
 struct RecomPicCardHomeView: View {
     @EnvironmentObject private var container: DIContainer
     
-    @StateObject private var viewModel = RecomPicCardViewModel()
+    @State private var viewModel = RecomPicCardViewModel()
     
     let rows = [GridItem(.fixed(103))]
     
