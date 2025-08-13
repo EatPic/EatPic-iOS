@@ -10,7 +10,7 @@ import SwiftUI
 struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @State private var viewModel = CommunityMainViewModel()
+    @StateObject private var viewModel = CommunityMainViewModel()
     
     var body: some View {
         ZStack {
@@ -33,10 +33,16 @@ struct CommunityMainView: View {
                 .presentationDetents([.large, .fraction(0.7)])
                 .presentationDragIndicator(.hidden)
             }
-            .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
+            .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {                
                 CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
                     .presentationDetents([.large, .fraction(0.7)])
                     .presentationDragIndicator(.hidden)
+                    .onAppear {
+                                print("CommentBottomSheetView appeared")
+                            }
+                            .onDisappear {
+                                print("CommentBottomSheetView disappeared")
+                            }
             }
             
             if viewModel.showDeleteModal {
@@ -60,7 +66,7 @@ struct CommunityMainView: View {
     private func userListView() -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 16) {
-                ForEach(viewModel.filteredUsers) { user in
+                ForEach(sampleUsers) { user in
                     VStack(spacing: 16) {
                         ProfileImageView(
                             image: user.profileImage,
@@ -83,36 +89,26 @@ struct CommunityMainView: View {
         .scrollIndicators(.hidden)
     }
     
-    // 카드 리스트 뷰
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
             ForEach(viewModel.filteredCards) { card in
-                // FIXME: - 각 user 당 카드 1개만 프로필 이동 및 메뉴 선택 되는 이슈 (원주연, 25.07.31)
                 PicCardView(
-                    profileImage: card.user.profileImage ?? Image(systemName: "person.fill"),
-                    profileID: card.user.id,
-                    time: card.time,
+                    card: card, // card 객체를 통째로 전달
                     menuContent: {
                         if viewModel.isMyCard(card) {
-                            // 내가 작성한 카드일 때
-                            Button(action: {
-                                viewModel.saveCardToPhotos(card)
-                            }, label: {
+                            Button(action: { viewModel.saveCardToPhotos(card) }, label: {
                                 Label("사진 앱에 저장", systemImage: "arrow.down.to.line")
                             })
-                            Button(action: {
-                                viewModel.editCard(card)
-                            }, label: {
+                            Button(action: { viewModel.editCard(card) },
+                                   label: {
                                 Label("수정하기", systemImage: "square.and.pencil")
                             })
-                            Button(role: .destructive,
-                                   action: {
+                            Button(role: .destructive, action: {
                                 viewModel.showDeleteConfirmation(for: card)
                             }, label: {
                                 Label("삭제하기", systemImage: "trash")
                             })
                         } else {
-                            // 다른 사람이 작성한 카드일 때
                             Button(role: .destructive, action: {
                                 viewModel.isShowingReportBottomSheet = true
                                 print("신고하기")
@@ -121,13 +117,24 @@ struct CommunityMainView: View {
                             })
                         }
                     },
-                    postImage: card.image,
-                    myMemo: card.memo,
                     onProfileTap: {
                         container.router.push(.userProfile(user: card.user))
                     },
+                    onLocationTap: { latitude, longitude, locationText in
+                        // 위치 정보를 확인하고 router로 뷰 이동
+                        container.router.push(
+                            .storeLocation(
+                                latitude: latitude,
+                                longitude: longitude,
+                                title: locationText
+                            )
+                        )
+                    },
                     toastVM: viewModel.toastVM,
-                    onItemAction: viewModel.handleCardAction
+                    onItemAction: { cardId, action in
+                        // 카드 ID와 액션을 함께 전달
+                        viewModel.handleCardAction(cardId: cardId, action: action)
+                    }
                 )
             }
         }
@@ -136,47 +143,16 @@ struct CommunityMainView: View {
     private func lastContentView() -> some View {
         VStack {
             Spacer().frame(height: 8)
-            
             Text("👏🏻")
                 .font(.dsLargeTitle)
-            
             Spacer().frame(height: 19)
-            
             Text("7일 간의 Pic카드를 모두 다 보셨군요!")
                 .font(.dsBold15)
-            
             Spacer().frame(height: 8)
-            
             Text("내일도 잇픽에서 잇친들의 Pic카드를 확인해보세요.")
                 .font(.dsFootnote)
-            
             Spacer()
         }
         .frame(height: 157)
     }
-    
-    // 신고 버튼 컴포넌트
-    private func reportButton(title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 0) {
-                Divider().foregroundStyle(Color.gray030)
-                HStack {
-                    Text(title)
-                        .font(.dsBody)
-                        .foregroundStyle(.black)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(Color.gray050)
-                }
-                .padding(.top, 20)
-                .padding(.bottom, 16)
-                .padding(.leading, 28)
-                .padding(.trailing, 16)
-            }
-        }
-    }
-}
-
-#Preview {
-    CommunityMainView()
 }

@@ -11,7 +11,6 @@ import SwiftUI
 // MARK: - Models
 
 struct CommunityUser: Identifiable, Hashable, Equatable {
-    let uuid = UUID()
     let id: String
     let nickname: String
     let imageName: String?
@@ -22,12 +21,89 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
     var isFollowed: Bool
 }
 
-struct PicCard: Identifiable {
+struct PicCard: Identifiable, Equatable {
     let id = UUID()
     let user: CommunityUser
     let time: String
     let image: Image
     let memo: String
+    
+    // MARK: - 스웨거 기반으로 추가된 속성들
+    let imageUrl: String?
+    let date: String
+    let meal: String
+    let recipe: String?
+    let recipeUrl: URL?
+    let latitude: Double?
+    let longitude: Double?
+    let locationText: String?
+    let hashtags: [String]?
+    
+    // MARK: - 동적으로 변경 가능한 상태 속성들
+    var reactionCount: Int
+    var userReaction: String?
+    var commentCount: Int
+    var bookmarked: Bool
+    
+    // 초기화 메서드
+    init(
+        user: CommunityUser,
+        time: String,
+        image: Image,
+        memo: String,
+        imageUrl: String? = nil,
+        date: String,
+        meal: String,
+        recipe: String? = nil,
+        recipeUrl: URL? = nil,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        locationText: String? = nil,
+        hashtags: [String]? = nil,
+        reactionCount: Int = 0,
+        userReaction: String? = nil,
+        commentCount: Int = 0,
+        bookmarked: Bool = false
+    ) {
+        self.user = user
+        self.time = time
+        self.image = image
+        self.memo = memo
+        self.imageUrl = imageUrl
+        self.date = date
+        self.meal = meal
+        self.recipe = recipe
+        self.recipeUrl = recipeUrl
+        self.latitude = latitude
+        self.longitude = longitude
+        self.locationText = locationText
+        self.hashtags = hashtags
+        self.reactionCount = reactionCount
+        self.userReaction = userReaction
+        self.commentCount = commentCount
+        self.bookmarked = bookmarked
+    }
+    
+    // 북마크 상태 토글
+        mutating func toggleBookmark() {
+            bookmarked.toggle()
+        }
+        
+        // 리액션 업데이트
+        mutating func updateReaction(newReaction: String?, newCount: Int) {
+            userReaction = newReaction
+            reactionCount = newCount
+        }
+        
+        // 댓글 수 업데이트
+        mutating func updateCommentCount(_ newCount: Int) {
+            commentCount = newCount
+        }
+        
+        // Equatable을 위한 비교 메서드
+        static func == (lhs: PicCard, rhs: PicCard) -> Bool {
+            return lhs.id == rhs.id
+        }
 }
 
 struct Comment: Identifiable {
@@ -56,20 +132,127 @@ var sampleUsers: [CommunityUser] = [
 ]
 
 var sampleCards: [PicCard] = [
-    PicCard(user: sampleUsers[1], time: "오후 6:30",
-            image: Image("Community/testImage"), memo: "오늘은 샐러드를 먹었습니다~"),
-    PicCard(user: sampleUsers[2], time: "오후 5:20",
-            image: Image("Community/testImage1"), memo: "파스타 먹음"),
-    PicCard(user: sampleUsers[1], time: "오후 3:10",
-            image: Image("Community/testImage2"), memo: "아침엔 스무디"),
-    PicCard(user: sampleUsers[3], time: "오후 2:00",
-            image: Image("Community/testImage3"), memo: "오랜만에 피자!"),
-    PicCard(user: sampleUsers[2], time: "오후 6:30",
-            image: Image("Community/testImage"), memo: "오늘은 샐러드 먹음"),
-    PicCard(user: sampleUsers[2], time: "오후 3:10",
-            image: Image("Community/testImage2"), memo: "아침엔 스무디 먹음"),
-    PicCard(user: sampleUsers[2], time: "오후 2:00",
-            image: Image("Community/testImage3"), memo: "오랜만에 피자 먹음")
+    PicCard(
+        user: sampleUsers[1],
+        time: "오후 6:30",
+            image: Image("Community/testImage"),
+        memo: "오늘은 샐러드를 먹었습니다~",
+            imageUrl: nil,
+        date: "2025-08-11",
+        meal: "LUNCH",
+            recipe: "UMC FS데이에 역삼까지 왔는데 샐러드 먹는 내 인생..",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.503456,
+        longitude: 127.036524,
+            locationText: "샐러드박스 역삼본점",
+            hashtags: ["#점심", "#샐러드", "다이어트"],
+        reactionCount: 12,
+            userReaction: "YUMMY",
+        commentCount: 7,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[2],
+            time: "오후 7:20",
+            image: Image("Community/testImage1"),
+        memo: "파스타 먹음",
+            imageUrl: nil,
+        date: "2025-08-10",
+            meal: "DINNER",
+        recipe: "이 근처에서 가장 구글 평점 높았던 곳. 무려 4.8점",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.509311,
+        longitude: 127.025866,
+            locationText: "비스트로논현",
+            hashtags: ["#알리오올리오", "#파스타"],
+        reactionCount: 23,
+            userReaction: "YUMMY",
+        commentCount: 3,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[1],
+            time: "오후 1:50",
+            image: Image("Community/testImage2"),
+        memo: "아침엔 스무디",
+            imageUrl: nil,
+        date: "2025-08-11",
+            meal: "LUNCH",
+        recipe: "예진이가 60프로 할인쿠폰을 적용해줬다",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.496321,
+        longitude: 127.038893,
+            locationText: "스타벅스 구역삼사거리점",
+            hashtags: ["#아메리카노","#커피", "#스타벅스"],
+        reactionCount: 3,
+            userReaction: "YUMMY",
+        commentCount: 3,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[3],
+            time: "오후 2:00",
+            image: Image("Community/testImage3"),
+        memo: "오랜만에 피자!",
+            imageUrl: nil,
+        date: "2025-07-01",
+            meal: "LUNCH",
+            latitude: 37.12,
+        longitude: 127.98,
+            locationText: "피자헛",
+            hashtags: ["#아침", "#피자"],
+        reactionCount: 13,
+            userReaction: "YUMMY",
+        commentCount: 5,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[2],
+        time: "오후 6:30",
+            image: Image("Community/testImage"),
+        memo: "오늘은 샐러드 먹음",
+            imageUrl: nil,
+        date: "2025-07-01",
+            meal: "LUNCH",
+        recipe: "샐러드 만드는 법",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            hashtags: ["#아침", "#다섯글자"],
+        reactionCount: 9,
+            userReaction: "YUMMY",
+        commentCount: 3,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[2],
+        time: "오후 3:10",
+            image: Image("Community/testImage2"),
+        memo: "아침엔 스무디 먹음",
+            imageUrl: nil,
+        date: "2025-07-01",
+            meal: "LUNCH",
+        reactionCount: 1,
+            userReaction: "YUMMY",
+        commentCount: 4,
+        bookmarked: true
+    ),
+    PicCard(
+        user: sampleUsers[2],
+        time: "오후 2:00",
+            image: Image("Community/testImage3"),
+        memo: "오랜만에 피자 먹음",
+            imageUrl: nil,
+        date: "2025-07-01",
+            meal: "LUNCH",
+        recipe: "레시피 설명...",
+            recipeUrl: URL(string: "https://recipe.example.com/salad-abc123"),
+            latitude: 37.12,
+        longitude: 127.98,
+            locationText: "캐나다라마바사아자차카파타하가나다라",
+            hashtags: ["#아침", "#다섯글자"],
+        reactionCount: 0,
+            userReaction: "YUMMY",
+        commentCount: 1,
+        bookmarked: true)
 ]
 
 var sampleComments: [Comment] = [

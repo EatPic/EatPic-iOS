@@ -41,6 +41,15 @@ class NetworkServiceImpl: @unchecked Sendable, NetworkService {
         )
     }
     
+    func createUnauthenticatedProvider<T: TargetType>(
+        for targetType: T.Type,
+        additionalPlugins: [PluginType]
+    ) -> MoyaProvider<T> {
+        return MoyaProvider<T>(
+            plugins: [loggerPlugin] + additionalPlugins
+        )
+    }
+    
     public func testProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
         return MoyaProvider<T>(
             stubClosure: MoyaProvider.immediatelyStub,

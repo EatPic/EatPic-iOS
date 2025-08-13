@@ -10,6 +10,7 @@ import Moya
 
 /// 로그인 등의 인증 요청을 위한 API를 정의하는 TargetType입니다.
 enum AuthTargetType {
+    case emailLogin(request: EmailLoginRequest)
     case login(email: String, password: String)
     case signup(request: SignupRequest)
 }
@@ -18,16 +19,17 @@ extension AuthTargetType: APITargetType {
     var path: String {
         switch self {
         case .login:
-            return "/auth/login/social"
+            return "api/auth/login/social"
         case .signup:
             return "/api/auth/signup"
+        case .emailLogin:
+            return "/api/auth/login/email"
         }
-
     }
 
     var method: Moya.Method {
         switch self {
-        case .login, .signup:
+        case .emailLogin, .login, .signup:
             return .post
         }
     }
@@ -42,16 +44,18 @@ extension AuthTargetType: APITargetType {
             )
         case .signup(let request):
             return .requestJSONEncodable(request)
+        case .emailLogin(let request):
+            return .requestJSONEncodable(request)
         }
     }
     
     var sampleData: Data {
         return Data("""
-        {
-            "user_id": 1,
-            "token": "jwt-token"
-        }
-        """.utf8)
+                {
+                    "user_id": 1,
+                    "token": "jwt-token"
+                }
+                """.utf8)
     }
 }
 

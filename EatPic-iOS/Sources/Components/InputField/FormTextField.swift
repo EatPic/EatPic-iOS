@@ -101,16 +101,28 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
                     Spacer()
                     
                     // 텍스트가 있으면 x 버튼, 유효성 통과 시 check 아이콘
+                    // 로그인 텍스트필드의 경우에는 x 마크만 표시되도록 구현
                     if !text.isEmpty {
-                        if isValid {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(Color.green060)
+                        if fieldType.showsValidationIcon {
+                            if isValid {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(Color.green060)
+                                    .padding(.trailing, 14)
+                            } else {
+                                Button(action: { text = "" },
+                                       label: {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(Color.gray050)
+                                })
                                 .padding(.trailing, 14)
+                            }
                         } else {
-                            Button(action: { text = "" }, label: {
-                                Image(systemName: "xmark.circle")
-                                    .foregroundStyle(Color.gray050)
-                            })
+                            Button(
+                                action: { text = "" },
+                                label: {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(Color.gray050)
+                                })
                             .padding(.trailing, 14)
                         }
                     }

@@ -38,4 +38,7 @@ protocol FormFieldType {
     /// 키보드 리턴 버튼 타입
     /// exapmle: .next, .done, .go
     var submitLabel: SubmitLabel { get }
+    
+    /// X 버튼 표시 조건 여부
+    var showsValidationIcon: Bool { get }
 }

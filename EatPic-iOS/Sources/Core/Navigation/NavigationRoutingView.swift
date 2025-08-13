@@ -31,12 +31,13 @@ enum NavigationRoute: Equatable, Hashable {
     case myMemo
     case receiptDetail
     case exploreMain
-    case hashtagSelection(selectedMeal: MealType)
-    case picCardRecord(selectedMeal: MealType, selectedHashtags: [String])
-    case mealTimeSelection
+    case mealTimeSelection(image: [UIImage])
+    case hashtagSelection
+    case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
+    case storeLocation(latitude: Double, longitude: Double, title: String)
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -46,6 +47,9 @@ enum NavigationRoute: Equatable, Hashable {
 struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
+    @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
+    @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
+
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -53,7 +57,6 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-      
         routingView
             .environmentObject(container)
     }
@@ -62,11 +65,11 @@ struct NavigationRoutingView: View {
     private var routingView: some View {
         switch route {
         case .calendar:
-            CalendarScrollView()
+            CalendarScrollView(container: container)
         case .notification:
             NotificationView()
         case .emailLoginView:
-            EmailLoginView()
+            EmailLoginView(container: container, appFlowViewModel: appFlowViewModel)
         case .signUpEmailView:
             SignupEmailView()
         case .signupPasswordView:
@@ -101,18 +104,39 @@ struct NavigationRoutingView: View {
             ReceiptDetailView()
         case .exploreMain:
             ExploreMainView()
-        case .hashtagSelection(let selectedMeal):
-            HashtagSelectionView(selectedMeal: selectedMeal)
-        case .picCardRecord(let selectedMeal, let selectedHashtags):
-            PicCardRecordView(selectedMeal: selectedMeal, selectedHashtags: selectedHashtags)
-        case .mealTimeSelection:
-            MealTimeSelectView()
+        case .mealTimeSelection(let images):
+            let recordFlowViewModel = container.getRecordFlowVM()
+            MealRecordView()
+                .task {
+                    recordFlowViewModel.bootstrapIfNeeded(createdAt: Date(), images: images)
+                }
+                .environmentObject(recordFlowViewModel)
+        case .hashtagSelection:
+            if let recordFlowViewModel = container.recordFlowVM {
+                HashtagSelectView().environmentObject(recordFlowViewModel)
+            } else {
+                HashtagSelectView() // fallback: 로그/어설트 추가 필요
+            }
+            
+        case .picCardRecord:
+            if let recordFlowViewModel = container.recordFlowVM {
+                PicCardRecorView().environmentObject(recordFlowViewModel)
+            } else {
+                PicCardRecorView()
+            }
         case .userProfile(let user):
             OthersProfileView(user: user)
         case .followList(let selected):
             FollowListView(selected: selected)
         case .exploreSelected:
             ExploreSelectedView()
+        case .storeLocation(let latitude, let longitude, let title):
+            StoreLocationView(
+                markers: [.init(
+                    coordinate: .init(latitude: latitude, longitude: longitude),
+                    title: title
+                )]
+            )
         }
     }
 }

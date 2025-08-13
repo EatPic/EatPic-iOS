@@ -25,4 +25,12 @@ extension APIProviderStore {
     func user() -> MoyaProvider<UserTargetType> {
         return networkService.testProvider(for: UserTargetType.self)
     }
+    
+    func auth() -> MoyaProvider<AuthTargetType> {
+        return networkService.createUnauthenticatedProvider(for: AuthTargetType.self)
+    }
+    
+    func home() -> MoyaProvider<HomeTargetType> {
+        return networkService.testProvider(for: HomeTargetType.self)
+    }
 }
