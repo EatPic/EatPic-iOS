@@ -16,7 +16,7 @@ import SwiftUI
 enum PicCardItemType {
     case bookmark(Bool)         // 북마크 여부
     case comment(Int)           // 댓글 개수
-    case reaction(Int, ReactionType?)   // 총 리액션 수, 선택된 리액션
+    case reaction(selected: ReactionType?, totalCount: Int)   // 선택된 리액션, 전체 리액션 수
     
     var id: String {
         switch self {
@@ -34,7 +34,7 @@ enum PicCardItemType {
             Image(isBookmarked ? "icon_bookmark_selected" : "icon_bookmark")
         case .comment:
             Image("icon_comment")
-        case .reaction(_, let selected):
+        case .reaction(let selected, _):
             if let emoji = selected?.emoji {
                 Text(emoji)
                     .font(.dsHeadline)
@@ -57,8 +57,8 @@ enum PicCardItemType {
             return nil
         case .comment(let value):
             return value
-        case .reaction(let value, _):
-            return value
+        case .reaction(_, let totalCount):
+            return totalCount
         }
     }
 }

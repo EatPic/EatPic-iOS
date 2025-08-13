@@ -22,7 +22,7 @@ struct PicCardView<Content: View>: View {
     let onProfileTap: (() -> Void)?
     let onLocationTap: ((Double, Double, String) -> Void)?
     let toastVM: ToastViewModel
-    let onItemAction: ((PicCardItemActionType) -> Void)?
+    let onItemAction: ((UUID, PicCardItemActionType) -> Void)? //카드 ID 전달 추가
     
     @State private var isFlipped = false
     
@@ -33,7 +33,7 @@ struct PicCardView<Content: View>: View {
         onProfileTap: (() -> Void)? = nil,
         onLocationTap: ((Double, Double, String) -> Void)? = nil,
         toastVM: ToastViewModel,
-        onItemAction: ((PicCardItemActionType) -> Void)? = nil
+        onItemAction: ((UUID, PicCardItemActionType) -> Void)? = nil
     ) {
         self.card = card
         self.menuContent = menuContent
@@ -90,7 +90,9 @@ struct PicCardView<Content: View>: View {
             ZStack {
                 if !isFlipped {
                     // 카드 앞면 (이미지)
-                    PicCardFrontView(card: card, toastVM: toastVM, onItemAction: onItemAction)
+                    PicCardFrontView(card: card, toastVM: toastVM) { action in
+                        onItemAction?(card.id, action)
+                    } 
                 } else {
                     // 카드 뒷면 (레시피)
                     PicCardBackView(card: card, onLocationTap: onLocationTap)
@@ -129,7 +131,7 @@ struct PicCardFrontView: View {
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 
-                PicCardItemView(toastVM: toastVM, onAction: onItemAction)
+                PicCardItemView(card: card, toastVM: toastVM, onAction: onItemAction)
                     .frame(maxWidth: .infinity, maxHeight: .infinity,
                            alignment: .bottomLeading)
             }
@@ -150,12 +152,12 @@ struct PicCardBackView: View {
             linkURL: card.recipeUrl,
             naviButtonAction: {
                 print("내비게이션 버튼 탭")
-                // ✅ 수정된 부분: 옵셔널 바인딩을 사용하여 안전하게 값 언래핑
+                // 옵셔널 바인딩을 사용하여 안전하게 값 언래핑
                 if let latitude = card.latitude,
                    let longitude = card.longitude,
                    let locationText = card.locationText {
                     
-                    // ✅ 옵셔널 바인딩에 성공하면 클로저를 실행
+                    // 옵셔널 바인딩에 성공하면 클로저를 실행
                     onLocationTap?(latitude, longitude, locationText)
                     
                 } else {
