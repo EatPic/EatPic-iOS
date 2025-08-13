@@ -11,7 +11,7 @@ struct SignupNicknameView: View {
     // MARK: - Property
 
     /// 유효성검사 로직 맡고있는 ViewModel
-    @State var viewModel: SignUpNicknameViewModel = .init()
+    @State var viewModel: SignUpNicknameViewModel = .init(container: .init())
 
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?

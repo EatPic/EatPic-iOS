@@ -56,8 +56,10 @@ class SignupFlowViewModel {
             let response = try await authProvider.requestAsync(
                 .signup(request: request)
             )
+            let dto = try JSONDecoder().decode(SignupResponse.self, from: response.data)
+            print(dto)
         } catch {
-            print("회원가입 실패:", error)
+            print("회원가입 실패:", error.localizedDescription)
         }
     }
 }
