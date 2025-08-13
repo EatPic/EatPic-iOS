@@ -103,7 +103,7 @@ struct NavigationRoutingView: View {
             ExploreMainView()
         case .mealTimeSelection(let images):
             let recordFlowViewModel = container.getRecordFlowVM()
-            MealRecorView()
+            MealRecordView()
                 .task {
                     recordFlowViewModel.bootstrapIfNeeded(createdAt: Date(), images: images)
                 }

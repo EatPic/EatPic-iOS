@@ -1,70 +1,73 @@
+//
+//  MealRecordView.swift
+//  EatPic-iOS
+//
+//  Created by jaewon Lee on 8/13/25.
+//
+
 import SwiftUI
 
-struct MealtimeSelectView: View {
+struct MealRecordView: View {
     @EnvironmentObject private var container: DIContainer
-    @EnvironmentObject private var viewmodel: PicCardRecorViewModel
-
-    // 현재 화면에서 선택된 식사 시간
-    @State private var selectedMeal: MealTime?
+    @EnvironmentObject private var recordFlowViewModel: RecordFlowViewModel
+    @StateObject private var viewModel: MealRecordViewModel
+    
+    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    
+    init(
+        date: Date = .now,
+        factory: @escaping MealRecordVMFactory = {
+            MealRecordViewModel(model: .initial(for: $0))
+        }
+    ) {
+        _viewModel = .init(wrappedValue: factory(date))
+    }
 
     var body: some View {
         VStack {
             Image("Record/img_record_itcong")
                 .resizable()
                 .frame(width: 180, height: 180)
-
+            
             Spacer().frame(height: 36)
-
+            
             HStack {
                 Text("이번에 기록할 \n식사는 언제 드신 건가요?")
                     .font(.dsTitle2)
                     .foregroundStyle(.black)
                 Spacer()
             }
-
+            
             Spacer().frame(height: 32)
-
+            
             // 식사 시간 선택 버튼들
-            VStack(spacing: 24) {
-                HStack(spacing: 21) {
-                    MealButton(mealType: .breakfast, isSelected: selectedMeal == .breakfast) {
-                        toggle(.breakfast)
-                    }
-                    MealButton(mealType: .lunch, isSelected: selectedMeal == .lunch) {
-                        toggle(.lunch)
-                    }
-                }
-                HStack(spacing: 21) {
-                    MealButton(mealType: .dinner, isSelected: selectedMeal == .dinner) {
-                        toggle(.dinner)
-                    }
-                    MealButton(mealType: .snack, isSelected: selectedMeal == .snack) {
-                        toggle(.snack)
+            LazyVGrid(columns: columns, spacing: 24) {
+                ForEach(MealSlot.allCases, id: \.self) { slot in
+                    MealButton(
+                        mealType: slot,
+                        isSelected: viewModel.isSelected(slot)
+                    ) {
+                        viewModel.select(slot)
                     }
                 }
             }
-
+            
             Spacer().frame(height: 102)
-
+            
             // 하단 다음 버튼
             PrimaryButton(
-                color: selectedMeal == nil ? .gray020 : .green060,
+                color: viewModel.selectedSlot == nil ? .gray020 : .green060,
                 text: "다음",
                 font: .dsTitle3,
-                textColor: selectedMeal == nil ? .gray040 : .white,
+                textColor: viewModel.selectedSlot == nil ? .gray040 : .white,
                 width: 361,
                 height: 48,
                 cornerRadius: 10
             ) {
-                if let meal = selectedMeal {
-                    print("선택된 식사 시간: \(meal)")
-                    viewmodel.updateMealTime(meal)
-//                    print("ViewModel에 저장된 mealTime: \(viewmodel.recordModel.mealTime?.rawValue ?? "nil")")
-//                    container.router.push(.hashtagSelection(selectedMeal: meal))
-                }
+                guard let selectedSlot = viewModel.selectedSlot else { return }
+                recordFlowViewModel.addMealSlot(selectedSlot)
+                container.router.push(.hashtagSelection)
             }
-            // 선택값 없으면 버튼 비활성화
-            .disabled(selectedMeal == nil)
         }
         .padding(.horizontal, 16)
         .customNavigationBar {
@@ -77,22 +80,11 @@ struct MealtimeSelectView: View {
             })
         }
     }
-
-    // 식사 버튼 토글
-    // 같은 버튼 누르면 해제, 다시 다른 버튼 누르면 변경
-    private func toggle(_ meal: MealTime) {
-        selectedMeal = (selectedMeal == meal) ? nil : meal
-        if let selected = selectedMeal {
-            print("🍽️ [MealtimeSelectView] 버튼 선택됨: \(selected)")
-        } else {
-            print("🍽️ [MealtimeSelectView] 버튼 선택 해제됨")
-        }
-    }
 }
 
 // MARK: - 식사 시간 버튼 (아침 ~간식)
 private struct MealButton: View {
-    let mealType: MealTime // 아침, 점심, 저녁, 간식
+    let mealType: MealSlot // 아침, 점심, 저녁, 간식
     let isSelected: Bool // 현재 선택 상태
     let action: () -> Void // 클릭 시 실행할 동작
 
@@ -145,6 +137,6 @@ private struct MealButton: View {
 }
 
 #Preview {
-    MealtimeSelectView()
-        .environmentObject(PicCardRecorViewModel())
+    MealRecordView()
+        .environmentObject(RecordFlowViewModel())
 }

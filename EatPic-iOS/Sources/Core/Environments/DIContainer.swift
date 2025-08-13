@@ -40,6 +40,8 @@ final class DIContainer: ObservableObject {
         self.mediaPickerService = mediaPickerService
     }
     
+    // MARK: - FlowViewModel Factory Property
+    
     @MainActor var recordFlowVM: RecordFlowViewModel?
 }
 
