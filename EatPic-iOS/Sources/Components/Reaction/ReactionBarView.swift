@@ -35,14 +35,14 @@ struct ReactionBarView: View {
     var onReactionSelected: (ReactionType?) -> Void // 리액션 선택 콜백
     
     init(
-            selectedReaction: Binding<ReactionType?>,
-            reactionCounts: Binding<[ReactionType: Int]>,
-            onReactionSelected: @escaping (ReactionType?) -> Void = { _ in }
-        ) {
-            self._selectedReaction = selectedReaction
-            self._reactionCounts = reactionCounts
-            self.onReactionSelected = onReactionSelected
-        }
+        selectedReaction: Binding<ReactionType?>,
+        reactionCounts: Binding<[ReactionType: Int]>,
+        onReactionSelected: @escaping (ReactionType?) -> Void = { _ in }
+    ) {
+        self._selectedReaction = selectedReaction
+        self._reactionCounts = reactionCounts
+        self.onReactionSelected = onReactionSelected
+    }
     
     var body: some View {
         HStack(spacing: 16) {
@@ -76,10 +76,6 @@ struct ReactionBarView: View {
     
     // 리액션 선택/해제 처리
     private func toggleReaction(_ reaction: ReactionType) {
-        print("=== ReactionBarView toggleReaction ===")
-        print("선택된 리액션: \(reaction)")
-        print("현재 selectedReaction: \(String(describing: selectedReaction))")
-        
         let newReaction: ReactionType?
         
         if selectedReaction == reaction {
@@ -100,11 +96,7 @@ struct ReactionBarView: View {
             newReaction = reaction
             print("새 리액션 \(reaction) 선택됨")
         }
-        
-        print("업데이트된 reactionCounts: \(reactionCounts)")
-                print("================================")
-                
-                // 콜백 호출
+        // 콜백 호출
         onReactionSelected(newReaction)
     }
     

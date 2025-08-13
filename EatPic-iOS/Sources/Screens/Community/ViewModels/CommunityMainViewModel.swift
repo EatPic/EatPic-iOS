@@ -109,16 +109,7 @@ class CommunityMainViewModel: ObservableObject {
     
     // 댓글 액션 처리
     private func handleCommentAction(cardId: UUID, count: Int) {
-        print("=== 댓글 버튼 눌림 ===")
-            print("카드 ID: \(cardId)")
-            print("댓글 수: \(count)")
-            print("현재 isShowingCommentBottomSheet: \(isShowingCommentBottomSheet)")
-        
         isShowingCommentBottomSheet = true
-//        print("댓글창 열기, 현재 댓글 수: \(count) for card: \(cardId)")
-        print("변경된 isShowingCommentBottomSheet: \(isShowingCommentBottomSheet)")
-            print("===================")
-        // 여기서 선택된 카드 ID를 저장해두고 댓글 창에서 사용할 수 있음
     }
     
     // 리액션 액션 처리

@@ -115,9 +115,6 @@ struct PicCardItemView: View {
     
     /// 각 버튼 항목에 대한 탭 처리 및 외부 액션 전달
     private func handleTap(for item: PicCardItemType) {
-        print("=== PicCardItemView handleTap ===")
-        print("탭된 아이템: \(item.id)")
-        
         switch item {
         case .bookmark:
             toggleBookmark()
@@ -132,8 +129,6 @@ struct PicCardItemView: View {
             }
             onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
         }
-        print("==============================")
-        
     }
     
     /// 북마크 토글 처리
@@ -148,23 +143,14 @@ struct PicCardItemView: View {
     
     /// 리액션 선택 처리
     private func handleReactionSelection(_ reaction: ReactionType?) {
-        print("=== PicCardItemView handleReactionSelection ===")
-        print("이전 selectedReaction: \(String(describing: selectedReaction))")
-        print("새로운 reaction: \(String(describing: reaction))")
-        
         let previousReaction = selectedReaction
         selectedReaction = reaction
         
         // 리액션 카운트 업데이트
         updateReactionCounts(previous: previousReaction, new: reaction)
         
-        print("업데이트된 selectedReaction: \(String(describing: selectedReaction))")
-        print("업데이트된 reactionCounts: \(reactionCounts)")
-        print("업데이트된 totalReactionCount: \(totalReactionCount)")
-        
         // 외부 액션 호출
         onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
-        print("=========================================")
     }
     
     /// 리액션 카운트 업데이트
