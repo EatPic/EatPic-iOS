@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - 메인 뷰
 struct MealStatusView: View {
-    @StateObject private var viewModel = MealStatusViewModel()
+    @State private var viewModel = MealStatusViewModel()
     @State private var isEditMode = false
     
     var body: some View {
@@ -78,7 +78,7 @@ struct MealStatusView: View {
 
 // MARK: - Meal 기록됐느냐 안됐느냐 상태에 따른 뷰
 private struct MealItemView: View {
-    let mymeal: MealStatusModel
+    let mymeal: MealStatusViewModel.MealItem
     let isEditMode: Bool
     let onDelete: () -> Void
     
@@ -93,7 +93,7 @@ private struct MealItemView: View {
 
 // MARK: - 기록되지 않은 Meal 뷰
 private struct EmptyMealView: View {
-    let meal: MealStatusModel
+    let meal: MealStatusViewModel.MealItem
 
     var body: some View {
         VStack {
@@ -126,9 +126,10 @@ private struct EmptyMealView: View {
         }
     }
 }
+
 // MARK: - 기록된 Meal 뷰
 private struct RecordedMealView: View {
-    let meal: MealStatusModel
+    let meal: MealStatusViewModel.MealItem
     let isEditMode: Bool
     let onDelete: () -> Void
 

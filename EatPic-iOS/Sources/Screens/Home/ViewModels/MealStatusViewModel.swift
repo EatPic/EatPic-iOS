@@ -7,21 +7,60 @@
 
 import Foundation
 
-class MealStatusViewModel: ObservableObject {
+@Observable
+class MealStatusViewModel {
     
-    @Published var mealStatus: [MealStatusModel] = [
-        MealStatusModel(mealTime: "아침", isRecorded: true, imageName: "Home/exampleSalad"),
-        MealStatusModel(mealTime: "점심", isRecorded: true, imageName: "Home/exampleSalad"),
-        MealStatusModel(mealTime: "저녁", isRecorded: false), // imageName 없음
-        MealStatusModel(mealTime: "간식", isRecorded: false)  
-    ]
+    /// 식사 현황 목록
+    var mealStatus: [MealItem] = []
     
-    func deleteMealRecord(meal: MealStatusModel) {
+    /// 식사 아이템
+    struct MealItem: Identifiable, Codable {
+        let id = UUID()
+        let cardId: Int
+        let cardImageUrl: String
+        let meal: String
+        
+        /// 식사 시간
+        var mealTime: String {
+            switch meal {
+            case "BREAKFAST": return "아침"
+            case "LUNCH": return "점심"
+            case "DINNER": return "저녁"
+            case "SNACK": return "간식"
+            default: return meal
+            }
+        }
+        
+        /// 기록 여부 (이미지가 있으면 기록된 것)
+        var isRecorded: Bool {
+            return !cardImageUrl.isEmpty
+        }
+        
+        /// 이미지 이름 (
+        var imageName: String? {
+            return isRecorded ? cardImageUrl : nil
+        }
+    }
+    
+    init() {
+        setupSampleData()
+    }
+    
+    
+    private func setupSampleData() {
+        mealStatus = [
+            MealItem(cardId: 1, cardImageUrl: "Home/exampleSalad", meal: "BREAKFAST"),
+            MealItem(cardId: 2, cardImageUrl: "Home/exampleSalad", meal: "LUNCH"),
+            MealItem(cardId: 3, cardImageUrl: "", meal: "DINNER"),
+            MealItem(cardId: 4, cardImageUrl: "", meal: "SNACK")
+        ]
+    }
+    
+    /// 식사 기록 삭제
+    func deleteMealRecord(meal: MealItem) {
         if let idx = mealStatus.firstIndex(where: { $0.id == meal.id }) {
-            mealStatus[idx] = MealStatusModel(mealTime: meal.mealTime, isRecorded: false)
-            // TODO: [25. 08.06] 실제 이미지 데이터 삭제 로직 추가
-            // - 로컬 파일 삭제
-            // - 데이터베이스에서 삭제
+            // 이미지 URL을 빈 문자열로 설정하여 기록되지 않은 상태로 변경
+            mealStatus[idx] = MealItem(cardId: meal.cardId, cardImageUrl: "", meal: meal.meal)
         }
     }
 }
