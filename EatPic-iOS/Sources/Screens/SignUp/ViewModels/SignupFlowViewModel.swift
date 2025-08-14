@@ -27,7 +27,7 @@ class SignupFlowViewModel {
     // MARK: - Func (API 호출 및 키체인 저장)
     
     /// 네트워크 연동 및 모델 매핑
-    func fetchAuth() async {
+    func fetchAuth() async throws {
         print("📌 Signup model before request:", model) // 요청 전에 상태 확인
         do {
             let request = SignupRequest(
@@ -50,6 +50,7 @@ class SignupFlowViewModel {
             print(dto)
         } catch {
             print("회원가입 실패:", error.localizedDescription)
+            throw error
         }
     }
 }

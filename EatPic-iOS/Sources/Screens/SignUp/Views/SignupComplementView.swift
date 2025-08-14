@@ -26,24 +26,6 @@ struct SignupComplementView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .onAppear {
-            // 디버깅: 같은 인스턴스인지 확인
-            print(
-                "🔐FlowVM 주소: \(Unmanaged.passUnretained(viewModel).toOpaque())"
-            )
-            print(
-                "🔐 PasswordView - 이전 화면에서 입력한 이메일: '\(viewModel.model.email)'"
-            )
-            print(
-                "🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.model.password)'"
-            )
-            print(
-                "🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.model.confirmPassword)'"
-            )
-            print(
-                "🔐 signupNicknameView - 이전 화면에서 입력한 ID: '\(viewModel.model.nameId)'"
-            )
-        }
     }
 
     // MARK: - 회원가입 완료 Contents
@@ -85,7 +67,10 @@ struct SignupComplementView: View {
                 Task {
                     do {
                         try await viewModel.fetchAuth() // 성공 시에만 다음 줄 호출
-                        await MainActor.run { container.router.popToRoot() }
+                        await MainActor.run {
+                            container.clearSignupFlowVM()
+                            container.router.popToRoot()
+                        }
                     } catch {
                         print("회원가입 실패")
                     }

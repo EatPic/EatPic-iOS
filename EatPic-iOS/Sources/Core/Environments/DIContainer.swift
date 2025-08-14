@@ -74,7 +74,7 @@ extension DIContainer {
         }
     }
 
-    func resetSignupFlowVM() {
+    func clearSignupFlowVM() {
         signupFlowVM = nil
     }
 }
