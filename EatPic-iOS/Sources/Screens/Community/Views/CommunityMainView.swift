@@ -10,11 +10,11 @@ import SwiftUI
 struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var viewModel = CommunityMainViewModel()
+    @State private var viewModel: CommunityMainViewModel
     
     init(container: DIContainer) {
-            self.viewModel = .init(container: container)
-        }
+        self._viewModel = .init(initialValue: .init(container: container))
+    }
     
     var body: some View {
         ZStack {
@@ -141,6 +141,9 @@ struct CommunityMainView: View {
                     }
                 )
             }
+        }
+        .task {
+            await viewModel.fetchFeeds()
         }
     }
     

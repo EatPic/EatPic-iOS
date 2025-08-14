@@ -9,55 +9,79 @@ import Foundation
 import SwiftUI
 import Moya
 
-class CommunityMainViewModel: ObservableObject {
+@Observable
+class CommunityMainViewModel {
     
     // MARK: - View State
-    @Published var selectedUser: CommunityUser?
-    @Published var filteredCards: [PicCard] = sampleCards
-    @Published var showDeleteModal = false
-    @Published var isShowingReportBottomSheet = false
-    @Published var isShowingCommentBottomSheet = false
+    var selectedUser: CommunityUser?
+    var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
+    var hasNextPage: Bool = true
+    var showDeleteModal = false
+    var isShowingReportBottomSheet = false
+    var isShowingCommentBottomSheet = false
     
     private var cardToDelete: PicCard?
+    private var nextCursor: Int = 0
+    private var isFetching: Bool = false
     
     let toastVM = ToastViewModel()
     private let cardProvider: MoyaProvider<CardTargetType>
-        
+    
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
     }
     
-    func fetchFeeds() async  {
+    func fetchFeeds() async {
+        guard hasNextPage && !isFetching else { return }
+        
+        self.isFetching = true
+        let currentCursor = self.nextCursor
+        let pageSize = 15
+        
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(cursor: <#T##Int#>, size: <#T##Int#>))
+                .fetchFeeds(cursor: currentCursor, size: pageSize))
             let dto = try JSONDecoder().decode(
-                UserInfoResponse.self, from: response.data)
+                APIResponse<FeedResult>.self, from: response.data)
             
-//            print(user)
+            // 핵심 변환 로직: Feed 배열을 PicCard 배열로 변환
+            let newCards = dto.result.cardFeedList.map { feed in
+                PicCard(from: feed)
+            }
             
+            DispatchQueue.main.async {
+                if currentCursor == 0 {
+                    self.filteredCards = newCards
+                } else {
+                    self.filteredCards.append(contentsOf: newCards)
+                }
+                
+                self.nextCursor = dto.result.nextCursor
+                self.hasNextPage = dto.result.hasNext
+                self.isFetching = false
+            }
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
     }
     
     // MARK: - Computed Properties
-    // 사용자 선택 처리
-    func selectUser(_ user: CommunityUser) {
-        selectedUser = user
-        // 선택된 사용자에 따라 카드 필터링 로직 구현
-        filterCards(for: user)
-    }
+        // 사용자 선택 처리
+        func selectUser(_ user: CommunityUser) {
+            selectedUser = user
+            // 선택된 사용자에 따라 카드 필터링 로직 구현
+//            filterCards(for: user)
+        }
     
     // 카드 필터링
-    private func filterCards(for user: CommunityUser) {
-        if user.id == "전체" { // 전체 사용자 선택 시
-            filteredCards = sampleCards
-        } else {
-            filteredCards = sampleCards.filter { $0.user.id == user.id }
-        }
-    }
+    //    private func filterCards(for user: CommunityUser) {
+    //        if user.id == "전체" { // 전체 사용자 선택 시
+    //            filteredCards = sampleCards
+    //        } else {
+    //            filteredCards = sampleCards.filter { $0.user.id == user.id }
+    //        }
+    //    }
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {

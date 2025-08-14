@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Moya
 
 // MARK: - API Response
 
@@ -22,13 +23,13 @@ struct Feed: Codable {
     let imageUrl: String
     let date: String
     let time: String
-    let meal: String
+    let meal: MealSlot
     let memo: String
-    let recipe: String
-    let recipeUrl: String
-    let latitude: Double
-    let longitude: Double
-    let locationText: String
+    let recipe: String?
+    let recipeUrl: String?
+    let latitude: Double?
+    let longitude: Double?
+    let locationText: String?
     let hashtags: [String]
     let user: FeedUser
     let reactionCount: Int
