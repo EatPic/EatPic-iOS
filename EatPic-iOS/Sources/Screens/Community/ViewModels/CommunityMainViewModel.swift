@@ -21,7 +21,7 @@ class CommunityMainViewModel {
     var isShowingCommentBottomSheet = false
     
     private var cardToDelete: PicCard?
-//    private var currentCursor: Int? = nil
+    //    private var currentCursor: Int? = nil
     private var nextCursor: Int? = nil
     private var isFetching: Bool = false
     
@@ -67,12 +67,12 @@ class CommunityMainViewModel {
     }
     
     // MARK: - Computed Properties
-        // 사용자 선택 처리
-        func selectUser(_ user: CommunityUser) {
-            selectedUser = user
-            // 선택된 사용자에 따라 카드 필터링 로직 구현
-//            filterCards(for: user)
-        }
+    // 사용자 선택 처리
+    func selectUser(_ user: CommunityUser) {
+        selectedUser = user
+        // 선택된 사용자에 따라 카드 필터링 로직 구현
+        //            filterCards(for: user)
+    }
     
     // 카드 필터링
     //    private func filterCards(for user: CommunityUser) {
@@ -109,14 +109,23 @@ class CommunityMainViewModel {
         print("삭제 확인 모달 띄우기: \(card.id)")
     }
     
+    func deleteCard(card: PicCard) async {
+        do {
+            let response = try await cardProvider.requestAsync(.deleteCard(cardId: card.cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<CardDeleteResult>.self, from: response.data)
+                        
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
     // 모달에서 '삭제' 버튼을 눌렀을 때 실제 삭제를 처리하는 함수
-    func confirmDeletion() {
+    func confirmDeletion() async {
         guard let card = cardToDelete else { return }
         
         // TODO: - 실제 삭제 API 호출 로직 구현
-        if let index = filteredCards.firstIndex(where: { $0.id == card.id }) {
-            filteredCards.remove(at: index)
-        }
+        await deleteCard(card: card)
         
         showDeleteModal = false
         cardToDelete = nil

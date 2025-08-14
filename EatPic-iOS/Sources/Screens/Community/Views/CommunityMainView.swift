@@ -60,7 +60,9 @@ struct CommunityMainView: View {
                         viewModel.showDeleteModal = false
                     },
                     rightBtnAction: {
-                        viewModel.confirmDeletion()
+                        Task {
+                            await viewModel.confirmDeletion()
+                        }
                     }
                 )
             }
