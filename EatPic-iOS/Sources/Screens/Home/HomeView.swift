@@ -8,10 +8,24 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    // MARK: - ProPerty
+    
     @EnvironmentObject private var container: DIContainer
     @StateObject private var badgeViewModel = MyBadgeStatusViewModel()
     @State private var showingBadgeModal = false
     @State private var selectedBadge: BadgeItem?
+    
+    /// 사용자 환영인사 호출 API
+    @State private var greetingViewModel: HomeGreetingViewModel
+    
+    // MARK: - Init
+    
+    init(container: DIContainer) {
+        self.greetingViewModel = .init(container: container)
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         ZStack {
@@ -50,14 +64,23 @@ struct HomeView: View {
                     badgeDescription: badgeViewModel.getBadgeDescription(for: badge.name)
                 )
             }
+        } //:ZStack
+        .task { // 뷰 진입시 API 호출
+            await greetingViewModel.fetchGreetingUser()
         }
     }
     
     private var topBar: some View {
         HStack(alignment: .top) {
-            Text("안녕하세요. 잇콩님\n오늘도 Pic 카드를 기록해볼까요?")
-                .font(.dsTitle2)
-                .kerning(-0.44) // 22 * -0.02 = -0.44
+            if let greet = greetingViewModel.greetingResponse {
+                (
+                    Text("안녕하세요. ").font(.dsTitle2)
+                    + Text(greet.name).font(.dsTitle2).bold()
+                    + Text("님\n").font(.dsTitle2)
+                    + Text(greet.message).font(.dsTitle2)
+                )
+                .kerning(-0.44)
+            }
             
             Spacer()
             
@@ -85,5 +108,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(container: .init())
 }

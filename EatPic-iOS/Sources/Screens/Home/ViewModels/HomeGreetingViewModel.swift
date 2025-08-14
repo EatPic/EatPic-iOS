@@ -12,6 +12,7 @@ import Moya
 @Observable
 class HomeGreetingViewModel {
     private let homeProvider: MoyaProvider<HomeTargetType>
+    var greetingResponse: GreetingResponse? // 인사말 응답값
     
     init(container: DIContainer) {
         self.homeProvider = container.apiProviderStore.home()
