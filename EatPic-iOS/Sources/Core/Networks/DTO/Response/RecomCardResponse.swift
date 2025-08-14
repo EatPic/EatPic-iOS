@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CardResponse: Codable {
+struct RecomCardResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String

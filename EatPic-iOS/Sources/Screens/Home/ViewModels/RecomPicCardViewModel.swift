@@ -6,39 +6,33 @@
 //
 
 import Foundation
+import Moya
+
+struct RecomCardModel {
+    let cardId: Int
+    let cardImageUrl: URL
+}
 
 @Observable
 class RecomPicCardViewModel {
-    /// 추천 픽카드 목록 (API 응답의 result 배열)
-    var cards: [CardItem] = []
+//    var cards: [RecomCardModel] = []
     
-    struct CardItem: Identifiable, Codable {
-        let id = UUID()
-        let cardId: Int
-        let cardImageUrl: String
+    private let recomCardprovider: MoyaProvider<CardTargetType>
+
+    init(container: DIContainer) {
+        self.recomCardprovider = container.apiProviderStore.recomCard()
+    }
+    
+    @MainActor
+    func fetchRecommendedCards() async {
+        do {
+            let response = try await recomCardprovider.request(.fetchRecommendedCards)
         
-        var imageName: String {
-            return cardImageUrl
+            let dto = try JSONDecoder().decode(RecomCardResponse.self, from: response.data)
+
+            print(dto)
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
-    }
-    
-    init() {
-        recomSampleData()
-    }
-    
-    /// 샘플데이터
-    private func recomSampleData() {
-        cards = [
-            CardItem(cardId: 1, cardImageUrl: "Home/img1"),
-            CardItem(cardId: 2, cardImageUrl: "Home/img2"),
-            CardItem(cardId: 3, cardImageUrl: "Home/img3"),
-            CardItem(cardId: 4, cardImageUrl: "Home/img1"),
-            CardItem(cardId: 5, cardImageUrl: "Home/img2"),
-            CardItem(cardId: 6, cardImageUrl: "Home/img3"),
-            CardItem(cardId: 1, cardImageUrl: "Home/img1"),
-            CardItem(cardId: 2, cardImageUrl: "Home/img2"),
-            CardItem(cardId: 3, cardImageUrl: "Home/img3"),
-            CardItem(cardId: 1, cardImageUrl: "Home/img1")
-        ]
     }
 }
