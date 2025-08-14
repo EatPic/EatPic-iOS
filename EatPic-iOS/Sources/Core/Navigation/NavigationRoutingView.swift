@@ -33,7 +33,7 @@ enum NavigationRoute: Equatable, Hashable {
     case exploreMain
     case mealTimeSelection(image: [UIImage])
     case hashtagSelection
-    case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
+    case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
@@ -132,9 +132,9 @@ struct NavigationRoutingView: View {
                 .environmentObject(recordFlowViewModel)
         case .hashtagSelection:
             if let recordFlowViewModel = container.recordFlowVM {
-                HashtagSelectView().environmentObject(recordFlowViewModel)
+                HashtagSelectingView().environmentObject(recordFlowViewModel)
             } else {
-                HashtagSelectView() // fallback: 로그/어설트 추가 필요
+                HashtagSelectingView() // fallback: 로그/어설트 추가 필요
             }
             
         case .picCardRecord:

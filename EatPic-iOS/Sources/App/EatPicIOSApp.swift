@@ -15,7 +15,6 @@ struct EatPicIOSApp: App {
             switch appFlowViewModel.appState {
             case .login:
                 LoginView(container: container, appFlowViewModel: appFlowViewModel)
-                
             case .tab:
                 MainTabView(container: container)
             }

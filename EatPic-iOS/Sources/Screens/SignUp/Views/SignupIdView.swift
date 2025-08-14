@@ -82,7 +82,7 @@ struct SignupIdView: View {
             if let error = viewModel.idErrorMessage {
                 Text(error)
                     .font(.dsFootnote)
-                    .foregroundStyle(Color.pink070)
+                    .foregroundStyle(Color.red050)
             }
         }
     }

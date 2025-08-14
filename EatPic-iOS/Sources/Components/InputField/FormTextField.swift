@@ -143,7 +143,7 @@ struct FormTextField<T: FormFieldType & Hashable>: View {
     /// 포커스된 필드에 따른 박스 테두리 배경색 설정
     private var borderColor: Color {
         if !isValid && !text.isEmpty {
-            return .pink070
+            return .red050
         }
         return focusedField.wrappedValue == currentField ? Color.green060 : Color.gray040
     }
