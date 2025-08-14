@@ -51,7 +51,6 @@ struct HashtagAddView: View {
                 ) {
                     onAddHashtag()
                 }
-                .disabled(!isEnabled)
             }
             .padding(.horizontal, 20)
         }

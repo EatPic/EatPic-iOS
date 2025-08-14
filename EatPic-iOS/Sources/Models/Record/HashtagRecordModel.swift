@@ -164,13 +164,16 @@ protocol HashtagTitlePolicy {
 enum HashtagPolicyError: LocalizedError {
     case tooLongHangul(limit: Int)
     case empty
+    case duplicateTitle
     // 추후 확장
     
     var errorDescription: String? {
         switch self {
         case .empty: return "내용을 입력해 주세요."
         case .tooLongHangul(let limit):
-            return "한글은 \(limit)자 이하만 가능합니다."
+            return "최대 \(limit)글자까지 입력 가능합니다."
+        case .duplicateTitle:
+            return "이미 존재하는 해시태그입니다."
         }
     }
 }
@@ -265,6 +268,10 @@ final class HashtagRecordViewModel {
     ) -> Result<HashtagCategory, HashtagPolicyError> {
         switch hashtagTitlePolicy.validate(title) {
         case .success:
+            guard isDuplicateTitle(title) == false else {
+                return .failure(.duplicateTitle)
+            }
+            
             let key = id ?? title.trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: " ", with: "_")
             
@@ -283,9 +290,21 @@ final class HashtagRecordViewModel {
     /// - Returns: 가능하면 `true`, 불가하면 `false`
     func canAdd(_ title: String) -> Bool {
         switch hashtagTitlePolicy.validate(title) {
-        case .success: return true
+        case .success: return !isDuplicateTitle(title)
         case .failure: return false
         }
+    }
+    
+    private func normalized(_ title: String) -> String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+             .lowercased()
+    }
+
+    private func isDuplicateTitle(_ title: String) -> Bool {
+        let key = normalized(title)
+        let existing = model.checks.map { normalized($0.hashtag.title) }
+        return existing.contains(key)
     }
 }
 
@@ -293,13 +312,19 @@ import SwiftUI
 
 typealias HashtagRecordVMFactory = @MainActor (_ date: Date) -> HashtagRecordViewModel
 
+private struct AlertPayload: Identifiable {
+    let id = UUID()
+    let title: String
+    let message: String
+}
+
 struct HashtagSelectingView: View {
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var recordFlowVM: RecordFlowViewModel
     
     @State private var hashtagRecordVM: HashtagRecordViewModel
     
-    @State private var showAlert: Bool = false
+    @State private var alert: AlertPayload?
     @State private var addHashtagSheet: Bool = false
     @State private var addHashtagText: String = ""
     
@@ -323,19 +348,19 @@ struct HashtagSelectingView: View {
         ZStack {
             HastagSelectingContentView(
                 hashtagRecordVM: hashtagRecordVM,
-                showAlert: $showAlert,
+                alert: $alert,
                 addHashtagSheet: $addHashtagSheet,
                 addHashtagText: $addHashtagText
             )
             
-            if showAlert {
+            if let alert {
                 AlertModalView(
-                    messageTitle: "안내",
-                    messageDescription: "하나 이상의 해시태그를 선택해 주세요.",
+                    messageTitle: alert.title,
+                    messageDescription: alert.message,
                     messageColor: .black,
                     btnText: "확인",
                     btnAction: {
-                        showAlert = false
+                        self.alert = nil
                     }
                 )
             }
@@ -348,18 +373,18 @@ private struct HastagSelectingContentView: View {
     @EnvironmentObject private var recordFlowVM: RecordFlowViewModel
     @Bindable private var hashtagRecordVM: HashtagRecordViewModel
     
-    @Binding private var showAlert: Bool
+    @Binding private var alert: AlertPayload?
     @Binding private var addHashtagSheet: Bool
     @Binding private var addHashtagText: String
     
     init(
         hashtagRecordVM: HashtagRecordViewModel,
-        showAlert: Binding<Bool>,
+        alert: Binding<AlertPayload?>,
         addHashtagSheet: Binding<Bool>,
         addHashtagText: Binding<String>
     ) {
         self.hashtagRecordVM = hashtagRecordVM
-        self._showAlert = showAlert
+        self._alert = alert
         self._addHashtagSheet = addHashtagSheet
         self._addHashtagText = addHashtagText
     }
@@ -407,16 +432,14 @@ private struct HastagSelectingContentView: View {
                 cornerRadius: 10
             ) {
                 guard let selectedHashtags = hashtagRecordVM.selectedHashtags else {
-                    print("선택된 해시태그가 없음")
+                    withAnimation {
+                        alert = .init(title: "안내", message: "하나 이상의 해시태그를 선택해 주세요.")
+                    }
                     return
                 }
                 recordFlowVM.setTags(selectedHashtags)
                 if recordFlowVM.canProceedToRecord {
                     container.router.push(.picCardRecord)
-                } else {
-                    withAnimation {
-                        showAlert = true
-                    }
                 }
             }
         }
@@ -430,11 +453,14 @@ private struct HastagSelectingContentView: View {
                     let result = hashtagRecordVM.addCustomCategory(title: addHashtagText)
                     switch result {
                     case .success:
-                        addHashtagSheet = false
-                        addHashtagText = ""
-                    case .failure:
                         break
+                    case .failure(let err):
+                        withAnimation {
+                            alert = .init(title: "안내", message: err.localizedDescription)
+                        }
                     }
+                    addHashtagSheet = false
+                    addHashtagText = ""
                 }
             }
             .presentationDetents([.height(200)])
