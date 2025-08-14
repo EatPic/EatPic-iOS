@@ -21,8 +21,7 @@ struct FeedResult: Codable {
 struct Feed: Codable {
     let cardId: Int
     let imageUrl: String?
-    let date: [Int]
-    let time: [Int]
+    let datetime: String
     let meal: MealSlot
     let memo: String
     let recipe: String?
@@ -36,6 +35,30 @@ struct Feed: Codable {
     let userReaction: String?
     let commentCount: Int
     let bookmarked: Bool
+    
+    // MARK: - Date / Time 포매팅
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.locale = Locale(identifier: "ko_KR")
+        if let date = formatter.date(from: datetime) {
+            formatter.dateFormat = "yyyy년 MM월 dd일"
+            return formatter.string(from: date)
+        }
+        return datetime
+    }
+    
+    var formattedTime: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 서버 datetime 형식
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        if let date = formatter.date(from: datetime) {
+            formatter.dateFormat = "a hh:mm" // 오전/오후 표시 포함
+            return formatter.string(from: date)
+        }
+        return ""
+    }
 }
 
 // MARK: - User Info
