@@ -33,22 +33,35 @@ struct ExploreSelectedView: View {
     }
     
     private func selectedPicCardView() -> some View {
-        // 1. PicCard 객체를 직접 생성합니다.
-        let card = PicCard(
-            user: CommunityUser(
-                id: "itcong",
-                nickname: "잇콩", // 닉네임 추가
-                imageName: "Community/itcong",
-                isCurrentUser: false,
-                isFollowed: false
-            ),
-            time: "오후 12:30",
-            image: Image("Community/testImage"),
-            memo: "오늘은 샐러드를 먹었습니다~ 계란과 딸기를 많이 넣어 먹었어요~~~~ 다들 좋은 하루 보내세용",
-            imageUrl: nil, date: "2025-08-11", meal: "LUNCH", recipe: "레시피 내용...",
-            recipeUrl: nil, latitude: nil, longitude: nil, locationText: "서울", hashtags: ["#샐러드"],
-            reactionCount: 0, userReaction: nil, commentCount: 0, bookmarked: false
+        // 더미 User 데이터
+        let dummyFeedUser = FeedUser(
+            userId: 98765,
+            nameId: "wonjy0307",
+            nickname: "원주연",
+            profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
         )
+        let dummyUser = CommunityUser(from: dummyFeedUser)
+        // 더미 Feed 데이터
+        let dummyFeed = Feed(
+            cardId: 101,
+            imageUrl: "https://example.com/images/pasta_feed_image.jpg",
+            date: [2025, 7, 1],
+                time: [14, 0, 0, 0],
+            meal: .LUNCH,
+            memo: "오늘 점심으로 먹은 파스타! 정말 맛있었어요! 😋",
+            recipe: "봉골레 파스타",
+            recipeUrl: "https://example.com/recipes/vongole_pasta",
+            latitude: 37.5665,
+            longitude: 126.9780,
+            locationText: "서울 종로구",
+            hashtags: ["#파스타", "#맛스타그램", "#봉골레"],
+            user: dummyFeedUser,
+            reactionCount: 15,
+            userReaction: "TASTY",
+            commentCount: 3,
+            bookmarked: false
+        )
+        let card = PicCard(from: dummyFeed)
         
         // 2. 생성한 card 객체를 PicCardView의 매개변수로 전달합니다.
         return PicCardView(
