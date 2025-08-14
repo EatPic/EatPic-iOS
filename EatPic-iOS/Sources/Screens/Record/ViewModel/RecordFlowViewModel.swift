@@ -12,7 +12,7 @@ import UIKit
 struct RecordFlowState {
     var images: [UIImage]
     var mealSlot: MealSlot?
-    var hasTags: [HashtagKind]
+    var hasTags: [HashtagCategory]
     var myMemo: String
     var myRecipe: String
     var recipeLink: String?
@@ -98,7 +98,7 @@ final class RecordFlowViewModel: ObservableObject {
         state.mealSlot = slot
     }
 
-    public func setTags(_ tags: [HashtagKind]) {
+    public func setTags(_ tags: [HashtagCategory]) {
         state.hasTags = tags
     }
 

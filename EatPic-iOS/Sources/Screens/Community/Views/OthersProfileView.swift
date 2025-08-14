@@ -143,7 +143,7 @@ struct OthersProfileView: View {
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "차단",
-                    rightBtnColor: .pink070,
+                    rightBtnColor: .red050,
                     leftBtnAction: {
                         viewModel.showBlockModal = false // 취소 버튼 탭 시 모달 뷰 닫기
                     },

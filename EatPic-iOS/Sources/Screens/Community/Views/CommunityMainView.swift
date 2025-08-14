@@ -51,7 +51,7 @@ struct CommunityMainView: View {
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "삭제",
-                    rightBtnColor: .pink070,
+                    rightBtnColor: .red050,
                     leftBtnAction: {
                         viewModel.showDeleteModal = false
                     },

@@ -72,7 +72,7 @@ struct SignupPasswordView: View {
             if let error = viewModel.passwordErrorMessage {
                 Text(error)
                     .font(.dsFootnote)
-                    .foregroundStyle(Color.pink070)
+                    .foregroundStyle(Color.red050)
             }
         }
     }
@@ -93,7 +93,7 @@ struct SignupPasswordView: View {
             if let error = viewModel.confirmPasswordErrorMessage {
                 Text(error)
                     .font(.dsFootnote)
-                    .foregroundStyle(Color.pink070)
+                    .foregroundStyle(Color.red050)
             }
         }
     }
