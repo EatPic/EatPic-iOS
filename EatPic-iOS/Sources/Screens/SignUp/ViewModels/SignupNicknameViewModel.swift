@@ -9,17 +9,22 @@ import Foundation
 
 /// 닉네임으로 회원가입 ViewModel
 @Observable
-class SignUpNicknameViewModel: SignupFlowViewModel {
+class SignUpNicknameViewModel {
     
     // MARK: - Property
+    let flow: SignupFlowViewModel
+    
+    init(flow: SignupFlowViewModel) {
+        self.flow = flow
+    }
     
     /// 이미 등록된 닉네임 테스트용 데이터
     let registeredNicknames = ["홍길동", "김철수"]
 
     /// 사용자 입력 닉네임
-    override var nickname: String {
-        get { super.nickname }
-        set { super.nickname = newValue }
+    var nickname: String {
+        get { flow.model.nickname }
+        set { flow.model.nickname = newValue }
     }
 
     // MARK: - Error Message

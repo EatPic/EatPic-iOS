@@ -35,7 +35,9 @@ final class DIContainer: ObservableObject {
         self.router = router
         self.locationStore = locationStore
         self.userSessionKeychain = userSessionKeychain
-        self.networkService = NetworkServiceImpl(userSessionKeychain: userSessionKeychain)
+        self.networkService = NetworkServiceImpl(
+            userSessionKeychain: userSessionKeychain
+        )
         self.apiProviderStore = APIProviderStore(networkService: networkService)
         self.mediaPickerService = mediaPickerService
     }
@@ -43,6 +45,7 @@ final class DIContainer: ObservableObject {
     // MARK: - FlowViewModel Factory Property
     
     @MainActor var recordFlowVM: RecordFlowViewModel?
+    var signupFlowVM: SignupFlowViewModel?
 }
 
 extension DIContainer {
@@ -57,5 +60,21 @@ extension DIContainer {
     @MainActor
     func clearRecordFlowVM() {
         recordFlowVM = nil
+    }
+    
+    // MARK: - SignupFlow
+
+    func getSignupFlowVM() -> SignupFlowViewModel {
+        if let viewModel = signupFlowVM {
+            return viewModel
+        } else {
+            let newViewModel = SignupFlowViewModel(container: self)
+            signupFlowVM = newViewModel
+            return newViewModel
+        }
+    }
+
+    func resetSignupFlowVM() {
+        signupFlowVM = nil
     }
 }

@@ -11,7 +11,7 @@ struct SignupNicknameView: View {
     // MARK: - Property
 
     /// 유효성검사 로직 맡고있는 ViewModel
-    @State var viewModel: SignUpNicknameViewModel = .init(container: .init())
+    @State var viewModel: SignUpNicknameViewModel 
 
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
@@ -32,6 +32,14 @@ struct SignupNicknameView: View {
                 .font(.dsTitle2)
         }
         .padding(.horizontal, 16)
+        .onAppear {
+                   // 디버깅: 같은 인스턴스인지 확인
+                   print("🔐FlowVM 주소: \(Unmanaged.passUnretained(viewModel.flow).toOpaque())")
+            print("🔐 PasswordView - 이전 화면에서 입력한 이메일: '\(viewModel.flow.model.email)'")
+            print("🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.flow.model.password)'")
+            print("🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.flow.model.confirmPassword)'")
+            print("🔐 signupNicknameView - 이전 화면에서 입력한 ID: '\(viewModel.flow.model.nameId)'")
+               }
     }
 
     // MARK: - TopContents(회원가입 닉네임 정보입력 뷰 상단 타이틀 및 텍스트 필드)
@@ -107,5 +115,5 @@ struct SignupNicknameView: View {
 }
 
 #Preview {
-    SignupNicknameView()
+    SignupNicknameView(viewModel: .init(flow: SignupFlowViewModel.init(container: .init())))
 }

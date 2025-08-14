@@ -9,11 +9,8 @@ import SwiftUI
 struct SignupProfileView: View {
     // MARK: - Property
 
-    /// 현재 포커싱된 입력 필드를 관리하는 FocusState
-    @FocusState private var focus: SignUpFieldType?
-
     @EnvironmentObject private var container: DIContainer
-
+    
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {

@@ -13,21 +13,9 @@ import Moya
 class SignupFlowViewModel {
     // MARK: - Property
     
-    /// 사용자 입력 이메일
-    var email: String = ""
+    /// 회원가입 플로우 사용자 입력값 모델
+    var model: SignupModel = .init()
     
-    /// 사용자 입력 비밀번호
-    var password: String = ""
-    
-    /// 비밀번호 확인
-    var confirmPassword: String = ""
-    
-    /// 사용자 입력 닉네임
-    var nickname: String = ""
-    
-    /// 사용자 입력 아이디
-    var id: String = ""
-
     /// API 연결을 위한 프로바이더
     private var authProvider: MoyaProvider<AuthTargetType>
     
@@ -38,15 +26,17 @@ class SignupFlowViewModel {
     
     // MARK: - Func (API 호출 및 키체인 저장)
     
+    /// 네트워크 연동 및 모델 매핑
     func fetchAuth() async {
+        print("📌 Signup model before request:", model) // 요청 전에 상태 확인
         do {
             let request = SignupRequest(
                 role: SignupDefaults.role,
-                email: email,
-                password: password,
-                passwordConfirm: confirmPassword,
-                nameId: id,
-                nickname: nickname,
+                email: model.email,
+                password: model.password,
+                passwordConfirm: model.confirmPassword,
+                nameId: model.nameId,
+                nickname: model.nickname,
                 termsAgreed: SignupDefaults.termsAgreed,
                 privacyPolicyAgreed: SignupDefaults.privacyPolicyAgreed,
                 marketingAgreed: SignupDefaults.marketingAgreed,

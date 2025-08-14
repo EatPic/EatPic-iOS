@@ -11,7 +11,7 @@ struct SignupComplementView: View {
     // MARK: - Property
 
     @EnvironmentObject private var container: DIContainer
-    @State var viewModel: SignupFlowViewModel = .init(container: .init())
+    @State var viewModel: SignupFlowViewModel
 
     // MARK: - Body
     
@@ -26,6 +26,24 @@ struct SignupComplementView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            // 디버깅: 같은 인스턴스인지 확인
+            print(
+                "🔐FlowVM 주소: \(Unmanaged.passUnretained(viewModel).toOpaque())"
+            )
+            print(
+                "🔐 PasswordView - 이전 화면에서 입력한 이메일: '\(viewModel.model.email)'"
+            )
+            print(
+                "🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.model.password)'"
+            )
+            print(
+                "🔐 signupIDView - 이전 화면에서 입력한 비밀번호: '\(viewModel.model.confirmPassword)'"
+            )
+            print(
+                "🔐 signupNicknameView - 이전 화면에서 입력한 ID: '\(viewModel.model.nameId)'"
+            )
+        }
     }
 
     // MARK: - 회원가입 완료 Contents
@@ -74,8 +92,4 @@ struct SignupComplementView: View {
                 }
             })
     }
-}
-
-#Preview {
-    SignupComplementView()
 }
