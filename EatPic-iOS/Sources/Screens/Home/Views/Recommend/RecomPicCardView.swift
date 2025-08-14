@@ -13,21 +13,37 @@ struct RecomPicCardView: View {
     
     // PicCardView의 요구사항에 맞게 PicCard 객체를 생성
     // FIXME: 실제 데이터로 교체해야 합니다.(원주연)
-    private let sampleCard = PicCard(
-        user: CommunityUser(
-            id: "아이디", nickname: "아이디",
-            imageName: nil, isCurrentUser: false,
-            isFollowed: false),
-        time: "오후 6:30",
-        image: Image(systemName: "square.fill"),
-        memo: "오늘은 샐러드를 먹었습니다~",
-        imageUrl: nil, date: "2025-07-01", meal: "LUNCH", recipe: "레시피 설명...",
-        recipeUrl: nil, latitude: nil, longitude: nil, locationText: "캐나다라마바사", hashtags: ["#점심"],
-        reactionCount: 0, userReaction: nil, commentCount: 0, bookmarked: false
-    )
-    
     var body: some View {
         VStack {
+            // 더미 User 데이터
+            let dummyFeedUser = FeedUser(
+                userId: 98765,
+                nameId: "wonjy0307",
+                nickname: "원주연",
+                profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
+            )
+            let dummyUser = CommunityUser(from: dummyFeedUser)
+            // 더미 Feed 데이터
+            let dummyFeed = Feed(
+                cardId: 101,
+                imageUrl: "https://example.com/images/pasta_feed_image.jpg",
+                datetime: "2025-07-01 15:10:00",
+                meal: .LUNCH,
+                memo: "오늘 점심으로 먹은 파스타! 정말 맛있었어요! 😋",
+                recipe: "봉골레 파스타",
+                recipeUrl: "https://example.com/recipes/vongole_pasta",
+                latitude: 37.5665,
+                longitude: 126.9780,
+                locationText: "서울 종로구",
+                hashtags: ["#파스타", "#맛스타그램", "#봉골레"],
+                user: dummyFeedUser,
+                reactionCount: 15,
+                userReaction: "TASTY",
+                commentCount: 3,
+                bookmarked: false
+            )
+            let sampleCard = PicCard(from: dummyFeed)
+
             PicCardView(
                 card: sampleCard, // ✅ 수정된 부분: card 객체 하나만 전달
                 menuContent: {

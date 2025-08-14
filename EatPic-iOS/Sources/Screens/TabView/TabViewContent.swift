@@ -24,7 +24,7 @@ struct TabViewContent: View {
             HomeView(container: container)
 
         case .community:
-            CommunityMainView()
+            CommunityMainView(container: container)
             
         case .writePost:
             EmptyView()

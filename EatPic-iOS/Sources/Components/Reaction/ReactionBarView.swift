@@ -108,7 +108,7 @@ struct ReactionBarView: View {
 }
 
 #Preview {
-    CommunityMainView()
+    CommunityMainView(container: .init())
 }
 
 #Preview {
