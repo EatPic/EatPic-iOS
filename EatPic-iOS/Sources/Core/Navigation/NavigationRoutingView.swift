@@ -109,7 +109,7 @@ struct NavigationRoutingView: View {
                 viewModel: container.getSignupFlowVM()
             )
         case .home:
-            HomeView()
+            HomeView(container: container)
         case .myBadgeStatusAll:
             MyBadgeStatusAllView()
         case .picCardEdit:

@@ -23,7 +23,7 @@ struct TabViewContent: View {
         // 홈 탭 화면: 예시로 버튼 클릭 시 calendar 화면으로 이동
         // 예시이므로 HomeView 완성시 지우고 HomeView 추가하면 됩니다.(주석도 함께 지워주세요!)
         case .home:
-            HomeView()
+            HomeView(container: container)
 //            Button {
 //                container.router.push(.calendar)
 //            } label: {

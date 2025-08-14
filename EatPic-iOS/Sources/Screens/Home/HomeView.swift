@@ -75,9 +75,17 @@ struct HomeView: View {
             if let greet = greetingViewModel.greetingResponse {
                 (
                     Text("안녕하세요. ").font(.dsTitle2)
-                    + Text(greet.name).font(.dsTitle2).bold()
+                    + Text(greet.result.nickname).font(.dsTitle2).bold()
                     + Text("님\n").font(.dsTitle2)
-                    + Text(greet.message).font(.dsTitle2)
+                    + Text(greet.result.message).font(.dsTitle2)
+                )
+                .kerning(-0.44)
+            } else {
+                (
+                    Text("안녕하세요. ").font(.dsTitle2)
+                    + Text("회원").font(.dsTitle2).bold()
+                    + Text("님\n").font(.dsTitle2)
+                    + Text("오늘도 Pic 카드를 기록해볼까요?").font(.dsTitle2)
                 )
                 .kerning(-0.44)
             }

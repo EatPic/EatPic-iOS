@@ -8,10 +8,14 @@
 import Foundation
 
 /// 홈화면 인사말 응답 구조체
-
-
-/// 홈화면 진입시 인사 타이틀 모델
 struct GreetingResponse: Codable {
-    let name: String
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: GreetingResult
+}
+
+struct GreetingResult: Codable {
+    let nickname: String
     let message: String
 }
