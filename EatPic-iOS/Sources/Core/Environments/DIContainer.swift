@@ -35,9 +35,7 @@ final class DIContainer: ObservableObject {
         self.router = router
         self.locationStore = locationStore
         self.userSessionKeychain = userSessionKeychain
-        self.networkService = NetworkServiceImpl(
-            userSessionKeychain: userSessionKeychain
-        )
+        self.networkService = NetworkServiceImpl(userSessionKeychain: userSessionKeychain)
         self.apiProviderStore = APIProviderStore(networkService: networkService)
         self.mediaPickerService = mediaPickerService
     }
