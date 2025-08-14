@@ -21,7 +21,8 @@ class CommunityMainViewModel {
     var isShowingCommentBottomSheet = false
     
     private var cardToDelete: PicCard?
-    private var nextCursor: Int = 0
+//    private var currentCursor: Int? = nil
+    private var nextCursor: Int? = nil
     private var isFetching: Bool = false
     
     let toastVM = ToastViewModel()
@@ -36,12 +37,11 @@ class CommunityMainViewModel {
         guard hasNextPage && !isFetching else { return }
         
         self.isFetching = true
-        let currentCursor = self.nextCursor
         let pageSize = 15
         
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(cursor: currentCursor, size: pageSize))
+                .fetchFeeds(userId: 15, cursor: nextCursor, size: pageSize))
             let dto = try JSONDecoder().decode(
                 APIResponse<FeedResult>.self, from: response.data)
             
@@ -51,7 +51,7 @@ class CommunityMainViewModel {
             }
             
             DispatchQueue.main.async {
-                if currentCursor == 0 {
+                if self.nextCursor == nil {
                     self.filteredCards = newCards
                 } else {
                     self.filteredCards.append(contentsOf: newCards)

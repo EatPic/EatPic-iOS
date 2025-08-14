@@ -13,16 +13,16 @@ import Moya
 struct FeedResult: Codable {
     let selectedId: Int
     let hasNext: Bool
-    let nextCursor: Int
+    let nextCursor: Int?
     let cardFeedList: [Feed]
 }
 
 // MARK: - Card Feed Item
 struct Feed: Codable {
     let cardId: Int
-    let imageUrl: String
-    let date: String
-    let time: String
+    let imageUrl: String?
+    let date: [Int]
+    let time: [Int]
     let meal: MealSlot
     let memo: String
     let recipe: String?

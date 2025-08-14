@@ -44,8 +44,8 @@ struct ExploreSelectedView: View {
         let dummyFeed = Feed(
             cardId: 101,
             imageUrl: "https://example.com/images/pasta_feed_image.jpg",
-            date: "2025-08-13",
-            time: "14:30",
+            date: [2025, 7, 1],
+                time: [14, 0, 0, 0],
             meal: .LUNCH,
             memo: "오늘 점심으로 먹은 파스타! 정말 맛있었어요! 😋",
             recipe: "봉골레 파스타",
