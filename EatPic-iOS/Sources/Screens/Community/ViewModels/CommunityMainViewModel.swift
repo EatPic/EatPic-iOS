@@ -74,20 +74,11 @@ class CommunityMainViewModel {
         //            filterCards(for: user)
     }
     
-    // 카드 필터링
-    //    private func filterCards(for user: CommunityUser) {
-    //        if user.id == "전체" { // 전체 사용자 선택 시
-    //            filteredCards = sampleCards
-    //        } else {
-    //            filteredCards = sampleCards.filter { $0.user.id == user.id }
-    //        }
-    //    }
-    
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
         // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
         // 예시: return card.user.id == currentUser.id
-        return card.user.id == "나" // 임시 로직
+        return card.user.id == "iannn" // 임시 로직
     }
     
     // MARK: - Actions
@@ -114,7 +105,7 @@ class CommunityMainViewModel {
             let response = try await cardProvider.requestAsync(.deleteCard(cardId: card.cardId))
             let dto = try JSONDecoder().decode(
                 APIResponse<CardDeleteResult>.self, from: response.data)
-                        
+            
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
@@ -124,11 +115,18 @@ class CommunityMainViewModel {
     func confirmDeletion() async {
         guard let card = cardToDelete else { return }
         
-        // TODO: - 실제 삭제 API 호출 로직 구현
         await deleteCard(card: card)
         
+        // UI 업데이트: filteredCards에서 삭제
+        if let index = filteredCards.firstIndex(where: { $0.id == card.id }) {
+            filteredCards.remove(at: index)
+        }
+        
+        // 모달 닫기 & 상태 초기화
         showDeleteModal = false
         cardToDelete = nil
+        
+        // 토스트 표시
         toastVM.showToast(title: "삭제되었습니다.")
         print("카드 삭제 완료: \(card.id)")
     }

@@ -165,7 +165,3 @@ struct CommunityMainView: View {
         .frame(height: 157)
     }
 }
-
-#Preview {
-    CommunityMainView()
-}
