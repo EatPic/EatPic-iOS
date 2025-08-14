@@ -11,10 +11,10 @@ struct RecomCardResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: [CardItem]
+    let result: [RecomCardResponseCardItem]
 }
 
-struct CardItem: Codable {
+struct RecomCardResponseCardItem: Codable {
     let cardId: Int
     let cardImageUrl: String
 }
