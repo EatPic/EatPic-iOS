@@ -135,7 +135,7 @@ struct SettingPageView: View {
                 Spacer()
                 
                 Button(action: {
-                    // TODO: [25.08.14] BlockedAccountView로 네비게이션 - 비엔/이은정
+                    container.router.push(.blockedAccount)
                     print("차단된 계정")
                 }, label: {
                     Image("btn_mypage_next")
