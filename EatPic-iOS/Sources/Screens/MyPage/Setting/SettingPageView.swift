@@ -14,7 +14,7 @@ struct SettingPageView: View {
     
     var body: some View {
         
-        VStack{
+        VStack {
             
             topNavigationBar
             
