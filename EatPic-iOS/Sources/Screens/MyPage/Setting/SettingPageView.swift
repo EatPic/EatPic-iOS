@@ -73,7 +73,7 @@ struct SettingPageView: View {
         }
         .padding(20)
         .background(Color.white)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
     
     // MARK: 설정 (알림 설정) 컴포넌트
@@ -110,7 +110,7 @@ struct SettingPageView: View {
             .padding(.vertical, 14)
             .padding(.horizontal, 16)
             .background(Color.white)
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
     
@@ -146,7 +146,7 @@ struct SettingPageView: View {
             .padding(.vertical, 17)
             .padding(.horizontal, 16)
             .background(Color.white)
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
     
@@ -192,7 +192,7 @@ struct SettingPageView: View {
                 })
                 .background(Color.white)
             }
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }
