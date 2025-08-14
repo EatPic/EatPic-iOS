@@ -49,7 +49,7 @@ struct NavigationRoutingView: View {
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
     @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
-
+        
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -69,15 +69,31 @@ struct NavigationRoutingView: View {
         case .notification:
             NotificationView()
         case .emailLoginView:
-            EmailLoginView(container: container, appFlowViewModel: appFlowViewModel)
+            EmailLoginView(
+                container: container,
+                appFlowViewModel: appFlowViewModel
+            )
         case .signUpEmailView:
-            SignupEmailView()
+            SignupEmailView(
+                viewModel: SignupEmailViewModel(
+                    flow: container.getSignupFlowVM()
+                )
+            )
         case .signupPasswordView:
-            SignupPasswordView()
+            SignupPasswordView(
+                viewModel: SignupPasswordViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupNicknameView:
-            SignupNicknameView()
+            SignupNicknameView(
+                viewModel: SignUpNicknameViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupIdView:
-            SignupIdView()
+            SignupIdView(
+                viewModel: SignUpIdViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupProfileView:
             SignupProfileView()
         case .signupAgreementView:
@@ -89,7 +105,9 @@ struct NavigationRoutingView: View {
         case .agreementServiceView:
             AgreementServiceView()
         case .signupComplementView:
-            SignupComplementView()
+            SignupComplementView(
+                viewModel: container.getSignupFlowVM()
+            )
         case .home:
             HomeView()
         case .myBadgeStatusAll:
@@ -108,7 +126,8 @@ struct NavigationRoutingView: View {
             let recordFlowViewModel = container.getRecordFlowVM()
             MealRecordView()
                 .task {
-                    recordFlowViewModel.bootstrapIfNeeded(createdAt: Date(), images: images)
+                    recordFlowViewModel
+                        .bootstrapIfNeeded(createdAt: Date(), images: images)
                 }
                 .environmentObject(recordFlowViewModel)
         case .hashtagSelection:

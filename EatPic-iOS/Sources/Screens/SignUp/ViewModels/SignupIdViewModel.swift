@@ -9,16 +9,22 @@ import Foundation
 
 /// ID로 회원가입 ViewModel
 @Observable
-class SignUpIdViewModel: SignupFlowViewModel {
+class SignUpIdViewModel {
     
     // MARK: - Property
+    
+    let flow: SignupFlowViewModel
+    
+    init(flow: SignupFlowViewModel) {
+        self.flow = flow
+    }
     
     /// 테스트용 중복 아이디 목록
     let registeredIds = ["test123", "abcde"]
     
-    override var id: String {
-        get { super.id }
-        set { super.id = newValue }
+    var id: String {
+        get { flow.model.nameId }
+        set { flow.model.nameId = newValue }
     }
     
     // MARK: - Error Message

@@ -11,7 +11,7 @@ import SwiftUI
 struct SignupPasswordView: View {
     // MARK: - Property
     
-    @State var viewModel: SignupPasswordViewModel = .init()
+    @State var viewModel: SignupPasswordViewModel
     
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
@@ -118,6 +118,7 @@ struct SignupPasswordView: View {
     }
 }
 
+
 #Preview {
-    SignupPasswordView()
+    SignupPasswordView(viewModel: .init(flow: SignupFlowViewModel.init(container: .init())))
 }

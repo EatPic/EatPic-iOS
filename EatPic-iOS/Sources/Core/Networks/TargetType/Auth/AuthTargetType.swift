@@ -12,6 +12,7 @@ import Moya
 enum AuthTargetType {
     case emailLogin(request: EmailLoginRequest)
     case login(email: String, password: String)
+    case signup(request: SignupRequest)
 }
 
 extension AuthTargetType: APITargetType {
@@ -19,6 +20,8 @@ extension AuthTargetType: APITargetType {
         switch self {
         case .login:
             return "api/auth/login/social"
+        case .signup:
+            return "/api/auth/signup"
         case .emailLogin:
             return "/api/auth/login/email"
         }
@@ -26,7 +29,7 @@ extension AuthTargetType: APITargetType {
 
     var method: Moya.Method {
         switch self {
-        case .emailLogin, .login:
+        case .emailLogin, .login, .signup:
             return .post
         }
     }
@@ -39,6 +42,8 @@ extension AuthTargetType: APITargetType {
                 parameters: parameters,
                 encoding: JSONEncoding.default
             )
+        case .signup(let request):
+            return .requestJSONEncodable(request)
         case .emailLogin(let request):
             return .requestJSONEncodable(request)
         }
@@ -46,10 +51,10 @@ extension AuthTargetType: APITargetType {
     
     var sampleData: Data {
         return Data("""
-            {
-                "user_id": 1,
-                "token": "jwt-token"
-            }
-            """.utf8)
+                {
+                    "user_id": 1,
+                    "token": "jwt-token"
+                }
+                """.utf8)
     }
 }

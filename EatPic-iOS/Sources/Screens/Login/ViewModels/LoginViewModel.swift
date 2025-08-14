@@ -44,7 +44,6 @@ class LoginViewModel {
     // MARK: - Func
     
     /// 이메일로 로그인 API 요청 함수
-    
     @MainActor
     func emailLogin() async {
         /// APIProviderStore에서 제작된 함수 호출
@@ -61,9 +60,11 @@ class LoginViewModel {
             
             // 키체인에 저장할 UserInfo 생성
             let userInfo = UserInfo(
+                role: dto.result.role,
+                userId: dto.result.userId,
+                email: dto.result.email,
                 accessToken: dto.result.accessToken,
                 refreshToken: dto.result.refreshToken
-                // userId, 닉네임 등 여기에 추가
             )
             
             guard keychain.saveSession(userInfo, for: .userSession) else {

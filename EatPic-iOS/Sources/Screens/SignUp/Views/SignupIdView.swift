@@ -11,18 +11,12 @@ struct SignupIdView: View {
     // MARK: - Property
 
     /// 유효성검사 로직 맡고있는 ViewModel
-    @State var viewModel: SignUpIdViewModel
+    @Bindable var viewModel: SignUpIdViewModel
 
     /// 현재 포커싱된 입력 필드를 관리하는 FocusState
     @FocusState private var focus: SignUpFieldType?
 
     @EnvironmentObject private var container: DIContainer
-
-    // MARK: - Init
-    /// 기본 생성자: 내부에서 ViewModel 인스턴스 생성
-    init() {
-        self.viewModel = .init()
-    }
 
     // MARK: - Body
     var body: some View {
@@ -114,5 +108,5 @@ struct SignupIdView: View {
 }
 
 #Preview {
-    SignupIdView()
+    SignupIdView(viewModel: .init(flow: SignupFlowViewModel.init(container: .init())))
 }

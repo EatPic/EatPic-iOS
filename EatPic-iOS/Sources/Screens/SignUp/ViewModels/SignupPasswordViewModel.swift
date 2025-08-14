@@ -9,19 +9,26 @@ import Foundation
 
 /// 회원가입 비밀번호 입력창 ViewModel
 @Observable
-class SignupPasswordViewModel: SignupFlowViewModel {
+class SignupPasswordViewModel {
     
     // MARK: - Property
     
-    /// 사용자 입력 비밀번호
-    override var password: String {
-        get { super.password }
-        set { super.password = newValue }
+    let flow: SignupFlowViewModel
+    
+    init(flow: SignupFlowViewModel) {
+        self.flow = flow
     }
     
-    override var confirmPassword: String {
-        get { super.confirmPassword}
-        set { super.confirmPassword = newValue }
+    /// 사용자 입력 비밀번호
+    var password: String {
+        get { flow.model.password }
+        set { flow.model.password = newValue }
+    }
+    
+    /// 사용자 확인 번호
+    var confirmPassword: String {
+        get { flow.model.confirmPassword}
+        set { flow.model.confirmPassword = newValue }
     }
     
     // MARK: - Error Message

@@ -43,6 +43,7 @@ final class DIContainer: ObservableObject {
     // MARK: - FlowViewModel Factory Property
     
     @MainActor var recordFlowVM: RecordFlowViewModel?
+    var signupFlowVM: SignupFlowViewModel?
 }
 
 extension DIContainer {
@@ -57,5 +58,21 @@ extension DIContainer {
     @MainActor
     func clearRecordFlowVM() {
         recordFlowVM = nil
+    }
+    
+    // MARK: - SignupFlow
+
+    func getSignupFlowVM() -> SignupFlowViewModel {
+        if let viewModel = signupFlowVM {
+            return viewModel
+        } else {
+            let newViewModel = SignupFlowViewModel(container: self)
+            signupFlowVM = newViewModel
+            return newViewModel
+        }
+    }
+
+    func clearSignupFlowVM() {
+        signupFlowVM = nil
     }
 }
