@@ -124,13 +124,11 @@ struct PicCardFrontView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Text(card.imageUrl)
-//                card.imageUrl
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fill)
-//                    .frame(width: geometry.size.width, height: geometry.size.width)
-//                    .clipped()
-//                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                Rectangle()
+                    .remoteImage(url: "")
+                    .frame(width: geometry.size.width, height: geometry.size.width)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 
                 PicCardItemView(card: card, toastVM: toastVM, onAction: onItemAction)
                     .frame(maxWidth: .infinity, maxHeight: .infinity,

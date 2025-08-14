@@ -58,17 +58,6 @@ struct PicCard: Identifiable, Equatable {
     init(from feed: Feed) {
         self.cardId = feed.cardId
         self.user = CommunityUser(from: feed.user)
-        
-        // [Int] → String 변환
-        self.date = feed.date
-            .map { String($0) }
-            .joined(separator: "-")
-        
-        self.time = feed.time
-            .prefix(3) // 시, 분, 초까지만 사용
-            .map { String($0) }
-            .joined(separator: ":")
-        
         self.imageUrl = feed.imageUrl ?? ""
         self.memo = feed.memo
         self.meal = feed.meal
@@ -89,6 +78,25 @@ struct PicCard: Identifiable, Equatable {
         self.userReaction = feed.userReaction
         self.commentCount = feed.commentCount
         self.bookmarked = feed.bookmarked
+        
+        // MARK: - datetime 포맷팅
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        if let dateObj = formatter.date(from: feed.datetime) {
+            // 시간: 오전/오후 포함
+            formatter.dateFormat = "a hh:mm"
+            self.time = formatter.string(from: dateObj)
+            
+            // 날짜: YYYY-MM-DD
+            formatter.dateFormat = "yyyy-MM-dd"
+            self.date = formatter.string(from: dateObj)
+        } else {
+            // 디폴트 값
+            self.time = ""
+            self.date = ""
+        }
     }
     // 북마크 상태 토글
     mutating func toggleBookmark() {
@@ -138,8 +146,7 @@ let sampleUsers: [CommunityUser] = [
 let dummyFeed1 = Feed(
     cardId: 1,
     imageUrl: "https://example.com/images/Community/testImage.jpg",
-    date: [2025, 8, 11],
-    time: [18, 30, 0, 0],
+    datetime: "2025-08-11 18:30:00",
     meal: .LUNCH,
     memo: "오늘은 샐러드를 먹었습니다~",
     recipe: "UMC FS데이에 역삼까지 왔는데 샐러드 먹는 내 인생..",
@@ -158,8 +165,7 @@ let dummyFeed1 = Feed(
 let dummyFeed2 = Feed(
     cardId: 2,
     imageUrl: "https://example.com/images/Community/testImage1.jpg",
-    date: [2025, 8, 10],
-    time: [19, 20, 0, 0],
+    datetime: "2025-08-10 19:20:00",
     meal: .DINNER,
     memo: "파스타 먹음",
     recipe: "이 근처에서 가장 구글 평점 높았던 곳. 무려 4.8점",
@@ -178,8 +184,7 @@ let dummyFeed2 = Feed(
 let dummyFeed3 = Feed(
     cardId: 3,
     imageUrl: "https://example.com/images/Community/testImage2.jpg",
-    date: [2025, 8, 11],
-    time: [13, 50, 0, 0],
+    datetime: "2025-08-11 13:50:00",
     meal: .BREAKFAST,
     memo: "아침엔 스무디",
     recipe: "예진이가 60프로 할인쿠폰을 적용해줬다",
@@ -198,8 +203,7 @@ let dummyFeed3 = Feed(
 let dummyFeed4 = Feed(
     cardId: 4,
     imageUrl: "https://example.com/images/Community/testImage3.jpg",
-    date: [2025, 7, 1],
-    time: [14, 0, 0, 0],
+    datetime: "2025-07-01 14:00:00",
     meal: .LUNCH,
     memo: "오랜만에 피자!",
     recipe: "레시피 설명...",
@@ -218,8 +222,7 @@ let dummyFeed4 = Feed(
 let dummyFeed5 = Feed(
     cardId: 5,
     imageUrl: "https://example.com/images/Community/testImage.jpg",
-    date: [2025, 7, 1],
-    time: [18, 30, 0, 0],
+    datetime: "2025-07-01 18:30:00",
     meal: .LUNCH,
     memo: "오늘은 샐러드 먹음",
     recipe: "샐러드 만드는 법",
@@ -238,8 +241,7 @@ let dummyFeed5 = Feed(
 let dummyFeed6 = Feed(
     cardId: 6,
     imageUrl: "https://example.com/images/Community/testImage2.jpg",
-    date: [2025, 7, 1],
-    time: [15, 10, 0, 0],
+    datetime: "2025-07-01 15:10:00",
     meal: .BREAKFAST,
     memo: "아침엔 스무디 먹음",
     recipe: nil,
@@ -258,8 +260,7 @@ let dummyFeed6 = Feed(
 let dummyFeed7 = Feed(
     cardId: 7,
     imageUrl: "https://example.com/images/Community/testImage3.jpg",
-    date: [2025, 7, 1],
-    time: [14, 0, 0, 0],
+    datetime: "2025-07-01 14:00:00",
     meal: .DINNER,
     memo: "오랜만에 피자 먹음",
     recipe: "레시피 설명...",

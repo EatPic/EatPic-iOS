@@ -64,4 +64,19 @@ extension View {
     func toastView(viewModel: ToastViewModel) -> some View {
         self.modifier(ToastModifier(viewModel: viewModel))
     }
+    
+    /// 현재 View 자리를 네트워크 이미지로 그려주는 Modifier
+    ///
+    /// 내부 로직으로 Kingfisher 사용하여 이미지 다운로드 및 캐싱함.
+    func remoteImage(
+        url: String?,
+        contentMode: ContentMode = .fill
+    ) -> some View {
+        modifier(
+            NetworkImageModifier(
+                url: url,
+                contentMode: contentMode
+            )
+        )
+    }
 }

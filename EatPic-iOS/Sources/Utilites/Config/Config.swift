@@ -21,4 +21,11 @@ enum Config {
         }
         return baseURL
     }()
+    
+    static let testImageURL: String = {
+        guard let testImageURL = Config.infoDictionary["TEST_IMG_URL"] as? String else {
+            fatalError()
+        }
+        return testImageURL
+    }()
 }
