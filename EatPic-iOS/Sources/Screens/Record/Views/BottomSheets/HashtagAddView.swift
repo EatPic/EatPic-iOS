@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct HashtagAddView: View {
-    @Binding var hashtagInput: String
-    let isEnabled: Bool
-    let onAddHashtag: () -> Void
+    @Binding private var hashtagInput: String
+    @Binding private var isEnabled: Bool
+    private let onAddHashtag: () -> Void
+    
+    init(
+        hashtagInput: Binding<String>,
+        isEnabled: Binding<Bool>,
+        onAddHashtag: @escaping () -> Void
+    ) {
+        self._hashtagInput = hashtagInput
+        self._isEnabled = isEnabled
+        self.onAddHashtag = onAddHashtag
+    }
     
     var body: some View {
         VStack {
@@ -51,7 +61,7 @@ struct HashtagAddView: View {
 #Preview {
     HashtagAddView(
         hashtagInput: .constant(""),
-        isEnabled: true,
+        isEnabled: .constant(true),
         onAddHashtag: {}
     )
 }

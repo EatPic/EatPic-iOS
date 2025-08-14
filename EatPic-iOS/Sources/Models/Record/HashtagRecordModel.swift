@@ -16,11 +16,6 @@ import Foundation
 struct HashtagCategory: Identifiable, Hashable, Sendable {
     let id: String
     var title: String
-    
-    init(id: String, title: String) {
-        self.id = id        // e.g. "midnightSnack"
-        self.title = title  // e.g. "야식"
-    }
 }
 
 /// 해시태그 목록 소스(내장/원격/로컬 합성 가능)
@@ -43,7 +38,7 @@ struct DefaultHashtagCatalog: HashtagCatalogProviding {
             .init(id: "korean", title: "한식"),
             .init(id: "western", title: "양식"),
             .init(id: "chinese", title: "중식"),
-            .init(id: "japanese", title: "일식"),
+            .init(id: "japanese", title: "일식")
         ]
     }
 }
@@ -154,18 +149,55 @@ extension HashtagRecordModel {
     }
 }
 
+protocol HashtagTitlePolicy {
+    // 타이틀이 허용되는지 검증( 성공: ok, 실패: 에러 반환)
+    func validate(_ title: String) -> Result<Void, HashtagPolicyError>
+    
+    var maxHangul: Int { get }
+}
+
+enum HashtagPolicyError: LocalizedError {
+    case tooLongHangul(limit: Int)
+    case empty
+    // 추후 확장
+    
+    var errorDescription: String? {
+        switch self {
+        case .empty: return "내용을 입력해 주세요."
+        case .tooLongHangul(let limit):
+            return "한글은 \(limit)자 이하만 가능합니다."
+        }
+    }
+}
+
+struct DefaultHashtagTitlePolicy: HashtagTitlePolicy {
+    let maxHangul: Int = 5
+    
+    func validate(_ title: String) -> Result<Void, HashtagPolicyError> {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isEmpty == false else { return .failure(.empty) }
+        
+        let length = trimmed.count
+        
+        return length <= maxHangul ? .success(()) : .failure(.tooLongHangul(limit: maxHangul))
+    }
+}
+
 @Observable
 @MainActor
 final class HashtagRecordViewModel {
     private(set) var model: HashtagRecordModel
     private(set) var catalog: HashtagCatalogProviding
+    private let hashtagTitlePolicy: HashtagTitlePolicy
     
     init(
         date: Date = .now,
-        catalog: HashtagCatalogProviding = DefaultHashtagCatalog()
+        catalog: HashtagCatalogProviding = DefaultHashtagCatalog(),
+        hashtagTitlePolicy: HashtagTitlePolicy = DefaultHashtagTitlePolicy()
     ) {
         self.catalog = catalog
         self.model = .initial(for: date, catalog: catalog)
+        self.hashtagTitlePolicy = hashtagTitlePolicy
     }
     
     var date: Date { model.date }
@@ -201,26 +233,52 @@ final class HashtagRecordViewModel {
     // MARK: Runtime extension (사용자에 의한 태그 추가)
     
     /**
-     뷰에서 사용자 정의 해시태그를 추가할 때 사용.
+     사용자 정의 해시태그를 모델에 추가합니다.
+     
+     이 메서드는 입력된 해시태그 제목을 `hashtagTitlePolicy`를 통해 검증한 뒤,
+     유효할 경우 `HashtagRecordModel`에 새로운 카테고리를 추가합니다.
+     선택 즉시 활성화 옵션(`selectImmediately`)이 켜져 있으면 추가와 동시에 선택 상태로 변경됩니다.
      
      - Parameters:
-     - id: 영속/서버 키(중복 방지용). 비워두면 `title` 기반으로 생성합니다.
-     - title: 표시용 텍스트
-     - selectImmediately: 추가 직후 선택할지 여부(기본 `false`)
+     - id: 해시태그 고유 식별자(서버/영속 키). `nil`인 경우 `title`을 가공하여 생성합니다.
+     - title: 사용자에게 표시되는 해시태그 제목.
+     - selectImmediately: `true`면 추가 직후 해당 해시태그를 선택 상태로 전환합니다. 기본값은 `false`입니다.
+     
+     - Returns:
+     - `.success(HashtagCategory)`: 정상적으로 추가된 해시태그 카테고리.
+     - `.failure(HashtagPolicyError)`: 제목이 비어 있거나, 길이 제한 등 정책을 위반한 경우.
+     
+     - Note:
+     - 이 메서드는 해시태그 목록(`checks`)에 동일한 `id`가 이미 존재하면 아무 동작도 하지 않습니다.
+     - 최대 선택 개수 제한(예: 3개)은 `selectImmediately` 시점의 토글 동작에 의해 적용됩니다.
      */
+    @discardableResult
     func addCustomCategory(
         id: String? = nil,
         title: String,
         selectImmediately: Bool = false
-    ) {
-        let key = id ?? title.trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: " ", with: "_")
-        
-        let category = HashtagCategory(id: key, title: title)
-        model.appendCategoryIfNeeded(category)
-        
-        if selectImmediately {
-            model.toggle(key)
+    ) -> Result<HashtagCategory, HashtagPolicyError> {
+        switch hashtagTitlePolicy.validate(title) {
+        case .success:
+            let key = id ?? title.trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: " ", with: "_")
+            
+            let category = HashtagCategory(id: key, title: title)
+            model.appendCategoryIfNeeded(category)
+            
+            if selectImmediately { model.toggle(key) }
+            return .success(category)
+        case .failure(let err):
+            return .failure(err)
+        }
+    }
+    
+    /// 입력된 title로 사용자 태그를 추가할 수 있는지 여부를 검증합니다.
+    /// - Returns: 가능하면 `true`, 불가하면 `false`
+    func canAdd(_ title: String) -> Bool {
+        switch hashtagTitlePolicy.validate(title) {
+        case .success: return true
+        case .failure: return false
         }
     }
 }
@@ -361,16 +419,24 @@ private struct HastagSelectingContentView: View {
             BottomSheetView(title: "해시태그 추가") {
                 HashtagAddView(
                     hashtagInput: $addHashtagText,
-                    isEnabled: true
+                    isEnabled: .constant(hashtagRecordVM.canAdd(addHashtagText))
                 ) {
-                    hashtagRecordVM.addCustomCategory(title: addHashtagText)
-                    addHashtagSheet = false
+                    let result = hashtagRecordVM.addCustomCategory(title: addHashtagText)
+                    switch result {
+                    case .success:
+                        addHashtagSheet = false
+                        addHashtagText = ""
+                    case .failure:
+                        break
+                    }
                 }
             }
             .presentationDetents([.height(200)])
         }
         .customNavigationBar {
             Text("Pic 카드 기록")
+                .font(.dsTitle2)
+                .foregroundStyle(Color.gray080)
         } right: {
             Button(action: {
                 container.router.popToRoot()
@@ -463,4 +529,3 @@ private extension Array {
         .environmentObject(RecordFlowViewModel())
         .environmentObject(DIContainer())
 }
-
