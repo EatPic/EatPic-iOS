@@ -34,4 +34,8 @@ extension APIProviderStore {
     func home() -> MoyaProvider<HomeTargetType> {
         return networkService.testProvider(for: HomeTargetType.self)
     }
+    
+    func recomCard() -> MoyaProvider<CardTargetType> {
+        return networkService.testProvider(for: CardTargetType.self)
+    }
 }
