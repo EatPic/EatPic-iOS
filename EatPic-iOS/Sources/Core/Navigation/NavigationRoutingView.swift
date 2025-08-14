@@ -32,8 +32,8 @@ enum NavigationRoute: Equatable, Hashable {
     case receiptDetail
     case exploreMain
     case mealTimeSelection(image: [UIImage])
-    case hashtagSelection(selectedMeal: MealTime)
-    case picCardRecord(selectedMeal: MealTime, selectedHashtags: [String])
+    case hashtagSelection
+    case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
@@ -49,7 +49,7 @@ struct NavigationRoutingView: View {
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
     @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
-
+        
     private let route: NavigationRoute
     
     init(route: NavigationRoute) {
@@ -57,10 +57,8 @@ struct NavigationRoutingView: View {
     }
     
     var body: some View {
-        
         routingView
             .environmentObject(container)
-            .environmentObject(recordViewModel)  // 모든 하위 화면에 전달
     }
     
     @ViewBuilder
@@ -71,15 +69,31 @@ struct NavigationRoutingView: View {
         case .notification:
             NotificationView()
         case .emailLoginView:
-            EmailLoginView(container: container, appFlowViewModel: appFlowViewModel)
+            EmailLoginView(
+                container: container,
+                appFlowViewModel: appFlowViewModel
+            )
         case .signUpEmailView:
-            SignupEmailView()
+            SignupEmailView(
+                viewModel: SignupEmailViewModel(
+                    flow: container.getSignupFlowVM()
+                )
+            )
         case .signupPasswordView:
-            SignupPasswordView()
+            SignupPasswordView(
+                viewModel: SignupPasswordViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupNicknameView:
-            SignupNicknameView()
+            SignupNicknameView(
+                viewModel: SignUpNicknameViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupIdView:
-            SignupIdView()
+            SignupIdView(
+                viewModel: SignUpIdViewModel(
+                    flow: container.getSignupFlowVM()
+                ))
         case .signupProfileView:
             SignupProfileView()
         case .signupAgreementView:
@@ -91,7 +105,9 @@ struct NavigationRoutingView: View {
         case .agreementServiceView:
             AgreementServiceView()
         case .signupComplementView:
-            SignupComplementView()
+            SignupComplementView(
+                viewModel: container.getSignupFlowVM()
+            )
         case .home:
             HomeView()
         case .myBadgeStatusAll:
@@ -106,12 +122,27 @@ struct NavigationRoutingView: View {
             ReceiptDetailView()
         case .exploreMain:
             ExploreMainView()
-        case .mealTimeSelection:
-            MealtimeSelectView()
+        case .mealTimeSelection(let images):
+            let recordFlowViewModel = container.getRecordFlowVM()
+            MealRecordView()
+                .task {
+                    recordFlowViewModel
+                        .bootstrapIfNeeded(createdAt: Date(), images: images)
+                }
+                .environmentObject(recordFlowViewModel)
         case .hashtagSelection:
-            HashtagSelectView()
+            if let recordFlowViewModel = container.recordFlowVM {
+                HashtagSelectView().environmentObject(recordFlowViewModel)
+            } else {
+                HashtagSelectView() // fallback: 로그/어설트 추가 필요
+            }
+            
         case .picCardRecord:
-            PicCardRecorView()
+            if let recordFlowViewModel = container.recordFlowVM {
+                PicCardRecorView().environmentObject(recordFlowViewModel)
+            } else {
+                PicCardRecorView()
+            }
         case .userProfile(let user):
             OthersProfileView(user: user)
         case .followList(let selected):

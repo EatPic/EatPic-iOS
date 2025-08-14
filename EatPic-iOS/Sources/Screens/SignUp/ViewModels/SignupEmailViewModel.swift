@@ -10,17 +10,23 @@ import SwiftUICore
 /// 이메일로 회원가입 ViewModel
 /// 해당 뷰모델은 유효성 검사만 책임을 가지고 상태 저장은 중앙 뷰모델에 저장
 @Observable
-class SignupEmailViewModel: SignupFlowViewModel {
+class SignupEmailViewModel {
     
     // MARK: - Property
+    
+    let flow: SignupFlowViewModel
+    
+    init(flow: SignupFlowViewModel) {
+        self.flow = flow
+    }
     
     /// 가입된 사용자 이메일 테스트 용 데이터
     let registeredEmails = ["test@example.com", "abc@gmail.com"]
     
     // 사용자 입력 이메일 값
-    override var email: String {
-        get { super.email }
-        set { super.email = newValue }
+    var email: String {
+        get { flow.model.email }
+        set { flow.model.email = newValue }
     }
     
     // MARK: - Error

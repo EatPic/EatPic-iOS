@@ -17,7 +17,7 @@ struct EmailLoginView: View {
     @FocusState private var focus: SignUpFieldType?
     
     @EnvironmentObject private var container: DIContainer
-    
+
     /// DIContainer와 앱 흐름 ViewModel(AppFlowViewModel)을 주입받아 초기화
     init(container: DIContainer, appFlowViewModel: AppFlowViewModel) {
         self.viewModel = .init(container: container, appFlowViewModel: appFlowViewModel)
@@ -115,6 +115,8 @@ struct EmailLoginView: View {
                 .foregroundStyle(Color.gray060)
             
             Button(action: {
+                // 회원가입 플로우 시작 시점에 단 한 번 생성/보관
+                _ = container.getSignupFlowVM() // 생성 or 기존 반환 (싱글턴처럼)
                 container.router.push(.signUpEmailView)
             }, label: {
                 Text("회원가입 하기")

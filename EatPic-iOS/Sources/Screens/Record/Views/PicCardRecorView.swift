@@ -14,7 +14,7 @@ struct PicCardRecorView: View {
     var body: some View {
         VStack {
             PicCardWriteView(
-                primaryButtonText: "저장하기",
+                primaryButtonText: "기록하기",
                 // recordModel의 각 필드에 수동 바인딩을 만들어서 연결
                 myMemo: Binding(
                     get: { viewmodel.recordModel.memo },
