@@ -38,6 +38,7 @@ enum NavigationRoute: Equatable, Hashable {
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
     case storeLocation(latitude: Double, longitude: Double, title: String)
+    case settingPage
     case blockedAccount
 }
 
@@ -157,6 +158,8 @@ struct NavigationRoutingView: View {
                     title: title
                 )]
             )
+        case .settingPage:
+            SettingPageView()
         case .blockedAccount:
             BlockedAccountView()
         }
