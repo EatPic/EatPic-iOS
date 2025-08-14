@@ -33,7 +33,7 @@ struct TabViewContent: View {
         // 커뮤니티 탭 화면: 커뮤니티 관련 화면을 연결
         // Home과 마찬가지로 화면이 완성되었다면, 지우고 ComunityView를 연결하면 됩니다.
         case .community:
-            CommunityMainView()
+            CommunityMainView(container: container)
             
         // 글쓰기 탭 화면: 카메라 모달을 표시하고, 선택 시 MealTimeSelectView로 이동
         case .writePost:

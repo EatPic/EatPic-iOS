@@ -55,18 +55,25 @@ final class FollowListViewModel {
     }
 }
 
-// MARK: - Updated Sample Data (For FollowListView)
+// MARK: - CommunityUser 더미 데이터를 생성하기 위한 FeedUser 더미
+let feedUserHong: FeedUser = FeedUser(userId: 101, nameId: "hong", nickname: "홍길동",
+                                      profileImageUrl: "https://example.com/images/hong.jpg")
+let feedUserYoung: FeedUser = FeedUser(userId: 102, nameId: "young", nickname: "김영희",
+                                       profileImageUrl: "https://example.com/images/young.jpg")
+let feedUserCheolsoo: FeedUser = FeedUser(userId: 103, nameId: "chul", nickname: "이철수",
+                                          profileImageUrl:
+                                            "https://example.com/images/cheolsoo.jpg")
+let feedUserMinsu: FeedUser = FeedUser(userId: 104, nameId: "minsu", nickname: "박민수",
+                                       profileImageUrl: "https://example.com/images/minsu.jpg")
 
+
+// MARK: - 수정된 CommunityUser 더미 데이터
 let sampleFollowers: [CommunityUser] = [
-    CommunityUser(id: "hong", nickname: "홍길동", imageName: nil,
-                  isCurrentUser: false, isFollowed: true),
-    CommunityUser(id: "young", nickname: "김영희", imageName: nil,
-                  isCurrentUser: false, isFollowed: false)
+    CommunityUser(from: feedUserHong),
+    CommunityUser(from: feedUserYoung)
 ]
 
 let sampleFollowings: [CommunityUser] = [
-    CommunityUser(id: "cheolsoo", nickname: "이철수", imageName: nil,
-                  isCurrentUser: false, isFollowed: true),
-    CommunityUser(id: "minsu", nickname: "박민수", imageName: nil,
-                  isCurrentUser: false, isFollowed: true)
+    CommunityUser(from: feedUserCheolsoo),
+    CommunityUser(from: feedUserMinsu)
 ]

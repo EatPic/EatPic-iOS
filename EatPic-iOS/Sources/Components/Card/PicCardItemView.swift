@@ -170,5 +170,5 @@ struct PicCardItemView: View {
 }
 
 #Preview {
-    CommunityMainView()
+    CommunityMainView(container: .init())
 }

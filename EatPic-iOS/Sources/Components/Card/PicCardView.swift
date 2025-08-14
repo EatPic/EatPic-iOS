@@ -124,12 +124,13 @@ struct PicCardFrontView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                card.image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: geometry.size.width)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                Text(card.imageUrl)
+//                card.imageUrl
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//                    .frame(width: geometry.size.width, height: geometry.size.width)
+//                    .clipped()
+//                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 
                 PicCardItemView(card: card, toastVM: toastVM, onAction: onItemAction)
                     .frame(maxWidth: .infinity, maxHeight: .infinity,
@@ -146,7 +147,7 @@ struct PicCardBackView: View {
     
     var body: some View {
         RecipeDetailCardView(
-            backgroundImage: card.image,
+            backgroundImage: card.imageUrl,
             hashtags: card.hashtags ?? [],
             recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
             linkURL: card.recipeUrl,

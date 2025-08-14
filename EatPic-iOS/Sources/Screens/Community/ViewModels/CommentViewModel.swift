@@ -18,12 +18,21 @@ final class CommentViewModel {
     let toastVM = ToastViewModel()
     
     // 현재 로그인된 사용자의 정보 (임시)
-    private let currentUser = CommunityUser(
-        id: "itcong", nickname: "잇콩",
-        imageName: "Community/itcong", isCurrentUser: true, isFollowed: true)
+    let dummyFeedUser = FeedUser(
+        userId: 98765,
+        nameId: "wonjy0307",
+        nickname: "원주연",
+        profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
+    )
+//    private let currentUser = CommunityUser(
+//        id: "itcong", nickname: "잇콩",
+//        imageName: "Community/itcong", isCurrentUser: true, isFollowed: true)
     
     func postComment() {
         guard !commentText.isEmpty else { return }
+        
+        let currentUser = CommunityUser(from: dummyFeedUser)
+        
         // 새 댓글 생성
         let newComment = Comment(user: currentUser, text: commentText, time: "방금 전")
         
@@ -67,6 +76,7 @@ final class CommentViewModel {
     
     // 댓글 작성자가 현재 사용자인지 확인하는 메서드
     func isMyComment(_ comment: Comment) -> Bool {
+        let currentUser = CommunityUser(from: dummyFeedUser)
         return comment.user.id == currentUser.id
     }
     

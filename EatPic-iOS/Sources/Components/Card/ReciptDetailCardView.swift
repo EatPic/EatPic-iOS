@@ -17,7 +17,7 @@ import SwiftUI
 ///   - naviButtonAction: 위치 기반 길찾기 등 내비게이션 버튼을 눌렀을 때 실행할 액션. nil일 경우 버튼이 표시되지 않습니다.
 ///   - naviLabel: 내비게이션 버튼에 표시될 라벨 텍스트. `naviButtonAction`이 nil일 경우 함께 무시됩니다.
 struct RecipeDetailCardView: View {
-    let backgroundImage: Image
+    let backgroundImage: String
     let hashtags: [String]
     let recipeDescription: String
     let linkURL: URL?
@@ -28,7 +28,7 @@ struct RecipeDetailCardView: View {
     
     // MARK: init
     init(
-        backgroundImage: Image,
+        backgroundImage: String,
         hashtags: [String],
         recipeDescription: String,
         linkURL: URL? = nil,
@@ -85,14 +85,15 @@ struct RecipeDetailCardView: View {
     
     /// 배경 이미지 뷰
     private var backgroundImageView: some View {
-        backgroundImage
-            .resizable()
-            .scaledToFill()
-            .frame(maxWidth: .infinity)
-            .aspectRatio(1, contentMode: .fit)
-            .overlay(Color.black.opacity(0.7)) // 어두운 필터
-            .clipped()
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+        Text(backgroundImage)
+//        backgroundImage
+//            .resizable()
+//            .scaledToFill()
+//            .frame(maxWidth: .infinity)
+//            .aspectRatio(1, contentMode: .fit)
+//            .overlay(Color.black.opacity(0.7)) // 어두운 필터
+//            .clipped()
+//            .clipShape(RoundedRectangle(cornerRadius: 20))
     }
     
     /// 해시태그 뷰
@@ -150,15 +151,3 @@ struct RecipeDetailCardView: View {
     }
 }
 
-#Preview {
-    RecipeDetailCardView(
-        backgroundImage: Image("Community/testImage"),
-        hashtags: ["#아침", "#저탄고지", "#다이어트"],
-        recipeDescription: "아보카도와 토마토, 그리고 닭가슴살로 구성된 간단한 레시피입니다.",
-        linkURL: URL(string: "https://www.example.com"),     // 없으면 nil
-        naviButtonAction: {
-            print("맵뷰 실행")
-        },
-        naviLabel: "샐러디 한성대점"
-    )
-}
