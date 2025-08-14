@@ -145,7 +145,7 @@ struct PicCardBackView: View {
     
     var body: some View {
         RecipeDetailCardView(
-            backgroundImage: card.image,
+            backgroundImage: card.imageUrl,
             hashtags: card.hashtags ?? [],
             recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
             linkURL: card.recipeUrl,
