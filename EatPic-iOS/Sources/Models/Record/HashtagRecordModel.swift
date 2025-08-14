@@ -7,7 +7,11 @@
 
 import Foundation
 
+// 해시태그 추가 시 중복 해시태그 추가 방지 로직 작성해야함
+
 // MARK: - Catalog (Data-driven)
+
+enum HashtagOrigin: Sendable { case builtIn, custom, remote }
 
 /// 해시태그의 데이터 모델
 ///
@@ -16,6 +20,7 @@ import Foundation
 struct HashtagCategory: Identifiable, Hashable, Sendable {
     let id: String
     var title: String
+    var origin: HashtagOrigin = .builtIn
 }
 
 /// 해시태그 목록 소스(내장/원격/로컬 합성 가능)
@@ -129,8 +134,8 @@ struct HashtagRecordModel {
         // 해시태그가 가득 찼고(=canSelectMore == false) 미선택을 누르면 무시
     }
     
-    /// 런타임에 카테고리를 추가(뷰에서 신규 해시태그 생성 시)
-    mutating func appendCategoryIfNeeded(_ newHashtag: HashtagCategory) {
+    /// 런타임에 해시태그를 추가(뷰에서 신규 해시태그 생성 시)
+    mutating func appendHashtagIfNeeded(_ newHashtag: HashtagCategory) {
         guard checks.contains(where: {
             $0.hashtag.id == newHashtag.id }) == false else { return }
         checks.append(.init(hashtag: newHashtag))
@@ -190,6 +195,8 @@ final class HashtagRecordViewModel {
     private(set) var catalog: HashtagCatalogProviding
     private let hashtagTitlePolicy: HashtagTitlePolicy
     
+    private(set) var customAddedSinceReset: [HashtagCategory] = []
+    
     init(
         date: Date = .now,
         catalog: HashtagCatalogProviding = DefaultHashtagCatalog(),
@@ -205,6 +212,7 @@ final class HashtagRecordViewModel {
     var selectedCount: Int { model.selectedCount }
     var canSelectMore: Bool { model.canSelectMore }
     var isFull: Bool { model.isFull }
+    var checks: [HashtagCheck] { model.checks }
     
     // MARK: - 조회
     
@@ -228,16 +236,13 @@ final class HashtagRecordViewModel {
     
     func reset(for date: Date = .now) {
         model = .initial(for: date, catalog: catalog)
+        customAddedSinceReset.removeAll()
     }
     
     // MARK: Runtime extension (사용자에 의한 태그 추가)
     
     /**
      사용자 정의 해시태그를 모델에 추가합니다.
-     
-     이 메서드는 입력된 해시태그 제목을 `hashtagTitlePolicy`를 통해 검증한 뒤,
-     유효할 경우 `HashtagRecordModel`에 새로운 카테고리를 추가합니다.
-     선택 즉시 활성화 옵션(`selectImmediately`)이 켜져 있으면 추가와 동시에 선택 상태로 변경됩니다.
      
      - Parameters:
      - id: 해시태그 고유 식별자(서버/영속 키). `nil`인 경우 `title`을 가공하여 생성합니다.
@@ -263,11 +268,12 @@ final class HashtagRecordViewModel {
             let key = id ?? title.trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: " ", with: "_")
             
-            let category = HashtagCategory(id: key, title: title)
-            model.appendCategoryIfNeeded(category)
+            let newHashtag = HashtagCategory(id: key, title: title)
+            model.appendHashtagIfNeeded(newHashtag)
+            customAddedSinceReset.append(newHashtag)
             
             if selectImmediately { model.toggle(key) }
-            return .success(category)
+            return .success(newHashtag)
         case .failure(let err):
             return .failure(err)
         }
@@ -447,7 +453,7 @@ private struct HastagSelectingContentView: View {
     }
     
     private func hastagBtnList(chunkSize: Int = 4) -> some View {
-        let rows = hashtagRecordVM.catalog.all.chunked(into: chunkSize)
+        let rows = hashtagRecordVM.checks.map(\.hashtag).chunked(into: chunkSize)
         
         return LazyVStack(alignment: .leading, spacing: 8) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
