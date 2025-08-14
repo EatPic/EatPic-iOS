@@ -230,4 +230,3 @@ struct SettingPageView: View {
 #Preview {
     SettingPageView()
 }
-
