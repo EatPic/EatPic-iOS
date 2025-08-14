@@ -13,32 +13,62 @@ struct SettingPageView: View {
     @State private var isNotificationEnabled = true
     
     var body: some View {
-        VStack {
-            Spacer().frame(height: 8)
-
-            userProfileView
+        
+        VStack{
             
-            Spacer().frame(height: 24)
+            topNavigationBar
             
-            settingsView
-            
-            Spacer().frame(height: 16)
-            
-            friendsView
-            
-            Spacer().frame(height: 16)
-            
-            accountView
+            VStack {
+                
+                Spacer().frame(height: 8)
+                
+                userProfileView
+                
+                Spacer().frame(height: 24)
+                
+                settingsView
+                
+                Spacer().frame(height: 16)
+                
+                friendsView
+                
+                Spacer().frame(height: 16)
+                
+                accountView
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+        }
+        .background(Color.gray020.ignoresSafeArea())
+        .navigationBarHidden(true) // 기본 네비게이션 바 숨기기
+    }
+    
+    // MARK: 상단 네비게이션 바
+    private var topNavigationBar: some View {
+        HStack {
+            Button(action: {
+                container.router.pop()
+            }, label: {
+                Image("backBtn")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+            })
             
             Spacer()
+            
+            Text("설정")
+                .font(.dsTitle2)
+                .foregroundStyle(Color.gray080)
+            
+            Spacer()
+            
+            // 오른쪽 공간을 맞추기 위한 투명한 뷰
+            Color.clear
+                .frame(width: 16, height: 16)
         }
         .padding(.horizontal, 16)
-        .background(Color.gray020.ignoresSafeArea())
-        .customNavigationBar {
-            Text("설정")
-        } right: {
-            EmptyView()
-        }
+        .padding(.vertical, 15)
     }
     
     // MARK: 사용자 프로필 뷰

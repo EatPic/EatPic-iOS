@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BlockedAccountView: View {
     var body: some View {
+        
         ScrollView {
             VStack(spacing: 0) {
                 ForEach(0..<3, id: \.self) { _ in
