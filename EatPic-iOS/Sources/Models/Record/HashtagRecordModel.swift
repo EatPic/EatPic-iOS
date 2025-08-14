@@ -36,6 +36,8 @@ struct HashtagCheck {
 }
 
 struct HashtagRecordModel {
+    private let maxSelectedCount: Int = 3
+    
     var date: Date
     var checks: [HashtagCheck]
     
@@ -44,7 +46,15 @@ struct HashtagRecordModel {
         self.checks = checks
     }
     
-    var selectedHashtags: [HashtagKind] { checks.map { $0.id }}
+    var selectedHashtags: [HashtagKind] {
+        checks.filter { $0.selected }.map { $0.id }
+    }
+    
+    var selectedCount: Int { selectedHashtags.count }
+    
+    var canSelectMore: Bool { selectedCount < maxSelectedCount }
+    
+    var isFull: Bool { selectedCount == maxSelectedCount }
     
     func check(of hashtag: HashtagKind) -> HashtagCheck? {
         checks.first { $0.id == hashtag }
@@ -59,8 +69,16 @@ struct HashtagRecordModel {
     mutating func markUploaded(_ hashtag: HashtagKind, at time: Date = .now) {
         guard let idx = checks.firstIndex(where: { $0.id == hashtag }) else { return }
         
-        checks[idx].selected = false
-        checks[idx].selectedAt = nil
+        if checks[idx].selected {
+            // 이미 선택된 것은 언제든 해제 가능
+            checks[idx].selected = false
+            checks[idx].selectedAt = nil
+        } else if canSelectMore {
+            // 남은 해시태그가 있을 때만 선택
+            checks[idx].selected = true
+            checks[idx].selectedAt = time
+        }
+        // 해시태그가 가득 찼고(=canSelectMore == false) 미선택을 누르면 무시
     }
 }
 
@@ -84,6 +102,9 @@ final class HashtagRecordViewModel {
     
     var date: Date { model.date }
     var selectedHashtags: [HashtagKind]? { model.selectedHashtags }
+    var selectedCount: Int { model.selectedCount }
+    var canSelectMore: Bool { model.canSelectMore }
+    var isFull: Bool { model.isFull }
     
     // MARK: - 조회
     
@@ -118,6 +139,7 @@ struct HashtagSelectingView: View {
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var recordFlowVM: RecordFlowViewModel
     @State private var hashtagRecordVM: HashtagRecordViewModel
+    @State private var showAlert: Bool = false
     
     private let columns = [
         GridItem(.adaptive(minimum: 50)),
@@ -135,6 +157,43 @@ struct HashtagSelectingView: View {
         self._hashtagRecordVM = State(wrappedValue: factory(date))
     }
 
+    var body: some View {
+        ZStack {
+            HastagSelectingContentView(
+                hashtagRecordVM: hashtagRecordVM,
+                showAlert: $showAlert
+            )
+            
+            if showAlert {
+                AlertModalView(
+                    messageTitle: "안내",
+                    messageDescription: "하나 이상의 해시태그를 선택해 주세요.",
+                    messageColor: .black,
+                    btnText: "확인",
+                    btnAction: {
+                        showAlert = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+private struct HastagSelectingContentView: View {
+    @EnvironmentObject private var container: DIContainer
+    @EnvironmentObject private var recordFlowVM: RecordFlowViewModel
+    @Bindable private var hashtagRecordVM: HashtagRecordViewModel
+    
+    @Binding private var showAlert: Bool
+    
+    init(
+        hashtagRecordVM: HashtagRecordViewModel,
+        showAlert: Binding<Bool>
+    ) {
+        self.hashtagRecordVM = hashtagRecordVM
+        self._showAlert = showAlert
+    }
+    
     var body: some View {
         VStack {
             // 상단 이미지
@@ -182,8 +241,13 @@ struct HashtagSelectingView: View {
                     return
                 }
                 recordFlowVM.setTags(selectedHashtags)
-                print(recordFlowVM.state.hasTags)
-                // 다음 화면으로 푸쉬
+                if recordFlowVM.canProceedToRecord {
+                    container.router.push(.picCardRecord)
+                } else {
+                    withAnimation {
+                        showAlert = true
+                    }
+                }
             }
         }
         .padding(.horizontal, 16)
@@ -215,30 +279,29 @@ struct HashtagSelectingView: View {
     }
     
     private func hashtagBtn(hastagKind: HashtagKind) -> some View {
+        let selected = hashtagRecordVM.isSelected(hastagKind)
+        
         return Button {
             hashtagRecordVM.hashtagTogle(hastagKind)
         } label: {
             Text("#\(hastagKind.rawValue)")
                 .font(.dsCallout)
                 .foregroundStyle(
-                    hashtagRecordVM.isSelected(hastagKind)
-                    ? Color.green060: .gray050)
+                    selected ? Color.green060: .gray050)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(
-                    hashtagRecordVM.isSelected(hastagKind)
-                    ? Color.green010: Color.white)
+                    selected ? Color.green010: Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 50))
                 .overlay(
                     RoundedRectangle(cornerRadius: 50)
                         .stroke(
-                            hashtagRecordVM.isSelected(hastagKind)
-                            ? Color.green060: Color.gray050,
+                            selected ? Color.green060: Color.gray050,
                             lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
-//        .disabled() // 3개 이상 선택시 나머지 비활성화
+        .disabled(!selected && !hashtagRecordVM.canSelectMore) // 3개 이상 선택시 나머지 비활성화
     }
     
     private var addHashTagBtn: some View {
@@ -281,4 +344,3 @@ private extension Array {
     HashtagSelectingView()
         .environmentObject(RecordFlowViewModel())
 }
-

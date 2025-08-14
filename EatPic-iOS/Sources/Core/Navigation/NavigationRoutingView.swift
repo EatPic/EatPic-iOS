@@ -33,7 +33,7 @@ enum NavigationRoute: Equatable, Hashable {
     case exploreMain
     case mealTimeSelection(image: [UIImage])
     case hashtagSelection
-    case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
+    case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
