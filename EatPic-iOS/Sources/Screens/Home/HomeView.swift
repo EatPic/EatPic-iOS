@@ -64,7 +64,7 @@ struct HomeView: View {
                     badgeDescription: badgeViewModel.getBadgeDescription(for: badge.name)
                 )
             }
-        } //:ZStack
+        }
         .task { // 뷰 진입시 API 호출
             await greetingViewModel.fetchGreetingUser()
         }
@@ -74,16 +74,16 @@ struct HomeView: View {
         HStack(alignment: .top) {
             if let greet = greetingViewModel.greetingResponse {
                 (
-                    Text("안녕하세요. ").font(.dsTitle2)
-                    + Text(greet.result.nickname).font(.dsTitle2).bold()
-                    + Text("님\n").font(.dsTitle2)
-                    + Text(greet.result.message).font(.dsTitle2)
+                    Text("안녕하세요. ").font(.dsTitle3)
+                    + Text(greet.result.nickname).font(.dsTitle3)
+                    + Text("님\n").font(.dsTitle3)
+                    + Text(greet.result.message).font(.dsTitle3)
                 )
                 .kerning(-0.44)
             } else {
                 (
-                    Text("안녕하세요. ").font(.dsTitle2)
-                    + Text("회원").font(.dsTitle2).bold()
+                    Text("안녕하세요. ").font(.dsTitle3)
+                    + Text("회원").font(.dsTitle3).bold()
                     + Text("님\n").font(.dsTitle2)
                     + Text("오늘도 Pic 카드를 기록해볼까요?").font(.dsTitle2)
                 )
