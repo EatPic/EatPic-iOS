@@ -36,6 +36,7 @@ struct ExploreSelectedView: View {
         // 더미 User 데이터
         let dummyFeedUser = FeedUser(
             userId: 98765,
+            nameId: "wonjy0307",
             nickname: "원주연",
             profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
         )

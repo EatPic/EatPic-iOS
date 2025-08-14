@@ -20,6 +20,7 @@ final class CommentViewModel {
     // 현재 로그인된 사용자의 정보 (임시)
     let dummyFeedUser = FeedUser(
         userId: 98765,
+        nameId: "wonjy0307",
         nickname: "원주연",
         profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
     )

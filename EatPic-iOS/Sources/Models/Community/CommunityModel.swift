@@ -22,7 +22,7 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
     
     // FeedUser를 받아서 CommunityUser를 생성하는 이니셜라이저 추가
     init(from feedUser: FeedUser) {
-        self.id = String(feedUser.userId) // Int 타입의 userId를 String으로 변환
+        self.id = feedUser.nameId
         self.nickname = feedUser.nickname
         self.imageName = feedUser.profileImageUrl // profileImageUrl을 imageName에 할당
         self.isCurrentUser = false // API 응답에 없는 속성이므로 기본값 설정
@@ -121,11 +121,11 @@ struct Comment: Identifiable {
 
 // MARK: - Sample Data
 // 더미 FeedUser 데이터
-let dummyFeedUser1 = FeedUser(userId: 1, nickname: "홍길동",
+let dummyFeedUser1 = FeedUser(userId: 1, nameId: "hong", nickname: "홍길동",
                               profileImageUrl: "https://example.com/profiles/hong.jpg")
-let dummyFeedUser2 = FeedUser(userId: 2, nickname: "김영희",
+let dummyFeedUser2 = FeedUser(userId: 2, nameId: "young", nickname: "김영희",
                               profileImageUrl: "https://example.com/profiles/young.jpg")
-let dummyFeedUser3 = FeedUser(userId: 3, nickname: "박민수",
+let dummyFeedUser3 = FeedUser(userId: 3, nameId: "minsu", nickname: "박민수",
                               profileImageUrl: "https://example.com/profiles/minsu.jpg")
 
 let sampleUsers: [CommunityUser] = [
@@ -304,6 +304,7 @@ let reportTypes = [
 
 let dummyFeedUser = FeedUser(
     userId: 98765,
+    nameId: "wonjy0307",
     nickname: "원주연",
     profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
 )

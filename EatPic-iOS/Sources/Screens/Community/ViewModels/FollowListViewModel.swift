@@ -56,14 +56,14 @@ final class FollowListViewModel {
 }
 
 // MARK: - CommunityUser 더미 데이터를 생성하기 위한 FeedUser 더미
-let feedUserHong: FeedUser = FeedUser(userId: 101, nickname: "홍길동",
+let feedUserHong: FeedUser = FeedUser(userId: 101, nameId: "hong", nickname: "홍길동",
                                       profileImageUrl: "https://example.com/images/hong.jpg")
-let feedUserYoung: FeedUser = FeedUser(userId: 102, nickname: "김영희",
+let feedUserYoung: FeedUser = FeedUser(userId: 102, nameId: "young", nickname: "김영희",
                                        profileImageUrl: "https://example.com/images/young.jpg")
-let feedUserCheolsoo: FeedUser = FeedUser(userId: 103, nickname: "이철수",
+let feedUserCheolsoo: FeedUser = FeedUser(userId: 103, nameId: "chul", nickname: "이철수",
                                           profileImageUrl:
                                             "https://example.com/images/cheolsoo.jpg")
-let feedUserMinsu: FeedUser = FeedUser(userId: 104, nickname: "박민수",
+let feedUserMinsu: FeedUser = FeedUser(userId: 104, nameId: "minsu", nickname: "박민수",
                                        profileImageUrl: "https://example.com/images/minsu.jpg")
 
 
