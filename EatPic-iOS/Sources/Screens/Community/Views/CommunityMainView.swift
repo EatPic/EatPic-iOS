@@ -164,6 +164,6 @@ struct CommunityMainView: View {
     }
 }
 
-#Preview {
-    CommunityMainView()
-}
+//#Preview {
+//    CommunityMainView()
+//}
