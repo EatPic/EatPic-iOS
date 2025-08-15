@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileEditView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var nickname: String = "잇콩"
     @State private var id: String = "itcong"
     @State private var introduction: String = "내용"
@@ -34,7 +35,8 @@ struct ProfileEditView: View {
     private var topNavigationBar: some View {
         HStack {
             Button("취소") {
-                print("취소 버ㅌ느")
+                print("취소하기")
+                dismiss()
             }
             .foregroundStyle(Color.gray060)
             .font(.dsBody)
@@ -48,7 +50,8 @@ struct ProfileEditView: View {
             Spacer()
             
             Button("저장") {
-                print("저장 버튼")
+                print("저장하지")
+                dismiss()
             }
             .foregroundStyle(Color.gray080)
             .font(.dsHeadline)
