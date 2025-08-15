@@ -8,6 +8,6 @@
 import Foundation
 
 struct CardDeleteResult: Codable {
-    // TODO: 해민이랑 얘기해서 완료 메세지 띄우기
-//    let message: String
+    let cardId: Int
+    let successMessage: String
 }
