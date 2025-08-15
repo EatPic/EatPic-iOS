@@ -91,8 +91,8 @@ struct ProfileEditView: View {
                     print("카메라 버튼 클릭")
                 }
 
-                Button("사용자 지정", role: .destructive) {
-                    print("사용자 지정 버튼 클릭")
+                Button("프로필 사진 삭제", role: .destructive) {
+                    print("프로필 사진 삭제")
                 }
                 
                 Button("취소", role: .cancel) { }
