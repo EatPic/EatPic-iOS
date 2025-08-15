@@ -65,7 +65,7 @@ struct SettingPageView: View {
             
             // 오른쪽 공간을 맞추기 위한 투명한 뷰
             Color.clear
-                .frame(width: 16, height: 16)
+                .frame(width: 24, height: 24)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 15)
