@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AllPicCardView: View {
+struct MyAllPicCardView: View {
     
     var body: some View {
         
@@ -44,5 +44,5 @@ struct AllPicCardView: View {
 }
 
 #Preview {
-    AllPicCardView()
+    MyAllPicCardView()
 }
