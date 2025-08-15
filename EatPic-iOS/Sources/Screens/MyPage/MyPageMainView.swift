@@ -153,7 +153,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("배지 클릭")
-                // TODO: [25.08.14] BadgeStatusAllView(Home)로 네비게이션 - 비엔/이은정
+                container.router.push(.myBadgeStatusAll)
             }
         }
     }
