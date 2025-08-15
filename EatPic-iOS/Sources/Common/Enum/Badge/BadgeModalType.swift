@@ -14,6 +14,8 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
     case badgeUnlocked(progress: CGFloat, icon: Image)
     // 뱃지 잠금 상태
     case badgeLocked
+    // 뱃지 완성 상태
+    case badgeCompleted
 
     // 뱃지 획득 상태에 따라 불러오는 뱃지 뷰
     var badgeView: AnyView {
@@ -28,6 +30,14 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
             ))
         case .badgeLocked:
             return AnyView(LockBadgeView(size: 130))
+        case .badgeCompleted:
+            let badgeCircleSize = 130 * 0.92
+            return AnyView(CircleProgressView(
+                progress: 1.0,
+                lineWidth: badgeCircleSize * 0.09,
+                size: badgeCircleSize,
+                icon: Image(systemName: "checkmark.circle.fill")
+            ))
         }
     }
 
@@ -36,6 +46,7 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
         switch self {
         case .badgeUnlocked: return .green010
         case .badgeLocked: return .gray030
+        case .badgeCompleted: return .green050
         }
     }
 
@@ -44,6 +55,7 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
         switch self {
         case .badgeUnlocked: return .green060
         case .badgeLocked: return .gray060
+        case .badgeCompleted: return .green060
         }
     }
 
@@ -52,6 +64,7 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
         switch self {
         case .badgeUnlocked: return .green050
         case .badgeLocked: return .gray060
+        case .badgeCompleted: return .white
         }
     }
 
@@ -63,6 +76,8 @@ enum BadgeModalType: ModalBadgeTypeProtocol {
             return "\(value)"
         case .badgeLocked:
             return "0"
+        case .badgeCompleted:
+            return "10"
         }
     }
 }

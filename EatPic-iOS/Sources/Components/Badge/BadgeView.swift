@@ -12,10 +12,11 @@ import SwiftUI
 /// 1.  원형으로 background(Circle)가 구성되어있음
 /// 2. 원형안에 이미지 존재
 /// 3. 원형뱃지 밑에 text값 존재
-/// 뱃지 상태 ( progress : 뱃지 획득 중 ~ 획득 완료) , locked ( 뱃지 획득 이전)
+/// 뱃지 상태 ( progress : 뱃지 획득 중 ~ 획득 완료) , locked ( 뱃지 획득 이전), completed (뱃지 완성)
 enum BadgeState {
     case progress(progress: Double, icon: Image)
     case locked
+    case completed
 }
 
 /// 상단에 CircleProgressView 또는 LockBadgeView, 하단에 뱃지 이름을 띄워주는 뷰입니다
@@ -64,6 +65,16 @@ struct BadgeView: View {
                     LockBadgeView(
                         size: size
                     )
+                    
+                    // completed 케이스의 경우 완성된 뱃지 표시
+                case .completed:
+                    let badgeCircleSize = size * 0.92
+                    CircleProgressView(
+                        progress: 1.0,
+                        lineWidth: badgeCircleSize * 0.09,
+                        size: badgeCircleSize,
+                        icon: Image(systemName: "checkmark.circle.fill")
+                    )
                 }
             }
             
@@ -91,5 +102,12 @@ struct BadgeView: View {
     BadgeView(
         state: .locked,
         badgeName: "기록마스터"
+    )
+}
+
+#Preview("뱃지 완성") {
+    BadgeView(
+        state: .completed,
+        badgeName: "삼시세끼"
     )
 }
