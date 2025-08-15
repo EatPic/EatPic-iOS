@@ -81,7 +81,8 @@ struct SavedPicCardView: View {
                 GridItem(.flexible())
             ], spacing: 6) {
                 ForEach(0..<30, id: \.self) { _ in
-                    Image("Community/testImage1")
+                    // selected 값에 따라 다른 이미지 표시
+                    Image(selected == 0 ? "Community/testImage1" : "Community/testImage2")
                         .resizable()
                         .frame(width: 118, height: 118)
                 }
