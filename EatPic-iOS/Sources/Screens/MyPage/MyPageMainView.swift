@@ -133,7 +133,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("전체 카드 클릭")
-                // TODO: [25.08.14] MyAllCardView로 네비게이션 - 비엔/이은정
+                container.router.push(.myAllPicCard)
             }
 
             MyPageCardView(
