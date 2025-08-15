@@ -24,7 +24,6 @@ struct SavedPicCardView: View {
             cardScroll
             
         }
-        .padding(.top, 26)
         .padding(.horizontal, 16)
         .customNavigationBar {
             Text("저장한 Pic 카드")
