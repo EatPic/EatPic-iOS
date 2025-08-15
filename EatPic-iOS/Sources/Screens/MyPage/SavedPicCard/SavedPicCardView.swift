@@ -9,24 +9,20 @@ import SwiftUI
 
 struct SavedPicCardView: View {
     @State private var showDateFilterDialog = false
-    @State private var selectedSegment = 0
+    @State private var selected = 0
     
     var body: some View {
         
         VStack {
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 2),
-                    GridItem(.flexible(), spacing: 2),
-                    GridItem(.flexible())
-                ], spacing: 6) {
-                    ForEach(0..<30, id: \.self) { _ in
-                        Image("Community/testImage1")
-                            .resizable()
-                            .frame(width: 118, height: 118)
-                    }
-                }
-            }
+            
+            Spacer().frame(height: 16)
+            
+            pickerBtn
+            
+            Spacer().frame(height: 30)
+            
+            cardScroll
+            
         }
         .padding(.top, 26)
         .padding(.horizontal, 16)
@@ -60,6 +56,33 @@ struct SavedPicCardView: View {
             }
             
             Button("취소", role: .cancel) {
+            }
+        }
+    }
+    
+    // MARK: 나의 PicCard, d잇친들의 픽카드 선택 버튼
+    private var pickerBtn: some View {
+        Picker("Pic 카드 선택", selection: $selected) {
+            Text("나의 Pic 카드").tag(0)
+            Text("잇친들의 Pic 카드").tag(1)
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: 하단 ScrollView
+    private var cardScroll: some View {
+        ScrollView {
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: 2),
+                GridItem(.flexible(), spacing: 2),
+                GridItem(.flexible())
+            ], spacing: 6) {
+                ForEach(0..<30, id: \.self) { _ in
+                    Image("Community/testImage1")
+                        .resizable()
+                        .frame(width: 118, height: 118)
+                }
             }
         }
     }
