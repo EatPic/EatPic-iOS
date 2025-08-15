@@ -15,20 +15,20 @@ struct MyAllPicCardView: View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 8),
-                    GridItem(.flexible(), spacing: 8),
-                    GridItem(.flexible(), spacing: 8)
-                ], spacing: 8) {
+                    GridItem(.flexible(), spacing: 2),
+                    GridItem(.flexible(), spacing: 2),
+                    GridItem(.flexible())
+                ], spacing: 6) {
                     ForEach(0..<30, id: \.self) { _ in
-                        Rectangle()
-                            .fill(Color.gray020)
+                        Image("Community/testImage1")
+                            .resizable()
                             .frame(width: 118, height: 118)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
             }
         }
+        .padding(.top, 26)
+        .padding(.horizontal, 16)
         .customNavigationBar {
             Text("전체 Pic 카드")
         } right: {
