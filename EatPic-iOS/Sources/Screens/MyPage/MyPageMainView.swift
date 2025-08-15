@@ -91,6 +91,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로워 선택")
+                container.router.push(.followList(selected: .followers))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -106,6 +107,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로잉 선택")
+                container.router.push(.followList(selected: .followings))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
