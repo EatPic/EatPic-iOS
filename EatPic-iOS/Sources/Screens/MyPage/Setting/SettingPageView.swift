@@ -11,37 +11,78 @@ struct SettingPageView: View {
     @EnvironmentObject private var container: DIContainer
     
     @State private var isNotificationEnabled = true
+    @State private var showLogoutModal = false
+    @State private var showWithdrawalModal = false
     
     var body: some View {
-        
-        VStack {
-            
-            topNavigationBar
-            
+        ZStack {
             VStack {
                 
-                Spacer().frame(height: 8)
+                topNavigationBar
                 
-                userProfileView
-                
-                Spacer().frame(height: 24)
-                
-                settingsView
-                
-                Spacer().frame(height: 16)
-                
-                friendsView
-                
-                Spacer().frame(height: 16)
-                
-                accountView
-                
-                Spacer()
+                VStack {
+                    
+                    Spacer().frame(height: 8)
+                    
+                    userProfileView
+                    
+                    Spacer().frame(height: 24)
+                    
+                    settingsView
+                    
+                    Spacer().frame(height: 16)
+                    
+                    friendsView
+                    
+                    Spacer().frame(height: 16)
+                    
+                    accountView
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
+            .background(Color.gray020.ignoresSafeArea())
+            .navigationBarHidden(true) // 기본 네비게이션 바 숨기기
+            
+            // 로그아웃 모달
+            if showLogoutModal {
+                DecisionModalView(
+                    message: "정말 로그아웃 하시겠어요?",
+                    messageColor: .gray080,
+                    leftBtnText: "아니오",
+                    rightBtnText: "예",
+                    rightBtnColor: .green060,
+                    leftBtnAction: {
+                        showLogoutModal = false
+                        print("아니오 버튼 클릭, 모달 닫기 액션")
+                    },
+                    rightBtnAction: {
+                        showLogoutModal = false
+                        print("예 버튼 클릭, 모달닫기 액션")
+                    }
+                )
+            }
+            
+            // 회원 탈퇴 모달
+            if showWithdrawalModal {
+                DecisionModalView(
+                    message: "회원 탈퇴 시 계정 정보는 복구가 불가능합니다.\n정말로 탈퇴하시겠어요?",
+                    messageColor: .gray080,
+                    leftBtnText: "아니오",
+                    rightBtnText: "탈퇴하기",
+                    rightBtnColor: .red050,
+                    leftBtnAction: {
+                        showWithdrawalModal = false
+                        print("아니오 버튼 클릭, 모달 닫기 액션")
+                    },
+                    rightBtnAction: {
+                        showWithdrawalModal = false
+                        print("탈퇴하기 버튼 클릭, 모달닫기 액션")
+                    }
+                )
+            }
         }
-        .background(Color.gray020.ignoresSafeArea())
-        .navigationBarHidden(true) // 기본 네비게이션 바 숨기기
     }
     
     // MARK: 상단 네비게이션 바
@@ -94,6 +135,7 @@ struct SettingPageView: View {
             
             Button(action: {
                 // TODO: [25.08.14] ProfileEditView로 네비게이션 - 비엔/이은정
+                container.router.push(.profileEdit)
                 print("프로필 편집")
             }, label: {
                 Image("btn_mypage_next")
@@ -188,9 +230,9 @@ struct SettingPageView: View {
                 .foregroundStyle(Color.gray080)
             
             VStack(spacing: 0) {
+                // 로그아웃 버튼
                 Button(action: {
-                    // TODO: [25.08.14] DecisionModalView - 비엔/이은정
-                    print("로그아웃")
+                    showLogoutModal = true
                 }, label: {
                     HStack {
                         Text("로그아웃")
@@ -206,9 +248,9 @@ struct SettingPageView: View {
                 
                 Divider()
                 
+                // 탈퇴 버튼
                 Button(action: {
-                    // TODO: [25.08.14] DecisionModalView - 비엔/이은정
-                    print("회원 탈퇴")
+                    showWithdrawalModal = true
                 }, label: {
                     HStack {
                         Text("회원 탈퇴")

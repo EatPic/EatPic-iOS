@@ -41,6 +41,7 @@ enum NavigationRoute: Equatable, Hashable {
     case settingPage
     case blockedAccount
     case myAllPicCard
+    case profileEdit
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -165,6 +166,8 @@ struct NavigationRoutingView: View {
             BlockedAccountView()
         case .myAllPicCard:
             MyAllPicCardView()
+        case .profileEdit:
+            ProfileEditView()
         }
     }
 }
