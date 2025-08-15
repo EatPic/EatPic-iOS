@@ -62,12 +62,10 @@ struct SavedPicCardView: View {
     
     // MARK: 나의 PicCard, d잇친들의 픽카드 선택 버튼
     private var pickerBtn: some View {
-        Picker("Pic 카드 선택", selection: $selected) {
+        Picker("", selection: $selected) {
             Text("나의 Pic 카드")
-                .font(.dsBold15)
                 .tag(0)
             Text("잇친들의 Pic 카드")
-                .font(.dsBold15)
                 .tag(1)
         }
         .pickerStyle(.segmented)
