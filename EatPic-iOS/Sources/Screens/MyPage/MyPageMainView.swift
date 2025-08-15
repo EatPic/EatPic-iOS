@@ -144,6 +144,7 @@ struct MyPageMainView: View {
             ) {
                 print("저장 카드 클릭")
                 // TODO: [25.08.14] SavePicCardView로 네비게이션 - 비엔/이은정
+//                container.router.push(.savedPicCard)
             }
 
             MyPageCardView(
