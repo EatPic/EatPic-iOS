@@ -30,6 +30,7 @@ struct ProfileEditView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .navigationBarHidden(true)
         
     }
     

@@ -40,6 +40,7 @@ enum NavigationRoute: Equatable, Hashable {
     case storeLocation(latitude: Double, longitude: Double, title: String)
     case settingPage
     case blockedAccount
+    case profileEdit
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -162,6 +163,8 @@ struct NavigationRoutingView: View {
             SettingPageView()
         case .blockedAccount:
             BlockedAccountView()
+        case .profileEdit:
+            ProfileEditView()
         }
     }
 }
