@@ -91,6 +91,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로워 선택")
+                container.router.push(.followList(selected: .followers))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -106,6 +107,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로잉 선택")
+                container.router.push(.followList(selected: .followings))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -153,7 +155,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("배지 클릭")
-                // TODO: [25.08.14] BadgeStatusAllView(Home)로 네비게이션 - 비엔/이은정
+                container.router.push(.myBadgeStatusAll)
             }
         }
     }
