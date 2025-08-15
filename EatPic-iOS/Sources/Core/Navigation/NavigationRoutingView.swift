@@ -38,6 +38,8 @@ enum NavigationRoute: Equatable, Hashable {
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
     case storeLocation(latitude: Double, longitude: Double, title: String)
+    case settingPage
+    case blockedAccount
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -156,6 +158,10 @@ struct NavigationRoutingView: View {
                     title: title
                 )]
             )
+        case .settingPage:
+            SettingPageView()
+        case .blockedAccount:
+            BlockedAccountView()
         }
     }
 }

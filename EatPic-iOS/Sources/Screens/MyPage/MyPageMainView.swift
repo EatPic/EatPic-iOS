@@ -9,6 +9,8 @@ import SwiftUI
 
 /// 마이페이지 메인 화면 View
 struct MyPageMainView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
             Spacer().frame(height: 12)
@@ -29,7 +31,9 @@ struct MyPageMainView: View {
         HStack(alignment: .top) {
             Spacer()
             Button(
-                action: {print("설정클릭")},
+                action: {
+                    container.router.push(.settingPage)
+                },
                 label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 24))
@@ -129,6 +133,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("전체 카드 클릭")
+                // TODO: [25.08.14] MyAllCardView로 네비게이션 - 비엔/이은정
             }
 
             MyPageCardView(
@@ -138,6 +143,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("저장 카드 클릭")
+                // TODO: [25.08.14] SavePicCardView로 네비게이션 - 비엔/이은정
             }
 
             MyPageCardView(
@@ -147,6 +153,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("배지 클릭")
+                // TODO: [25.08.14] BadgeStatusAllView(Home)로 네비게이션 - 비엔/이은정
             }
         }
     }
