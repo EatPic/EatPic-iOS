@@ -10,7 +10,11 @@ import SwiftUI
 struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var viewModel = CommunityMainViewModel()
+    @State private var viewModel: CommunityMainViewModel
+    
+    init(container: DIContainer) {
+        self._viewModel = .init(initialValue: .init(container: container))
+    }
     
     var body: some View {
         ZStack {
@@ -51,7 +55,7 @@ struct CommunityMainView: View {
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "삭제",
-                    rightBtnColor: .pink070,
+                    rightBtnColor: .red050,
                     leftBtnAction: {
                         viewModel.showDeleteModal = false
                     },
@@ -138,6 +142,9 @@ struct CommunityMainView: View {
                 )
             }
         }
+        .task {
+            await viewModel.fetchFeeds()
+        }
     }
     
     private func lastContentView() -> some View {
@@ -156,3 +163,7 @@ struct CommunityMainView: View {
         .frame(height: 157)
     }
 }
+
+//#Preview {
+//    CommunityMainView()
+//}

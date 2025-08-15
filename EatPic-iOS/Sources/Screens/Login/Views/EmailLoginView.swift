@@ -101,7 +101,7 @@ struct EmailLoginView: View {
             if let error = viewModel.loginError {
                 Text(error)
                     .font(.dsFootnote)
-                    .foregroundStyle(Color.pink070)
+                    .foregroundStyle(Color.red050)
             }
         }
     }

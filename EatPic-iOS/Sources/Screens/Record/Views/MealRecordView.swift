@@ -91,20 +91,20 @@ private struct MealButton: View {
     // 버튼에 표시할 텍스트
     private var title: String {
         switch mealType {
-        case .breakfast: "아침"
-        case .lunch:     "점심"
-        case .dinner:    "저녁"
-        case .snack:     "간식"
+        case .BREAKFAST: "아침"
+        case .LUNCH:     "점심"
+        case .DINNER:    "저녁"
+        case .SNACK:     "간식"
         }
     }
 
     // 버튼에 표시할 아이콘
     private var icon: Image {
         switch mealType {
-        case .breakfast: Image("Record/ic_home_morning")
-        case .lunch:     Image("Record/ic_home_lunch")
-        case .dinner:    Image("Record/ic_home_dinner")
-        case .snack:     Image("Record/ic_home_dessert")
+        case .BREAKFAST: Image("Record/ic_home_morning")
+        case .LUNCH:     Image("Record/ic_home_lunch")
+        case .DINNER:    Image("Record/ic_home_dinner")
+        case .SNACK:     Image("Record/ic_home_dessert")
         }
     }
 

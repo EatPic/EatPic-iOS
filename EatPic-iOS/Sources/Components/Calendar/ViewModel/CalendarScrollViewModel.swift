@@ -43,7 +43,7 @@ final class CalendarScrollViewModel {
                 APIResponse<[CalendarResponse]>.self, from: response.data)
             
             guard data.isSuccess else {
-                throw APIError.server(code: data.code, message: data.message)
+                throw APIError.serverError(code: response.statusCode, message: data.message)
             }
             
             await markLoaded(key)

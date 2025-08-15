@@ -9,9 +9,10 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var badgeViewModel = MyBadgeStatusViewModel()
+    @State private var badgeViewModel = MyBadgeStatusViewModel()
+    @State private var badgeDetailViewModel = BadgeDetailViewModel()
     @State private var showingBadgeModal = false
-    @State private var selectedBadge: BadgeItem?
+    @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     
     var body: some View {
         ZStack {
@@ -40,14 +41,14 @@ struct HomeView: View {
             // 배지 모달
             if showingBadgeModal, let badge = selectedBadge {
                 BadgeProgressModalView(
-                    badgeType: badgeViewModel.createBadgeModalType(for: badge),
+                    badgeType: badgeDetailViewModel.createBadgeModalType(for: badge),
                     closeBtnAction: {
                         showingBadgeModal = false
                         selectedBadge = nil
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeViewModel.getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel.getBadgeDescription(for: badge.name)
                 )
             }
         }

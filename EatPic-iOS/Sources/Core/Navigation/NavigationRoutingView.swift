@@ -33,11 +33,16 @@ enum NavigationRoute: Equatable, Hashable {
     case exploreMain
     case mealTimeSelection(image: [UIImage])
     case hashtagSelection
-    case picCardRecord(selectedMeal: MealSlot, selectedHashtags: [String])
+    case picCardRecord
     case userProfile(user: CommunityUser)
     case followList(selected: FollowListView.FollowSegment)
     case exploreSelected
     case storeLocation(latitude: Double, longitude: Double, title: String)
+    case settingPage
+    case blockedAccount
+    case myAllPicCard
+    case profileEdit
+    case savedPicCard
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -132,9 +137,9 @@ struct NavigationRoutingView: View {
                 .environmentObject(recordFlowViewModel)
         case .hashtagSelection:
             if let recordFlowViewModel = container.recordFlowVM {
-                HashtagSelectView().environmentObject(recordFlowViewModel)
+                HashtagSelectingView().environmentObject(recordFlowViewModel)
             } else {
-                HashtagSelectView() // fallback: 로그/어설트 추가 필요
+                HashtagSelectingView() // fallback: 로그/어설트 추가 필요
             }
             
         case .picCardRecord:
@@ -156,6 +161,16 @@ struct NavigationRoutingView: View {
                     title: title
                 )]
             )
+        case .settingPage:
+            SettingPageView()
+        case .blockedAccount:
+            BlockedAccountView()
+        case .myAllPicCard:
+            MyAllPicCardView()
+        case .profileEdit:
+            ProfileEditView()
+        case .savedPicCard:
+            SavedPicCardView()
         }
     }
 }

@@ -20,8 +20,8 @@ struct RecordCreateDTO: Encodable {
     public let imageCount: Int  // 실제 파일 업로드는 별도 파이프라인에서 처리
 }
 
-public enum MealSlot: String, CaseIterable, Sendable, Equatable {
-    case breakfast, lunch, dinner, snack
+public enum MealSlot: String, CaseIterable, Codable, Sendable, Equatable {
+    case BREAKFAST, LUNCH, DINNER, SNACK
 }
 
 /// 개별 끼니의 상태

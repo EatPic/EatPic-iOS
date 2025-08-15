@@ -143,7 +143,7 @@ struct OthersProfileView: View {
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "차단",
-                    rightBtnColor: .pink070,
+                    rightBtnColor: .red050,
                     leftBtnAction: {
                         viewModel.showBlockModal = false // 취소 버튼 탭 시 모달 뷰 닫기
                     },
@@ -233,23 +233,14 @@ struct OthersProfileView: View {
             let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
             LazyVGrid(columns: columns, spacing: 4, content: {
                 ForEach(viewModel.userCards) { card in
-                    card.image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: imageSize, height: imageSize)
-                        .clipped()
+                    Text(card.imageUrl)
+//                    card.image
+//                        .resizable()
+//                        .scaledToFill()
+//                        .frame(width: imageSize, height: imageSize)
+//                        .clipped()
                 }
             })
         }
     }
-}
-
-#Preview {
-    OthersProfileView(user: CommunityUser(
-        id: "id1",
-        nickname: "아이디1",
-        imageName: nil,
-        isCurrentUser: true,
-        isFollowed: true
-    ))
 }

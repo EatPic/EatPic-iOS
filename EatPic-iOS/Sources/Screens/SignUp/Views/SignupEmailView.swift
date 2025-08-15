@@ -70,7 +70,7 @@ struct SignupEmailView: View {
             if let error = viewModel.emailErrorMessage {
                 Text(error)
                     .font(.dsFootnote)
-                    .foregroundStyle(Color.pink070)
+                    .foregroundStyle(Color.red050)
             }
         }
     }
