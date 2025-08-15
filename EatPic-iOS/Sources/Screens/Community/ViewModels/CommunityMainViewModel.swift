@@ -66,21 +66,12 @@ class CommunityMainViewModel {
     }
     
     // MARK: - Computed Properties
-        // 사용자 선택 처리
-        func selectUser(_ user: CommunityUser) {
-            selectedUser = user
-            // 선택된 사용자에 따라 카드 필터링 로직 구현
-//            filterCards(for: user)
-        }
-    
-    // 카드 필터링
-    //    private func filterCards(for user: CommunityUser) {
-    //        if user.id == "전체" { // 전체 사용자 선택 시
-    //            filteredCards = sampleCards
-    //        } else {
-    //            filteredCards = sampleCards.filter { $0.user.id == user.id }
-    //        }
-    //    }
+    // 사용자 선택 처리
+    func selectUser(_ user: CommunityUser) {
+        selectedUser = user
+        // 선택된 사용자에 따라 카드 필터링 로직 구현
+        //            filterCards(for: user)
+    }
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
@@ -108,17 +99,33 @@ class CommunityMainViewModel {
         print("삭제 확인 모달 띄우기: \(card.id)")
     }
     
+    func deleteCard(card: PicCard) async {
+        do {
+            let response = try await cardProvider.requestAsync(.deleteCard(cardId: card.cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<CardDeleteResult>.self, from: response.data)
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
     // 모달에서 '삭제' 버튼을 눌렀을 때 실제 삭제를 처리하는 함수
-    func confirmDeletion() {
+    func confirmDeletion() async {
         guard let card = cardToDelete else { return }
         
-        // TODO: - 실제 삭제 API 호출 로직 구현
+        await deleteCard(card: card)
+        
+        // UI 업데이트: filteredCards에서 삭제
         if let index = filteredCards.firstIndex(where: { $0.id == card.id }) {
             filteredCards.remove(at: index)
         }
         
+        // 모달 닫기 & 상태 초기화
         showDeleteModal = false
         cardToDelete = nil
+        
+        // 토스트 표시
         toastVM.showToast(title: "삭제되었습니다.")
         print("카드 삭제 완료: \(card.id)")
     }
