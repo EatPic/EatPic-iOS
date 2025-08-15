@@ -12,6 +12,7 @@ struct ProfileEditView: View {
     @State private var nickname: String = "잇콩"
     @State private var id: String = "itcong"
     @State private var introduction: String = "내용"
+    @State private var showEditProfileImageDialog = false
     
     var body: some View {
         VStack {
@@ -68,17 +69,33 @@ struct ProfileEditView: View {
                 .frame(width: 130, height: 130)
 
             Button(action: {
-                print("프로필 이미지 변경")
-                // TODO: 아까 뭔 다이얼로그? 거기 코드 가져오기
-            }) {
+                print("프로필 사진 설정")
+                showEditProfileImageDialog = true
+            }, label: {
                 Image("btn_home_record")
                     .resizable()
                     .frame(width: 40, height: 40)
-            }
+            })
             .offset(x: 50, y: 45)
-            
-            
-            
+            .confirmationDialog(
+                "프로필 사진 설정",
+                isPresented: $showEditProfileImageDialog,
+                titleVisibility: .visible
+            ) {
+                Button("갤러리") {
+                    print("갤러리 버튼 클릭")
+                }
+                
+                Button("카메라") {
+                    print("카메라 버튼 클릭")
+                }
+
+                Button("사용자 지정", role: .destructive) {
+                    print("사용자 지정 버튼 클릭")
+                }
+                
+                Button("취소", role: .cancel) { }
+            }
         }
     }
     
