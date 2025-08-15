@@ -21,7 +21,6 @@ class CommunityMainViewModel {
     var isShowingCommentBottomSheet = false
     
     private var cardToDelete: PicCard?
-//    private var currentCursor: Int? = nil
     private var nextCursor: Int? = nil
     private var isFetching: Bool = false
     
@@ -41,7 +40,7 @@ class CommunityMainViewModel {
         
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(userId: 15, cursor: nextCursor, size: pageSize))
+                .fetchFeeds(userId: 24, cursor: nextCursor, size: pageSize))
             let dto = try JSONDecoder().decode(
                 APIResponse<FeedResult>.self, from: response.data)
             
@@ -87,7 +86,7 @@ class CommunityMainViewModel {
     func isMyCard(_ card: PicCard) -> Bool {
         // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
         // 예시: return card.user.id == currentUser.id
-        return card.user.id == "나" // 임시 로직
+        return card.user.id == "daisyyy" // 임시 로직
     }
     
     // MARK: - Actions
