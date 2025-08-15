@@ -29,6 +29,7 @@ struct ProfileEditView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        
     }
     
     // MARK: 상단 네비게이션 바
@@ -66,10 +67,18 @@ struct ProfileEditView: View {
                 .resizable()
                 .frame(width: 130, height: 130)
 
-            Image("btn_home_record")
-                .resizable()
-                .frame(width: 40, height: 40)
-                .offset(x: 50, y: 45)
+            Button(action: {
+                print("프로필 이미지 변경")
+                // TODO: 아까 뭔 다이얼로그? 거기 코드 가져오기
+            }) {
+                Image("btn_home_record")
+                    .resizable()
+                    .frame(width: 40, height: 40)
+            }
+            .offset(x: 50, y: 45)
+            
+            
+            
         }
     }
     
