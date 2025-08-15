@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MyAllPicCardView: View {
+    @State private var showDateFilterDialog = false
     
     var body: some View {
         
@@ -29,16 +30,36 @@ struct MyAllPicCardView: View {
             }
         }
         .customNavigationBar {
-            Text("차단된 계정")
+            Text("전체 Pic 카드")
         } right: {
             Button(action: {
-                // TODO: 필터 버튼 액션 구현
+                showDateFilterDialog = true
             }, label: {
                 Image("btn_mypage_filter")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
             })
+        }
+        .confirmationDialog(
+            "날짜 설정하기",
+            isPresented: $showDateFilterDialog,
+            titleVisibility: .visible
+        ) {
+            Button("최근 7일") {
+                print("최근 7일 버튼 클릭")
+            }
+            
+            Button("최근 30일") {
+                print("최근 30일 버튼 클릭")
+            }
+            
+            Button("사용자 지정") {
+                print("사용자 지정 버튼 클릭")
+            }
+            
+            Button("취소", role: .cancel) {
+            }
         }
     }
 }
