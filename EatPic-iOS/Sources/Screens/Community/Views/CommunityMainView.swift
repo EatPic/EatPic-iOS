@@ -60,7 +60,9 @@ struct CommunityMainView: View {
                         viewModel.showDeleteModal = false
                     },
                     rightBtnAction: {
-                        viewModel.confirmDeletion()
+                        Task {
+                            await viewModel.confirmDeletion()
+                        }
                     }
                 )
             }
@@ -162,8 +164,4 @@ struct CommunityMainView: View {
         }
         .frame(height: 157)
     }
-}
-
-#Preview {
-    CommunityMainView(container: .init())
 }
