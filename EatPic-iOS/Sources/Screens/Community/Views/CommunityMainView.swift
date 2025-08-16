@@ -165,5 +165,5 @@ struct CommunityMainView: View {
 }
 
 #Preview {
-    CommunityMainView()
+    CommunityMainView(container: .init())
 }

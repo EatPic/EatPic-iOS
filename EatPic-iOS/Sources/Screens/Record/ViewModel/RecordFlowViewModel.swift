@@ -16,7 +16,9 @@ struct RecordFlowState {
     var myMemo: String
     var myRecipe: String
     var recipeLink: String?
-    var storeLocation: String
+    var storeLocation: String?
+    var latitude: Double?
+    var longitude: Double?
     var sharedFeed: Bool
     var createdAt: Date
 }
@@ -125,6 +127,23 @@ final class RecordFlowViewModel: ObservableObject {
     // MARK: - Snapshot / DTO
 
    // DTO 생성해서 반환하는 함수를 여기다가 만들 예정
+    func getCreateCardRequestDTO() throws -> CreateCardRequest {
+        let tags = state.hasTags.map(\.title)
+        guard let mealSlot = state.mealSlot else {
+            throw APIError.noData
+        }
+        return .init(
+            latitude: 37.5665,
+            longitude: 126.978,
+            recipe: "야채, 아보카도, 소스 조합으로 구성된 샐러드입니다.",
+            recipeUrl: "https://example.com/recipe/123",
+            memo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣었어요",
+            isShared: true,
+            locationText: "서울특별시 성북구 정릉동",
+            meal: mealSlot,
+            hashtags: tags
+        )
+    }
 
     /// 업로드 완료 후 상태를 초기화합니다. (정책에 따라 조정)
     public func resetForNext(createdAt: Date = .now) {
@@ -136,5 +155,287 @@ final class RecordFlowViewModel: ObservableObject {
         state.recipeLink = nil
         state.storeLocation = ""
         state.sharedFeed = false
+    }
+}
+
+import UniformTypeIdentifiers
+import ImageIO
+import MobileCoreServices
+import Moya
+
+struct EncodedImage {
+    let data: Data
+    let mimeType: String
+    let fileExtension: String
+    let fileName: String
+}
+
+protocol ImageEncodingStrategy {
+    // 최대 바이트 제약 하에 인코딩 시도. 실패하면 nil 반환
+    func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage?
+}
+
+final class HEICEncoder: ImageEncodingStrategy {
+    private let quality: CGFloat
+    private let filenameBase: String
+
+    init(quality: CGFloat = 0.85, filenameBase: String = "image") {
+        self.quality = quality
+        self.filenameBase = filenameBase
+    }
+
+    func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage? {
+        guard let cgImage = image.cgImage else { return nil }
+        guard let utType = UTType.heic.identifier as CFString? else { return nil }
+
+        // 알파가 있는 경우: 필요 시 배경색 합성으로 알파 제거
+        let source: CGImage
+        if image.hasAlpha, let flattened = image.flattened(background: .white) {
+            guard let cgImg = flattened.cgImage else { return nil }
+            source = cgImg
+        } else {
+            source = cgImage
+        }
+
+        // 가변 품질로 시도 (간단 이분탐색)
+        var low: CGFloat = 0.4
+        var high: CGFloat = quality
+        var bestData: Data?
+
+        for _ in 0..<6 {
+            let quality = (low + high) / 2
+            guard let data = Self.encodeHEIC(
+                cgImage: source, quality: quality, utType: utType) else { break }
+            if data.count > maxBytes {
+                high = quality
+            } else {
+                bestData = data
+                low = quality
+            }
+        }
+
+        guard let final = bestData else { return nil }
+        return EncodedImage(
+            data: final,
+            mimeType: "image/heic",
+            fileExtension: "heic",
+            fileName: "\(filenameBase).heic"
+        )
+    }
+
+    private static func encodeHEIC(
+        cgImage: CGImage,
+        quality: CGFloat,
+        utType: CFString
+    ) -> Data? {
+        let data = NSMutableData()
+        guard let dest = CGImageDestinationCreateWithData(
+            data, utType, 1, nil) else { return nil }
+        let options: [CFString: Any] = [
+            kCGImageDestinationLossyCompressionQuality: quality
+        ]
+        CGImageDestinationAddImage(dest, cgImage, options as CFDictionary)
+        guard CGImageDestinationFinalize(dest) else { return nil }
+        return data as Data
+    }
+}
+
+private extension UIImage {
+    var hasAlpha: Bool {
+        guard let alpha = cgImage?.alphaInfo else { return false }
+        switch alpha {
+        case .first, .last, .premultipliedFirst, .premultipliedLast: return true
+        default: return false
+        }
+    }
+
+    /// 알파를 버려도 될 때 배경에 합성
+    func flattened(background: UIColor) -> UIImage? {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        return renderer.image { ctx in
+            background.setFill()
+            ctx.fill(CGRect(origin: .zero, size: size))
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}
+
+final class JPEGEncoder: ImageEncodingStrategy {
+    private let filenameBase: String
+    init(filenameBase: String = "image") {
+        self.filenameBase = filenameBase
+    }
+
+    func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage? {
+        // 이분탐색으로 품질 조절
+        var low: CGFloat = 0.3, high: CGFloat = 0.9
+        var best: Data?
+        for _ in 0..<6 {
+            let quality = (low + high) / 2
+            guard let data = image.jpegData(
+                compressionQuality: quality) else { break }
+            if data.count > maxBytes {
+                high = quality
+            } else {
+                best = data
+                low = quality
+            }
+        }
+        guard let data = best else { return nil }
+        return EncodedImage(
+            data: data,
+            mimeType: "image/jpeg",
+            fileExtension: "jpg",
+            fileName: "\(filenameBase).jpg"
+        )
+    }
+}
+
+final class PNGEncoder: ImageEncodingStrategy {
+    private let filenameBase: String
+    init(filenameBase: String = "image") {
+        self.filenameBase = filenameBase
+    }
+
+    func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage? {
+        guard let data = image.pngData(),
+                data.count <= maxBytes else { return nil }
+        return EncodedImage(
+            data: data,
+            mimeType: "image/png",
+            fileExtension: "png",
+            fileName: "\(filenameBase).png"
+        )
+    }
+}
+
+struct ImageEncoderPipeline: ImageEncodingStrategy {
+    private let strategies: [ImageEncodingStrategy]
+    init(_ strategies: [ImageEncodingStrategy]) {
+        self.strategies = strategies
+    }
+
+    func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage? {
+        for strategy in strategies {
+            if let out = strategy.encode(
+                image, maxBytes: maxBytes) { return out }
+        }
+        return nil
+    }
+}
+
+protocol CardRepository {
+    func createCard(
+        request: CreateCardRequest,
+        imageData: Data,
+        fileName: String,
+        mimeType: String
+    ) async throws -> Int
+}
+
+final class DefaultCardRepository: CardRepository {
+    private let provider: MoyaProvider<CardTargetType>
+    private let decoder: JSONDecoder
+
+    init(provider: MoyaProvider<CardTargetType>, decoder: JSONDecoder = JSONDecoder()) {
+        self.provider = provider
+        self.decoder = decoder
+    }
+
+    func createCard(
+        request: CreateCardRequest,
+        imageData: Data,
+        fileName: String,
+        mimeType: String
+    ) async throws -> Int {
+        let response = try await provider.requestAsync(
+            .createFeed(
+                request: request,
+                image: imageData,
+                fileName: fileName,
+                mimeType: mimeType
+            )
+        )
+        let envelope = try decoder.decode(CreateCardResponse.self, from: response.data)
+        
+        guard envelope.isSuccess else {
+            throw APIError.serverError(
+                code: response.statusCode, message: envelope.message)
+        }
+        
+        print("envelope: \(envelope)")
+        
+        return envelope.result.newCardId
+    }
+}
+
+/// 이미지 업로드 과정에서 발생할 수 있는 에러
+enum UploadError: LocalizedError {
+    /// 업로드할 이미지가 없는 경우
+    case missingImage
+    /// 인코딩(압축/변환)에 실패한 경우
+    case encodingFailed
+    /// 서버 응답이 비정상일 때
+    case invalidServerResponse
+    /// 네트워크 오류
+    case networkError(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingImage:
+            return "업로드할 이미지가 없습니다."
+        case .encodingFailed:
+            return "이미지를 인코딩하는 데 실패했습니다."
+        case .invalidServerResponse:
+            return "서버 응답이 올바르지 않습니다."
+        case .networkError(let error):
+            return "네트워크 오류가 발생했습니다: \(error.localizedDescription)"
+        }
+    }
+}
+
+protocol CreateCardUseCase {
+    func execute(
+        state: RecordFlowState, request: CreateCardRequest) async throws -> Int
+}
+
+final class DefaultCreateCardUseCase: CreateCardUseCase {
+    private let repository: CardRepository
+    private let encoder: ImageEncodingStrategy
+    private let maxBytes: Int
+
+    init(
+        repository: CardRepository,
+        encoder: ImageEncodingStrategy = ImageEncoderPipeline(
+            [HEICEncoder(), JPEGEncoder(), PNGEncoder()]),
+        maxBytes: Int = 1_000_000,
+    ) {
+        self.repository = repository
+        self.encoder = encoder
+        self.maxBytes = maxBytes
+    }
+
+    func execute(
+        state: RecordFlowState,
+        request: CreateCardRequest
+    ) async throws -> Int {
+        guard let uiImage = state.images.first else {
+            throw UploadError.missingImage
+        }
+        guard let encoded = encoder.encode(
+            uiImage, maxBytes: maxBytes
+        ) else {
+            throw UploadError.encodingFailed
+        }
+        
+        return try await repository.createCard(
+            request: request,
+            imageData: encoded.data,
+            fileName: encoded.fileName,
+            mimeType: encoded.mimeType
+        )
     }
 }

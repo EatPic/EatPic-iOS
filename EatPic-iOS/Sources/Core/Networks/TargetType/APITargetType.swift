@@ -12,7 +12,6 @@ protocol APITargetType: TargetType {}
 
 extension APITargetType {
     var baseURL: URL {
-        // TODO: 추후 실제 URL로 변경 필요
         guard let url = URL(string: Config.baseURL) else {
             fatalError("Invalid baseURL")
         }
@@ -22,11 +21,12 @@ extension APITargetType {
     var headers: [String: String]? {
         switch task {
         case .requestJSONEncodable, .requestParameters:
-            return ["Content-Type": "application/json"]
-        case .uploadMultipart:
-            return ["Content-Type": "multipart/form-data"]
+            return ["Accept": "application/json"]
         default:
-            return nil
+            return [
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            ]
         }
     }
     
