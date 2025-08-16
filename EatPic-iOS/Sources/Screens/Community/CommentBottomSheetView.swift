@@ -18,25 +18,36 @@ struct CommentBottomSheetView: View {
                     title: "댓글",
                     content: {
                         LazyVStack(spacing: 0) {
-                            ForEach(viewModel.comments, id: \.id) { comment in
-                                commentListView(
-                                    userName: comment.user.id,
-                                    profileImage: comment.user.imageName ?? "Community/itcong",
-                                    commentText: comment.text,
-                                    time: comment.time
-                                )
-                                .contextMenu {
-                                    if viewModel.isMyComment(comment) {
-                                        Button(role: .destructive) {
-                                            viewModel.deleteComment(comment)
-                                        } label: {
-                                            Label("삭제하기", systemImage: "trash")
-                                        }
-                                    } else {
-                                        Button(role: .destructive) {
-                                            viewModel.reportComment(comment)
-                                        } label: {
-                                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                            if viewModel.comments.isEmpty {
+                                    VStack {
+                                        Spacer().frame(height: 40)
+                                        Text("댓글이 아직 없습니다")
+                                            .font(.dsCallout)
+                                            .foregroundStyle(Color.gray060)
+                                            .multilineTextAlignment(.center)
+                                        Spacer()
+                                    }
+                            } else {
+                                ForEach(viewModel.comments, id: \.id) { comment in
+                                    commentListView(
+                                        userName: comment.user.id,
+                                        profileImage: comment.user.imageName ?? "Community/itcong",
+                                        commentText: comment.text,
+                                        time: comment.time
+                                    )
+                                    .contextMenu {
+                                        if viewModel.isMyComment(comment) {
+                                            Button(role: .destructive) {
+                                                viewModel.deleteComment(comment)
+                                            } label: {
+                                                Label("삭제하기", systemImage: "trash")
+                                            }
+                                        } else {
+                                            Button(role: .destructive) {
+                                                viewModel.reportComment(comment)
+                                            } label: {
+                                                Label("신고하기", systemImage: "exclamationmark.bubble")
+                                            }
                                         }
                                     }
                                 }

@@ -234,11 +234,11 @@ struct OthersProfileView: View {
             LazyVGrid(columns: columns, spacing: 4, content: {
                 ForEach(viewModel.userCards) { card in
                     Text(card.imageUrl)
-//                    card.image
-//                        .resizable()
-//                        .scaledToFill()
-//                        .frame(width: imageSize, height: imageSize)
-//                        .clipped()
+                    Rectangle()
+                        .remoteImage(url: card.imageUrl)
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .clipped()
                 }
             })
         }
