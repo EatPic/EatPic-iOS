@@ -143,6 +143,8 @@ final class PicCardRecordViewModel {
     func createPicCard() async {
         guard !isUploading else { return }
         isUploading = true
+        defer { isUploading = false }
+        
         errorMessage = nil
         lastCreatedCardId = nil
 
@@ -154,37 +156,28 @@ final class PicCardRecordViewModel {
                 request: createCardRequestDTO
             )
             self.lastCreatedCardId = cardId
-        } catch let err as UploadError {
-            switch err {
-            case .missingImage:
-                self.errorMessage = "업로드할 이미지를 선택해주세요."
-            case .encodingFailed:
-                self.errorMessage = "이미지 인코딩에 실패했습니다. 다시 시도해주세요."
-            case .invalidServerResponse:
-                self.errorMessage = "서버 응답이 올바르지 않습니다."
-            case .networkError(let underlying):
-                self.errorMessage = "네트워크 오류: \(underlying.localizedDescription)"
-            }
-        } catch let err as MoyaError {
-            // 네트워크 레이어에서 직접 던져진 경우
+        } catch {
+            self.errorMessage = userErrMessage(for: error)
+        }
+    }
+    
+    private func userErrMessage(for error: Error) -> String {
+        if let err = error as? UploadError {
+            return err.errorDescription ?? "업로드 오류가 발생했습니다."
+        }
+        if let err = error as? APIError {
+            return err.errorDescription ?? "요청 처리 중 오류가 발생했습니다."
+        }
+        if let err = error as? MoyaError {
             switch err {
             case .underlying(let nsError, _):
-                self.errorMessage = "네트워크 오류: \(nsError.localizedDescription)"
+                return "네트워크 오류: \(nsError.localizedDescription)"
             case .statusCode(let response):
-                self.errorMessage = "요청이 실패했습니다(\(response.statusCode))."
+                return "요청이 실패했습니다(\(response.statusCode))."
             default:
-                self.errorMessage = "요청 처리 중 오류가 발생했습니다."
+                return "요청 처리 중 오류가 발생했습니다."
             }
-        } catch let err as APIError {
-            if case let .serverError(code, msg) = err {
-                self.errorMessage = err.errorDescription
-            }
-            else if case .decodingFailed = err {
-                self.errorMessage = err.errorDescription
-            }
-        } catch {
-            self.errorMessage = "알 수 없는 오류가 발생했습니다."
         }
-        self.isUploading = false
+        return "알 수 없는 오류가 발생했습니다."
     }
 }
