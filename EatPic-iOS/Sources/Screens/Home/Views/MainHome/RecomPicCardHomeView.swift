@@ -10,7 +10,11 @@ import SwiftUI
 struct RecomPicCardHomeView: View {
     @EnvironmentObject private var container: DIContainer
     
-    @StateObject private var viewModel = RecomPicCardViewModel()
+    @State private var viewModel: RecomPicCardViewModel
+    
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     
     let rows = [GridItem(.fixed(103))]
     
@@ -37,23 +41,37 @@ struct RecomPicCardHomeView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHGrid(rows: [GridItem(.fixed(103))], spacing: 8) {
-                    ForEach(viewModel.cards) { cards in
-                        Image(cards.imageName)
-                            .resizable()
-                            .frame(width: 103, height: 103)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    ForEach(viewModel.cards, id: \.cardId) { card in
+                        CardThumb(urlString: card.cardImageUrl)
                     }
                 }
             }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 19)
+            .frame(height: 183)
+            .background(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 19)
-        .frame(height: 183)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .task {
+            await viewModel.fetchRecommended()
+        }
     }
 }
 
 #Preview {
-    RecomPicCardHomeView()
+    RecomPicCardHomeView(container: DIContainer.init())
+}
+
+/// 카드 썸네일 셀
+private struct CardThumb: View {
+    let urlString: String
+
+    var body: some View {
+        Rectangle()
+            .remoteImage(url: urlString)
+            .frame(width: 103, height: 103)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .contentShape(RoundedRectangle(cornerRadius: 10))
+    }
 }

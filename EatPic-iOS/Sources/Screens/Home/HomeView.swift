@@ -39,7 +39,7 @@ struct HomeView: View {
                     
                     MealStatusView()
                     
-                    RecomPicCardHomeView()
+                    RecomPicCardHomeView(container: container)
                     
                     MyBadgeStatusHomeView(
                     selectedBadge: $selectedBadge,

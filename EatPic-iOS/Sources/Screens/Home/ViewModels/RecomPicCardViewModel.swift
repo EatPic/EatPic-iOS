@@ -6,15 +6,37 @@
 //
 
 import Foundation
+import Moya
 
-class RecomPicCardViewModel: ObservableObject {
+@Observable
+class RecomPicCardViewModel {
+    private let cardProvicer: MoyaProvider<CardTargetType>
+    var cards: [CardsResult] = []
     
-    @Published var cards: [RecomPicCardModel] = [
-        RecomPicCardModel(imageName: "Home/img1"),
-        RecomPicCardModel(imageName: "Home/img2"),
-        RecomPicCardModel(imageName: "Home/img3"),
-        RecomPicCardModel(imageName: "Home/img1"),
-        RecomPicCardModel(imageName: "Home/img2"),
-        RecomPicCardModel(imageName: "Home/img3")
-    ]
+    init(container: DIContainer) {
+        self.cardProvicer = container.apiProviderStore.card()
+    }
+    
+    @MainActor
+        func fetchRecommended() async {
+            do {
+                let response = try await cardProvicer.requestAsync(.recommendedCard)
+                let dto = try JSONDecoder().decode(
+                    RecommendedCardsResponse.self,
+                    from: response.data)
+                self.cards = dto.result
+                print(dto)
+            } catch {
+                print("요청 또는 디코딩 실패:", error.localizedDescription)
+                self.cards = []
+            }
+        }
+//    @Published var cards: [RecomPicCardModel] = [
+//        RecomPicCardModel(imageName: "Home/img1"),
+//        RecomPicCardModel(imageName: "Home/img2"),
+//        RecomPicCardModel(imageName: "Home/img3"),
+//        RecomPicCardModel(imageName: "Home/img1"),
+//        RecomPicCardModel(imageName: "Home/img2"),
+//        RecomPicCardModel(imageName: "Home/img3")
+//    ]
 }
