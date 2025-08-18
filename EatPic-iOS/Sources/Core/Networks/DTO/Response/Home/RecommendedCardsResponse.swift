@@ -7,3 +7,14 @@
 
 import Foundation
 
+struct RecommendedCardsResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: [CardsResult]
+}
+
+struct CardsResult: Codable {
+    let cardId: Int
+    let cardImageUrl: String
+}
