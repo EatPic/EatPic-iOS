@@ -28,4 +28,18 @@ enum Config {
         }
         return testImageURL
     }()
+    
+    static let appVersion: String = {
+        guard let appVersion = Config.infoDictionary["APP_VERSION"] as? String else {
+            fatalError()
+        }
+        return appVersion
+    }()
+    
+    static let appBuild: String = {
+        guard let appBuild = Config.infoDictionary["APP_BUILD"] as? String else {
+            fatalError()
+        }
+        return appBuild
+    }()
 }
