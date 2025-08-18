@@ -10,14 +10,24 @@ import Moya
 
 enum UserTargetType {
     case getUserInfo
+    case getFollowingUserIcon
 }
 
 extension UserTargetType: APITargetType {
-    var path: String { "/users" }
+    var path: String {
+        switch self {
+        case .getUserInfo:
+            return "/users"
+        case .getFollowingUserIcon:
+            return "/api/users/icons/following"
+        }
+    }
     
     var method: Moya.Method {
         switch self {
         case .getUserInfo:
+            return .get
+        case .getFollowingUserIcon:
             return .get
         }
     }
@@ -26,13 +36,13 @@ extension UserTargetType: APITargetType {
         switch self {
         case .getUserInfo:
             return .requestPlain
+        case .getFollowingUserIcon:
+            return .requestPlain
         }
     }
     
     var sampleData: Data {
-        switch self {
-        case .getUserInfo:
-            return Data("""
+        return Data("""
              {
                "user_name": "itcong",
                "nickname": "잇콩이",
@@ -40,6 +50,5 @@ extension UserTargetType: APITargetType {
                "status": "ACTIVE"
              }
             """.utf8)
-        }
     }
 }
