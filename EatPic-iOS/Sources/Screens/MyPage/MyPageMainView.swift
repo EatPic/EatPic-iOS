@@ -9,6 +9,8 @@ import SwiftUI
 
 /// 마이페이지 메인 화면 View
 struct MyPageMainView: View {
+    @EnvironmentObject private var container: DIContainer
+    
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
             Spacer().frame(height: 12)
@@ -29,7 +31,9 @@ struct MyPageMainView: View {
         HStack(alignment: .top) {
             Spacer()
             Button(
-                action: {print("설정클릭")},
+                action: {
+                    container.router.push(.settingPage)
+                },
                 label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 24))
@@ -87,6 +91,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로워 선택")
+                container.router.push(.followList(selected: .followers))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -102,6 +107,7 @@ struct MyPageMainView: View {
             
             Button {
                 print("팔로잉 선택")
+                container.router.push(.followList(selected: .followings))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -129,6 +135,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("전체 카드 클릭")
+                container.router.push(.myAllPicCard)
             }
 
             MyPageCardView(
@@ -138,6 +145,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("저장 카드 클릭")
+                container.router.push(.savedPicCard)
             }
 
             MyPageCardView(
@@ -147,6 +155,7 @@ struct MyPageMainView: View {
                 countText: "0개"
             ) {
                 print("배지 클릭")
+                container.router.push(.myBadgeStatusAll)
             }
         }
     }

@@ -125,7 +125,7 @@ struct PicCardFrontView: View {
         GeometryReader { geometry in
             ZStack {
                 Rectangle()
-                    .remoteImage(url: "")
+                    .remoteImage(url: card.imageUrl)
                     .frame(width: geometry.size.width, height: geometry.size.width)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))

@@ -12,6 +12,7 @@ enum CardTargetType {
     case fetchFeeds(userId: Int, cursor: Int?, size: Int)
     case createFeed(
         request: CreateCardRequest, image: Data, fileName: String, mimeType: String)
+    case deleteCard(cardId: Int)
 }
 
 extension CardTargetType: APITargetType {
@@ -21,6 +22,8 @@ extension CardTargetType: APITargetType {
             return "/api/cards/feeds"
         case .createFeed:
             return "/api/cards"
+        case .deleteCard(let cardId):
+            return "/api/cards/\(cardId)"
         }
     }
     
@@ -30,6 +33,8 @@ extension CardTargetType: APITargetType {
             return .get
         case .createFeed:
             return .post
+        case .deleteCard:
+            return .delete
         }
     }
     
@@ -68,6 +73,8 @@ extension CardTargetType: APITargetType {
                       mimeType: mimeType)     // 예: image/heic / image/jpeg / image/png
             )
             return .uploadMultipart(parts)
+        case .deleteCard:
+            return .requestPlain
         }
     }
     

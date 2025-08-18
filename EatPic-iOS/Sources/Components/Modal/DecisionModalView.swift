@@ -73,7 +73,8 @@ struct DecisionModalView: View {
                 /// 모달 메시지
                 Text(message)
                     .foregroundStyle(messageColor)
-                            .font(.dsHeadline)
+                    .font(.dsHeadline)
+                    .multilineTextAlignment(.center)
                 
                 Spacer().frame(height: 41)
  

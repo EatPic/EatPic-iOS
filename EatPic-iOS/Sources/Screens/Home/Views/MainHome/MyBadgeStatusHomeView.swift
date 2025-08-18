@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MyBadgeStatusHomeView: View {
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var viewModel = MyBadgeStatusViewModel()
-    @Binding var selectedBadge: BadgeItem?
+    @State private var viewModel = MyBadgeStatusViewModel()
+    @Binding var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @Binding var showingBadgeModal: Bool
     
     var body: some View {

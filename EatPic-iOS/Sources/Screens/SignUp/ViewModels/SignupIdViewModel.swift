@@ -34,7 +34,9 @@ class SignUpIdViewModel {
         if id.isEmpty {
             return nil
         } else if id.count < 5 {
-            return "아이디는 최소 5자 이상이어야 합니다."
+            return "아이디는 5자에서 8자이어야 합니다."
+        } else if id.count > 8 {
+            return "아이디는 5자에서 8자이어야 합니다."
         } else if containsSpecialCharacters(id) {
             return "특수문자는 사용할 수 없습니다."
         } else if containsKoreanCharacters(id) {
@@ -50,7 +52,7 @@ class SignUpIdViewModel {
     /// 아이디 유효성 검사
     var isIdValid: Bool {
         return !id.isEmpty &&
-        id.count >= 5 &&
+        id.count >= 5 && id.count <= 8 &&
         !containsSpecialCharacters(id) &&
         !containsKoreanCharacters(id) &&
         !isIdDuplicate(id)

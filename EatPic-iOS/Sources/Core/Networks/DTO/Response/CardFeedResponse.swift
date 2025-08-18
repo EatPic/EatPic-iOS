@@ -66,5 +66,5 @@ struct FeedUser: Codable {
     let userId: Int
     let nameId: String
     let nickname: String
-    let profileImageUrl: String
+    let profileImageUrl: String?
 }
