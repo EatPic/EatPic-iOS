@@ -26,7 +26,7 @@ final class FollowListViewModel {
         } else {
             return list.filter {
                 $0.nickname.localizedCaseInsensitiveContains(searchText) ||
-                $0.id.localizedCaseInsensitiveContains(searchText)
+                $0.nameId.localizedCaseInsensitiveContains(searchText)
             }
         }
     }

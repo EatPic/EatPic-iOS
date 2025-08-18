@@ -119,7 +119,7 @@ struct FollowListView: View {
                 Text(user.nickname)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.black)
-                Text(user.id)
+                Text(user.nameId)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.gray060)
             }

@@ -15,6 +15,7 @@ class CommunityMainViewModel {
     // MARK: - View State
     var selectedUser: CommunityUser?
     var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
+    var users: [CommunityUser] = []
     var hasNextPage: Bool = true
     var showDeleteModal = false
     var isShowingReportBottomSheet = false
@@ -26,10 +27,12 @@ class CommunityMainViewModel {
     
     let toastVM = ToastViewModel()
     private let cardProvider: MoyaProvider<CardTargetType>
+    private let userProvider: MoyaProvider<UserTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
+        self.userProvider = container.apiProviderStore.user()
     }
     
     func fetchFeeds() async {
@@ -65,6 +68,31 @@ class CommunityMainViewModel {
         }
     }
     
+    // userList 불러오기
+        func fetchUsers() async {
+            do {
+                let response = try await userProvider.requestAsync(.getFollowingUserIcon)
+                let dto = try JSONDecoder().decode(APIResponse<UserIconResult>.self,
+                                                   from: response.data)
+
+                let newUsers = dto.result.userIconList.map { userIcon in
+                    CommunityUser(
+                        userId: userIcon.userId,
+                        nameId: userIcon.nameId,
+                        nickname: userIcon.nickname,
+                        profileImage: userIcon.profileImageUrl,
+                        introduce: userIcon.introduce
+                    )
+                }
+
+                DispatchQueue.main.async {
+                    self.users = newUsers
+                }
+            } catch {
+                print("사용자 리스트 요청/디코딩 실패:", error.localizedDescription)
+            }
+        }
+    
     // MARK: - Computed Properties
     // 사용자 선택 처리
     func selectUser(_ user: CommunityUser) {
@@ -77,7 +105,7 @@ class CommunityMainViewModel {
     func isMyCard(_ card: PicCard) -> Bool {
         // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
         // 예시: return card.user.id == currentUser.id
-        return card.user.id == "daisyyy" // 임시 로직
+        return card.user.id == 24 // 임시 로직
     }
     
     // MARK: - Actions

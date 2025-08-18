@@ -11,22 +11,37 @@ import SwiftUI
 // MARK: - Models
 
 struct CommunityUser: Identifiable, Hashable, Equatable {
-    let id: String
+    let id: Int
+    let nameId: String
     let nickname: String
     let imageName: String?
     var profileImage: Image? {
         imageName.map { Image($0) }
     }
+    let introduce: String?
     let isCurrentUser: Bool
     var isFollowed: Bool
     
+    init(userId: Int, nameId: String, nickname: String,
+         profileImage: String, introduce: String? = nil) {
+        self.id = userId
+        self.nameId = nameId
+        self.nickname = nickname
+        self.imageName = profileImage
+        self.introduce = introduce
+        self.isCurrentUser = false // API 응답에 없는 속성이므로 기본값 설정
+        self.isFollowed = true    // API 응답에 없는 속성이므로 기본값 설정
+    }
+    
     // FeedUser를 받아서 CommunityUser를 생성하는 이니셜라이저 추가
     init(from feedUser: FeedUser) {
-        self.id = feedUser.nameId
+        self.id = feedUser.userId
+        self.nameId = feedUser.nameId
         self.nickname = feedUser.nickname
         self.imageName = feedUser.profileImageUrl // profileImageUrl을 imageName에 할당
+        self.introduce = nil
         self.isCurrentUser = false // API 응답에 없는 속성이므로 기본값 설정
-        self.isFollowed = false    // API 응답에 없는 속성이므로 기본값 설정
+        self.isFollowed = true    // API 응답에 없는 속성이므로 기본값 설정
     }
 }
 

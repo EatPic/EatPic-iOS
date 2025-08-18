@@ -72,7 +72,7 @@ struct CommunityMainView: View {
     private func userListView() -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 16) {
-                ForEach(sampleUsers) { user in
+                ForEach(viewModel.users) { user in
                     VStack(spacing: 16) {
                         ProfileImageView(
                             image: user.profileImage,
@@ -80,7 +80,7 @@ struct CommunityMainView: View {
                             borderColor: user == viewModel.selectedUser ? .pink050 : .gray040,
                             borderWidth: 3
                         )
-                        Text(user.id)
+                        Text(user.nameId)
                             .font(.dsSubhead)
                             .foregroundStyle(Color.gray080)
                     }
@@ -93,6 +93,9 @@ struct CommunityMainView: View {
             .frame(maxHeight: 112)
         }
         .scrollIndicators(.hidden)
+        .task {
+            await viewModel.fetchUsers()
+        }
     }
     
     private func cardListView() -> some View {
