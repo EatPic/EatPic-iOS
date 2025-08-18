@@ -150,7 +150,7 @@ final class PicCardRecordViewModel {
 
         do {
             let state = recordFlowVM.state
-            let createCardRequestDTO = try recordFlowVM.getCreateCardRequestDTO()
+            let createCardRequestDTO = try CreateCardMapper.makeRequest(from: state)
             let cardId = try await createCardUseCase.execute(
                 state: state,
                 request: createCardRequestDTO

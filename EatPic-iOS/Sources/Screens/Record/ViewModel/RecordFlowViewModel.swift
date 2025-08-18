@@ -124,27 +124,6 @@ final class RecordFlowViewModel: ObservableObject {
         state.sharedFeed = isOn
     }
 
-    // MARK: - Snapshot / DTO
-
-   // DTO 생성해서 반환하는 함수를 여기다가 만들 예정
-    func getCreateCardRequestDTO() throws -> CreateCardRequest {
-        let tags = state.hasTags.map(\.title)
-        guard let mealSlot = state.mealSlot else {
-            throw APIError.noData
-        }
-        return .init(
-            latitude: 37.5665,
-            longitude: 126.978,
-            recipe: "야채, 아보카도, 소스 조합으로 구성된 샐러드입니다.",
-            recipeUrl: "https://example.com/recipe/123",
-            memo: "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣었어요",
-            isShared: true,
-            locationText: "서울특별시 성북구 정릉동",
-            meal: mealSlot,
-            hashtags: tags
-        )
-    }
-
     /// 업로드 완료 후 상태를 초기화합니다. (정책에 따라 조정)
     public func resetForNext(createdAt: Date = .now) {
         state.createdAt = createdAt
@@ -155,6 +134,24 @@ final class RecordFlowViewModel: ObservableObject {
         state.recipeLink = nil
         state.storeLocation = ""
         state.sharedFeed = false
+    }
+}
+
+enum CreateCardMapper {
+    static func makeRequest(from state: RecordFlowState) throws -> CreateCardRequest {
+        let tags = state.hasTags.map(\.title)
+        guard let meal = state.mealSlot else { throw APIError.noData }
+        return .init(
+            latitude: state.latitude ?? 0,  // 실제 값으로
+            longitude: state.longitude ?? 0,
+            recipe: state.myRecipe,
+            recipeUrl: state.recipeLink ?? "",
+            memo: state.myMemo,
+            isShared: state.sharedFeed,
+            locationText: state.storeLocation ?? "",
+            meal: meal,
+            hashtags: tags
+        )
     }
 }
 
