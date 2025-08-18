@@ -8,7 +8,9 @@
 import Foundation
 import UIKit
 
-// 각 화면별 데이터 취합 모델
+/// 사용자가 기록 플로우에서 입력한 값을 일시적으로 모아두는 **작성 초안(draft) 상태**입니다.
+/// - Note: 초기 구현 단계에서 실용성을 위해 `UIImage`를 보관합니다. 인코딩은 UseCase 내부에서 `MainActor.run`으로 수행되어
+///   non-Sendable 이슈를 회피합니다. 추후 필요 시 `ImageRef(Data/URL)`로 치환하여 도메인 순수성을 강화할 수 있습니다.
 struct RecordFlowState {
     var images: [UIImage]
     var mealSlot: MealSlot?
@@ -23,14 +25,15 @@ struct RecordFlowState {
     var createdAt: Date
 }
 
-// 팩토리 시그니처도 메인 액터에서만 호출되도록
+/// 기록 플로우에서 날짜를 기준으로 서브 뷰모델을 생성하기 위한 팩토리 시그니처입니다.
+/// - Warning: UI 스레드 제약을 명확히 하기 위해 `@MainActor`로 선언합니다.
 typealias MealRecordVMFactory = @MainActor (_ date: Date) -> MealRecordViewModel
 
-/// 기록 플로우의 루트 상태를 관리하는 뷰모델.
-/// - 책임:
+/// 기록 플로우의 루트 상태를 관리하는 뷰모델입니다.
+/// - Responsibilities:
 ///   - `RecordFlowState`의 저장/갱신(단방향 상태)
 ///   - 화면 전이 가드(검증)
-///   - 서버 DTO 스냅샷 생성
+/// - Note: UI 업데이트 보장을 위해 `@MainActor`로 동작합니다.
 @MainActor
 final class RecordFlowViewModel: ObservableObject {
 
@@ -75,7 +78,10 @@ final class RecordFlowViewModel: ObservableObject {
 
     // MARK: - Mutations (사이드이펙트 없음)
 
-    /// 최초 진입 후 한 번만 세팅하고 싶을 때 사용(이미 값이 있으면 덮어쓰지 않게 보호)
+    /// 최초 진입 시 한 번만 초기 상태를 세팅합니다. 이미 값이 있으면 덮어쓰지 않습니다.
+    /// - Parameters:
+    ///   - createdAt: 기록 기준 시각
+    ///   - images: 최초 선택된 이미지 배열
     public func bootstrapIfNeeded(createdAt: Date, images: [UIImage]) {
         if state.images.isEmpty {
             state.createdAt = createdAt
@@ -83,48 +89,62 @@ final class RecordFlowViewModel: ObservableObject {
         }
     }
 
+    /// 현재 보관 중인 이미지를 전달된 배열로 교체합니다.
     public func replaceImages(_ images: [UIImage]) {
         state.images = images
     }
 
+    /// 현재 보관 중인 이미지 배열의 뒤에 새 이미지를 추가합니다.
     public func appendImages(_ images: [UIImage]) {
         state.images.append(contentsOf: images)
     }
 
+    /// 지정한 인덱스의 이미지를 제거합니다. 인덱스가 유효하지 않으면 무시합니다.
+    /// - Parameter index: 제거할 위치
     public func removeImage(at index: Int) {
         guard state.images.indices.contains(index) else { return }
         state.images.remove(at: index)
     }
     
+    /// 선택한 식사 시간대를 설정합니다.
+    /// - Parameter slot: 아침/점심/저녁/간식 식사 슬롯
     public func addMealSlot(_ slot: MealSlot) {
         state.mealSlot = slot
     }
 
+    /// 선택된 해시태그 목록을 설정합니다.
+    /// - Parameter tags: 해시태그 카테고리 배열
     public func setTags(_ tags: [HashtagCategory]) {
         state.hasTags = tags
     }
 
+    /// 사용자가 입력한 메모를 설정합니다.
     public func setMemo(_ memo: String) {
         state.myMemo = memo
     }
 
+    /// 레시피/내용 본문을 설정합니다.
     public func setRecipeText(_ text: String) {
         state.myRecipe = text
     }
 
+    /// 레시피 링크(URL 문자열)를 설정합니다. 빈 문자열은 `nil`로 정규화합니다.
     public func setRecipeLink(_ urlString: String?) {
         state.recipeLink = (urlString?.isEmpty == true) ? nil : urlString
     }
 
+    /// 사용자가 지정한 위치 텍스트를 설정합니다.
     public func setStoreLocation(_ location: String) {
         state.storeLocation = location
     }
 
+    /// 피드 공개 여부를 설정합니다.
     public func setSharedFeed(_ isOn: Bool) {
         state.sharedFeed = isOn
     }
 
-    /// 업로드 완료 후 상태를 초기화합니다. (정책에 따라 조정)
+    /// 업로드 완료 후 다음 기록을 위해 상태를 초기화합니다.
+    /// - Parameter createdAt: 다음 기록의 기준 시각(기본값: 현재 시각)
     public func resetForNext(createdAt: Date = .now) {
         state.createdAt = createdAt
         state.images = []
@@ -137,7 +157,13 @@ final class RecordFlowViewModel: ObservableObject {
     }
 }
 
+/// 기록 상태를 서버 전송 DTO로 변환하는 매퍼입니다.
+/// - Important: **매핑 일원화**를 위해 변환 로직을 이곳에만 둡니다.
 enum CreateCardMapper {
+    /// `RecordFlowState`를 서버 전송용 `CreateCardRequest`로 변환합니다.
+    /// - Parameter state: 화면에서 수집한 기록 상태
+    /// - Throws: `APIError.noData` — 필수 값(예: `mealSlot`)이 누락된 경우
+    /// - Returns: 전송 가능한 `CreateCardRequest`
     static func makeRequest(from state: RecordFlowState) throws -> CreateCardRequest {
         let tags = state.hasTags.map(\.title)
         guard let meal = state.mealSlot else { throw APIError.noData }
@@ -160,6 +186,8 @@ import ImageIO
 import MobileCoreServices
 import Moya
 
+/// 인코딩된 이미지 바이너리와 메타정보를 묶어 전달하기 위한 값 객체입니다.
+/// - Note: 멀티파트 업로드 시 `fileName`, `mimeType`을 정확히 지정해야 서버/스토리지 호환성이 보장됩니다.
 struct EncodedImage {
     let data: Data
     let mimeType: String
@@ -167,11 +195,18 @@ struct EncodedImage {
     let fileName: String
 }
 
+/// 이미지 인코딩 전략을 추상화한 프로토콜입니다.
+/// - Parameters:
+///   - image: 원본 이미지(`UIImage`)
+///   - maxBytes: 인코딩 결과가 넘지 말아야 할 최대 바이트
+/// - Returns: 조건을 만족하는 `EncodedImage` 또는 실패 시 `nil`
 protocol ImageEncodingStrategy {
     // 최대 바이트 제약 하에 인코딩 시도. 실패하면 nil 반환
     func encode(_ image: UIImage, maxBytes: Int) -> EncodedImage?
 }
 
+/// HEIC 포맷으로 인코딩하는 전략입니다. 알파 채널이 있을 경우 배경 합성 후 손실 압축을 수행합니다.
+/// - Warning: 일부 서버/라이브러리는 `image/heic`를 지원하지 않을 수 있습니다.
 final class HEICEncoder: ImageEncodingStrategy {
     private let quality: CGFloat
     private let filenameBase: String
@@ -260,6 +295,7 @@ private extension UIImage {
     }
 }
 
+/// JPEG 포맷으로 인코딩하는 전략입니다. 이분 탐색으로 품질을 조정하여 목표 용량을 만족시킵니다.
 final class JPEGEncoder: ImageEncodingStrategy {
     private let filenameBase: String
     init(filenameBase: String = "image") {
@@ -291,6 +327,7 @@ final class JPEGEncoder: ImageEncodingStrategy {
     }
 }
 
+/// PNG 포맷으로 인코딩하는 전략입니다. 무손실이지만 용량이 커질 수 있습니다(최대 바이트 초과 시 실패).
 final class PNGEncoder: ImageEncodingStrategy {
     private let filenameBase: String
     init(filenameBase: String = "image") {
@@ -309,6 +346,7 @@ final class PNGEncoder: ImageEncodingStrategy {
     }
 }
 
+/// 등록된 전략 순서대로 인코딩을 시도하는 파이프라인입니다. 최초 성공 결과를 반환합니다.
 struct ImageEncoderPipeline: ImageEncodingStrategy {
     private let strategies: [ImageEncodingStrategy]
     init(_ strategies: [ImageEncodingStrategy]) {
@@ -324,6 +362,8 @@ struct ImageEncoderPipeline: ImageEncodingStrategy {
     }
 }
 
+/// PicCard 생성/조회 등 카드 관련 데이터를 다루는 도메인 리포지토리 인터페이스입니다.
+/// - Note: 도메인 계층의 추상화로서, Moya/URLSession 등의 세부 구현을 알지 못합니다.
 protocol CardRepository {
     func createCard(
         request: CreateCardRequest,
@@ -333,7 +373,9 @@ protocol CardRepository {
     ) async throws -> Int
 }
 
-final class DefaultCardRepository: CardRepository {
+/// `CardRepository`의 기본 구현체입니다. Moya를 통해 원격 API와 통신합니다.
+/// - Important: 이 계층에서만 DTO/네트워크 세부사항을 다루고, 상위에는 도메인 타입/원시값만 노출합니다.
+final class CardRepositoryImpl: CardRepository {
     private let provider: MoyaProvider<CardTargetType>
     private let decoder: JSONDecoder
 
@@ -342,6 +384,14 @@ final class DefaultCardRepository: CardRepository {
         self.decoder = decoder
     }
 
+    /// PicCard를 생성합니다(멀티파트 업로드).
+    /// - Parameters:
+    ///   - request: 전송할 본문 JSON(`CreateCardRequest`)
+    ///   - imageData: 업로드할 이미지 바이너리
+    ///   - fileName: 파일명(확장자 포함)
+    ///   - mimeType: MIME 타입(예: `image/heic`, `image/jpeg`)
+    /// - Returns: 생성된 카드의 식별자(`newCardId`)
+    /// - Throws: 네트워크/디코딩/서버 오류에 따른 도메인 에러
     func createCard(
         request: CreateCardRequest,
         imageData: Data,
@@ -356,20 +406,18 @@ final class DefaultCardRepository: CardRepository {
                 mimeType: mimeType
             )
         )
-        let envelope = try decoder.decode(CreateCardResponse.self, from: response.data)
+        let envelope = try decoder.decode(APIResponse<CreateCardResult>.self, from: response.data)
         
         guard envelope.isSuccess else {
             throw APIError.serverError(
                 code: response.statusCode, message: envelope.message)
         }
         
-        print("envelope: \(envelope)")
-        
         return envelope.result.newCardId
     }
 }
 
-/// 이미지 업로드 과정에서 발생할 수 있는 에러
+/// 업로드 과정에서 발생할 수 있는 도메인 에러입니다. 사용자 메시지로 변환하기 쉽도록 `LocalizedError`를 채택합니다.
 enum UploadError: LocalizedError {
     /// 업로드할 이미지가 없는 경우
     case missingImage
@@ -394,12 +442,22 @@ enum UploadError: LocalizedError {
     }
 }
 
+/// `CreateCardUseCase`의 기본 구현체입니다.
+/// - Note: `UIImage`는 non-Sendable이므로, 인코딩은 `MainActor.run`에서 수행하여 안전성을 확보합니다.
 protocol CreateCardUseCase {
+    /// 기록 상태와 DTO를 받아 이미지 인코딩 후 서버에 업로드합니다.
+    /// - Parameters:
+    ///   - state: 화면에서 수집한 기록 상태
+    ///   - request: 서버 전송용 DTO
+    /// - Returns: 생성된 카드의 식별자
+    /// - Throws: `UploadError` 및 레포지토리에서 전달되는 도메인 에러
     func execute(
-        state: RecordFlowState, request: CreateCardRequest) async throws -> Int
+        state: RecordFlowState,
+        request: CreateCardRequest
+    ) async throws -> Int
 }
 
-final class DefaultCreateCardUseCase: CreateCardUseCase {
+final class CreateCardUseCaseImpl: CreateCardUseCase {
     private let repository: CardRepository
     private let encoder: ImageEncodingStrategy
     private let maxBytes: Int

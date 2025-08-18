@@ -8,7 +8,8 @@
 import Foundation
 import Moya
 
-/// 식사 기록 요청 DTO
+/// PicCard 생성 요청 본문입니다.
+/// - Important: 서버 스키마와 일치해야 하며, 멀티파트의 `request.json` 파트로 전송됩니다.
 struct CreateCardRequest: Codable {
     let latitude: Double
     let longitude: Double
@@ -21,16 +22,8 @@ struct CreateCardRequest: Codable {
     let hashtags: [String]
 }
 
-/// 서버 공통 응답 래핑
-struct CreateCardResponse: Decodable {
-    let isSuccess: Bool
-    let code: String
-    let message: String
-    let result: CreateCardResult
-}
-
-/// 카드 생성 결과 (필요한 필드만)
-struct CreateCardResult: Decodable {
+/// PicCard 생성 결과의 핵심 데이터입니다. 현재는 `newcardId`만 사용합니다.
+struct CreateCardResult: Codable {
     let newCardId: Int
     private enum CodingKeys: String, CodingKey {
         case newCardId = "newcardId"
@@ -77,6 +70,9 @@ extension CardTargetType: APITargetType {
             
             return .requestParameters(parameters: params, encoding: URLEncoding.default)
         case let .createFeed(request, image, fileName, mimeType):
+            // 멀티파트 파트 구성:
+            // 1) name=`request` (application/json) — CreateCardRequest 직렬화
+            // 2) name=`cardImageFile` (image/*) — 인코딩된 이미지 파일
             guard let json = try? JSONEncoder().encode(request) else {
                 // 에러 처리를 올려보내거나 최소한 로그
                 return .requestPlain
@@ -117,11 +113,15 @@ extension CardTargetType: APITargetType {
     }
 }
 
+/// 서버가 기대하는 멀티파트 파트 이름 상수입니다.
+/// - Note: Postman 테스트 기준 `cardImageFile`이어야 `cardImageUrl`이 생성됩니다.
 enum MultipartField {
     static let cardImage = "cardImageFile"
     static let request = "request"
 }
 
+/// PicCard 업로드 액션을 트리거하고 결과를 UI에 전달하는 뷰모델입니다.
+/// - Note: 사이클로매틱 복잡도를 낮추기 위해 에러 메시지 매핑을 전용 헬퍼로 분리했습니다.
 @MainActor
 @Observable
 final class PicCardRecordViewModel {
@@ -135,11 +135,13 @@ final class PicCardRecordViewModel {
 
     init(container: DIContainer, recordFlowVM: RecordFlowViewModel) {
         let provider = container.apiProviderStore.card()
-        let repository = DefaultCardRepository(provider: provider)
-        self.createCardUseCase = DefaultCreateCardUseCase(repository: repository)
+        let repository = CardRepositoryImpl(provider: provider)
+        self.createCardUseCase = CreateCardUseCaseImpl(repository: repository)
         self.recordFlowVM = recordFlowVM
     }
 
+    /// PicCard 생성을 실행합니다. 중복 업로드를 방지하고, 완료 후 상태를 갱신합니다.
+    /// - Important: `RecordFlowViewModel.state`를 스냅샷으로 읽어 사용합니다.
     func createPicCard() async {
         guard !isUploading else { return }
         isUploading = true
@@ -161,6 +163,9 @@ final class PicCardRecordViewModel {
         }
     }
     
+    /// 에러를 사용자 친화적인 메시지로 변환합니다.
+    /// - Parameter error: 발생한 에러
+    /// - Returns: UI 표시에 적합한 한국어 메시지
     private func userErrMessage(for error: Error) -> String {
         if let err = error as? UploadError {
             return err.errorDescription ?? "업로드 오류가 발생했습니다."
