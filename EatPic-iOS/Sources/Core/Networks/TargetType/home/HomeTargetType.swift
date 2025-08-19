@@ -11,6 +11,7 @@ import Moya
 enum HomeTargetType {
     case fetchCalendar(year: Int, month: Int)
     case greetingMessage
+    case badgeList
 }
 
 extension HomeTargetType: APITargetType {
@@ -20,14 +21,14 @@ extension HomeTargetType: APITargetType {
             return "/api/calendar/meals"
         case .greetingMessage:
             return "/api/greeting"
+        case .badgeList:
+            return "/api/badges/home"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .fetchCalendar:
-            return .get
-        case .greetingMessage:
+        case .fetchCalendar, .greetingMessage, .badgeList:
             return .get
         }
     }
@@ -38,7 +39,7 @@ extension HomeTargetType: APITargetType {
             let parameters = ["year": year, "month": month]
             return .requestParameters(
                 parameters: parameters, encoding: URLEncoding.queryString)
-        case .greetingMessage:
+        case .greetingMessage, .badgeList:
             return .requestPlain
         }
     }
@@ -60,7 +61,7 @@ extension HomeTargetType: APITargetType {
                ]
              }
             """.utf8)
-        case .greetingMessage:
+        case .greetingMessage, .badgeList:
             return Data("""
             
             """.utf8)
