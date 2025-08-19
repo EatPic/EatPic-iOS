@@ -16,14 +16,14 @@ import SwiftUI
 struct ProfileImageView: View {
     
     // MARK: - Property
-    let image: Image?
+    let image: String?
     let size: CGFloat
     let borderColor: Color
     let borderWidth: CGFloat
     
     // MARK: - Init
     init(
-        image: Image? = nil,
+        image: String? = nil,
         size: CGFloat,
         borderColor: Color = ProfileImageConstants.defaultBorderColor,
         borderWidth: CGFloat = ProfileImageConstants.defaultBorderWidth
@@ -33,18 +33,45 @@ struct ProfileImageView: View {
         self.borderColor = borderColor
         self.borderWidth = borderWidth
     }
-
+    
     var body: some View {
-        (image ?? ProfileImageConstants.defaultPlaceholderImage) // 이미지 없으면 기본값 사용
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
-            .clipShape(Circle()) // 원형으로 자르기
-            .overlay(alignment: .center) {
-                Circle() // 뷰 위에 테두리 겹쳐 원형 테두리 생성
-                    .stroke(borderColor, lineWidth: borderWidth)
+        Group {
+            if let imageName = image {
+                // 이미지 이름이 있는 경우
+                if isLocalImage(imageName) {
+                    // 로컬 이미지인 경우
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    // 원격 이미지인 경우
+                    Rectangle()
+                        .remoteImage(url: imageName)
+                        .scaledToFill()
+                }
+            } else {
+                // 이미지가 없는 경우 기본 placeholder
+                ProfileImageConstants.defaultPlaceholderImage
+                    .resizable()
+                    .scaledToFill()
+                    .foregroundColor(.gray)
             }
-            .contentShape(Circle()) // 원형 클릭시만 반응 (사각형 Shape영역 터치시 무반응)
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle()) // 원형으로 자르기
+        .overlay(alignment: .center) {
+            Circle() // 뷰 위에 테두리 겹쳐 원형 테두리 생성
+                .stroke(borderColor, lineWidth: borderWidth)
+        }
+        .contentShape(Circle()) // 원형 클릭시만 반응 (사각형 Shape영역 터치시 무반응)
+    }
+    
+    /// 로컬 이미지인지 판단하는 헬퍼 메서드
+    private func isLocalImage(_ imageName: String) -> Bool {
+        // URL 형태가 아니면 로컬 이미지로 간주
+        return !imageName.hasPrefix("http://") &&
+        !imageName.hasPrefix("https://") &&
+        !imageName.contains("://")
     }
 }
 
