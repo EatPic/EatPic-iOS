@@ -7,8 +7,15 @@
 
 import SwiftUI
 
-struct PicCardRecorView: View {
+struct PicCardRecordView: View {
     @EnvironmentObject private var container: DIContainer
+    @EnvironmentObject private var recordFlowVM: RecordFlowViewModel
+    @State private var picCardRecordVM: PicCardRecordViewModel
+    
+    init(container: DIContainer, recordFlowVM: RecordFlowViewModel) {
+        self._picCardRecordVM = .init(
+            wrappedValue: .init(container: container, recordFlowVM: recordFlowVM))
+    }
 
     var body: some View {
         VStack {
@@ -28,7 +35,14 @@ struct PicCardRecorView: View {
 //                    set: { viewmodel.recordModel.isShared = $0 }
 //                )
 //            )
-            Text("기록하기 뷰")
+            Button {
+                Task {
+                    await picCardRecordVM.createPicCard()
+                }
+                print("Button Click")
+            } label: {
+                Text("Button")
+            }
         }
         .customNavigationBar { Text("Pic 카드 기록") } right: {
             Button { container.router.popToRoot() } label: {
@@ -38,7 +52,8 @@ struct PicCardRecorView: View {
     }
 }
 
-#Preview {
-    PicCardRecorView()
-        .environmentObject(PicCardRecorViewModel())
-}
+//#Preview {
+//    PicCardRecordView(container: <#DIContainer#>, recordFlowVM: <#RecordFlowViewModel#>)
+//        .environmentObject(DIContainer())
+//        .environmentObject(RecordFlowViewModel())
+//}

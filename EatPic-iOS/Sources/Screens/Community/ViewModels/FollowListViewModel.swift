@@ -26,7 +26,7 @@ final class FollowListViewModel {
         } else {
             return list.filter {
                 $0.nickname.localizedCaseInsensitiveContains(searchText) ||
-                $0.id.localizedCaseInsensitiveContains(searchText)
+                $0.nameId.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
@@ -69,11 +69,11 @@ let feedUserMinsu: FeedUser = FeedUser(userId: 104, nameId: "minsu", nickname: "
 
 // MARK: - 수정된 CommunityUser 더미 데이터
 let sampleFollowers: [CommunityUser] = [
-    CommunityUser(from: feedUserHong),
-    CommunityUser(from: feedUserYoung)
+    feedUserHong.toCommunityUser(),
+    feedUserYoung.toCommunityUser()
 ]
 
 let sampleFollowings: [CommunityUser] = [
-    CommunityUser(from: feedUserCheolsoo),
-    CommunityUser(from: feedUserMinsu)
+    feedUserCheolsoo.toCommunityUser(),
+    feedUserMinsu.toCommunityUser()
 ]

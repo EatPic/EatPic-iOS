@@ -139,7 +139,7 @@ struct OthersProfileView: View {
             // showBlockModal 상태에 따라 모달 뷰를 띄움
             if viewModel.showBlockModal {
                 DecisionModalView(
-                    message: "\(viewModel.user.nickname)(\(viewModel.user.id))님을 차단하시겠어요?",
+                    message: "\(viewModel.user.nickname)(\(viewModel.user.nameId))님을 차단하시겠어요?",
                     messageColor: .gray080,
                     leftBtnText: "취소",
                     rightBtnText: "차단",
@@ -166,7 +166,7 @@ struct OthersProfileView: View {
         VStack {
             Spacer().frame(height: 8)
             ProfileImageView(
-                image: viewModel.user.profileImage ?? Image(systemName: "person.fill"),
+                image: viewModel.user.imageName,
                 size: 100)
             
             Spacer().frame(height: 16)
@@ -174,7 +174,7 @@ struct OthersProfileView: View {
             Text(viewModel.user.nickname)
                 .font(.dsTitle3)
                 .foregroundStyle(Color.gray080)
-            Text("@"+viewModel.user.id)
+            Text("@"+viewModel.user.nameId)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray060)
             Spacer().frame(height: 18)

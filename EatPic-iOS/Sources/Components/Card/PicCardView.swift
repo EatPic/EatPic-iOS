@@ -63,7 +63,7 @@ struct PicCardView<Content: View>: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(card.user.id)
+                    Text(card.user.nameId)
                         .font(.dsHeadline)
                         .foregroundStyle(Color.gray080)
                     Text(card.time)
