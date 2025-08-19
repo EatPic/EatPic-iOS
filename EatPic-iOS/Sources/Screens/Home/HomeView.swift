@@ -12,7 +12,7 @@ struct HomeView: View {
     // MARK: - ProPerty
     
     @EnvironmentObject private var container: DIContainer
-    @State private var badgeViewModel = MyBadgeStatusViewModel()
+    @StateObject private var badgeViewModel: MyBadgeStatusViewModel
     @State private var badgeDetailViewModel = BadgeDetailViewModel()
     @State private var showingBadgeModal = false
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
@@ -24,6 +24,8 @@ struct HomeView: View {
     
     init(container: DIContainer) {
         self.greetingViewModel = .init(container: container)
+        _badgeViewModel = StateObject(
+            wrappedValue: MyBadgeStatusViewModel(container: container))
     }
     
     // MARK: - Body
@@ -42,9 +44,10 @@ struct HomeView: View {
                     RecomPicCardHomeView(container: container)
                     
                     MyBadgeStatusHomeView(
-                    selectedBadge: $selectedBadge,
-                    showingBadgeModal: $showingBadgeModal
-                )
+                        viewModel: badgeViewModel,
+                        selectedBadge: $selectedBadge,
+                        showingBadgeModal: $showingBadgeModal
+                    )
                     
                     Spacer()
                 }
@@ -55,19 +58,22 @@ struct HomeView: View {
             // 배지 모달
             if showingBadgeModal, let badge = selectedBadge {
                 BadgeProgressModalView(
-                    badgeType: badgeDetailViewModel.createBadgeModalType(for: badge),
+                    badgeType: badgeDetailViewModel
+                        .createBadgeModalType(for: badge),
                     closeBtnAction: {
                         showingBadgeModal = false
                         selectedBadge = nil
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeDetailViewModel.getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel
+                        .getBadgeDescription(for: badge.name)
                 )
             }
         }
         .task { // 뷰 진입시 API 호출
             await greetingViewModel.fetchGreetingUser()
+            await badgeViewModel.fetchBadgeList()
         }
     }
     

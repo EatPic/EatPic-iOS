@@ -9,10 +9,11 @@ import SwiftUI
 
 struct MyBadgeStatusHomeView: View {
     @EnvironmentObject private var container: DIContainer
-    @State private var viewModel = MyBadgeStatusViewModel()
+    @ObservedObject var viewModel: MyBadgeStatusViewModel
     @Binding var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @Binding var showingBadgeModal: Bool
     
+    // MARK: - Body
     var body: some View {
         VStack {
             titleBar
@@ -66,12 +67,4 @@ struct MyBadgeStatusHomeView: View {
             }
         }
     }
-}
-
-#Preview {
-    MyBadgeStatusHomeView(
-        selectedBadge: .constant(nil),
-        showingBadgeModal: .constant(false)
-    )
-    .environmentObject(DIContainer())
 }

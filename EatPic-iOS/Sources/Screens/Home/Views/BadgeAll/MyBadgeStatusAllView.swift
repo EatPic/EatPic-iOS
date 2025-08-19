@@ -10,10 +10,15 @@ import SwiftUI
 
 struct MyBadgeStatusAllView: View {
     
-    @State private var viewModel = MyBadgeStatusViewModel()
+    @ObservedObject private var viewModel: MyBadgeStatusViewModel
     @State private var badgeDetailViewModel = BadgeDetailViewModel()
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @State private var showingBadgeModal = false
+    
+    // MARK: - Init
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     
     var body: some View {
         ZStack {
@@ -99,5 +104,5 @@ struct MyBadgeStatusAllView: View {
 }
 
 #Preview {
-    MyBadgeStatusAllView()
+    MyBadgeStatusAllView(container: .init())
 }

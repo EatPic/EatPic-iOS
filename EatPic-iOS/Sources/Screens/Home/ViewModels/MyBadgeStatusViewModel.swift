@@ -2,8 +2,7 @@ import Foundation
 import SwiftUI
 import Moya
 
-@Observable
-class MyBadgeStatusViewModel {
+final class MyBadgeStatusViewModel: ObservableObject {
     
     // MARK: - Properties
     
@@ -11,13 +10,13 @@ class MyBadgeStatusViewModel {
     private let homeProvider: MoyaProvider<HomeTargetType>
     
     /// 뱃지 아이템 목록
-    var badgeItems: [BadgeItem] = []
+    @Published var badgeItems: [BadgeItem] = []
     
     /// 전체 뱃지 개수
-    var totalBadges: Int = 0
+    @Published var totalBadges: Int = 0
     
     /// 획득한 뱃지 개수
-    var acquiredBadges: Int = 0
+    @Published var acquiredBadges: Int = 0
     
     /// 뱃지 아이템 구조체 (홈화면용 - 간단한 정보만)
     struct BadgeItem: Identifiable, Codable {
