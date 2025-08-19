@@ -9,8 +9,12 @@ import SwiftUI
 
 // MARK: - 메인 뷰
 struct MealStatusView: View {
-    @StateObject private var viewModel = MealStatusViewModel()
+    @State private var viewModel: MealStatusViewModel
     @State private var isEditMode = false
+    
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     
     var body: some View {
         VStack {
@@ -101,7 +105,7 @@ private struct EmptyMealView: View {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.gray030)
 
-                Text(meal.mealTime)
+                Text(meal.displayName)
                     .font(.dsBold15)
                     .foregroundStyle(Color.gray060)
             }
@@ -137,7 +141,7 @@ private struct RecordedMealView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.green050)
-                Text(meal.mealTime)
+                Text(meal.displayName)
                     .font(.dsBold15)
                     .foregroundStyle(Color.white)
             }
@@ -177,5 +181,5 @@ private struct RecordedMealView: View {
 }
 
 #Preview {
-    MealStatusView()
+    MealStatusView(container: .init())
 }
