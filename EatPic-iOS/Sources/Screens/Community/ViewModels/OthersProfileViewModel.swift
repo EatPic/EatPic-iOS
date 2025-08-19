@@ -48,13 +48,13 @@ final class OthersProfileViewModel {
     
     func blockUser() {
         // BlockedUsersManager를 통해 차단 처리
-        BlockedUsersManager.shared.blockUser(userId: user.id)
+        BlockedUsersManager.shared.blockUser(userId: user.nameId)
         isFollowed = false
         print("\(user.nickname) 차단 완료")
     }
     
     func handleProfileReport(_ reportType: String) {
-        print("프로필 신고: \(user.id) - 유형: \(reportType)")
+        print("프로필 신고: \(user.nameId) - 유형: \(reportType)")
         // TODO: 실제 신고 API 호출 로직 구현
         isShowingReportBottomSheet = false
     }
@@ -62,6 +62,6 @@ final class OthersProfileViewModel {
     private func checkFollowStatus(for user: CommunityUser) -> Bool {
         // TODO: 실제 팔로우 상태를 확인하는 로직 구현 (API 호출 등)
         // 현재는 더미 데이터로 임시 구현
-        return user.id == "id3" ? true : false
+        return user.nameId == "id3" ? true : false
     }
 }

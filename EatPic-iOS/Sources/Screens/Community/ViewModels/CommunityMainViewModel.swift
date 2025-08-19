@@ -15,6 +15,7 @@ class CommunityMainViewModel {
     // MARK: - View State
     var selectedUser: CommunityUser?
     var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
+    var users: [CommunityUser] = []
     var hasNextPage: Bool = true
     var showDeleteModal = false
     var isShowingReportBottomSheet = false
@@ -26,10 +27,12 @@ class CommunityMainViewModel {
     
     let toastVM = ToastViewModel()
     private let cardProvider: MoyaProvider<CardTargetType>
+    private let userProvider: MoyaProvider<UserTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
+        self.userProvider = container.apiProviderStore.user()
     }
     
     func fetchFeeds() async {
@@ -46,7 +49,7 @@ class CommunityMainViewModel {
             
             // 핵심 변환 로직: Feed 배열을 PicCard 배열로 변환
             let newCards = dto.result.cardFeedList.map { feed in
-                PicCard(from: feed)
+                feed.toPicCard()
             }
             
             DispatchQueue.main.async {
@@ -65,19 +68,99 @@ class CommunityMainViewModel {
         }
     }
     
+    // userList 불러오기
+    func fetchUserList() async {
+        // 기본 '전체' 사용자
+        let allUser = CommunityUser(
+            id: -1,
+            nameId: "전체",
+            nickname: "전체",
+            imageName: "Community/grid",
+            introduce: nil,
+            type: .all,
+            isCurrentUser: false,
+            isFollowed: false
+        )
+        
+        var finalUsers: [CommunityUser] = [allUser]
+        
+        do {
+            // 1) 나의 정보 가져오기
+            let meResponse = try await userProvider.requestAsync(.getMyUserIcon)
+            let meDto = try JSONDecoder().decode(APIResponse<MyUserIconResult>.self,
+                                                 from: meResponse.data)
+            let myUser = meDto.result.toCommunityUser()
+            finalUsers.append(myUser)
+            
+            print("내 정보 로드 성공: \(myUser.nameId)")
+            
+        } catch {
+            print("내 정보 로드 실패:", error.localizedDescription)
+            // 내 정보 로드 실패해도 전체는 표시
+        }
+        
+        do {
+            // 2) 팔로우 중인 유저 목록 가져오기
+            let listResponse = try await userProvider.requestAsync(.getFollowingUserIcon)
+            let listDto = try JSONDecoder().decode(APIResponse<UserListResult>.self,
+                                                   from: listResponse.data)
+            
+            // isFollowing == true인 유저만 필터링
+            let followingUsers = listDto.result.userIconList
+                .filter { $0.isFollowing ?? true }
+                .map { $0.toCommunityUser() }
+            
+            finalUsers.append(contentsOf: followingUsers)
+            print("팔로우 유저 \(followingUsers.count)명 로드 성공")
+            
+        } catch {
+            print("팔로우 유저 리스트 로드 실패:", error.localizedDescription)
+            print("상세 에러: \(error)")
+            
+            // 팔로우 유저가 없거나 에러가 발생해도 기본 사용자들(전체, 나)은 표시
+            if let moyaError = error as? MoyaError {
+                switch moyaError {
+                case .statusCode(let response):
+                    print("HTTP 상태 코드: \(response.statusCode)")
+                    if let responseString = String(data: response.data, encoding: .utf8) {
+                        print("서버 응답: \(responseString)")
+                    }
+                case .underlying(let nsError, let response):
+                    print("하위 에러: \(nsError)")
+                    if let response = response,
+                       let responseString = String(data: response.data, encoding: .utf8) {
+                        print("응답 데이터: \(responseString)")
+                    }
+                default:
+                    break
+                }
+            }
+        }
+        
+        // UI 업데이트
+        DispatchQueue.main.async {
+            self.users = finalUsers
+            
+            // 초기 선택값은 "전체"
+            if self.selectedUser == nil {
+                self.selectedUser = allUser
+            }
+            
+            print("최종 사용자 리스트: \(self.users.map { $0.nameId })")
+        }
+    }
+    
     // MARK: - Computed Properties
     // 사용자 선택 처리
     func selectUser(_ user: CommunityUser) {
         selectedUser = user
-        // 선택된 사용자에 따라 카드 필터링 로직 구현
-        //            filterCards(for: user)
     }
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
         // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
         // 예시: return card.user.id == currentUser.id
-        return card.user.id == "daisyyy" // 임시 로직
+        return card.user.id == 24 // 임시 로직
     }
     
     // MARK: - Actions

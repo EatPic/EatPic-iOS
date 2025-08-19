@@ -35,31 +35,54 @@ struct Feed: Codable {
     let userReaction: String?
     let commentCount: Int
     let bookmarked: Bool
-    
-    // MARK: - Date / Time 포매팅
-    var formattedDate: String {
+}
+
+// MARK: - Feed → PicCard 변환
+extension Feed {
+    func toPicCard() -> PicCard {
+        // user 변환 먼저
+        let communityUser = user.toCommunityUser()
+        
+        // datetime 포맷팅
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         formatter.locale = Locale(identifier: "ko_KR")
-        if let date = formatter.date(from: datetime) {
-            formatter.dateFormat = "yyyy년 MM월 dd일"
-            return formatter.string(from: date)
-        }
-        return datetime
-    }
-    
-    var formattedTime: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 서버 datetime 형식
-        formatter.locale = Locale(identifier: "ko_KR")
         
-        if let date = formatter.date(from: datetime) {
-            formatter.dateFormat = "a hh:mm" // 오전/오후 표시 포함
-            return formatter.string(from: date)
+        var formattedTime = ""
+        var formattedDate = ""
+        
+        if let dateObj = formatter.date(from: datetime) {
+            // 시간 (오전/오후 포함)
+            formatter.dateFormat = "a hh:mm"
+            formattedTime = formatter.string(from: dateObj)
+            
+            // 날짜 (YYYY-MM-DD)
+            formatter.dateFormat = "yyyy-MM-dd"
+            formattedDate = formatter.string(from: dateObj)
         }
-        return ""
+        
+        return PicCard(
+            cardId: cardId,
+            user: communityUser,
+            time: formattedTime,
+            memo: memo,
+            imageUrl: imageUrl ?? "",
+            date: formattedDate,
+            meal: meal,
+            recipe: recipe,
+            recipeUrl: recipeUrl.flatMap { URL(string: $0) },
+            latitude: latitude,
+            longitude: longitude,
+            locationText: locationText,
+            hashtags: hashtags,
+            reactionCount: reactionCount,
+            userReaction: userReaction,
+            commentCount: commentCount,
+            bookmarked: bookmarked
+        )
     }
 }
+
 
 // MARK: - User Info
 struct FeedUser: Codable {
@@ -67,4 +90,19 @@ struct FeedUser: Codable {
     let nameId: String
     let nickname: String
     let profileImageUrl: String?
+}
+
+extension FeedUser {
+    func toCommunityUser() -> CommunityUser {
+        CommunityUser(
+            id: userId,
+            nameId: nameId,
+            nickname: nickname,
+            imageName: profileImageUrl,
+            introduce: nil,
+            type: .other,
+            isCurrentUser: false,
+            isFollowed: true
+        )
+    }
 }
