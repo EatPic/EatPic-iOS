@@ -42,4 +42,4 @@ class BadgeDetailViewModel {
         // 현재는 기본 설명 반환, 나중에 API 연동 시 badgeDetail.badgeDescription 사용
         return "뱃지 설명입니다."
     }
-} 
+}
