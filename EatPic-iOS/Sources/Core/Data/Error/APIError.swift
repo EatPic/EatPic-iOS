@@ -40,4 +40,3 @@ enum APIError: Error, LocalizedError {
         }
     }
 }
-

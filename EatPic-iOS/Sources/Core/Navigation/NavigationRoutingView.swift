@@ -53,7 +53,6 @@ struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
-    @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
         
     private let route: NavigationRoute
     
@@ -144,9 +143,15 @@ struct NavigationRoutingView: View {
             
         case .picCardRecord:
             if let recordFlowViewModel = container.recordFlowVM {
-                PicCardRecorView().environmentObject(recordFlowViewModel)
+                PicCardRecordView(
+                    container: container,
+                    recordFlowVM: recordFlowViewModel
+                ).environmentObject(recordFlowViewModel)
             } else {
-                PicCardRecorView()
+                PicCardRecordView(
+                    container: container,
+                    recordFlowVM: .init()
+                )
             }
         case .userProfile(let user):
             OthersProfileView(user: user)
