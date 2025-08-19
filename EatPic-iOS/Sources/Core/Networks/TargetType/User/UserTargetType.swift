@@ -11,6 +11,7 @@ import Moya
 enum UserTargetType {
     case getUserInfo
     case getFollowingUserIcon
+    case getMyUserIcon
 }
 
 extension UserTargetType: APITargetType {
@@ -20,6 +21,8 @@ extension UserTargetType: APITargetType {
             return "/users"
         case .getFollowingUserIcon:
             return "/api/users/icons/following"
+        case .getMyUserIcon:
+            return "/api/users/icons/me"
         }
     }
     
@@ -27,7 +30,7 @@ extension UserTargetType: APITargetType {
         switch self {
         case .getUserInfo:
             return .get
-        case .getFollowingUserIcon:
+        case .getFollowingUserIcon, .getMyUserIcon:
             return .get
         }
     }
@@ -36,7 +39,7 @@ extension UserTargetType: APITargetType {
         switch self {
         case .getUserInfo:
             return .requestPlain
-        case .getFollowingUserIcon:
+        case .getFollowingUserIcon, .getMyUserIcon:
             return .requestPlain
         }
     }
