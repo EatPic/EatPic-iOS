@@ -38,4 +38,8 @@ extension APIProviderStore {
     func card() -> MoyaProvider<CardTargetType> {
         return networkService.createProvider(for: CardTargetType.self)
     }
+    
+    func bookmark() -> MoyaProvider<BookmarkTargetType> {
+        return networkService.createProvider(for: BookmarkTargetType.self)
+    }
 }
