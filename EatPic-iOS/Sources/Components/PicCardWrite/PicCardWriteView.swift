@@ -22,6 +22,11 @@ struct PicCardWriteView: View {
     @EnvironmentObject private var container: DIContainer
     
     let primaryButtonText: String
+    let recipeLinkTitle: String
+    let storeLocationTitle: String
+    let recipeLinkTitleColor: Color
+    let storeLocationTitleColor: Color
+    
     let onPrimaryButtonTap: (() -> Void)?
     let onAddReceiptTap: (() -> Void)?
     let onAddStoreLocationTap: (() -> Void)?
@@ -43,12 +48,8 @@ struct PicCardWriteView: View {
             Spacer().frame(height: Metrics.smallSpacing)
 
             actionButtonsSection
-            ShareToFeedButton(
-                isOn: $isSharedToFeed,
-                action: { _ in
-                    print("공유하기 토글")
-                }
-            )
+            
+            ShareToFeedButton(isOn: $isSharedToFeed)
 
             Spacer().frame(height: Metrics.shareSpacing)
 
@@ -91,7 +92,8 @@ struct PicCardWriteView: View {
     private var actionButtonsSection: some View {
         AddButtonView(
             btnImage: Image("PicCardWrite/ic_record_link"),
-            btnTitle: "레시피 링크 추가",
+            btnTitle: recipeLinkTitle,
+            titleColor: recipeLinkTitleColor,
             action: {
                 onAddReceiptTap?()
             }
@@ -99,7 +101,8 @@ struct PicCardWriteView: View {
 
         AddButtonView(
             btnImage: Image("PicCardWrite/ic_record_map"),
-            btnTitle: "식당 위치 추가",
+            btnTitle: storeLocationTitle,
+            titleColor: storeLocationTitleColor,
             action: {
                 onAddStoreLocationTap?()
             }
@@ -129,16 +132,19 @@ struct PicCardWriteView: View {
 private struct AddButtonView: View {
     let btnImage: Image
     let btnTitle: String
+    let titleColor: Color
     let action: () -> Void
     
     // MARK: - Init
     init(
         btnImage: Image,
         btnTitle: String,
+        titleColor: Color = .gray080,
         action: @escaping () -> Void
     ) {
         self.btnImage = btnImage
         self.btnTitle = btnTitle
+        self.titleColor = titleColor
         self.action = action
     }
     
@@ -156,7 +162,7 @@ private struct AddButtonView: View {
                 
                 Text(btnTitle)
                     .font(.dsBody)
-                    .foregroundStyle(Color.gray080)
+                    .foregroundStyle(titleColor)
                 
                 Spacer()
                 
@@ -172,15 +178,12 @@ private struct AddButtonView: View {
 // MARK: 피드 공유 버튼 뷰
 private struct ShareToFeedButton: View {
     @Binding var isOn: Bool
-    let action: (Bool) -> Void
     
     // MARK: - Init
     init(
-        isOn: Binding<Bool>,
-        action: @escaping (Bool) -> Void
+        isOn: Binding<Bool>
     ) {
         self._isOn = isOn
-        self.action = action
     }
 
     var body: some View {
@@ -206,14 +209,6 @@ private struct ShareToFeedButton: View {
             Toggle("", isOn: $isOn)
                 .toggleStyle(SwitchToggleStyle(tint: .pink060))
                 .labelsHidden()
-                .onChange(of: isOn) { _, newValue in
-                    if newValue {
-                        print("피드 공유하기 on")
-                    } else {
-                        print("피드 공유하기 off")
-                    }
-                    action(newValue)
-                }
                 
             Spacer().frame(width: 6)
         }

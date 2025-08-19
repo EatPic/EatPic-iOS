@@ -16,13 +16,15 @@ struct PicCardRecordView: View {
     @State private var memo: String = ""
     @State private var recipeContent: String = ""
     @State private var recipeLink: String = ""
+    @State private var recipeLinkURL: String = ""
     @State private var storeLocation: PicCardStoreLocation = .init(name: "")
+    @State private var storeLocationTitle: String = ""
     @State private var sharedFeed: Bool = false
-    
-    @State private var searchText = ""
     
     @State private var showAddRecipeSheet: Bool = false
     @State private var showAddStoreLocationSheet: Bool = false
+    
+    private let storeLocationSheetHeight: CGFloat = 400
     
     init(container: DIContainer, recordFlowVM: RecordFlowViewModel) {
         self._picCardRecordVM = .init(
@@ -33,11 +35,24 @@ struct PicCardRecordView: View {
         VStack {
             PicCardWriteView(
                 primaryButtonText: "기록하기",
+                recipeLinkTitle: recipeLinkURL.isEmpty ? "레시피 링크 추가" : recipeLinkURL,
+                storeLocationTitle:
+                    storeLocationTitle.isEmpty ? "식당 위치 추가" : storeLocationTitle,
+                recipeLinkTitleColor:
+                    recipeLinkURL.isEmpty ? Color.gray080 : .green060,
+                storeLocationTitleColor:
+                    storeLocationTitle.isEmpty ? Color.gray080 : .green060,
                 onPrimaryButtonTap: {
                     recordFlowVM.setMemo(memo)
                     recordFlowVM.setRecipeText(recipeContent)
                     recordFlowVM.setRecipeLink(recipeLink)
                     recordFlowVM.setStoreLocation(storeLocation)
+                    recordFlowVM.setSharedFeed(sharedFeed)
+                    recordFlowVM.setStoreLocation(storeLocation)
+                    
+                    Task {
+                        await picCardRecordVM.createPicCard()
+                    }
                     
                     container.router.popToRoot()
                 },
@@ -58,17 +73,18 @@ struct PicCardRecordView: View {
                     input: $recipeLink,
                     isEnabled: .constant(true) // 추후 리팩토링
                 ) {
-                    recordFlowVM.setRecipeLink(recipeLink)
+                    recipeLinkURL = recipeLink
+                    recordFlowVM.setRecipeLink(recipeLinkURL)
                     showAddRecipeSheet = false
                 }
             }
-            .presentationDetents([.height(200)])
+            .presentationDetents([.height(150)])
         }
         .sheet(isPresented: $showAddStoreLocationSheet) {
             BottomSheetView(title: "식당 위치 추가") {
-                SearchMapView(viewModel: picCardRecordVM)
+                searchStoreLocationView
             }
-            .presentationDetents([.height(600)])
+            .presentationDetents([.height(storeLocationSheetHeight)])
         }
         .customNavigationBar { Text("Pic 카드 기록") } right: {
             Button { container.router.popToRoot() } label: {
@@ -76,31 +92,47 @@ struct PicCardRecordView: View {
             }
         }
     }
-}
-
-struct SearchMapView: View {
-    @EnvironmentObject private var container: DIContainer
-    @Bindable var viewModel: PicCardRecordViewModel
-    @State private var searchText = ""
-
-    var body: some View {
+    
+    private var searchStoreLocationView: some View {
         VStack {
-            TextField("장소를 검색하세요", text: $searchText, onCommit: {
-                viewModel.search(query: searchText)
-            })
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding()
+            SearchBarView(
+                text: $storeLocationTitle,
+                placeholder: "장소를 검색하세요",
+                showsDeleteButton: false,
+                backgroundColor: .gray020,
+                strokeColor: nil,
+                onSubmit: {
+                    //
+                },
+                onChange: { _ in
+                    picCardRecordVM.search(query: storeLocationTitle)
+                }
+            )
+            
+            Spacer().frame(height: 20)
 
-            List(viewModel.searchResults) { place in
+            List(picCardRecordVM.searchResults) { place in
                 VStack(alignment: .leading) {
                     Text(place.mapItem.name ?? "이름 없음")
-                        .font(.headline)
+                        .font(.dsSubhead)
+                        .foregroundStyle(Color.gray080)
                     Text(place.mapItem.placemark.title ?? "")
-                        .font(.subheadline)
-                        .foregroundStyle(.gray)
+                        .font(.dsFootnote)
+                        .foregroundStyle(Color.gray060)
+                }
+                .onTapGesture {
+                    storeLocationTitle = place.mapItem.name ?? "이름 없음"
+                    storeLocation.latitude = place.mapItem.placemark.coordinate.latitude
+                    storeLocation.longitude = place.mapItem.placemark.coordinate.longitude
+                    storeLocation.name = storeLocationTitle
+                    showAddStoreLocationSheet = false
                 }
             }
+            .listStyle(.plain)
+            .listRowSpacing(10)
         }
+        .padding(.horizontal, 16)
+        .frame(height: storeLocationSheetHeight - 100)
     }
 }
 

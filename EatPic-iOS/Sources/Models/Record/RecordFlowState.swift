@@ -29,7 +29,7 @@ struct RecordFlowState {
         myRecipe: String = "",
         recipeLink: String? = nil,
         storeLocation: PicCardStoreLocation = .init(name: ""),
-        sharedFeed: Bool = true,
+        sharedFeed: Bool = false,
         createdAt: Date = .now
     ) {
         self.images = images
