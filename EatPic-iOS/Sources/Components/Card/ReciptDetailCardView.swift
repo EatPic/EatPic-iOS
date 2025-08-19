@@ -85,15 +85,15 @@ struct RecipeDetailCardView: View {
     
     /// 배경 이미지 뷰
     private var backgroundImageView: some View {
-        Text(backgroundImage)
-//        backgroundImage
-//            .resizable()
-//            .scaledToFill()
-//            .frame(maxWidth: .infinity)
-//            .aspectRatio(1, contentMode: .fit)
-//            .overlay(Color.black.opacity(0.7)) // 어두운 필터
-//            .clipped()
-//            .clipShape(RoundedRectangle(cornerRadius: 20))
+
+        Rectangle()
+            .remoteImage(url: backgroundImage)
+            .scaledToFill()
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .overlay(Color.black.opacity(0.7)) // 어두운 필터
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20))
     }
     
     /// 해시태그 뷰
