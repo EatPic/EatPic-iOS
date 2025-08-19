@@ -45,7 +45,7 @@ final class RecordFlowViewModel: ObservableObject {
 
     /// 업로드 가능 여부(최소 요건 충족)
     public var isReadyToUpload: Bool {
-        // 필요시 정책 조정: 메모/레시피/위치 필수 여부 등
+        // [25.08.20] 메모/레시피/위치 필수 여부 적용해야 함 - 리버/이재원
         canProceedToRecord
     }
 
