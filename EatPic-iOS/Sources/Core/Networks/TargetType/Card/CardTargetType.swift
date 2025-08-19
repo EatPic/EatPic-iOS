@@ -12,6 +12,7 @@ enum CardTargetType {
     case fetchFeeds(userId: Int, cursor: Int?, size: Int)
     case deleteCard(cardId: Int)
     case recommendedCard
+    case todayMeals
 }
 
 extension CardTargetType: APITargetType {
@@ -23,12 +24,14 @@ extension CardTargetType: APITargetType {
             return "/api/cards/\(cardId)"
         case .recommendedCard:
             return "/api/cards/recommended-cards"
+        case .todayMeals:
+            return "/api/cards/home/today-cards"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .fetchFeeds, .recommendedCard:
+        case .fetchFeeds, .recommendedCard, .todayMeals:
             return .get
         case .deleteCard:
             return .delete
@@ -53,7 +56,7 @@ extension CardTargetType: APITargetType {
         case .deleteCard:
             return .requestPlain
             
-        case .recommendedCard:
+        case .recommendedCard, .todayMeals:
             return .requestPlain
         }
     }

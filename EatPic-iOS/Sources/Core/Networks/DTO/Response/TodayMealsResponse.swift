@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct TodayCardsResponse: Codable {
+struct TodayMealsResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: [TodayCardsResult]
+    let result: [TodayMealsResult]
 }
 
-struct TodayCardsResult: Codable {
+struct TodayMealsResult: Codable {
     let cardId: Int
     let cardImageUrl: String
     let meal: MealSlot
