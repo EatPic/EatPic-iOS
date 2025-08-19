@@ -16,6 +16,9 @@ class CommunityMainViewModel {
     var selectedUser: CommunityUser?
     var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
     var users: [CommunityUser] = []
+    var currentUser: CommunityUser? {
+        users.first { $0.userType == .me }
+    }
     var hasNextPage: Bool = true
     var showDeleteModal = false
     var isShowingReportBottomSheet = false
@@ -160,9 +163,8 @@ class CommunityMainViewModel {
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
-        // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
-        // 예시: return card.user.id == currentUser.id
-        return card.user.id == 24 // 임시 로직
+        guard let me = currentUser else { return false }
+        return card.user.id == me.id
     }
     
     // MARK: - Actions
