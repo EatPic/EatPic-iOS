@@ -13,6 +13,7 @@ enum CardTargetType {
     case createFeed(
         request: CreateCardRequest, image: Data, fileName: String, mimeType: String)
     case deleteCard(cardId: Int)
+    case recommendedCard
 }
 
 extension CardTargetType: APITargetType {
@@ -24,12 +25,14 @@ extension CardTargetType: APITargetType {
             return "/api/cards"
         case .deleteCard(let cardId):
             return "/api/cards/\(cardId)"
+        case .recommendedCard:
+            return "/api/cards/recommended-cards"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .fetchFeeds:
+        case .fetchFeeds, .recommendedCard:
             return .get
         case .createFeed:
             return .post
@@ -74,6 +77,9 @@ extension CardTargetType: APITargetType {
             )
             return .uploadMultipart(parts)
         case .deleteCard:
+            return .requestPlain
+            
+        case .recommendedCard:
             return .requestPlain
         }
     }
