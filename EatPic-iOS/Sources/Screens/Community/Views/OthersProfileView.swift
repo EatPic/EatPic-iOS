@@ -166,7 +166,7 @@ struct OthersProfileView: View {
         VStack {
             Spacer().frame(height: 8)
             ProfileImageView(
-                image: viewModel.user.profileImage ?? Image(systemName: "person.fill"),
+                image: viewModel.user.imageName,
                 size: 100)
             
             Spacer().frame(height: 16)

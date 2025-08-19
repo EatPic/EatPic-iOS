@@ -69,11 +69,11 @@ let feedUserMinsu: FeedUser = FeedUser(userId: 104, nameId: "minsu", nickname: "
 
 // MARK: - 수정된 CommunityUser 더미 데이터
 let sampleFollowers: [CommunityUser] = [
-    CommunityUser(from: feedUserHong),
-    CommunityUser(from: feedUserYoung)
+    feedUserHong.toCommunityUser(),
+    feedUserYoung.toCommunityUser()
 ]
 
 let sampleFollowings: [CommunityUser] = [
-    CommunityUser(from: feedUserCheolsoo),
-    CommunityUser(from: feedUserMinsu)
+    feedUserCheolsoo.toCommunityUser(),
+    feedUserMinsu.toCommunityUser()
 ]

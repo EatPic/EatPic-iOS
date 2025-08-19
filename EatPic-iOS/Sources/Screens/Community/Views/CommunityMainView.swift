@@ -74,13 +74,28 @@ struct CommunityMainView: View {
             LazyHStack(spacing: 16) {
                 ForEach(viewModel.users) { user in
                     VStack(spacing: 16) {
-                        ProfileImageView(
-                            image: user.profileImage,
-                            size: 64,
-                            borderColor: user == viewModel.selectedUser ? .pink050 : .gray040,
-                            borderWidth: 3
-                        )
-                        Text(user.nameId)
+                        if user.userType == .all {
+                            // "전체" 버튼용 로컬 아이콘
+                            let imageName = viewModel.selectedUser?.id == user.id
+                                                        ? "Community/grid_selected"
+                                                        : "Community/grid"
+                            ProfileImageView(
+                                image: imageName,
+                                size: 64,
+                                borderColor: user == viewModel.selectedUser ? .pink050 : .gray040,
+                                borderWidth: 3
+                            )
+                        } else {
+                            // 서버에서 내려온 이미지 URL (nil이면 디폴트 처리됨)
+                            ProfileImageView(
+                                image: user.imageName,
+                                size: 64,
+                                borderColor: user == viewModel.selectedUser ? .pink050 : .gray040,
+                                borderWidth: 3
+                            )
+                        }
+                        
+                        Text(user.userType == .me ? "나" : user.nameId)
                             .font(.dsSubhead)
                             .foregroundStyle(Color.gray080)
                     }
@@ -94,7 +109,7 @@ struct CommunityMainView: View {
         }
         .scrollIndicators(.hidden)
         .task {
-            await viewModel.fetchUsers()
+            await viewModel.fetchUserList()
         }
     }
     

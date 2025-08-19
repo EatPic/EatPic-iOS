@@ -19,30 +19,30 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
         imageName.map { Image($0) }
     }
     let introduce: String?
+    let userType: CommunityUserType
     let isCurrentUser: Bool
     var isFollowed: Bool
     
-    init(userId: Int, nameId: String, nickname: String,
-         profileImage: String, introduce: String? = nil) {
-        self.id = userId
+    init(id: Int, nameId: String, nickname: String,
+         imageName: String?, introduce: String? = nil,
+         type: CommunityUserType = .other,
+         isCurrentUser: Bool = false,
+         isFollowed: Bool = true) {
+        self.id = id
         self.nameId = nameId
         self.nickname = nickname
-        self.imageName = profileImage
+        self.imageName = imageName
         self.introduce = introduce
-        self.isCurrentUser = false // API 응답에 없는 속성이므로 기본값 설정
-        self.isFollowed = true    // API 응답에 없는 속성이므로 기본값 설정
+        self.userType = type
+        self.isCurrentUser = isCurrentUser
+        self.isFollowed = isFollowed
     }
-    
-    // FeedUser를 받아서 CommunityUser를 생성하는 이니셜라이저 추가
-    init(from feedUser: FeedUser) {
-        self.id = feedUser.userId
-        self.nameId = feedUser.nameId
-        self.nickname = feedUser.nickname
-        self.imageName = feedUser.profileImageUrl // profileImageUrl을 imageName에 할당
-        self.introduce = nil
-        self.isCurrentUser = false // API 응답에 없는 속성이므로 기본값 설정
-        self.isFollowed = true    // API 응답에 없는 속성이므로 기본값 설정
-    }
+}
+
+enum CommunityUserType {
+    case all
+    case me
+    case other
 }
 
 struct PicCard: Identifiable, Equatable {
@@ -69,50 +69,6 @@ struct PicCard: Identifiable, Equatable {
     var commentCount: Int
     var bookmarked: Bool
     
-    // Feed를 받아서 PicCard를 생성
-    init(from feed: Feed) {
-        self.cardId = feed.cardId
-        self.user = CommunityUser(from: feed.user)
-        self.imageUrl = feed.imageUrl ?? ""
-        self.memo = feed.memo
-        self.meal = feed.meal
-        self.recipe = feed.recipe
-        
-        if let urlString = feed.recipeUrl, let url = URL(string: urlString) {
-            self.recipeUrl = url
-        } else {
-            self.recipeUrl = nil
-        }
-        
-        self.latitude = feed.latitude
-        self.longitude = feed.longitude
-        self.locationText = feed.locationText
-        self.hashtags = feed.hashtags // 서버에서 항상 배열로 옴
-        
-        self.reactionCount = feed.reactionCount
-        self.userReaction = feed.userReaction
-        self.commentCount = feed.commentCount
-        self.bookmarked = feed.bookmarked
-        
-        // MARK: - datetime 포맷팅
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        formatter.locale = Locale(identifier: "ko_KR")
-        
-        if let dateObj = formatter.date(from: feed.datetime) {
-            // 시간: 오전/오후 포함
-            formatter.dateFormat = "a hh:mm"
-            self.time = formatter.string(from: dateObj)
-            
-            // 날짜: YYYY-MM-DD
-            formatter.dateFormat = "yyyy-MM-dd"
-            self.date = formatter.string(from: dateObj)
-        } else {
-            // 디폴트 값
-            self.time = ""
-            self.date = ""
-        }
-    }
     // 북마크 상태 토글
     mutating func toggleBookmark() {
         bookmarked.toggle()
@@ -152,9 +108,9 @@ let dummyFeedUser3 = FeedUser(userId: 3, nameId: "minsu", nickname: "박민수",
                               profileImageUrl: "https://example.com/profiles/minsu.jpg")
 
 let sampleUsers: [CommunityUser] = [
-    CommunityUser(from: dummyFeedUser1),
-    CommunityUser(from: dummyFeedUser2),
-    CommunityUser(from: dummyFeedUser3)
+    dummyFeedUser1.toCommunityUser(),
+    dummyFeedUser2.toCommunityUser(),
+    dummyFeedUser3.toCommunityUser()
 ]
 
 // 더미 Feed 데이터
@@ -293,14 +249,15 @@ let dummyFeed7 = Feed(
 
 // MARK: - 수정된 PicCard 더미 데이터 (from: Feed)
 var sampleCards: [PicCard] = [
-    PicCard(from: dummyFeed1),
-    PicCard(from: dummyFeed2),
-    PicCard(from: dummyFeed3),
-    PicCard(from: dummyFeed4),
-    PicCard(from: dummyFeed5),
-    PicCard(from: dummyFeed6),
-    PicCard(from: dummyFeed7)
+    dummyFeed1.toPicCard(),
+    dummyFeed2.toPicCard(),
+    dummyFeed3.toPicCard(),
+    dummyFeed4.toPicCard(),
+    dummyFeed5.toPicCard(),
+    dummyFeed6.toPicCard(),
+    dummyFeed7.toPicCard()
 ]
+
 var sampleComments: [Comment] = [
     Comment(user: dummyUser, text: "정말 맛있어 보이네요! 🤤", time: "10분 전"),
     Comment(user: dummyUser, text: "어디서 먹을 수 있나요?", time: "5분 전"),
@@ -324,4 +281,4 @@ let dummyFeedUser = FeedUser(
     nickname: "원주연",
     profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
 )
-let dummyUser = CommunityUser(from: dummyFeedUser)
+let dummyUser = dummyFeedUser.toCommunityUser()
