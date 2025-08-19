@@ -17,7 +17,7 @@ extension BookmarkTargetType: APITargetType {
     var path: String {
         switch self {
         case .postBookmark(let cardId):
-            return "api/bookmark/\(cardId)"
+            return "api/bookmarks/\(cardId)"
         }
     }
 
