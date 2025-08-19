@@ -30,10 +30,11 @@ final class MyBadgeStatusViewModel: ObservableObject {
         /// 기존 BadgeState와의 호환성을 위한 computed property
         var state: BadgeState {
             if achieved {
-                return .completed
+                return .completed(iconURL: badgeImageUrl)
             } else if progressRate > 0 {
-                return .progress(progress: Double(progressRate) / 100.0,
-                                 icon: Image(systemName: "star.fill"))
+                return .progress(
+                    progress: Double(progressRate) / 100.0,
+                    iconURL: badgeImageUrl)
             } else {
                 return .locked
             }

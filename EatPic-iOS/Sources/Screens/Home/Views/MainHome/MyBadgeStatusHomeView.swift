@@ -51,7 +51,6 @@ struct MyBadgeStatusHomeView: View {
     private var badgeScroll: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
-                
                 ForEach(viewModel.badgeItems) { badgeItem in
                     BadgeView(
                         state: badgeItem.state,

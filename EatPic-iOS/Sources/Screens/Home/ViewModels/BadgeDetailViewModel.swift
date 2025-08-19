@@ -28,12 +28,12 @@ class BadgeDetailViewModel {
     /// 배지 상태에 따른 모달 타입을 생성합니다
     func createBadgeModalType(for badge: MyBadgeStatusViewModel.BadgeItem) -> BadgeModalType {
         switch badge.state {
-        case .progress(let progress, let icon):
-            return .badgeUnlocked(progress: progress, icon: icon)
+        case .progress(let progress, let iconURL):
+            return .badgeUnlocked(progress: progress, iconURL: iconURL)
         case .locked:
             return .badgeLocked
-        case .completed:
-            return .badgeCompleted
+        case .completed(let url):
+            return .badgeCompleted(iconURL: url)
         }
     }
     
