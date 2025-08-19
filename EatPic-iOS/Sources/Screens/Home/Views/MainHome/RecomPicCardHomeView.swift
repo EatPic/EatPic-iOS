@@ -28,7 +28,6 @@ struct RecomPicCardHomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    // TODO: ExploreMainView로 Navigation
                     container.router.push(.exploreMain)
                 }, label: {
                     Text("전체보기 >")
@@ -46,12 +45,12 @@ struct RecomPicCardHomeView: View {
                     }
                 }
             }
-            .padding(.vertical, 16)
-            .padding(.horizontal, 19)
-            .frame(height: 183)
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
         }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 19)
+        .frame(height: 183)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
         .task {
             await viewModel.fetchRecommended()
         }
@@ -64,7 +63,7 @@ struct RecomPicCardHomeView: View {
 
 /// 카드 썸네일 셀
 private struct CardThumb: View {
-    let urlString: String
+    let urlString: String?
 
     var body: some View {
         Rectangle()

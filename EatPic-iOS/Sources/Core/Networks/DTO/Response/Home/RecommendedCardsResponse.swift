@@ -16,5 +16,5 @@ struct RecommendedCardsResponse: Codable {
 
 struct CardsResult: Codable {
     let cardId: Int
-    let cardImageUrl: String
+    let cardImageUrl: String?
 }
