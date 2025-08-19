@@ -16,6 +16,9 @@ class CommunityMainViewModel {
     var selectedUser: CommunityUser?
     var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
     var users: [CommunityUser] = []
+    var currentUser: CommunityUser? {
+        users.first { $0.userType == .me }
+    }
     var hasNextPage: Bool = true
     var showDeleteModal = false
     var isShowingReportBottomSheet = false
@@ -160,9 +163,8 @@ class CommunityMainViewModel {
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
-        // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
-        // 예시: return card.user.id == currentUser.id
-        return card.user.id == 24 // 임시 로직
+        guard let me = currentUser else { return false }
+        return card.user.id == me.id
     }
     
     // MARK: - Actions
@@ -239,7 +241,17 @@ class CommunityMainViewModel {
             let response = try await bookmarkProvider.requestAsync(.postBookmark(cardId: cardId))
             let dto = try JSONDecoder().decode(
                 APIResponse<BookmarkResult>.self, from: response.data)
-                        
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
+    func deleteBookmark(cardId: Int) async {
+        do {
+            let response = try await bookmarkProvider.requestAsync(.deleteBookmark(cardId: cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<BookmarkResult>.self, from: response.data)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
@@ -247,8 +259,15 @@ class CommunityMainViewModel {
     
     // 북마크 액션 처리
     private func handleBookmarkAction(cardId: Int, isOn: Bool) async {
-        // 실제 구현: API 호출하여 서버에 북마크 상태 업데이트
-        await postBookmark(cardId: cardId)
+        if isOn {
+            // 북마크 추가
+            await postBookmark(cardId: cardId)
+        } else {
+            // 북마크 해제
+            await deleteBookmark(cardId: cardId)
+        }
+        
+        // UI 업데이트
         updateCardBookmarkStatus(cardId: cardId, isBookmarked: isOn)
         
         // 선택적으로 토스트 메시지 표시 (PicCardItemView에서 이미 처리되므로 중복 방지)
