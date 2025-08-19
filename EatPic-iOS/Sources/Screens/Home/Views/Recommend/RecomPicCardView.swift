@@ -22,7 +22,7 @@ struct RecomPicCardView: View {
                 nickname: "원주연",
                 profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
             )
-            let dummyUser = CommunityUser(from: dummyFeedUser)
+            let dummyUser = dummyFeedUser.toCommunityUser()
             // 더미 Feed 데이터
             let dummyFeed = Feed(
                 cardId: 101,
@@ -42,7 +42,7 @@ struct RecomPicCardView: View {
                 commentCount: 3,
                 bookmarked: false
             )
-            let sampleCard = PicCard(from: dummyFeed)
+            let sampleCard = dummyFeed.toPicCard()
 
             PicCardView(
                 card: sampleCard, // ✅ 수정된 부분: card 객체 하나만 전달

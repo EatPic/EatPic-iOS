@@ -40,7 +40,7 @@ struct ExploreSelectedView: View {
             nickname: "원주연",
             profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
         )
-        let dummyUser = CommunityUser(from: dummyFeedUser)
+        let dummyUser = dummyFeedUser.toCommunityUser()
         // 더미 Feed 데이터
         let dummyFeed = Feed(
             cardId: 101,
@@ -60,7 +60,7 @@ struct ExploreSelectedView: View {
             commentCount: 3,
             bookmarked: false
         )
-        let card = PicCard(from: dummyFeed)
+        let card = dummyFeed.toPicCard()
         
         // 2. 생성한 card 객체를 PicCardView의 매개변수로 전달합니다.
         return PicCardView(
