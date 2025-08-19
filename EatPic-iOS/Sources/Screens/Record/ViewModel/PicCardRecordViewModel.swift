@@ -7,6 +7,7 @@
 
 import Foundation
 import Moya
+import MapKit
 
 /// 가게 위치 값 오브젝트
 struct PicCardStoreLocation: Equatable, Sendable {
@@ -29,6 +30,8 @@ final class PicCardRecordViewModel {
     private(set) var isUploading = false
     private(set) var lastCreatedCardId: Int?
     private(set) var errorMessage: String?
+    
+    var searchResults: [Place] = []
 
     init(
         container: DIContainer,
@@ -42,6 +45,20 @@ final class PicCardRecordViewModel {
     
     var recordFlowState: RecordFlowState {
         recordFlowVM.state
+    }
+    
+    func search(query: String) {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        
+        let search = MKLocalSearch(request: request)
+        search.start { [weak self] response, _ in
+            guard let self, let mapItems = response?.mapItems else { return }
+            
+            DispatchQueue.main.async {
+                self.searchResults = mapItems.map { Place(mapItem: $0) }
+            }
+        }
     }
     
     // MARK: - API 호출 및 업로드

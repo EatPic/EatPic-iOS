@@ -19,6 +19,8 @@ struct PicCardRecordView: View {
     @State private var storeLocation: PicCardStoreLocation = .init(name: "")
     @State private var sharedFeed: Bool = false
     
+    @State private var searchText = ""
+    
     @State private var showAddRecipeSheet: Bool = false
     @State private var showAddStoreLocationSheet: Bool = false
     
@@ -64,13 +66,39 @@ struct PicCardRecordView: View {
         }
         .sheet(isPresented: $showAddStoreLocationSheet) {
             BottomSheetView(title: "식당 위치 추가") {
-                // 식당 검색
+                SearchMapView(viewModel: picCardRecordVM)
             }
-            .presentationDetents([.height(200)])
+            .presentationDetents([.height(600)])
         }
         .customNavigationBar { Text("Pic 카드 기록") } right: {
             Button { container.router.popToRoot() } label: {
                 Image("Record/btn_home_close")
+            }
+        }
+    }
+}
+
+struct SearchMapView: View {
+    @EnvironmentObject private var container: DIContainer
+    @Bindable var viewModel: PicCardRecordViewModel
+    @State private var searchText = ""
+
+    var body: some View {
+        VStack {
+            TextField("장소를 검색하세요", text: $searchText, onCommit: {
+                viewModel.search(query: searchText)
+            })
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding()
+
+            List(viewModel.searchResults) { place in
+                VStack(alignment: .leading) {
+                    Text(place.mapItem.name ?? "이름 없음")
+                        .font(.headline)
+                    Text(place.mapItem.placemark.title ?? "")
+                        .font(.subheadline)
+                        .foregroundStyle(.gray)
+                }
             }
         }
     }
