@@ -157,7 +157,9 @@ struct CommunityMainView: View {
                     toastVM: viewModel.toastVM,
                     onItemAction: { cardId, action in
                         // 카드 ID와 액션을 함께 전달
-                        viewModel.handleCardAction(cardId: cardId, action: action)
+                        Task {
+                            await viewModel.handleCardAction(cardId: cardId, action: action)
+                        }
                     }
                 )
             }

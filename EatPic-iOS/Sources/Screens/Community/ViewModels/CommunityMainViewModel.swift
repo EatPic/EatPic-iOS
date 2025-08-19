@@ -27,11 +27,13 @@ class CommunityMainViewModel {
     
     let toastVM = ToastViewModel()
     private let cardProvider: MoyaProvider<CardTargetType>
+    private let bookmarkProvider: MoyaProvider<BookmarkTargetType>
     private let userProvider: MoyaProvider<UserTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
+        self.bookmarkProvider = container.apiProviderStore.bookmark()
         self.userProvider = container.apiProviderStore.user()
     }
     
@@ -221,10 +223,10 @@ class CommunityMainViewModel {
     }
     
     // 카드 아이템 액션 처리 (카드 ID와 함께)
-    func handleCardAction(cardId: UUID, action: PicCardItemActionType) {
+    func handleCardAction(cardId: Int, action: PicCardItemActionType) async {
         switch action {
         case .bookmark(let isOn):
-            handleBookmarkAction(cardId: cardId, isOn: isOn)
+            await handleBookmarkAction(cardId: cardId, isOn: isOn)
         case .comment(let count):
             handleCommentAction(cardId: cardId, count: count)
         case .reaction(let selected, let counts):
@@ -232,9 +234,21 @@ class CommunityMainViewModel {
         }
     }
     
+    func postBookmark(cardId: Int) async {
+        do {
+            let response = try await bookmarkProvider.requestAsync(.postBookmark(cardId: cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<BookmarkResult>.self, from: response.data)
+                        
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
     // 북마크 액션 처리
-    private func handleBookmarkAction(cardId: UUID, isOn: Bool) {
+    private func handleBookmarkAction(cardId: Int, isOn: Bool) async {
         // 실제 구현: API 호출하여 서버에 북마크 상태 업데이트
+        await postBookmark(cardId: cardId)
         updateCardBookmarkStatus(cardId: cardId, isBookmarked: isOn)
         
         // 선택적으로 토스트 메시지 표시 (PicCardItemView에서 이미 처리되므로 중복 방지)
@@ -242,13 +256,13 @@ class CommunityMainViewModel {
     }
     
     // 댓글 액션 처리
-    private func handleCommentAction(cardId: UUID, count: Int) {
+    private func handleCommentAction(cardId: Int, count: Int) {
         isShowingCommentBottomSheet = true
     }
     
     // 리액션 액션 처리
     private func handleReactionAction(
-        cardId: UUID, selected: ReactionType?,
+        cardId: Int, selected: ReactionType?,
         counts: [ReactionType: Int]) {
             // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
             let totalCount = counts.values.reduce(0, +)
@@ -261,22 +275,22 @@ class CommunityMainViewModel {
         }
     
     // 특정 카드의 북마크 상태 업데이트
-    func updateCardBookmarkStatus(cardId: UUID, isBookmarked: Bool) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
+    func updateCardBookmarkStatus(cardId: Int, isBookmarked: Bool) {
+        if let index = filteredCards.firstIndex(where: { $0.cardId == cardId }) {
             filteredCards[index].bookmarked = isBookmarked
         }
     }
     
     // 특정 카드의 리액션 정보 업데이트
-    func updateCardReactionInfo(cardId: UUID, reactionCount: Int, userReaction: String?) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
+    func updateCardReactionInfo(cardId: Int, reactionCount: Int, userReaction: String?) {
+        if let index = filteredCards.firstIndex(where: { $0.cardId == cardId }) {
             filteredCards[index].updateReaction(newReaction: userReaction, newCount: reactionCount)
         }
     }
     
     // 특정 카드의 댓글 수 업데이트
-    func updateCardCommentCount(cardId: UUID, commentCount: Int) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
+    func updateCardCommentCount(cardId: Int, commentCount: Int) {
+        if let index = filteredCards.firstIndex(where: { $0.cardId == cardId }) {
             filteredCards[index].updateCommentCount(commentCount)
         }
     }
