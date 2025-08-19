@@ -14,7 +14,8 @@ struct EatPicIOSApp: App {
         WindowGroup {
             switch appFlowViewModel.appState {
             case .login:
-                LoginView(container: container, appFlowViewModel: appFlowViewModel)
+//                LoginView(container: container, appFlowViewModel: appFlowViewModel)
+                MainTabView(container: container)
             case .tab:
                 MainTabView(container: container)
             }

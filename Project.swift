@@ -16,6 +16,9 @@ let swiftLintScript: TargetScript = .pre(
 
 let project = Project(
     name: "EatPic-iOS",
+    options: .options(
+        developmentRegion: "ko"
+    ),
     settings: .settings(
         base: [
             "BASE_URL": "$(BASE_URL)",
@@ -38,6 +41,7 @@ let project = Project(
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
+                    "CFBundleDevelopmentRegion": "ko",
                     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
                     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                     "BASE_URL": "$(BASE_URL)",
