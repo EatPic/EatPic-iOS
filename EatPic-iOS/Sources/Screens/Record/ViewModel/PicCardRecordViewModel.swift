@@ -8,6 +8,16 @@
 import Foundation
 import Moya
 
+/// 가게 위치 값 오브젝트
+struct PicCardStoreLocation: Equatable, Sendable {
+    var name: String
+    var latitude: Double?
+    var longitude: Double?
+    var hasCoordinate: Bool {
+        latitude != nil && longitude != nil
+    }
+}
+
 /// PicCard 업로드 액션을 트리거하고 결과를 UI에 전달하는 뷰모델입니다.
 /// - Note: 사이클로매틱 복잡도를 낮추기 위해 에러 메시지 매핑을 전용 헬퍼로 분리했습니다.
 @MainActor
@@ -16,18 +26,26 @@ final class PicCardRecordViewModel {
     private let createCardUseCase: CreateCardUseCase
     private let recordFlowVM: RecordFlowViewModel
 
-    // UI 상태
     private(set) var isUploading = false
     private(set) var lastCreatedCardId: Int?
     private(set) var errorMessage: String?
 
-    init(container: DIContainer, recordFlowVM: RecordFlowViewModel) {
+    init(
+        container: DIContainer,
+        recordFlowVM: RecordFlowViewModel
+    ) {
         let provider = container.apiProviderStore.card()
         let repository = CardRepositoryImpl(provider: provider)
         self.createCardUseCase = CreateCardUseCaseImpl(repository: repository)
         self.recordFlowVM = recordFlowVM
     }
-
+    
+    var recordFlowState: RecordFlowState {
+        recordFlowVM.state
+    }
+    
+    // MARK: - API 호출 및 업로드
+    
     /// PicCard 생성을 실행합니다. 중복 업로드를 방지하고, 완료 후 상태를 갱신합니다.
     /// - Important: `RecordFlowViewModel.state`를 스냅샷으로 읽어 사용합니다.
     func createPicCard() async {
@@ -37,12 +55,11 @@ final class PicCardRecordViewModel {
         
         errorMessage = nil
         lastCreatedCardId = nil
-
+        
         do {
-            let state = recordFlowVM.state
-            let createCardRequestDTO = try CreateCardMapper.makeRequest(from: state)
+            let createCardRequestDTO = try CreateCardMapper.makeRequest(from: recordFlowState)
             let cardId = try await createCardUseCase.execute(
-                state: state,
+                state: recordFlowState,
                 request: createCardRequestDTO
             )
             self.lastCreatedCardId = cardId
@@ -74,3 +91,4 @@ final class PicCardRecordViewModel {
         return "알 수 없는 오류가 발생했습니다."
     }
 }
+

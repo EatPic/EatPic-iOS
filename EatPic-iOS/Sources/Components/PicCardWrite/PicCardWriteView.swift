@@ -23,6 +23,8 @@ struct PicCardWriteView: View {
     
     let primaryButtonText: String
     let onPrimaryButtonTap: (() -> Void)?
+    let onAddReceiptTap: (() -> Void)?
+    let onAddStoreLocationTap: (() -> Void)?
 
     @Binding var myMemo: String
     @Binding var receiptDetail: String
@@ -91,7 +93,7 @@ struct PicCardWriteView: View {
             btnImage: Image("PicCardWrite/ic_record_link"),
             btnTitle: "레시피 링크 추가",
             action: {
-                print("링크 추가하기")
+                onAddReceiptTap?()
             }
         )
 
@@ -99,7 +101,7 @@ struct PicCardWriteView: View {
             btnImage: Image("PicCardWrite/ic_record_map"),
             btnTitle: "식당 위치 추가",
             action: {
-                print("식당 위치 추가")
+                onAddStoreLocationTap?()
             }
         )
     }
@@ -217,21 +219,4 @@ private struct ShareToFeedButton: View {
         }
         .padding(.vertical, 18)
     }
-}
-
-#Preview {
-    // 프리뷰 전용 State 값
-    @Previewable @State var memo = "샘플 메모"
-    @Previewable @State var recipe = "샘플 레시피"
-    @Previewable @State var isShared = false
-    
-    PicCardWriteView(
-        primaryButtonText: "기록하기",
-        onPrimaryButtonTap: {
-            print("업로드")
-        },
-        myMemo: $memo,
-        receiptDetail: $recipe,
-        isSharedToFeed: $isShared
-    )
 }

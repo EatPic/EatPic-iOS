@@ -17,9 +17,29 @@ struct RecordFlowState {
     var myMemo: String
     var myRecipe: String
     var recipeLink: String?
-    var storeLocation: String?
-    var latitude: Double?
-    var longitude: Double?
+    var storeLocation: PicCardStoreLocation
     var sharedFeed: Bool
     var createdAt: Date
+    
+    init(
+        images: [UIImage] = [],
+        mealSlot: MealSlot? = nil,
+        hasTags: [HashtagCategory] = [],
+        myMemo: String = "",
+        myRecipe: String = "",
+        recipeLink: String? = nil,
+        storeLocation: PicCardStoreLocation = .init(name: ""),
+        sharedFeed: Bool = true,
+        createdAt: Date = .now
+    ) {
+        self.images = images
+        self.mealSlot = mealSlot
+        self.hasTags = hasTags
+        self.myMemo = myMemo
+        self.myRecipe = myRecipe
+        self.recipeLink = recipeLink
+        self.storeLocation = storeLocation
+        self.sharedFeed = sharedFeed
+        self.createdAt = createdAt
+    }
 }

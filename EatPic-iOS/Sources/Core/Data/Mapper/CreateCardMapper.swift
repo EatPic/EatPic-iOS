@@ -18,13 +18,13 @@ enum CreateCardMapper {
         let tags = state.hasTags.map(\.title)
         guard let meal = state.mealSlot else { throw APIError.noData }
         return .init(
-            latitude: state.latitude ?? 0,  // 실제 값으로
-            longitude: state.longitude ?? 0,
+            latitude: state.storeLocation.latitude ?? 0,
+            longitude: state.storeLocation.longitude ?? 0,
             recipe: state.myRecipe,
             recipeUrl: state.recipeLink ?? "",
             memo: state.myMemo,
             isShared: state.sharedFeed,
-            locationText: state.storeLocation ?? "",
+            locationText: state.storeLocation.name,
             meal: meal,
             hashtags: tags
         )
