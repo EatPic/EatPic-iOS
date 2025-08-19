@@ -239,7 +239,17 @@ class CommunityMainViewModel {
             let response = try await bookmarkProvider.requestAsync(.postBookmark(cardId: cardId))
             let dto = try JSONDecoder().decode(
                 APIResponse<BookmarkResult>.self, from: response.data)
-                        
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
+    func deleteBookmark(cardId: Int) async {
+        do {
+            let response = try await bookmarkProvider.requestAsync(.deleteBookmark(cardId: cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<BookmarkResult>.self, from: response.data)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
@@ -247,8 +257,15 @@ class CommunityMainViewModel {
     
     // 북마크 액션 처리
     private func handleBookmarkAction(cardId: Int, isOn: Bool) async {
-        // 실제 구현: API 호출하여 서버에 북마크 상태 업데이트
-        await postBookmark(cardId: cardId)
+        if isOn {
+            // 북마크 추가
+            await postBookmark(cardId: cardId)
+        } else {
+            // 북마크 해제
+            await deleteBookmark(cardId: cardId)
+        }
+        
+        // UI 업데이트
         updateCardBookmarkStatus(cardId: cardId, isBookmarked: isOn)
         
         // 선택적으로 토스트 메시지 표시 (PicCardItemView에서 이미 처리되므로 중복 방지)
