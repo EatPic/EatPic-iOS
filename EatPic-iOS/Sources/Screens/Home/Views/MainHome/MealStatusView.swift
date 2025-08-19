@@ -40,6 +40,9 @@ struct MealStatusView: View {
         .padding(.horizontal, 19)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
+        .task {
+            await viewModel.fetchMealStatus()
+        }
     }
     
     private var topBarView: some View {
@@ -151,8 +154,8 @@ private struct RecordedMealView: View {
 
             ZStack {
                 if let imageName = meal.imageName {
-                    Image(imageName)
-                        .resizable()
+                    Rectangle()
+                        .remoteImage(url: imageName)
                         .frame(width: 76, height: 76)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else {

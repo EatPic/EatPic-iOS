@@ -37,7 +37,7 @@ struct HomeView: View {
                     
                     topBar
                     
-                    MealStatusView()
+                    MealStatusView(container: container)
                     
                     RecomPicCardHomeView(container: container)
                     
