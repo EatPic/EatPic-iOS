@@ -31,12 +31,4 @@ class RecomPicCardViewModel {
                 self.cards = []
             }
         }
-//    @Published var cards: [RecomPicCardModel] = [
-//        RecomPicCardModel(imageName: "Home/img1"),
-//        RecomPicCardModel(imageName: "Home/img2"),
-//        RecomPicCardModel(imageName: "Home/img3"),
-//        RecomPicCardModel(imageName: "Home/img1"),
-//        RecomPicCardModel(imageName: "Home/img2"),
-//        RecomPicCardModel(imageName: "Home/img3")
-//    ]
 }
