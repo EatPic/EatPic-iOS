@@ -11,12 +11,13 @@ import Moya
 /// 댓글 관리를 위한 API를 정의하는 TargetType입니다.
 enum CommentTargetType {
     case postComment(cardId: Int, request: CommentRequest)
+    case getComment(cardId: Int, cursor: Int)
 }
 
 extension CommentTargetType: APITargetType {
     var path: String {
         switch self {
-        case .postComment(let cardId, _):
+        case .postComment(let cardId, _), .getComment(let cardId, _):
             return "api/comments/\(cardId)"
         }
     }
@@ -25,6 +26,8 @@ extension CommentTargetType: APITargetType {
         switch self {
         case .postComment:
             return .post
+        case .getComment:
+            return .get
         }
     }
 
@@ -32,6 +35,11 @@ extension CommentTargetType: APITargetType {
         switch self {
         case .postComment(_, let request):
             return .requestJSONEncodable(request)
+        case .getComment(_, let cursor):
+            return .requestParameters(
+                parameters: ["cursor" : cursor],
+                encoding: URLEncoding.queryString
+            )
         }
     }
     
