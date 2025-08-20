@@ -41,7 +41,11 @@ struct RecomPicCardHomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHGrid(rows: [GridItem(.fixed(103))], spacing: 8) {
                     ForEach(viewModel.cards, id: \.cardId) { card in
-                        CardThumb(urlString: card.cardImageUrl)
+                        CardThumb(urlString: card.cardImageUrl, cardId: card.cardId)
+                            .onTapGesture {
+                                print("Tapped cardId:", card.cardId)
+                                container.router.push(.recomPicSingleCard(cardId: card.cardId))
+                            }
                     }
                 }
             }
@@ -64,6 +68,7 @@ struct RecomPicCardHomeView: View {
 /// 카드 썸네일 셀
 private struct CardThumb: View {
     let urlString: String?
+    let cardId: Int
 
     var body: some View {
         Rectangle()
