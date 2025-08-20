@@ -24,7 +24,7 @@ struct DownsampledRemoteModifier: ViewModifier {
             .overlay(
                 KFImage(URL(string: url))
                     .placeholder { Color.gray.opacity(0.12)
- }
+                    }
                     .setProcessor(
                         DownsamplingImageProcessor(size: effectivePixelSize())
                     )
@@ -67,9 +67,10 @@ enum ImageContentMode {
 }
 
 extension View {
-    func downsampledRemoteImage(url: String,
-                                contentMode: ImageContentMode = .fill,
-                                targetSize: CGSize? = nil) -> some View {
+    func downsampledRemoteImage(
+        url: String,
+        contentMode: ImageContentMode = .fill,
+        targetSize: CGSize? = nil) -> some View {
         modifier(
             DownsampledRemoteModifier(
                 url: url,

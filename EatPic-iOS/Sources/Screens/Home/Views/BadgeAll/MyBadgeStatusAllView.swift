@@ -10,13 +10,14 @@ import SwiftUI
 struct MyBadgeStatusAllView: View {
     
     @ObservedObject private var viewModel: MyBadgeStatusViewModel
-    @State private var badgeDetailViewModel = BadgeDetailViewModel()
+    @State private var badgeDetailViewModel: BadgeDetailViewModel
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @State private var showingBadgeModal = false
     
     // MARK: - Init
     init(container: DIContainer) {
         self.viewModel = .init(container: container)
+        self.badgeDetailViewModel = .init(container: container)
     }
     
     var body: some View {
@@ -44,7 +45,9 @@ struct MyBadgeStatusAllView: View {
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeDetailViewModel.getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel.description(
+                        for: badge.userBadgeId,
+                        fallbackName: badge.name)
                 )
             }
         }

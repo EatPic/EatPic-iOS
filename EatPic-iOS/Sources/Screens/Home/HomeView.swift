@@ -13,7 +13,7 @@ struct HomeView: View {
     
     @EnvironmentObject private var container: DIContainer
     @StateObject private var badgeViewModel: MyBadgeStatusViewModel
-    @State private var badgeDetailViewModel = BadgeDetailViewModel()
+    @State private var badgeDetailViewModel: BadgeDetailViewModel
     @State private var showingBadgeModal = false
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     
@@ -26,6 +26,7 @@ struct HomeView: View {
         self.greetingViewModel = .init(container: container)
         _badgeViewModel = StateObject(
             wrappedValue: MyBadgeStatusViewModel(container: container))
+        self.badgeDetailViewModel = .init(container: container)
     }
     
     // MARK: - Body
@@ -66,9 +67,15 @@ struct HomeView: View {
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeDetailViewModel
-                        .getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel.description(
+                        for: badge.userBadgeId,
+                        fallbackName: badge.name)
                 )
+                // 모달 표시 시 설명 지연 로드
+                .task(id: badge.userBadgeId) {
+                    await badgeDetailViewModel
+                        .fetchDescription(userBadgeId: badge.userBadgeId)
+                }
             }
         }
         .task { // 뷰 진입시 API 호출
