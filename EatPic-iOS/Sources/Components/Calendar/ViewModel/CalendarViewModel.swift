@@ -16,7 +16,7 @@ class CalendarViewModel {
     var selectedDate: Date
     private let calendar: Calendar
     private let dateProvider: CalendarDateProviding
-    private var metaDict: [Date: EatPicDayMeta] = EatPicDayMeta.dummyByDate
+    private var metaDict: [Date: EatPicDayMeta] = [:]
 
     init(
         currentMonth: Date = Date(),
@@ -32,12 +32,12 @@ class CalendarViewModel {
 
     var days: [CalendarDay] {
         dateProvider.generateBaseDays(for: currentMonth).map { baseDay in
-            let meta = metaDict[calendar.startOfDay(for: baseDay.date)]
+            let key = calendar.startOfDay(for: baseDay.date)
             return CalendarDay(
                 day: baseDay.day,
                 date: baseDay.date,
                 isCurrentMonth: baseDay.isCurrentMonth,
-                meta: meta
+                meta: metaDict[key] // ← URL/meta 바인딩
             )
         }
     }
@@ -68,12 +68,12 @@ class CalendarViewModel {
         }
     }
     
-    /// 특정 날짜에 해당하는 이미지를 반환합니다.
+    /// 특정 날짜에 해당하는 이미지 URL을 반환합니다.
     ///
     /// - Parameter date: 조회할 날짜
-    /// - Returns: 이미지가 있을 경우 해당 이미지, 없으면 nil
-    func image(for date: Date) -> Image? {
-        metaDict[calendar.startOfDay(for: date)]?.img
+    /// - Returns: 이미지 URL이 있을 경우 해당 이미지, 없으면 nil
+    func image(for date: Date) -> String? {
+        metaDict[calendar.startOfDay(for: date)]?.imageURL
     }
 
     /// 특정 날짜에 이미지가 있는지 여부를 반환합니다.
@@ -81,6 +81,7 @@ class CalendarViewModel {
     /// - Parameter date: 조회할 날짜
     /// - Returns: 이미지 존재 여부
     func hasImage(for date: Date) -> Bool {
-        metaDict[calendar.startOfDay(for: date)]?.img != nil
+        if let url = image(for: date) { return !url.isEmpty }
+                return false
     }
 }
