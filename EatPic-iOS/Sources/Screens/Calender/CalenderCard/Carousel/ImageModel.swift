@@ -1,7 +1,7 @@
 // ImageModel.swift
 import SwiftUI
 
-struct ImageModel: Identifiable {
+struct ImageModel: Identifiable, Equatable {
     let id = UUID()
     let image: String
     

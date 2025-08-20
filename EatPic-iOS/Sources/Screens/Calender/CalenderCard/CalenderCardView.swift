@@ -5,19 +5,19 @@ struct CalenderCardView: View {
     @EnvironmentObject private var container: DIContainer
     @Environment(\.openURL) private var openURL
     @Bindable private var toastVM = ToastViewModel()
-    
-    // 현재 선택된 캐러셀 아이템
+
+    // ⬇️ 더미 데이터로 초기화 (나중에 서버 데이터로 대체)
+    @State private var items: [ImageModel] = calendarImages
     @State private var selection: ImageModel? = calendarImages.first
-    
+
     var body: some View {
         Spacer().frame(height: 8)
         VStack {
-            // 캐러셀
-            CarouselView(selection: $selection, data: calendarImages)
+            // ⬇️ 캐러셀에 items 주입
+            CarouselView(selection: $selection, data: items)
                 .padding(.horizontal, -16)
-            
+
             buttonsView
-            
             goToFeed
             Spacer()
         }
@@ -37,14 +37,16 @@ struct CalenderCardView: View {
                 } label: {
                     Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
                 }
-                
+
                 Button {
                     container.router.push(.picCardEdit)
                 } label: {
                     Label("수정하기", systemImage: "square.and.pencil")
                 }
-                
+
+                // ⬇️ 삭제하기 구현
                 Button(role: .destructive) {
+                    deleteCurrentSelection()
                 } label: {
                     Label("삭제하기", systemImage: "exclamationmark.bubble")
                 }
@@ -56,6 +58,10 @@ struct CalenderCardView: View {
         }
         .toastView(viewModel: toastVM)
         .padding(.horizontal, 16)
+        .onChange(of: items) { newValue in
+            // 방어적으로: items가 비면 selection도 nil 처리
+            if newValue.isEmpty { selection = nil }
+        }
     }
     
     // MARK: 하단 버튼들
@@ -119,6 +125,35 @@ struct CalenderCardView: View {
         }
     }
 }
+
+extension CalenderCardView {
+    private func deleteCurrentSelection() {
+        guard let selected = selection,
+              let idx = items.firstIndex(where: { $0.id == selected.id }) else {
+            return
+        }
+
+        // 실제 삭제
+        items.remove(at: idx)
+
+        // 다음 selection 결정: 다음 → 이전 → nil
+        if idx < items.endIndex {
+            selection = items[idx]               // 바로 오른쪽 카드
+        } else if !items.isEmpty {
+            selection = items[items.index(before: items.endIndex)] // 마지막 카드로
+        } else {
+            selection = nil
+            // 모두 삭제됨: 라우팅 처리 (원하는 UX에 맞게 선택)
+            // 1) 뒤로 가기
+            container.router.pop()
+            // 2) 또는 토스트만 띄우고 빈 상태 유지
+            // toastVM.showToast(title: "모든 기록이 삭제되었습니다.")
+        }
+
+        toastVM.showToast(title: "삭제되었습니다.")
+    }
+}
+
 
 #Preview {
     CalenderCardView()
