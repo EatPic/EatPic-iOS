@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Moya
 
+@MainActor
 @Observable
 class CommunityMainViewModel {
     
@@ -240,7 +241,7 @@ class CommunityMainViewModel {
         case .bookmark(let isOn):
             await handleBookmarkAction(cardId: cardId, isOn: isOn)
         case .comment(let count):
-            handleCommentAction(cardId: cardId, count: count)
+            await handleCommentAction(cardId: cardId, count: count)
         case .reaction(let selected, let counts):
             await handleReactionAction(cardId: cardId, selected: selected,
                                        previousReaction: selected, counts: counts)
@@ -286,6 +287,7 @@ class CommunityMainViewModel {
     }
     
     // 댓글 액션 처리
+    @MainActor
     private func handleCommentAction(cardId: Int, count: Int) {
         isShowingCommentBottomSheet = true
         commentVM.selectedCardId = cardId

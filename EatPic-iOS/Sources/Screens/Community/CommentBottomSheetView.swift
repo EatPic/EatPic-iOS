@@ -74,15 +74,14 @@ struct CommentBottomSheetView: View {
             .presentationDetents([.large, .fraction(0.7)])
             .presentationDragIndicator(.hidden)
         }
-        .task(id: viewModel.selectedCardId) {
-            if viewModel.selectedCardId != nil {
-                await viewModel.fetchComments()
-            }
-        }
-//        .onDisappear {
-//            viewModel.nextCursor = nil
-//            viewModel.hasNextPage = true
+//        .task(id: viewModel.selectedCardId) {
+//            if viewModel.selectedCardId != nil {
+//                await viewModel.fetchComments()
+//            }
 //        }
+        .task {
+            await viewModel.fetchComments()
+        }
     }
     
     private func commentListView(
@@ -131,7 +130,6 @@ struct CommentBottomSheetView: View {
         }
         .padding(.top, 14)
         .padding(.bottom, 10)
-        .frame(height: 85)
     }
     
     private func commentPostView() -> some View {
