@@ -33,7 +33,8 @@ class CommunityMainViewModel {
     private let cardProvider: MoyaProvider<CardTargetType>
     private let bookmarkProvider: MoyaProvider<BookmarkTargetType>
     private let userProvider: MoyaProvider<UserTargetType>
-//    private let commentProvider: MoyaProvider<CommentTargetType>
+    private let commentProvider: MoyaProvider<CommentTargetType>
+    private let reactionProvider: MoyaProvider<ReactionTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
@@ -41,17 +42,23 @@ class CommunityMainViewModel {
         self.bookmarkProvider = container.apiProviderStore.bookmark()
         self.userProvider = container.apiProviderStore.user()
         self.commentVM = CommentViewModel(container: container)
+        self.reactionProvider = container.apiProviderStore.reaction()
+        self.commentProvider = container.apiProviderStore.comment()
     }
     
     func fetchFeeds() async {
         guard hasNextPage && !isFetching else { return }
+        guard let myId = currentUser?.id else {
+            print("❌ 로그인된 유저 ID를 찾을 수 없음")
+            return
+        }
         
         self.isFetching = true
         let pageSize = 15
         
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(userId: 24, cursor: nextCursor, size: pageSize))
+                .fetchFeeds(userId: myId, cursor: nextCursor, size: pageSize))
             let dto = try JSONDecoder().decode(
                 APIResponse<FeedResult>.self, from: response.data)
             
@@ -235,7 +242,7 @@ class CommunityMainViewModel {
         case .comment(let count):
             handleCommentAction(cardId: cardId, count: count)
         case .reaction(let selected, let counts):
-            handleReactionAction(cardId: cardId, selected: selected, counts: counts)
+            await handleReactionAction(cardId: cardId, selected: selected, counts: counts)
         }
     }
     
@@ -287,34 +294,77 @@ class CommunityMainViewModel {
             print("isShowingCommentBottomSheet 상태: \(isShowingCommentBottomSheet)")
     }
     
-//    func postComment(cardId: Int, content: String, parentCommentId: Int = 0) async {
-//        let request = CommentRequest(
-//            parentCommentId: parentCommentId, content: content)
-//        
-//        do {
-//            let response = try await commentProvider.requestAsync(.postComment(cardId: cardId, request: request))
-//            let dto = try JSONDecoder().decode(
-//                APIResponse<CommentPostResult>.self, from: response.data)
-//            
-//            print("댓글 등록 성공:", dto)
-//        } catch {
-//            print("요청 또는 디코딩 실패:", error.localizedDescription)
-//        }
-//    }
+    func postComment(cardId: Int, content: String, parentCommentId: Int = 0) async {
+        let request = CommentRequest(
+            parentCommentId: parentCommentId, content: content)
+        
+        do {
+            let response = try await commentProvider.requestAsync(
+                .postComment(cardId: cardId, request: request))
+            let dto = try JSONDecoder().decode(
+                APIResponse<CommentPostResult>.self, from: response.data)
+            
+            print("댓글 등록 성공:", dto)
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
+    // 리액션 추가/수정
+    func postReaction(cardId: Int, type: ReactionType) async {
+        guard let reactionToServer = ReactionTypes(rawValue: type.rawValue) else {
+            print("Error: Could not convert reaction type \(type.rawValue) to server type")
+            return
+        }
+        
+        do {
+            _ = try await reactionProvider.requestAsync(
+                .postReaction(cardId: cardId, reactionType: reactionToServer))
+            print("리액션 등록 성공")
+        } catch {
+            print("리액션 등록 실패:", error.localizedDescription)
+        }
+    }
+    
+    // 리액션 삭제
+    //    func deleteReaction(cardId: Int) async {
+    //        do {
+    //            let response = try await reactionProvider.requestAsync(.deleteReaction(cardId: cardId))
+    //            let dto = try JSONDecoder().decode(APIResponse<ReactionResult>.self, from: response.data)
+    //
+    //            DispatchQueue.main.async {
+    //                self.updateCardReactionInfo(cardId: cardId, reactionCount: 0, userReaction: nil)
+    //            }
+    //
+    //            print("리액션 삭제 성공")
+    //        } catch {
+    //            print("리액션 삭제 실패:", error.localizedDescription)
+    //        }
+    //    }
     
     // 리액션 액션 처리
     private func handleReactionAction(
-        cardId: Int, selected: ReactionType?,
-        counts: [ReactionType: Int]) {
-            // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
-            let totalCount = counts.values.reduce(0, +)
-            updateCardReactionInfo(
-                cardId: cardId, reactionCount: totalCount,
-                userReaction: selected?.rawValue)
-            
-            print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
-            print("리액션 카운트: \(counts)")
-        }
+        cardId: Int,
+        selected: ReactionType?,
+        counts: [ReactionType: Int]
+    ) async {
+            if let selected = selected {
+                // ✅ 변환해서 API 호출
+                await postReaction(cardId: cardId, type: selected)
+            } else {
+                //                    await deleteReaction(cardId: cardId)
+            }
+        
+        // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
+        let totalCount = counts.values.reduce(0, +)
+        updateCardReactionInfo(
+            cardId: cardId, reactionCount: totalCount,
+            userReaction: selected?.rawValue)
+        
+        print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
+        print("리액션 카운트: \(counts)")
+        
+    }
     
     // 특정 카드의 북마크 상태 업데이트
     func updateCardBookmarkStatus(cardId: Int, isBookmarked: Bool) {

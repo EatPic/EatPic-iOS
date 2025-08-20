@@ -46,4 +46,8 @@ extension APIProviderStore {
     func comment() -> MoyaProvider<CommentTargetType> {
         return networkService.createProvider(for: CommentTargetType.self)
     }
+    
+    func reaction() -> MoyaProvider<ReactionTargetType> {
+        return networkService.createProvider(for: ReactionTargetType.self)
+    }
 }
