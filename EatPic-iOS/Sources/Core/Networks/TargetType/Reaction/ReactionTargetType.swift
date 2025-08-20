@@ -16,7 +16,7 @@ extension ReactionTargetType: APITargetType {
     var path: String {
         switch self {
         case .postReaction(let cardId, let reactionType):
-            return "/api/reactions/\(cardId)/\(reactionType)"
+            return "/api/reactions/\(cardId)/\(reactionType.rawValue)"
         }
     }
     
@@ -29,7 +29,7 @@ extension ReactionTargetType: APITargetType {
     
     var task: Task {
         switch self {
-        case .postReaction:
+        case .postReaction(let cardId, let reactionType):
             return .requestPlain
         }
     }
@@ -43,3 +43,4 @@ extension ReactionTargetType: APITargetType {
                 """.utf8)
     }
 }
+
