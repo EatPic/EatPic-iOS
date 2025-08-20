@@ -19,128 +19,82 @@ struct CameraRecordModalView: View {
     @Bindable private var mediaPickerProvider: MediaPickerProvider
     @State private var showCamera = false
     @State private var showPhotosPicker = false
-    
+
     private let maxImgSelectionCount: Int = 5
-    
-    /// 모달 제목 메시지 색상
+
     let messageTitleColor: Color
-    
-    /// 모달 설명 메시지 색상
     let messageDescriptionColor: Color
-    
-    /// 카메라/ 앨범 버튼 색상
     let buttonColor: Color
-    
-    // MARK: - Init
+
+    // ⬇️ 추가: 닫기/선택 콜백
+    let onClose: () -> Void
+    let onPickedImages: ([UIImage]) -> Void
+
     init(
         container: DIContainer,
         messageTitleColor: Color = .black,
         messageDescriptionColor: Color = .gray060,
-        buttonColor: Color = .gray020
+        buttonColor: Color = .gray020,
+        onClose: @escaping () -> Void,
+        onPickedImages: @escaping ([UIImage]) -> Void
     ) {
         self.messageTitleColor = messageTitleColor
         self.messageDescriptionColor = messageDescriptionColor
         self.buttonColor = buttonColor
-        self.mediaPickerProvider = .init(
-            mediaPickerService: container.mediaPickerService)
+        self.onClose = onClose
+        self.onPickedImages = onPickedImages
+        self.mediaPickerProvider = .init(mediaPickerService: container.mediaPickerService)
     }
-    
-    // MARK: - Body
+
     var body: some View {
         VStack {
-            // 나가기 x 버튼
             HStack {
                 Spacer()
-                
-                Button(action: {
-                    print("모달 나가기 동작")
-                }, label: {
-                    Image("Modal/btn_close")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                })
+                Button { onClose() } label: {
+                    Image("Modal/btn_close").resizable().scaledToFit().frame(width: 24, height: 24)
+                }
             }
             .padding(.horizontal, 16)
-            
+
             Spacer().frame(height: 8)
-            
-            /// 모달 제목 메시지
-            Text("Pic 카드 기록")
-                .foregroundColor(messageTitleColor)
-                .font(.dsTitle2)
-            
+            Text("Pic 카드 기록").foregroundColor(messageTitleColor).font(.dsTitle2)
             Spacer().frame(height: 8)
-            
-            /// 모달 설명 메시지
-            Text("기록할 방법을 선택해주세요")
-                .foregroundColor(messageDescriptionColor)
-                .font(.dsSubhead)
-            
+            Text("기록할 방법을 선택해주세요").foregroundColor(messageDescriptionColor).font(.dsSubhead)
             Spacer().frame(height: 32)
-            
-            /// 하단 버튼 두개
+
             HStack {
                 Spacer()
-                
+
+                // 카메라
                 VStack {
-                    /// 카메라  버튼
-                    Button(action: {
-                        mediaPickerProvider.presentCamera()
-                    }, label: {
-                        
-                        ZStack {
-                            // 배경 버튼
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(buttonColor)
-                                .frame(width: 70, height: 70)
-                            
-                            // 버튼 가운데 이미지
-                            Image("Modal/ic_record_camera")
-                                .resizable()
+                    Button { mediaPickerProvider.presentCamera() } label: {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(buttonColor)
+                            .frame(width: 70, height: 70)
+                            .overlay(Image("Modal/ic_record_camera").resizable()
                                 .scaledToFit()
-                                .frame(width: 32, height: 32)
-                        }
-                    })
-                    
+                                .frame(width: 32, height: 32))
+                    }
                     Spacer().frame(height: 11)
-                    
-                    /// 카메라 텍스트
-                    Text("카메라")
-                        .font(.dsBold15)
+                    Text("카메라").font(.dsBold15)
                 }
-                
+
                 Spacer().frame(width: 40)
-                
+
+                // 앨범
                 VStack {
-                    /// 앨범  버튼
-                    Button(action: {
-                        showPhotosPicker.toggle()
-                    }, label: {
-                        
-                        ZStack {
-                            // 배경 버튼
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(buttonColor)
-                                .frame(width: 70, height: 70)
-                            
-                            // 버튼 가운데 이미지
-                            Image("Modal/ic_record_album")
-                                .resizable()
+                    Button { showPhotosPicker.toggle() } label: {
+                        RoundedRectangle(cornerRadius: 10).fill(buttonColor)
+                            .frame(width: 70, height: 70)
+                            .overlay(Image("Modal/ic_record_album").resizable()
                                 .scaledToFit()
-                                .frame(width: 32, height: 32)
-                        }
-                    })
-                    
+                                .frame(width: 32, height: 32))
+                    }
                     Spacer().frame(height: 11)
-                    
-                    /// 앨범 텍스트
-                    Text("사진 앨범")
-                        .font(.dsBold15)
+                    Text("사진 앨범").font(.dsBold15)
                 }
-                
+
                 Spacer()
-                
             }
         }
         .padding(.top, 18)
@@ -154,12 +108,16 @@ struct CameraRecordModalView: View {
             maxSelectionCount: maxImgSelectionCount,
             matching: .images
         )
+        // 선택 완료/촬영 완료 시 콜백으로 결과 올리기
+        .task {
+            mediaPickerProvider.onDidAddImages = { images in
+                onPickedImages(images)
+                onClose()
+            }
+        }
         .onChange(of: mediaPickerProvider.selections) { _, new in
             mediaPickerProvider.loadImages(from: new)
+            mediaPickerProvider.removeAllSelectionsImages()
         }
     }
-}
-
-#Preview {
-    CameraRecordModalView(container: .init())
 }

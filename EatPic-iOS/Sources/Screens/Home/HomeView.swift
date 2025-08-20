@@ -20,6 +20,9 @@ struct HomeView: View {
     /// 사용자 환영인사 호출 API
     @State private var greetingViewModel: HomeGreetingViewModel
     
+    // 카메라 모달 표시 여부
+        @State private var showRecordModal = false
+    
     // MARK: - Init
     
     init(container: DIContainer) {
@@ -40,9 +43,10 @@ struct HomeView: View {
                     
                     topBar
                     
-                    MealStatusView(container: container)
-                    
-                    RecomPicCardHomeView(container: container)
+                    // EmptyMealView에서 “추가하기” 누르면 이 모달 띄우게끔 클로저 전달
+                    MealStatusView(container: container, onTapEmptyMeal: {
+                        showRecordModal = true
+                    })
                     
                     MyBadgeStatusHomeView(
                         viewModel: badgeViewModel,
@@ -76,6 +80,19 @@ struct HomeView: View {
                     await badgeDetailViewModel
                         .fetchDescription(userBadgeId: badge.userBadgeId)
                 }
+            }
+            
+            // 카메라/앨범 모달
+            if showRecordModal {
+                Color.black.opacity(0.45).ignoresSafeArea().onTapGesture { showRecordModal = false }
+                CameraRecordModalView(
+                    container: container,
+                    onClose: { showRecordModal = false },
+                    onPickedImages: { images in
+                        // 기존 흐름과 동일: 선택된 이미지로 다음 화면 이동
+                        container.router.push(.mealTimeSelection(image: images))
+                    }
+                )
             }
         }
         .task { // 뷰 진입시 API 호출
