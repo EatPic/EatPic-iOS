@@ -7,25 +7,6 @@
 
 import SwiftUI
 
-let dummyFeed = Feed(
-    cardId: 101,
-    imageUrl: "https://example.com/images/pasta_feed_image.jpg",
-    datetime: "2025-07-01 14:00:00",
-    meal: .LUNCH,
-    memo: "오늘 점심으로 먹은 파스타! 정말 맛있었어요! 😋",
-    recipe: "봉골레 파스타",
-    recipeUrl: "https://example.com/recipes/vongole_pasta",
-    latitude: 37.5665,
-    longitude: 126.9780,
-    locationText: "서울 종로구",
-    hashtags: ["#파스타", "#맛스타그램", "#봉골레"],
-    user: dummyFeedUser,
-    reactionCount: 15,
-    userReaction: "TASTY",
-    commentCount: 3,
-    bookmarked: false
-)
-let card = dummyFeed.toPicCard()
 
 struct ExploreSelectedView: View {
     
@@ -86,6 +67,7 @@ struct ExploreSelectedView: View {
         .customCenterNavigationBar(title: {
             Text("탐색")
                 .font(.dsTitle2)
+                .foregroundStyle(Color.white)
         })
     }
     

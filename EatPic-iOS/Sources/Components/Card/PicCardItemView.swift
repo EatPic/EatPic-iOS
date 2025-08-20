@@ -119,10 +119,7 @@ struct PicCardItemView: View {
         case .bookmark:
             toggleBookmark()
         case .comment:
-            print("댓글 버튼 탭 - 댓글 수: \(commentCount)")
-            print("onAction 콜백 호출 시도")
             onAction?(.comment(count: commentCount))
-            print("onAction 콜백 호출 완료")
         case .reaction:
             withAnimation {
                 isShowingReactionBar = true

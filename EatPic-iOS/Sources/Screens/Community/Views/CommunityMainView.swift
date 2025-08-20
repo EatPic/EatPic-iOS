@@ -41,12 +41,6 @@ struct CommunityMainView: View {
                 CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
                     .presentationDetents([.large, .fraction(0.7)])
                     .presentationDragIndicator(.hidden)
-                    .onAppear {
-                        print("CommentBottomSheetView appeared")
-                    }
-                    .onDisappear {
-                        print("CommentBottomSheetView disappeared")
-                    }
             }
             
             if viewModel.showDeleteModal {
