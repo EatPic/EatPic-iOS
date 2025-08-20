@@ -6,22 +6,29 @@
 //
 
 import Foundation
-// MARK: - 댓글 리스트 결과
+
 struct CommentListResult: Codable {
+    let cardFeedList: [CardFeedItem]
     let hasNext: Bool
     let nextCursor: Int?
-    let commentList: [CommentItem]
 }
 
-// MARK: - 개별 댓글
-struct CommentItem: Codable, Identifiable {
-    let parentCommentId: Int
-    let commentId: Int
-    let nickname: String
-    let nameId: String
+struct CardFeedItem: Codable {
+    let cardFeedId: Int
+    let user: CommentUser
     let content: String
     let createdAt: String
-    
-    var id: Int { commentId } // SwiftUI ForEach 용
+    let imageUrl: String
+    let likeCount: Int
+    let commentCount: Int
+    let isLiked: Bool
+    let latitude: Double
+    let longitude: Double
 }
 
+struct CommentUser: Codable {
+    let userId: Int
+    let nameId: String
+    let nickname: String
+    let profileImageUrl: String
+}

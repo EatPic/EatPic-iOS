@@ -76,10 +76,6 @@ struct CommentBottomSheetView: View {
         }
         .task(id: viewModel.selectedCardId) {
             if viewModel.selectedCardId != nil {
-                print("""
-            CommentBottomSheetView task 실행 - selectedCardId: 
-            \(String(describing: viewModel.selectedCardId))
-            """)
                 await viewModel.fetchComments()
             }
         }
@@ -89,8 +85,12 @@ struct CommentBottomSheetView: View {
 //        }
     }
     
-    private func commentListView(userName: String, profileImage: String,
-                                 commentText: String, time: String) -> some View {
+    private func commentListView(
+        userName: String,
+        profileImage: String,
+        commentText: String,
+        time: String
+    ) -> some View {
         HStack(spacing: 13) {
             // 프로필 이미지
             Image(profileImage)
@@ -176,4 +176,9 @@ struct CommentBottomSheetView: View {
         .padding(.top, 6)
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview {
+    CommentBottomSheetView(
+        isShowing: .constant(true), viewModel: .init(container: .init()))
 }

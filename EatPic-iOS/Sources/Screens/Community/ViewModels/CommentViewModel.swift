@@ -12,7 +12,7 @@ import SwiftUI
 @Observable
 final class CommentViewModel {
     var commentText: String = ""
-    var comments: [Comment] = sampleComments // 예시 댓글 목록
+    var comments: [Comment] = sampleComments
     var isShowingReportBottomSheet: Bool = false
     var commentToReport: Comment? = nil
     var selectedCardId: Int? = nil
@@ -31,12 +31,12 @@ final class CommentViewModel {
         self.commentProvider = container.apiProviderStore.comment()
     }
     
-    func postComment(parentCommentId: Int = 0) async {
+    func postComment() async {
         guard let cardId = selectedCardId else { return }
         guard !commentText.isEmpty else { return }
         
         let request = CommentRequest(
-            parentCommentId: cardId,
+            parentCommentId: nil,
             content: commentText
         )
         
@@ -74,23 +74,24 @@ final class CommentViewModel {
             
             print("fetchComments 시작 - cardId: \(cardId)")
             isFetching = true
-        let cursor = nextCursor ?? 0 // 첫 번째 요청은 cursor 0
+        
+        let cursor = nextCursor
         
         do {
             let response = try await commentProvider.requestAsync(
-                .getComment(cardId: cardId, cursor: cursor)
+                .getComment(cardId: cardId, size: 30)
             )
             let dto = try JSONDecoder()
                 .decode(APIResponse<CommentListResult>.self, from: response.data
             )
             // CommentItem을 Comment로 변환
-            let newComments = dto.result.commentList.map { commentItem in
+            let newComments = dto.result.cardFeedList.map { commentItem in
                 Comment(
-                    id: commentItem.commentId,
+                    id: commentItem.cardFeedId,
                     user: CommunityUser(
-                        id: 0, // API에서 userId가 없으므로 임시값
-                        nameId: commentItem.nameId,
-                        nickname: commentItem.nickname,
+                        id: commentItem.user.userId,
+                        nameId: commentItem.user.nameId,
+                        nickname: commentItem.user.nickname,
                         imageName: nil, // 기본 이미지 사용
                         introduce: nil,
                         type: .other,
@@ -120,13 +121,6 @@ final class CommentViewModel {
             
         } catch {
             print("댓글 불러오기 실패:", error.localizedDescription)
-            
-            DispatchQueue.main.async {
-                if cursor == 0 {
-                    self.comments = []
-                }
-                self.isFetching = false
-            }
         }
     }
     
