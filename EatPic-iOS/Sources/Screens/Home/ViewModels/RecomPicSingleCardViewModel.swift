@@ -47,18 +47,19 @@ class RecomPicSingleCardViewModel {
                     switch apiErr?.code {
                     case "CARD_001":
                         // 서버: 해당 카드 없음
-                        self.errorMessage = "(해당 카드가 삭제되었는데 서버가 해당 카드 아이디를 추천해줄때(즉, 더미데이터 문제인듯) 나는 에러임) 해당 카드를 찾을 수 없어요. (id: \(cardId))"
+                        self.errorMessage = "해당 카드를 찾을 수 없어요. (id: \(cardId))"
                     default:
                         self.errorMessage = apiErr?.message
                         ?? "요청 실패 (\(resp.statusCode))"
                     }
                 }
             }
-        } catch {
+        }
+        catch {
             await MainActor.run {
                 self.card = nil
                 self.isLoading = false
-                self.errorMessage = "(피드에 공유하기되지 않은 카드의 아이디를 서버에서 추천할 때(즉, 더미데이터 문제인듯) 뜨는 오류임) 디코딩 실패: \(error.localizedDescription)"
+                self.errorMessage = "디코딩 실패: \(error.localizedDescription)"
             }
         }
     }

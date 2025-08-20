@@ -84,7 +84,7 @@ struct SingleCardFeedUser: Codable {
     let userId: Int
     let nameId: String
     let nickname: String
-    let profileImageUrl: String
+    let profileImageUrl: String?   // <- 여기 optional 처리
 }
 
 extension SingleCardFeedUser {
@@ -93,7 +93,7 @@ extension SingleCardFeedUser {
             id: userId,
             nameId: nameId,
             nickname: nickname,
-            imageName: profileImageUrl
+            imageName: profileImageUrl ?? ""   // null일 경우 안전하게 처리
         )
     }
 }
