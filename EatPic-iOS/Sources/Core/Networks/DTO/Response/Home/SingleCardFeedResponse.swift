@@ -21,7 +21,7 @@ struct SingleCardFeedResult: Codable {
     let datetime: String
     let meal: MealSlot
     let memo: String
-    let recipe: String
+    let recipe: String?          // ✅ 변경
     let recipeUrl: String?
     let latitude: Double?
     let longitude: Double?
@@ -63,10 +63,10 @@ extension SingleCardFeedResult {
             user: user,
             time: formattedTime,
             memo: memo,
-            imageUrl: imageUrl ?? "",
+            imageUrl: imageUrl,
             date: formattedDate,
             meal: meal,
-            recipe: recipe,
+            recipe: recipe ?? "", // ✅ null 방어
             recipeUrl: recipeUrl.flatMap { URL(string: $0) },
             latitude: latitude,
             longitude: longitude,
@@ -93,7 +93,7 @@ extension SingleCardFeedUser {
             id: userId,
             nameId: nameId,
             nickname: nickname,
-            imageName: profileImageUrl ?? ""   // null일 경우 안전하게 처리
+            imageName: profileImageUrl
         )
     }
 }
