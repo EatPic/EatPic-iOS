@@ -31,13 +31,18 @@ class CalendarViewModel {
     }
 
     var days: [CalendarDay] {
-        dateProvider.generateBaseDays(for: currentMonth).map { baseDay in
+        days(for: currentMonth)
+    }
+
+    // 렌더링 month 인자로 생성
+    func days(for month: Date) -> [CalendarDay] {
+        dateProvider.generateBaseDays(for: month).map { baseDay in
             let key = calendar.startOfDay(for: baseDay.date)
             return CalendarDay(
                 day: baseDay.day,
                 date: baseDay.date,
                 isCurrentMonth: baseDay.isCurrentMonth,
-                meta: metaDict[key] // ← URL/meta 바인딩
+                meta: metaDict[key]
             )
         }
     }
@@ -68,7 +73,7 @@ class CalendarViewModel {
         }
     }
     
-    /// 특정 날짜에 해당하는 이미지 URL을 반환합니다.
+    /// 특정 날짜에 해당하는 이미지 Url을 반환합니다.
     ///
     /// - Parameter date: 조회할 날짜
     /// - Returns: 이미지 URL이 있을 경우 해당 이미지, 없으면 nil
@@ -82,6 +87,6 @@ class CalendarViewModel {
     /// - Returns: 이미지 존재 여부
     func hasImage(for date: Date) -> Bool {
         if let url = image(for: date) { return !url.isEmpty }
-                return false
+        return false
     }
 }

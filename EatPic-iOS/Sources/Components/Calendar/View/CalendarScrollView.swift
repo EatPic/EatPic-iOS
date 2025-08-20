@@ -36,7 +36,7 @@ struct MonthVisiblePreferenceKey: PreferenceKey {
 struct CalendarScrollView: View {
     /// 이 뷰가 소유하는 뷰모델(Observation 기반). 수명주기와 함께 관리됩니다.
     @State private var calendarScrollVM: CalendarScrollViewModel
-    @State private var calendarVM = CalendarViewModel.init()
+    @State private var calendarVM = CalendarViewModel()
     /// 화면에서 **중앙에 가장 가까운 월**(YearMonth). 데이터 요청 트리거로 사용됩니다.
     @State private var visibleYM: YearMonth?
     @State private var months: [Date]
