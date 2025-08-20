@@ -42,4 +42,8 @@ extension APIProviderStore {
     func bookmark() -> MoyaProvider<BookmarkTargetType> {
         return networkService.createProvider(for: BookmarkTargetType.self)
     }
+    
+    func comment() -> MoyaProvider<CommentTargetType> {
+        return networkService.createProvider(for: CommentTargetType.self)
+    }
 }
