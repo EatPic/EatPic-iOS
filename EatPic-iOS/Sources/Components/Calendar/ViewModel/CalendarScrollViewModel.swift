@@ -85,6 +85,7 @@ final class CalendarScrollViewModel {
                 self.metaByDate = resultMap
                 self.loaded.insert(loadedKey) // 성공 시에만 markLoaded
             }
+            print("캘린더 API 호출 성공🟢")
         } catch let error as MoyaError {
             let msg = readable(error)
             print("MoyaError:", msg)
