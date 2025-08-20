@@ -30,6 +30,7 @@ final class PicCardRecordViewModel {
     private(set) var isUploading = false
     private(set) var lastCreatedCardId: Int?
     private(set) var errorMessage: String?
+    private(set) var isDuplicateMealConflict: Bool = false
     
     var searchResults: [Place] = []
 
@@ -81,7 +82,7 @@ final class PicCardRecordViewModel {
             )
             self.lastCreatedCardId = cardId
         } catch {
-            self.errorMessage = userErrMessage(for: error)
+            self.handle(error)
         }
     }
     
@@ -93,18 +94,69 @@ final class PicCardRecordViewModel {
             return err.errorDescription ?? "업로드 오류가 발생했습니다."
         }
         if let err = error as? APIError {
-            return err.errorDescription ?? "요청 처리 중 오류가 발생했습니다."
+            switch err {
+            case .serverErrorString(let code, let message):
+                if code == "CARD_002" {
+                    return "이미 같은 날짜와 같은 식사 유형의 카드가 존재합니다."
+                }
+                return message.isEmpty ? "서버 오류가 발생했습니다." : message
+            default:
+                return err.errorDescription ?? "요청 처리 중 오류가 발생했습니다."
+            }
         }
+        
         if let err = error as? MoyaError {
             switch err {
-            case .underlying(let nsError, _):
-                return "네트워크 오류: \(nsError.localizedDescription)"
             case .statusCode(let response):
-                return "요청이 실패했습니다(\(response.statusCode))."
+                return handleResponse(response)
+            case .underlying(_, let response?):
+                return handleResponse(response)
             default:
                 return "요청 처리 중 오류가 발생했습니다."
             }
         }
         return "알 수 없는 오류가 발생했습니다."
+    }
+    
+    private func handleResponse(_ response: Response) -> String {
+        let parsed = parseServerErrorPayload(from: response.data)
+        if parsed.code == "CARD_002" {
+            return "이미 같은 날짜와 같은 식사 유형의 카드가 존재합니다."
+        }
+        return "요청이 실패했습니다(\(response.statusCode))."
+    }
+    
+    /// 에러를 해석하여 UI 바인딩 상태를 갱신합니다.
+    private func handle(_ error: Error) {
+        // 서버 중복 업로드 충돌 여부 판단
+        self.isDuplicateMealConflict = isCard002(error)
+        self.errorMessage = userErrMessage(for: error)
+    }
+
+    /// 서버에서 내려오는 에러 페이로드를 파싱하여 (code, message)를 추출합니다.
+    private func parseServerErrorPayload(from data: Data) -> (code: String?, message: String?) {
+        guard
+            let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        else { return (nil, nil) }
+        let code = json["code"] as? String
+        let message = json["message"] as? String
+        return (code, message)
+    }
+
+    /// CARD_002 (같은 날짜+식사 유형 카드 중복) 여부를 판별합니다.
+    private func isCard002(_ error: Error) -> Bool {
+        if case let APIError.serverErrorString(code, _) = error {
+            return code == "CARD_002"
+        }
+        if let moyaError = error as? MoyaError {
+            switch moyaError {
+            case .statusCode(let response), .underlying(_, let response?):
+                let parsed = parseServerErrorPayload(from: response.data)
+                return parsed.code == "CARD_002"
+            default:
+                return false
+            }
+        }
+        return false
     }
 }

@@ -24,6 +24,8 @@ struct PicCardRecordView: View {
     @State private var showAddRecipeSheet: Bool = false
     @State private var showAddStoreLocationSheet: Bool = false
     
+    @State private var showDuplicateAlert = false
+    
     private let storeLocationSheetHeight: CGFloat = 400
     
     init(container: DIContainer, recordFlowVM: RecordFlowViewModel) {
@@ -52,9 +54,12 @@ struct PicCardRecordView: View {
                     
                     Task {
                         await picCardRecordVM.createPicCard()
+                        if picCardRecordVM.isDuplicateMealConflict {
+                            showDuplicateAlert = true
+                        } else {
+                            container.router.popToRoot()
+                        }
                     }
-                    
-                    container.router.popToRoot()
                 },
                 onAddReceiptTap: {
                     showAddRecipeSheet = true
@@ -91,6 +96,16 @@ struct PicCardRecordView: View {
                 Image("Record/btn_home_close")
             }
         }
+        .alert(
+            "업로드 불가",
+            isPresented: $showDuplicateAlert,
+            actions: {
+                Button("확인", role: .cancel) { }
+            },
+            message: {
+                Text(picCardRecordVM.errorMessage ?? "이미 같은 날짜와 같은 식사 유형의 카드가 존재합니다.")
+            }
+        )
     }
     
     private var searchStoreLocationView: some View {
