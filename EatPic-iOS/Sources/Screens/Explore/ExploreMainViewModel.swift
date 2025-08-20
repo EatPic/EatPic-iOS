@@ -90,7 +90,7 @@ struct AccountSummary: Hashable, Sendable, Identifiable {
     var userId: Int
     var nameId: String
     var nickname: String
-    var profileImageURL: URL?
+    var profileImageURL: String?
 }
 
 struct HashtagSummary: Hashable, Sendable {
@@ -158,7 +158,7 @@ struct AccountDTO: Decodable {
     let userId: Int
     let nameId: String
     let nickname: String
-    let profileImageURL: URL?
+    let profileImageURL: String?
 
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
