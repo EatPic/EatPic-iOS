@@ -88,7 +88,7 @@ struct ExploreMainView: View {
             LazyVGrid(columns: columns, spacing: 9, content: {
                 ForEach(viewModel.cards) { card in
                     Button {
-                        container.router.push(.exploreSelected)
+                        container.router.push(.exploreSelected(cardId: card.id))
                     } label: {
                         explorePicCard(
                             imageURL: card.imageURL,
