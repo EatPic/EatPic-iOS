@@ -51,7 +51,6 @@ struct PicCardRecordView: View {
                         recordFlowVM.setRecipeLink(recipeLink)
                         recordFlowVM.setStoreLocation(storeLocation)
                         recordFlowVM.setSharedFeed(sharedFeed)
-                        recordFlowVM.setStoreLocation(storeLocation)
                         
                         Task {
                             await picCardRecordVM.createPicCard()

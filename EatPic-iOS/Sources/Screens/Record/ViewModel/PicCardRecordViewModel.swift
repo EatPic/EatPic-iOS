@@ -9,16 +9,6 @@ import Foundation
 import Moya
 import MapKit
 
-/// 가게 위치 값 오브젝트
-struct PicCardStoreLocation: Equatable, Sendable {
-    var name: String
-    var latitude: Double?
-    var longitude: Double?
-    var hasCoordinate: Bool {
-        latitude != nil && longitude != nil
-    }
-}
-
 /// PicCard 업로드 액션을 트리거하고 결과를 UI에 전달하는 뷰모델입니다.
 /// - Note: 사이클로매틱 복잡도를 낮추기 위해 에러 메시지 매핑을 전용 헬퍼로 분리했습니다.
 @MainActor
