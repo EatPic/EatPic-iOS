@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingPageView: View {
     @EnvironmentObject private var container: DIContainer
+    @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
     
     @State private var isNotificationEnabled = true
     @State private var showLogoutModal = false
@@ -59,7 +60,9 @@ struct SettingPageView: View {
                     },
                     rightBtnAction: {
                         showLogoutModal = false
-                        print("예 버튼 클릭, 모달닫기 액션")
+                        container.userSessionKeychain.deleteSession(for: .userSession)
+                        appFlowViewModel.appState = .login
+                        container.router.popToRoot()
                     }
                 )
             }
@@ -74,11 +77,9 @@ struct SettingPageView: View {
                     rightBtnColor: .red050,
                     leftBtnAction: {
                         showWithdrawalModal = false
-                        print("아니오 버튼 클릭, 모달 닫기 액션")
                     },
                     rightBtnAction: {
                         showWithdrawalModal = false
-                        print("탈퇴하기 버튼 클릭, 모달닫기 액션")
                     }
                 )
             }
