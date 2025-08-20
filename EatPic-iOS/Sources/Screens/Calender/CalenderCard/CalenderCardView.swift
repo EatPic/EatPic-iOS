@@ -1,67 +1,207 @@
+////
+////  CalenderCardView.swift
+////  EatPic-iOS
+////
+////  Created by 이은정 on 7/23/25.
+////
 //
-//  CalenderCardView.swift
-//  EatPic-iOS
+//import SwiftUI
 //
-//  Created by 이은정 on 7/23/25.
+//struct CalenderCardView: View {
+//    @EnvironmentObject private var container: DIContainer
+//    
+//    @Bindable private var toastVM = ToastViewModel()
+//    
+//    var body: some View {
 //
+//        Spacer().frame(height: 8)
+//        
+//        VStack {
+//            
+//            // 당일 식사 사진들 캐러셀 뷰
+//            // FIXME: [25.07.29] 각 Carousel 사진마다 개별 뷰 보여줘야함 – 비엔/이은정
+//            CarouselView()
+//                .padding(.horizontal, -16) // 패딩 무시
+//            
+//            buttonsView
+//            
+//            goToFeed
+//            
+//            Spacer()
+//        }
+//        .customNavigationBar {
+//            VStack(spacing: 4) {
+//                // TODO: Calender 날짜 + 식사 시간(아침/점심/저녁/간식) 불러와야 함
+//                Text("8월 1일 아침")
+//                    .font(.dsTitle2)
+//                    .foregroundStyle(Color.gray080)
+//                
+//                // TODO: 해당 PicCard가 저장된 시간 불러와야 함
+//                Text("오후 1시 10분")
+//                    .font(.dsFootnote)
+//                    .foregroundStyle(Color.gray060)
+//            }
+//        } right: {
+//            Menu {
+//                Button(action: {
+//                    toastVM.showToast(title: "사진 앱에 저장되었습니다.")
+//                    // TODO: [25.07.27] 다운로드 액션 – 비엔/이은정
+//                }, label: {
+//                    Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
+//                })
+//                
+//                Button(action: {
+//                    container.router.push(.picCardEdit)
+//                }, label: {
+//                    Label("수정하기", systemImage: "square.and.pencil")
+//                })
+//                
+//                Button(role: .destructive, action: {
+//                    // TODO: [25.07.27] 해당 PicCard 삭제 액션 – 비엔/이은정
+//                }, label: {
+//                    Label("삭제하기", systemImage: "exclamationmark.bubble")
+//                })
+//            } label: {
+//                Image("Home/btn_home_ellipsis")
+//                    .resizable()
+//                    .frame(width: 24, height: 24)
+//            }
+//        }
+//        .toastView(viewModel: toastVM)
+//        .padding(.horizontal, 16)
+//    }
+//    
+//    // MARK: 레시피 링크 ~ 메모 등의 하단 버튼 뷰 4개
+//    private var buttonsView: some View {
+//        ZStack {
+//            // VStack은 기본적으로
+//            // 각 자식 뷰 사이에 spacing을 주기 때문에
+//            // spacing을 0으로 처리
+//            VStack(spacing: 0) {
+//                
+//                CalenderNavigationButton(
+//                    buttonName: "레시피 링크"
+//                ) {
+//                    print("레시피 링크 열기")
+//                    // TODO: [25.07.24] 담아놓은 레시피 Link 연결하여 브라우저에서 열기 – 비엔/이은정
+//                }
+//                
+//                Divider()
+//                    .frame(maxWidth: .infinity)
+//                
+//                CalenderNavigationButton(
+//                    buttonName: "식당 위치"
+//                ) {
+//                    print("식당 위치 뷰로 이동")
+//                    // TODO: [25.07.29] StoreLocationView로 Navigation – 비엔/이은정
+//                }
+//                
+//                Divider()
+//                    .frame(maxWidth: .infinity)
+//                
+//                CalenderNavigationButton(
+//                    buttonName: "나의 메모"
+//                ) {
+//                    container.router.push(.myMemo)
+//                }
+//                
+//                Divider()
+//                    .frame(maxWidth: .infinity)
+//                
+//                CalenderNavigationButton(
+//                    buttonName: "레시피 내용"
+//                ) {
+//                    container.router.push(.receiptDetail)
+//                }
+//            }
+//            .padding(.vertical, 8)
+//        }
+//        .background(Color.gray030.ignoresSafeArea())
+//        .padding(.horizontal, -16) // 패딩 무시
+//    }
+//    
+//    // MARK: 해당 피드 바로가기 버튼 있는 뷰
+//    private var goToFeed: some View {
+//        VStack {
+//            
+//            Spacer().frame(height: 28)
+//            
+//            Button {
+//                // TODO: [25.07.23] 해당 피드 뷰로 Navigation – 비엔/이은정
+//                print("해당 피드 바로가기 버튼 클릭")
+//            } label: {
+//                HStack {
+//                    Text("해당 피드 바로가기")
+//                        .underline()
+//                        .font(.dsSubhead)
+//                        .foregroundStyle(Color.gray060)
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//#Preview {
+//    CalenderCardView()
+//        .environmentObject(DIContainer())
+//}
 
+// CalenderCardView.swift
 import SwiftUI
 
 struct CalenderCardView: View {
     @EnvironmentObject private var container: DIContainer
-    
+    @Environment(\.openURL) private var openURL
     @Bindable private var toastVM = ToastViewModel()
     
+    // 현재 선택된 캐러셀 아이템
+    @State private var selection: ImageModel? = calendarImages.first
+    
     var body: some View {
-
         Spacer().frame(height: 8)
-        
         VStack {
-            
-            // 당일 식사 사진들 캐러셀 뷰
-            // FIXME: [25.07.29] 각 Carousel 사진마다 개별 뷰 보여줘야함 – 비엔/이은정
-            CarouselView()
-                .padding(.horizontal, -16) // 패딩 무시
+            // 캐러셀
+            CarouselView(selection: $selection, data: calendarImages)
+                .padding(.horizontal, -16)
             
             buttonsView
             
             goToFeed
-            
             Spacer()
         }
         .customNavigationBar {
             VStack(spacing: 4) {
-                // TODO: Calender 날짜 + 식사 시간(아침/점심/저녁/간식) 불러와야 함
-                Text("8월 1일 아침")
+                Text(selection?.titleText ?? "—")
                     .font(.dsTitle2)
                     .foregroundStyle(Color.gray080)
-                
-                // TODO: 해당 PicCard가 저장된 시간 불러와야 함
-                Text("오후 1시 10분")
+                Text(selection?.timeText ?? "—")
                     .font(.dsFootnote)
                     .foregroundStyle(Color.gray060)
             }
         } right: {
             Menu {
-                Button(action: {
+                Button {
                     toastVM.showToast(title: "사진 앱에 저장되었습니다.")
-                    // TODO: [25.07.27] 다운로드 액션 – 비엔/이은정
-                }, label: {
+                } label: {
                     Label("사진 앱에 저장", systemImage: "square.and.arrow.down")
-                })
+                }
                 
-                Button(action: {
+                Button {
                     container.router.push(.picCardEdit)
-                }, label: {
+                } label: {
                     Label("수정하기", systemImage: "square.and.pencil")
-                })
+                }
                 
-                Button(role: .destructive, action: {
-                    // TODO: [25.07.27] 해당 PicCard 삭제 액션 – 비엔/이은정
-                }, label: {
+                Button(role: .destructive) {
+                    // TODO: 삭제 로직
+                } label: {
                     Label("삭제하기", systemImage: "exclamationmark.bubble")
-                })
+                }
             } label: {
+                Image("Home/btn_home_ellipsis")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+            } primaryAction: {
                 Image("Home/btn_home_ellipsis")
                     .resizable()
                     .frame(width: 24, height: 24)
@@ -71,64 +211,57 @@ struct CalenderCardView: View {
         .padding(.horizontal, 16)
     }
     
-    // MARK: 레시피 링크 ~ 메모 등의 하단 버튼 뷰 4개
+    // MARK: 하단 버튼들
     private var buttonsView: some View {
-        ZStack {
-            // VStack은 기본적으로
-            // 각 자식 뷰 사이에 spacing을 주기 때문에
-            // spacing을 0으로 처리
-            VStack(spacing: 0) {
-                
-                CalenderNavigationButton(
-                    buttonName: "레시피 링크"
-                ) {
-                    print("레시피 링크 열기")
-                    // TODO: [25.07.24] 담아놓은 레시피 Link 연결하여 브라우저에서 열기 – 비엔/이은정
-                }
-                
-                Divider()
-                    .frame(maxWidth: .infinity)
-                
-                CalenderNavigationButton(
-                    buttonName: "식당 위치"
-                ) {
-                    print("식당 위치 뷰로 이동")
-                    // TODO: [25.07.29] StoreLocationView로 Navigation – 비엔/이은정
-                }
-                
-                Divider()
-                    .frame(maxWidth: .infinity)
-                
-                CalenderNavigationButton(
-                    buttonName: "나의 메모"
-                ) {
-                    container.router.push(.myMemo)
-                }
-                
-                Divider()
-                    .frame(maxWidth: .infinity)
-                
-                CalenderNavigationButton(
-                    buttonName: "레시피 내용"
-                ) {
-                    container.router.push(.receiptDetail)
+        VStack(spacing: 0) {
+            CalenderNavigationButton(buttonName: "레시피 링크") {
+                if let urlStr = selection?.recipeURL,
+                   let url = URL(string: urlStr) {
+                    openURL(url)
+                } else {
+                    print("레시피 링크 없음")
                 }
             }
-            .padding(.vertical, 8)
+            Divider()
+            
+            CalenderNavigationButton(buttonName: "식당 위치") {
+                if selection?.hasLocation == true {
+                    print("식당 위치 화면으로 이동")
+                } else {
+                    print("식당 위치 없음")
+                }
+            }
+            Divider()
+            
+            CalenderNavigationButton(buttonName: "나의 메모") {
+                if let memo = selection?.memo {
+                    print("메모 열기: \(memo)")
+                    container.router.push(.myMemo)
+                } else {
+                    print("메모 없음")
+                }
+            }
+            Divider()
+            
+            CalenderNavigationButton(buttonName: "레시피 내용") {
+                if selection?.hasRecipeDetail == true {
+                    container.router.push(.receiptDetail)
+                } else {
+                    print("레시피 내용 없음")
+                }
+            }
         }
+        .padding(.vertical, 8)
         .background(Color.gray030.ignoresSafeArea())
-        .padding(.horizontal, -16) // 패딩 무시
+        .padding(.horizontal, -16)
     }
     
-    // MARK: 해당 피드 바로가기 버튼 있는 뷰
     private var goToFeed: some View {
         VStack {
-            
             Spacer().frame(height: 28)
-            
             Button {
-                // TODO: [25.07.23] 해당 피드 뷰로 Navigation – 비엔/이은정
-                print("해당 피드 바로가기 버튼 클릭")
+                // TODO: selection 기반 해당 피드로 이동
+                print("해당 피드 바로가기: \(selection?.id.uuidString ?? "")")
             } label: {
                 HStack {
                     Text("해당 피드 바로가기")
