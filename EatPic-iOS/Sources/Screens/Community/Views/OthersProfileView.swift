@@ -122,6 +122,13 @@ struct OthersProfileView: View {
             .toastView(viewModel: toastVM)
             .padding(.horizontal, 16)
             .scrollIndicators(.hidden)
+            .onAppear {
+                viewModel.setCardProvider(container.apiProviderStore.card())
+                Task {
+                    print("fetchUser")
+                    await viewModel.fetchUserCards()
+                }
+            }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
                     isShowing: $viewModel.isShowingReportBottomSheet,
@@ -231,16 +238,20 @@ struct OthersProfileView: View {
             let availableWidth = geometry.size.width // 좌우 패딩 16씩 제외
             let spacing: CGFloat = 8 // 총 spacing (4 * 2)
             let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
-            LazyVGrid(columns: columns, spacing: 4, content: {
-                ForEach(viewModel.userCards) { card in
-                    Text(card.imageUrl)
-                    Rectangle()
-                        .remoteImage(url: card.imageUrl)
-                        .scaledToFill()
-                        .frame(width: imageSize, height: imageSize)
-                        .clipped()
-                }
-            })
+            LazyVGrid(columns: columns, spacing: 4) {
+                        ForEach(viewModel.feedCards) { card in
+                            Rectangle()
+                                .remoteImage(url: card.imageUrl)
+                                .scaledToFill()
+                                .frame(width: imageSize, height: imageSize)
+                                .clipped()
+                                .onAppear {
+                                    Task {
+                                        await viewModel.loadNextPageIfNeeded(currentCard: card)
+                                    }
+                                }
+                        }
+                    }
         }
     }
 }
