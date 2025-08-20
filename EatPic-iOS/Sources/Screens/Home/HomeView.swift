@@ -48,6 +48,8 @@ struct HomeView: View {
                         showRecordModal = true
                     })
                     
+                    RecomPicCardHomeView(container: container)
+                    
                     MyBadgeStatusHomeView(
                         viewModel: badgeViewModel,
                         selectedBadge: $selectedBadge,
