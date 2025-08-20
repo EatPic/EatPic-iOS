@@ -11,9 +11,11 @@ struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
     @State private var viewModel: CommunityMainViewModel
+//    @State private var commentVM: CommentViewModel
     
     init(container: DIContainer) {
         self._viewModel = .init(initialValue: .init(container: container))
+//        self._commentVM = .init(initialValue: .init(container: container))
     }
     
     var body: some View {
@@ -38,7 +40,9 @@ struct CommunityMainView: View {
                 .presentationDragIndicator(.hidden)
             }
             .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
-                CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
+                CommentBottomSheetView(
+                    isShowing: $viewModel.isShowingCommentBottomSheet,
+                    viewModel: viewModel.commentVM)
                     .presentationDetents([.large, .fraction(0.7)])
                     .presentationDragIndicator(.hidden)
                     .onAppear {

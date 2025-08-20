@@ -29,15 +29,18 @@ class CommunityMainViewModel {
     private var isFetching: Bool = false
     
     let toastVM = ToastViewModel()
+    let commentVM: CommentViewModel
     private let cardProvider: MoyaProvider<CardTargetType>
     private let bookmarkProvider: MoyaProvider<BookmarkTargetType>
     private let userProvider: MoyaProvider<UserTargetType>
+//    private let commentProvider: MoyaProvider<CommentTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
         self.bookmarkProvider = container.apiProviderStore.bookmark()
         self.userProvider = container.apiProviderStore.user()
+        self.commentVM = CommentViewModel(container: container)
     }
     
     func fetchFeeds() async {
@@ -277,7 +280,23 @@ class CommunityMainViewModel {
     // 댓글 액션 처리
     private func handleCommentAction(cardId: Int, count: Int) {
         isShowingCommentBottomSheet = true
+        commentVM.selectedCardId = cardId
     }
+    
+//    func postComment(cardId: Int, content: String, parentCommentId: Int = 0) async {
+//        let request = CommentRequest(
+//            parentCommentId: parentCommentId, content: content)
+//        
+//        do {
+//            let response = try await commentProvider.requestAsync(.postComment(cardId: cardId, request: request))
+//            let dto = try JSONDecoder().decode(
+//                APIResponse<CommentPostResult>.self, from: response.data)
+//            
+//            print("댓글 등록 성공:", dto)
+//        } catch {
+//            print("요청 또는 디코딩 실패:", error.localizedDescription)
+//        }
+//    }
     
     // 리액션 액션 처리
     private func handleReactionAction(

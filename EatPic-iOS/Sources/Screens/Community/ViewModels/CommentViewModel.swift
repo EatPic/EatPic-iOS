@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Moya
 import SwiftUI
 
 @Observable
@@ -14,37 +15,54 @@ final class CommentViewModel {
     var comments: [Comment] = sampleComments // 예시 댓글 목록
     var isShowingReportBottomSheet: Bool = false
     var commentToReport: Comment? = nil
+    var selectedCardId: Int? = nil
     
     let toastVM = ToastViewModel()
     
-    // 현재 로그인된 사용자의 정보 (임시)
-    let dummyFeedUser = FeedUser(
-        userId: 98765,
-        nameId: "wonjy0307",
-        nickname: "원주연",
-        profileImageUrl: "https://example.com/images/profile_ju_yeon.jpg"
-    )
-//    private let currentUser = CommunityUser(
-//        id: "itcong", nickname: "잇콩",
-//        imageName: "Community/itcong", isCurrentUser: true, isFollowed: true)
+    private let commentProvider: MoyaProvider<CommentTargetType>
     
-    func postComment() {
+    init(container: DIContainer) {
+        // APIProviderStore에서 제작한 함수 호출
+        self.commentProvider = container.apiProviderStore.comment()
+    }
+    
+    func postComment(parentCommentId: Int = 0) async {
+        guard let cardId = selectedCardId else { return }
         guard !commentText.isEmpty else { return }
         
-        let currentUser = dummyFeedUser.toCommunityUser()
+        let request = CommentRequest(
+            parentCommentId: cardId,
+            content: commentText
+        )
         
-        // 새 댓글 생성
-        let newComment = Comment(user: currentUser, text: commentText, time: "방금 전")
-        
-        // 댓글 목록에 추가
-        comments.append(newComment)
-        // 텍스트 필드 초기화
-        commentText = ""
-        
-        // TODO: - API 통신 로직을 여기에 구현
-        print("새 댓글이 추가되었습니다: \(newComment.text)")
-        print(comments)
+        do {
+            let response = try await commentProvider.requestAsync(
+                .postComment(cardId: cardId, request: request)
+            )
+            
+            let dto = try JSONDecoder().decode(
+                APIResponse<CommentPostResult>.self,
+                from: response.data
+            )
+            
+            // 성공 시 댓글 추가
+            let currentUser = dummyFeedUser.toCommunityUser()
+            let newComment = Comment(
+                user: currentUser,
+                text: commentText,
+                time: "방금 전"
+            )
+            
+            comments.append(newComment)
+            commentText = ""
+            
+            print("댓글 등록 성공:", dto.result)
+            
+        } catch {
+            print("댓글 등록 실패:", error.localizedDescription)
+        }
     }
+    
     
     // 댓글 삭제 기능
     func deleteComment(_ comment: Comment) {

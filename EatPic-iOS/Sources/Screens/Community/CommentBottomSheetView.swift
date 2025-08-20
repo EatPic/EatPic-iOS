@@ -9,7 +9,9 @@ import SwiftUI
 
 struct CommentBottomSheetView: View {
     @Binding var isShowing: Bool
-    @State private var viewModel = CommentViewModel()
+    @State var viewModel: CommentViewModel
+    
+//    let cardId: Int
     
     var body: some View {
         VStack {
@@ -135,7 +137,9 @@ struct CommentBottomSheetView: View {
                 
                 // 전송 버튼
                 Button(action: {
-                    viewModel.postComment()
+                    Task {
+                        await viewModel.postComment()
+                    }
                 }, label: {
                     if !viewModel.commentText.isEmpty {
                         Image("Community/send_green")
