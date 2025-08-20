@@ -186,7 +186,7 @@ struct OthersProfileView: View {
                 .foregroundStyle(Color.gray060)
             Spacer().frame(height: 18)
             
-            Text("소개글입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ")
+            Text(viewModel.user.introduce ?? "")
                 .font(.dsCaption1)
                 .foregroundStyle(Color.gray060)
             Spacer().frame(height: 16)
