@@ -5,15 +5,20 @@
 //  Created by 이은정 on 7/27/25.
 //
 
-// FIXME: [25. 08. 01] 획득한 뱃지 현황 갯수 세어야 하므로 추후 case에 completed 필요할듯  - 비엔/이은정
 import SwiftUI
 
 struct MyBadgeStatusAllView: View {
     
-    @State private var viewModel = MyBadgeStatusViewModel()
-    @State private var badgeDetailViewModel = BadgeDetailViewModel()
+    @ObservedObject private var viewModel: MyBadgeStatusViewModel
+    @State private var badgeDetailViewModel: BadgeDetailViewModel
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     @State private var showingBadgeModal = false
+    
+    // MARK: - Init
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+        self.badgeDetailViewModel = .init(container: container)
+    }
     
     var body: some View {
         ZStack {
@@ -40,7 +45,9 @@ struct MyBadgeStatusAllView: View {
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeDetailViewModel.getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel.description(
+                        for: badge.userBadgeId,
+                        fallbackName: badge.name)
                 )
             }
         }
@@ -99,5 +106,5 @@ struct MyBadgeStatusAllView: View {
 }
 
 #Preview {
-    MyBadgeStatusAllView()
+    MyBadgeStatusAllView(container: .init())
 }

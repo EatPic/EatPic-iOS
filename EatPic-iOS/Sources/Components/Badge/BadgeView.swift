@@ -14,9 +14,9 @@ import SwiftUI
 /// 3. 원형뱃지 밑에 text값 존재
 /// 뱃지 상태 ( progress : 뱃지 획득 중 ~ 획득 완료) , locked ( 뱃지 획득 이전), completed (뱃지 완성)
 enum BadgeState {
-    case progress(progress: Double, icon: Image)
+    case progress(progress: Double, iconURL: String)
     case locked
-    case completed
+    case completed(iconURL: String)
 }
 
 /// 상단에 CircleProgressView 또는 LockBadgeView, 하단에 뱃지 이름을 띄워주는 뷰입니다
@@ -25,20 +25,11 @@ enum BadgeState {
 ///   - badgeName: 뱃지 이름입니다.
 ///   - size: 뱃지의 사이즈 입니다.
 struct BadgeView: View {
-    // 뱃지 상태
     let state: BadgeState
-    
-    // 뱃지 이름
     let badgeName: String
-    
-    // 뱃지 사이즈
     let size: CGFloat
 
-    init(
-        state: BadgeState,
-        badgeName: String,
-        size: CGFloat = 130
-    ) {
+    init(state: BadgeState, badgeName: String, size: CGFloat = 130) {
         self.state = state
         self.badgeName = badgeName
         self.size = size
@@ -46,68 +37,38 @@ struct BadgeView: View {
 
     var body: some View {
         VStack {
-            // 상태에 따른 뱃지 뷰 표시
-            Group {
-                switch state {
-                    
-                    // progress 케이스의 경우 CircleProgressView 띄우기
-                case .progress(let progress, let icon):
-                    let badgeCircleSize = size * 0.92 // locked와 badge크기 맞추기 위한 값
-                    CircleProgressView(
-                        progress: progress,
-                        lineWidth: badgeCircleSize * 0.09,
-                        size: badgeCircleSize,
-                        icon: icon
-                    )
-                    
-                    // locked 케이스의 경우 LockBadgeView 띄우기
-                case .locked:
-                    LockBadgeView(
-                        size: size
-                    )
-                    
-                    // completed 케이스의 경우 완성된 뱃지 표시
-                case .completed:
-                    let badgeCircleSize = size * 0.92
-                    CircleProgressView(
-                        progress: 1.0,
-                        lineWidth: badgeCircleSize * 0.09,
-                        size: badgeCircleSize,
-                        icon: Image(systemName: "checkmark.circle.fill")
-                    )
-                }
+            let badgeCircleSize = size * 0.92
+            let iconSize = badgeCircleSize * 0.68
+
+            switch state {
+            case .progress(let progress, let iconURL):
+                CircleProgressView(
+                    progress: progress,
+                    lineWidth: badgeCircleSize * 0.09,
+                    size: badgeCircleSize,
+                    iconURL: iconURL,
+                    iconSize: iconSize
+                )
+
+            case .locked:
+                LockBadgeView(size: size)
+
+            case .completed(let iconURL):
+                CircleProgressView(
+                    progress: 1.0,
+                    lineWidth: badgeCircleSize * 0.09,
+                    size: badgeCircleSize,
+                    iconURL: iconURL,                 
+                    iconSize: iconSize
+                )
             }
-            
+
             Spacer()
-            
-            // 뱃지 이름
+
             Text(badgeName)
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray080)
         }
         .frame(width: 130, height: 156)
     }
-}
-
-#Preview("뱃지 획득 중 ~ 획득 완료") {
-    BadgeView(
-        state: .progress(progress: 0.4,
-                         icon: Image(systemName: "star.fill")
-                        ),
-        badgeName: "혼밥러"
-    )
-}
-
-#Preview("뱃지 획득 이전") {
-    BadgeView(
-        state: .locked,
-        badgeName: "기록마스터"
-    )
-}
-
-#Preview("뱃지 완성") {
-    BadgeView(
-        state: .completed,
-        badgeName: "삼시세끼"
-    )
 }
