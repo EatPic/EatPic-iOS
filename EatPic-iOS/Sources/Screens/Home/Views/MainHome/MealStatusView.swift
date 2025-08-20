@@ -29,7 +29,9 @@ struct MealStatusView: View {
                         mymeal: meal,
                         isEditMode: isEditMode,
                         onDelete: {
-                            viewModel.deleteMealRecord(meal: meal)
+                            Task {
+                                await viewModel.confirmMealDeletion(meal: meal)
+                            }
                         }
                     )
                 }
