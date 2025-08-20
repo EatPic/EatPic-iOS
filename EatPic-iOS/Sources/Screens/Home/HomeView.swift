@@ -12,18 +12,24 @@ struct HomeView: View {
     // MARK: - ProPerty
     
     @EnvironmentObject private var container: DIContainer
-    @State private var badgeViewModel = MyBadgeStatusViewModel()
-    @State private var badgeDetailViewModel = BadgeDetailViewModel()
+    @StateObject private var badgeViewModel: MyBadgeStatusViewModel
+    @State private var badgeDetailViewModel: BadgeDetailViewModel
     @State private var showingBadgeModal = false
     @State private var selectedBadge: MyBadgeStatusViewModel.BadgeItem?
     
     /// 사용자 환영인사 호출 API
     @State private var greetingViewModel: HomeGreetingViewModel
     
+    // 카메라 모달 표시 여부
+        @State private var showRecordModal = false
+    
     // MARK: - Init
     
     init(container: DIContainer) {
         self.greetingViewModel = .init(container: container)
+        _badgeViewModel = StateObject(
+            wrappedValue: MyBadgeStatusViewModel(container: container))
+        self.badgeDetailViewModel = .init(container: container)
     }
     
     // MARK: - Body
@@ -37,14 +43,16 @@ struct HomeView: View {
                     
                     topBar
                     
-                    MealStatusView(container: container)
-                    
-                    RecomPicCardHomeView(container: container)
+                    // EmptyMealView에서 “추가하기” 누르면 이 모달 띄우게끔 클로저 전달
+                    MealStatusView(container: container, onTapEmptyMeal: {
+                        showRecordModal = true
+                    })
                     
                     MyBadgeStatusHomeView(
-                    selectedBadge: $selectedBadge,
-                    showingBadgeModal: $showingBadgeModal
-                )
+                        viewModel: badgeViewModel,
+                        selectedBadge: $selectedBadge,
+                        showingBadgeModal: $showingBadgeModal
+                    )
                     
                     Spacer()
                 }
@@ -55,19 +63,41 @@ struct HomeView: View {
             // 배지 모달
             if showingBadgeModal, let badge = selectedBadge {
                 BadgeProgressModalView(
-                    badgeType: badgeDetailViewModel.createBadgeModalType(for: badge),
+                    badgeType: badgeDetailViewModel
+                        .createBadgeModalType(for: badge),
                     closeBtnAction: {
                         showingBadgeModal = false
                         selectedBadge = nil
                     },
                     badgeSize: 130,
                     badgeTitle: badge.name,
-                    badgeDescription: badgeDetailViewModel.getBadgeDescription(for: badge.name)
+                    badgeDescription: badgeDetailViewModel.description(
+                        for: badge.userBadgeId,
+                        fallbackName: badge.name)
+                )
+                // 모달 표시 시 설명 지연 로드
+                .task(id: badge.userBadgeId) {
+                    await badgeDetailViewModel
+                        .fetchDescription(userBadgeId: badge.userBadgeId)
+                }
+            }
+            
+            // 카메라/앨범 모달
+            if showRecordModal {
+                Color.black.opacity(0.45).ignoresSafeArea().onTapGesture { showRecordModal = false }
+                CameraRecordModalView(
+                    container: container,
+                    onClose: { showRecordModal = false },
+                    onPickedImages: { images in
+                        // 기존 흐름과 동일: 선택된 이미지로 다음 화면 이동
+                        container.router.push(.mealTimeSelection(image: images))
+                    }
                 )
             }
         }
         .task { // 뷰 진입시 API 호출
             await greetingViewModel.fetchGreetingUser()
+            await badgeViewModel.fetchBadgeList()
         }
     }
     

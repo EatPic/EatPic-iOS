@@ -17,6 +17,7 @@ enum APIError: Error, LocalizedError {
     case unauthorized
     case notFound
     case serverError(code: Int, message: String)
+    case serverErrorString(code: String, message: String)
     case unknown
 
     var errorDescription: String? {
@@ -35,6 +36,8 @@ enum APIError: Error, LocalizedError {
             return "리소스를 찾을 수 없습니다."
         case .serverError(let code, let message):
             return "서버 오류 발생 (코드: \(code), 메세지: \(message)"
+        case .serverErrorString(let code, let message):
+            return "서버 오류 발생 (코드: \(code), 메세지: \(message))"
         case .unknown:
             return "알 수 없는 오류입니다."
         }
