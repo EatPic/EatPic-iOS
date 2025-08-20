@@ -20,7 +20,7 @@ struct SingleCardFeedResult: Codable {
     let imageUrl: String
     let datetime: String
     let meal: MealSlot
-    let memo: String
+    let memo: String?
     let recipe: String?          // ✅ 변경
     let recipeUrl: String?
     let latitude: Double?
@@ -62,7 +62,7 @@ extension SingleCardFeedResult {
             cardId: cardId,
             user: user,
             time: formattedTime,
-            memo: memo,
+            memo: memo ?? "",
             imageUrl: imageUrl,
             date: formattedDate,
             meal: meal,
