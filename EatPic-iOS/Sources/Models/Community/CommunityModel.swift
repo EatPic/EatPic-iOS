@@ -92,7 +92,7 @@ struct PicCard: Identifiable, Equatable {
 }
 
 struct Comment: Identifiable {
-    let id = UUID()
+    let id: Int
     let user: CommunityUser
     let text: String
     let time: String
@@ -259,11 +259,11 @@ var sampleCards: [PicCard] = [
 ]
 
 var sampleComments: [Comment] = [
-    Comment(user: dummyUser, text: "정말 맛있어 보이네요! 🤤", time: "10분 전"),
-    Comment(user: dummyUser, text: "어디서 먹을 수 있나요?", time: "5분 전"),
-    Comment(user: dummyUser, text: "레시피 공유해주세요~", time: "1분 전"),
-    Comment(user: dummyUser, text: "바로 저장", time: "1분 전"),
-    Comment(user: dummyUser, text: "내일 가봐야지", time: "1분 전")
+    Comment(id: 1, user: dummyUser, text: "정말 맛있어 보이네요! 🤤", time: "10분 전"),
+    Comment(id: 2, user: dummyUser, text: "어디서 먹을 수 있나요?", time: "5분 전"),
+    Comment(id: 3, user: dummyUser, text: "레시피 공유해주세요~", time: "1분 전"),
+    Comment(id: 4, user: dummyUser, text: "바로 저장", time: "1분 전"),
+    Comment(id: 5, user: dummyUser, text: "내일 가봐야지", time: "1분 전")
 ]
 
 let reportTypes = [

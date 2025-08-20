@@ -17,7 +17,6 @@ struct CommunityMainView: View {
     }
     
     var body: some View {
-        ZStack {
             ScrollView {
                 VStack(spacing: 40) {
                     userListView()
@@ -28,6 +27,25 @@ struct CommunityMainView: View {
             .scrollIndicators(.hidden)
             .toastView(viewModel: viewModel.toastVM)
             .padding(.horizontal, 16)
+            .overlay {
+                if viewModel.showDeleteModal {
+                    DecisionModalView(
+                        message: "Pic카드를 정말 삭제하시겠어요?",
+                        messageColor: .gray080,
+                        leftBtnText: "취소",
+                        rightBtnText: "삭제",
+                        rightBtnColor: .red050,
+                        leftBtnAction: {
+                            viewModel.showDeleteModal = false
+                        },
+                        rightBtnAction: {
+                            Task {
+                                await viewModel.confirmDeletion()
+                            }
+                        }
+                    )
+                }
+            }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
                     isShowing: $viewModel.isShowingReportBottomSheet,
@@ -38,9 +56,12 @@ struct CommunityMainView: View {
                 .presentationDragIndicator(.hidden)
             }
             .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
-                CommentBottomSheetView(isShowing: $viewModel.isShowingCommentBottomSheet)
-                    .presentationDetents([.large, .fraction(0.7)])
-                    .presentationDragIndicator(.hidden)
+                CommentBottomSheetView(
+                    isShowing: $viewModel.isShowingCommentBottomSheet,
+                    viewModel: viewModel.commentVM
+                )
+                .presentationDetents([.large, .fraction(0.7)])
+                .presentationDragIndicator(.hidden)
             }
             
             if viewModel.showDeleteModal {
@@ -59,8 +80,9 @@ struct CommunityMainView: View {
                         }
                     }
                 )
+                .presentationDetents([.large, .fraction(0.7)])
+                .presentationDragIndicator(.hidden)
             }
-        }
     }
     
     private func userListView() -> some View {

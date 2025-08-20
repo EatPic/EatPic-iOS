@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct ExploreSelectedView: View {
     
     @EnvironmentObject private var container: DIContainer

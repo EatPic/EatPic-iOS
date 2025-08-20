@@ -20,7 +20,7 @@ struct PicCardItemView: View {
     @State private var isBookmarked: Bool = false
     
     /// 댓글 수
-    @State private var commentCount: Int = 0
+    @State private var commentCount: Int
     
     /// 선택된 리액션 이모지
     @State private var selectedReaction: ReactionType?
@@ -44,16 +44,21 @@ struct PicCardItemView: View {
     var onAction: ((PicCardItemActionType) -> Void)?
     
     // 초기화 메서드 - 카드 데이터를 받아서 초기값 설정
-    init(card: PicCard, toastVM: ToastViewModel,
-         onAction: ((PicCardItemActionType) -> Void)? = nil) {
+    init(
+        card: PicCard,
+        toastVM: ToastViewModel,
+        commentCount: Int = 0,
+        totalReactionCount: Int = 0,
+        onAction: ((PicCardItemActionType) -> Void)? = nil
+    ) {
         self.card = card
         self.toastVM = toastVM
         self.onAction = onAction
+        self.commentCount = commentCount
+        self.totalReactionCount = totalReactionCount
         
         // 카드 데이터로부터 초기값 설정
         self._isBookmarked = State(initialValue: card.bookmarked)
-        self._commentCount = State(initialValue: card.commentCount)
-        self._totalReactionCount = State(initialValue: card.reactionCount)
         
         // 사용자의 현재 반응 설정
         if let userReaction = card.userReaction {
@@ -124,7 +129,7 @@ struct PicCardItemView: View {
             withAnimation {
                 isShowingReactionBar = true
             }
-            onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
+            //            onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
         }
     }
     
@@ -138,7 +143,6 @@ struct PicCardItemView: View {
         }
     }
     
-    /// 리액션 선택 처리
     private func handleReactionSelection(_ reaction: ReactionType?) {
         let previousReaction = selectedReaction
         selectedReaction = reaction
