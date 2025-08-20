@@ -8,17 +8,21 @@
 import SwiftUI
 
 /// 리액션 타입
-enum ReactionType: String, CaseIterable, Identifiable {
-    case thumbsUp, heart, yummy, strong, laugh
-    
+enum ReactionType: String, CaseIterable, Identifiable, Codable {
+    case thumbsUp = "THUMB_UP"
+    case heart = "HEART"
+    case yummy = "YUMMY"
+    case power = "POWER"
+    case laugh = "LAUGH"
+
     var id: String { rawValue }
-    
+
     var emoji: String {
         switch self {
         case .thumbsUp: return "👍🏻"
         case .heart:    return "❤️"
         case .yummy:    return "😋"
-        case .strong:   return "💪🏻"
+        case .power:    return "💪🏻"
         case .laugh:    return "🤣"
         }
     }
@@ -94,7 +98,7 @@ struct ReactionBarView: View {
             selectedReaction = reaction
             reactionCounts[reaction, default: 0] += 1
             newReaction = reaction
-            print("새 리액션 \(reaction) 선택됨")
+//            print("새 리액션 \(reaction) 선택됨")
         }
         // 콜백 호출
         onReactionSelected(newReaction)
@@ -117,7 +121,7 @@ struct ReactionBarView: View {
         .thumbsUp: 102,
         .heart: 98,
         .yummy: 32,
-        .strong: 12,
+        .power: 12,
         .laugh: 44
     ]
     

@@ -28,17 +28,7 @@ final class RecordFlowViewModel: ObservableObject {
     /// 최초 진입 시 루트 상태를 주입합니다.
     /// - Note: 보통 라우팅 진입 시점에서 `createdAt`, `images`를 채운 상태로 들어옵니다.
     init() {
-        self.state = .init(
-            images: [],
-            mealSlot: nil,
-            hasTags: [],
-            myMemo: "",
-            myRecipe: "",
-            recipeLink: nil,
-            storeLocation: "",
-            sharedFeed: false,
-            createdAt: Date()
-        )
+        self.state = .init()
     }
 
     // MARK: - Derived (화면 전이 가드)
@@ -55,7 +45,7 @@ final class RecordFlowViewModel: ObservableObject {
 
     /// 업로드 가능 여부(최소 요건 충족)
     public var isReadyToUpload: Bool {
-        // 필요시 정책 조정: 메모/레시피/위치 필수 여부 등
+        // [25.08.20] 메모/레시피/위치 필수 여부 적용해야 함 - 리버/이재원
         canProceedToRecord
     }
 
@@ -117,7 +107,7 @@ final class RecordFlowViewModel: ObservableObject {
     }
 
     /// 사용자가 지정한 위치 텍스트를 설정합니다.
-    public func setStoreLocation(_ location: String) {
+    public func setStoreLocation(_ location: PicCardStoreLocation) {
         state.storeLocation = location
     }
 
@@ -135,7 +125,7 @@ final class RecordFlowViewModel: ObservableObject {
         state.myMemo = ""
         state.myRecipe = ""
         state.recipeLink = nil
-        state.storeLocation = ""
+        state.storeLocation = .init(name: "")
         state.sharedFeed = false
     }
 }
