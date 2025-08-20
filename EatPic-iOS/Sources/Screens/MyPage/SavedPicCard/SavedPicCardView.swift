@@ -87,6 +87,7 @@ struct SavedPicCardView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 }
 

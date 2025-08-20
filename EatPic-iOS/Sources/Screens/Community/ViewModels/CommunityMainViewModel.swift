@@ -14,7 +14,7 @@ class CommunityMainViewModel {
     
     // MARK: - View State
     var selectedUser: CommunityUser?
-    var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
+    var filteredCards: [PicCard] = sampleCards // 초기값을 비어있는 배열로 변경
     var users: [CommunityUser] = []
     var currentUser: CommunityUser? {
         users.first { $0.userType == .me }
@@ -29,9 +29,11 @@ class CommunityMainViewModel {
     private var isFetching: Bool = false
     
     let toastVM = ToastViewModel()
+    let commentVM: CommentViewModel
     private let cardProvider: MoyaProvider<CardTargetType>
     private let bookmarkProvider: MoyaProvider<BookmarkTargetType>
     private let userProvider: MoyaProvider<UserTargetType>
+    private let commentProvider: MoyaProvider<CommentTargetType>
     private let reactionProvider: MoyaProvider<ReactionTargetType>
     
     init(container: DIContainer) {
@@ -39,7 +41,9 @@ class CommunityMainViewModel {
         self.cardProvider = container.apiProviderStore.card()
         self.bookmarkProvider = container.apiProviderStore.bookmark()
         self.userProvider = container.apiProviderStore.user()
+        self.commentVM = CommentViewModel(container: container)
         self.reactionProvider = container.apiProviderStore.reaction()
+        self.commentProvider = container.apiProviderStore.comment()
     }
     
     func fetchFeeds() async {
@@ -283,6 +287,27 @@ class CommunityMainViewModel {
     // 댓글 액션 처리
     private func handleCommentAction(cardId: Int, count: Int) {
         isShowingCommentBottomSheet = true
+        commentVM.selectedCardId = cardId
+        
+        // 디버깅을 위한 로그 추가
+            print("댓글 액션 처리 - cardId: \(cardId), count: \(count)")
+            print("isShowingCommentBottomSheet 상태: \(isShowingCommentBottomSheet)")
+    }
+    
+    func postComment(cardId: Int, content: String, parentCommentId: Int = 0) async {
+        let request = CommentRequest(
+            parentCommentId: parentCommentId, content: content)
+        
+        do {
+            let response = try await commentProvider.requestAsync(
+                .postComment(cardId: cardId, request: request))
+            let dto = try JSONDecoder().decode(
+                APIResponse<CommentPostResult>.self, from: response.data)
+            
+            print("댓글 등록 성공:", dto)
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
     }
     
     // 리액션 추가/수정
