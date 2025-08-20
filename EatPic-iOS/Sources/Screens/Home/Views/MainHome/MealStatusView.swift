@@ -15,9 +15,6 @@ struct MealStatusView: View {
     // 추가: 빈 카드 탭 시 액션
     let onTapEmptyMeal: () -> Void
     
-//    init(container: DIContainer) {
-//        self.viewModel = .init(container: container)
-//    }
     init(container: DIContainer, onTapEmptyMeal: @escaping () -> Void) {
         self._viewModel = .init(wrappedValue: .init(container: container))
         self.onTapEmptyMeal = onTapEmptyMeal
@@ -37,7 +34,9 @@ struct MealStatusView: View {
                         mymeal: meal,
                         isEditMode: isEditMode,
                         onDelete: {
-                            viewModel.deleteMealRecord(meal: meal)
+                            Task {
+                                await viewModel.confirmMealDeletion(meal: meal)
+                            }
                         },
                         onAdd: { onTapEmptyMeal() }
                     )
