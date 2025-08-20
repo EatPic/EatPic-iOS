@@ -225,30 +225,29 @@ struct CalenderCardView: View {
             Divider()
             
             CalenderNavigationButton(buttonName: "식당 위치") {
-                if selection?.hasLocation == true {
-                    print("식당 위치 화면으로 이동")
+                // 위치가 있을 때만 네비게이션
+                if let item = selection,
+                   let lat = item.latitude,
+                   let lon = item.longitude {
+                    let title = item.locationText ?? "위치"
+                    container.router.push(
+                        .storeLocation(latitude: lat, longitude: lon, title: title)
+                    )
                 } else {
-                    print("식당 위치 없음")
+                    // 위치가 없으면 아무 동작 안 함 (로그만)
+                    print("위치 정보 없음")
                 }
             }
+
             Divider()
             
             CalenderNavigationButton(buttonName: "나의 메모") {
-                if let memo = selection?.memo {
-                    print("메모 열기: \(memo)")
-                    container.router.push(.myMemo)
-                } else {
-                    print("메모 없음")
-                }
+                container.router.push(.myMemo)
             }
             Divider()
             
             CalenderNavigationButton(buttonName: "레시피 내용") {
-                if selection?.hasRecipeDetail == true {
-                    container.router.push(.receiptDetail)
-                } else {
-                    print("레시피 내용 없음")
-                }
+                container.router.push(.receiptDetail)
             }
         }
         .padding(.vertical, 8)

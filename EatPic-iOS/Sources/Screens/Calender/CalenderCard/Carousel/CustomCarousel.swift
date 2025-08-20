@@ -120,6 +120,7 @@ struct CarouselView: View {
     // 내부에서는 ID를 바인딩으로 쓰고, 바뀔 때 selection을 갱신
     @State private var activeID: UUID?
      
+    // 캐러셀 뷰
     var body: some View {
         VStack {
             CustomCarousel(
