@@ -32,45 +32,51 @@ struct PicCardRecordView: View {
         self._picCardRecordVM = .init(
             wrappedValue: .init(container: container, recordFlowVM: recordFlowVM))
     }
-
+    
     var body: some View {
-        VStack {
-            PicCardWriteView(
-                primaryButtonText: "기록하기",
-                recipeLinkTitle: recipeLinkURL.isEmpty ? "레시피 링크 추가" : recipeLinkURL,
-                storeLocationTitle:
-                    storeLocationTitle.isEmpty ? "식당 위치 추가" : storeLocationTitle,
-                recipeLinkTitleColor:
-                    recipeLinkURL.isEmpty ? Color.gray080 : .green060,
-                storeLocationTitleColor:
-                    storeLocationTitle.isEmpty ? Color.gray080 : .green060,
-                onPrimaryButtonTap: {
-                    recordFlowVM.setMemo(memo)
-                    recordFlowVM.setRecipeText(recipeContent)
-                    recordFlowVM.setRecipeLink(recipeLink)
-                    recordFlowVM.setStoreLocation(storeLocation)
-                    recordFlowVM.setSharedFeed(sharedFeed)
-                    recordFlowVM.setStoreLocation(storeLocation)
-                    
-                    Task {
-                        await picCardRecordVM.createPicCard()
-                        if picCardRecordVM.isDuplicateMealConflict {
-                            showDuplicateAlert = true
-                        } else {
-                            container.router.popToRoot()
+        ScrollView {
+            VStack {
+                PicCardWriteView(
+                    primaryButtonText: "기록하기",
+                    recipeLinkTitle: recipeLinkURL.isEmpty ? "레시피 링크 추가" : recipeLinkURL,
+                    storeLocationTitle:
+                        storeLocationTitle.isEmpty ? "식당 위치 추가" : storeLocationTitle,
+                    recipeLinkTitleColor:
+                        recipeLinkURL.isEmpty ? Color.gray080 : .green060,
+                    storeLocationTitleColor:
+                        storeLocationTitle.isEmpty ? Color.gray080 : .green060,
+                    onPrimaryButtonTap: {
+                        recordFlowVM.setMemo(memo)
+                        recordFlowVM.setRecipeText(recipeContent)
+                        recordFlowVM.setRecipeLink(recipeLink)
+                        recordFlowVM.setStoreLocation(storeLocation)
+                        recordFlowVM.setSharedFeed(sharedFeed)
+                        recordFlowVM.setStoreLocation(storeLocation)
+                        
+                        Task {
+                            await picCardRecordVM.createPicCard()
+                            if picCardRecordVM.isDuplicateMealConflict {
+                                showDuplicateAlert = true
+                            } else {
+                                container.router.popToRoot()
+                            }
                         }
-                    }
-                },
-                onAddReceiptTap: {
-                    showAddRecipeSheet = true
-                },
-                onAddStoreLocationTap: {
-                    showAddStoreLocationSheet = true
-                },
-                myMemo: $memo,
-                receiptDetail: $recipeContent,
-                isSharedToFeed: $sharedFeed
-            )
+                    },
+                    onAddReceiptTap: {
+                        showAddRecipeSheet = true
+                    },
+                    onAddStoreLocationTap: {
+                        showAddStoreLocationSheet = true
+                    },
+                    myMemo: $memo,
+                    receiptDetail: $recipeContent,
+                    isSharedToFeed: $sharedFeed
+                )
+            }
+        }
+        .contentShape(Rectangle()) // 빈 영역 탭도 인식
+        .onTapGesture {
+            dismissKeyboard()
         }
         .sheet(isPresented: $showAddRecipeSheet) {
             BottomSheetView(title: "레시피 링크 추가") {
@@ -125,7 +131,7 @@ struct PicCardRecordView: View {
             )
             
             Spacer().frame(height: 20)
-
+            
             List(picCardRecordVM.searchResults) { place in
                 VStack(alignment: .leading) {
                     Text(place.mapItem.name ?? "이름 없음")
@@ -179,6 +185,11 @@ private struct BottomSheetTextFieldView: View {
                     .background(Color.white000)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .lineLimit(1)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        dismissKeyboard()
+                        onAddHashtag()
+                    }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(
@@ -200,6 +211,14 @@ private struct BottomSheetTextFieldView: View {
                 }
             }
             .padding(.horizontal, 20)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("완료") {
+                    dismissKeyboard()
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 extension View {
     /// 화면 상단의 내비게이션 바에 커스텀 타이틀 뷰와 오른쪽 버튼을 설정합니다.
@@ -78,5 +79,12 @@ extension View {
                 contentMode: contentMode
             )
         )
+    }
+    
+    /// 현재 포커스된 First Responder를 해제하여 키보드를 내립니다.
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil)
     }
 }
