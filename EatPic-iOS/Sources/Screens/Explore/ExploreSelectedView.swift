@@ -64,6 +64,7 @@ struct ExploreSelectedView: View {
         .scrollIndicators(.hidden)
         .task {
             await viewModel.fetchCardDetail(cardId: cardId)
+            await viewModel.fetchRecommendedCards()
         }
         .onChange(of: viewModel.errMsg) { _, newValue in
             if newValue != nil {
@@ -113,34 +114,70 @@ struct ExploreSelectedView: View {
                 .foregroundStyle(.black)
             
             LazyVGrid(columns: columns, spacing: 9, content: {
-                ForEach(0..<9) { _ in
-                    explorePicCard()
+                ForEach(viewModel.recommended, id: \.id) { card in
+                    ExplorePicCardView(
+                        imageURL: card.imageURL,
+                        commentCount: card.commentCount,
+                        reactionCount: card.reactionCount
+                    )
                 }
             })
         }
     }
+}
+
+/// 각 피드 카드 뷰: 게시물 이미지 + 댓글/공감 수
+struct ExplorePicCardView: View {
+    private let imageURL: URL
+    private let commentCount: Int
+    private let reactionCount: Int
     
-    private func explorePicCard() -> some View {
+    init(imageURL: URL, commentCount: Int, reactionCount: Int) {
+        self.imageURL = imageURL
+        self.commentCount = commentCount
+        self.reactionCount = reactionCount
+    }
+    
+    var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(.Community.testImage1)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.2)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .failure:
+                        Color.gray.opacity(0.2)
+                    @unknown default:
+                        Color.gray.opacity(0.2)
+                    }
+                }
+                .frame(width: geometry.size.width)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                // Bottom gradient for legibility
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.35), Color.clear]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .allowsHitTesting(false)
                 
                 HStack(spacing: 4) {
                     Image("icon_comment")
                         .resizable()
                         .frame(width: 18, height: 18)
-                    Text("99+")
+                    Text("\(commentCount)")
                         .font(.dsBold13)
                         .foregroundStyle(Color.white)
                     Image("icon_emotion")
                         .resizable()
                         .frame(width: 18, height: 18)
-                    Text("10")
+                    Text("\(reactionCount)")
                         .font(.dsBold13)
                         .foregroundStyle(Color.white)
                 }
@@ -259,7 +296,6 @@ extension MealSlot {
     }
 }
 
-
 import Moya
 
 @Observable
@@ -267,19 +303,39 @@ final class ExploreSelectedViewModel {
     private(set) var picCard: PicCard?
     private(set) var errMsg: String?
     private let cardProvider: MoyaProvider<CardTargetType>
+    private let exploreRepository: ExploreRepository
+    private(set) var recommended: [ExploreCard] = []
     
     init(container: DIContainer) {
         cardProvider = container.apiProviderStore.card()
+        self.exploreRepository = ExploreRepositoryImpl(container: container)
     }
 
     func fetchCardDetail(cardId: Int) async {
         do {
             let response = try await cardProvider.requestAsync(.fetchCardDetail(cardId: cardId))
             let dto = try JSONDecoder().decode(CardDetailResponse.self, from: response.data)
-            picCard = dto.result.toPicCard()
+            
+            await MainActor.run {
+                picCard = dto.result.toPicCard()
+            }
         } catch {
             print("Failed to fetch card detail: \(error)")
             errMsg = error.localizedDescription
+        }
+    }
+    
+    func fetchRecommendedCards() async {
+        do {
+            // 더 찾아보기 뷰에 대한 api가 없는 관계로 `api/search` api로 대체함
+            let items = try await exploreRepository.fetchCards(limit: 20)
+            
+            await MainActor.run {
+                self.recommended = items
+            }
+        } catch {
+            print("Failed to fetch recommended cards: \(error)")
+            errMsg = "추천 피드를 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
         }
     }
 }

@@ -59,7 +59,7 @@ extension CardTargetType: APITargetType {
                 params["cursor"] = cursor
             }
             return .requestParameters(parameters: params, encoding: URLEncoding.default)
-        case .fetchCardDetail(let cardId):
+        case .fetchCardDetail:
             return .requestPlain
         case let .createFeed(request, image, fileName, mimeType):
             // 멀티파트 파트 구성:

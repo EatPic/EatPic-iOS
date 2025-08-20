@@ -90,7 +90,7 @@ struct ExploreMainView: View {
                     Button {
                         container.router.push(.exploreSelected(cardId: card.id))
                     } label: {
-                        explorePicCard(
+                        ExplorePicCardView(
                             imageURL: card.imageURL,
                             commentCount: card.commentCount,
                             reactionCount: card.reactionCount
@@ -100,57 +100,6 @@ struct ExploreMainView: View {
             })
         }
         .scrollIndicators(.hidden)
-    }
-    
-    /// 각 피드 카드 뷰: 게시물 이미지 + 댓글/공감 수
-    private func explorePicCard(imageURL: URL, commentCount: Int, reactionCount: Int) -> some View {
-        GeometryReader { geometry in
-            ZStack {
-                AsyncImage(url: imageURL) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.2)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.2)
-                    @unknown default:
-                        Color.gray.opacity(0.2)
-                    }
-                }
-                .frame(width: geometry.size.width)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                // Bottom gradient for legibility
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.black.opacity(0.35), Color.clear]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                .allowsHitTesting(false)
-                
-                HStack(spacing: 4) {
-                    Image("icon_comment")
-                        .resizable()
-                        .frame(width: 18, height: 18)
-                    Text("\(commentCount)")
-                        .font(.dsBold13)
-                        .foregroundStyle(Color.white)
-                    Image("icon_emotion")
-                        .resizable()
-                        .frame(width: 18, height: 18)
-                    Text("\(reactionCount)")
-                        .font(.dsBold13)
-                        .foregroundStyle(Color.white)
-                }
-                .padding(8)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-            }
-        }
-        .aspectRatio(1, contentMode: .fit)
     }
 }
 
