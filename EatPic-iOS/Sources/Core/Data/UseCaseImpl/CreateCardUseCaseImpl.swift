@@ -17,7 +17,7 @@ final class CreateCardUseCaseImpl: CreateCardUseCase {
         repository: CardRepository,
         encoder: ImageEncodingStrategy = ImageEncoderPipeline(
             [HEICEncoder(), JPEGEncoder(), PNGEncoder()]),
-        maxBytes: Int = 1_000_000,
+        maxBytes: Int = 1_000_000
     ) {
         self.repository = repository
         self.encoder = encoder

@@ -30,7 +30,7 @@ struct CommentBottomSheetView: View {
                             } else {
                                 ForEach(viewModel.comments, id: \.id) { comment in
                                     commentListView(
-                                        userName: comment.user.id,
+                                        userName: comment.user.nameId,
                                         profileImage: comment.user.imageName ?? "Community/itcong",
                                         commentText: comment.text,
                                         time: comment.time

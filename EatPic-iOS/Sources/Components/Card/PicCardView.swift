@@ -22,7 +22,7 @@ struct PicCardView<Content: View>: View {
     let onProfileTap: (() -> Void)?
     let onLocationTap: ((Double, Double, String) -> Void)?
     let toastVM: ToastViewModel
-    let onItemAction: ((UUID, PicCardItemActionType) -> Void)? //카드 ID 전달 추가
+    let onItemAction: ((Int, PicCardItemActionType) -> Void)? // 카드 ID 전달 추가
     
     @State private var isFlipped = false
     
@@ -33,7 +33,7 @@ struct PicCardView<Content: View>: View {
         onProfileTap: (() -> Void)? = nil,
         onLocationTap: ((Double, Double, String) -> Void)? = nil,
         toastVM: ToastViewModel,
-        onItemAction: ((UUID, PicCardItemActionType) -> Void)? = nil
+        onItemAction: ((Int, PicCardItemActionType) -> Void)? = nil
     ) {
         self.card = card
         self.menuContent = menuContent
@@ -63,7 +63,7 @@ struct PicCardView<Content: View>: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(card.user.id)
+                    Text(card.user.nameId)
                         .font(.dsHeadline)
                         .foregroundStyle(Color.gray080)
                     Text(card.time)
@@ -91,7 +91,7 @@ struct PicCardView<Content: View>: View {
                 if !isFlipped {
                     // 카드 앞면 (이미지)
                     PicCardFrontView(card: card, toastVM: toastVM) { action in
-                        onItemAction?(card.id, action)
+                        onItemAction?(card.cardId, action)
                     } 
                 } else {
                     // 카드 뒷면 (레시피)

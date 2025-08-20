@@ -113,13 +113,13 @@ struct FollowListView: View {
     /// 한 명의 유저를 표시하는 행 뷰
     private func userRowView(user: CommunityUser) -> some View {
         HStack(spacing: 16) {
-            ProfileImageView(image: user.profileImage, size: 47)
+            ProfileImageView(image: user.imageName, size: 47)
             
             VStack(alignment: .leading) {
                 Text(user.nickname)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.black)
-                Text(user.id)
+                Text(user.nameId)
                     .font(.dsSubhead)
                     .foregroundStyle(Color.gray060)
             }

@@ -9,8 +9,12 @@ import SwiftUI
 
 // MARK: - 메인 뷰
 struct MealStatusView: View {
-    @StateObject private var viewModel = MealStatusViewModel()
+    @State private var viewModel: MealStatusViewModel
     @State private var isEditMode = false
+    
+    init(container: DIContainer) {
+        self.viewModel = .init(container: container)
+    }
     
     var body: some View {
         VStack {
@@ -36,6 +40,9 @@ struct MealStatusView: View {
         .padding(.horizontal, 19)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
+        .task {
+            await viewModel.fetchMealStatus()
+        }
     }
     
     private var topBarView: some View {
@@ -101,7 +108,7 @@ private struct EmptyMealView: View {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.gray030)
 
-                Text(meal.mealTime)
+                Text(meal.displayName)
                     .font(.dsBold15)
                     .foregroundStyle(Color.gray060)
             }
@@ -137,7 +144,7 @@ private struct RecordedMealView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.green050)
-                Text(meal.mealTime)
+                Text(meal.displayName)
                     .font(.dsBold15)
                     .foregroundStyle(Color.white)
             }
@@ -147,8 +154,8 @@ private struct RecordedMealView: View {
 
             ZStack {
                 if let imageName = meal.imageName {
-                    Image(imageName)
-                        .resizable()
+                    Rectangle()
+                        .remoteImage(url: imageName)
                         .frame(width: 76, height: 76)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else {
@@ -177,5 +184,5 @@ private struct RecordedMealView: View {
 }
 
 #Preview {
-    MealStatusView()
+    MealStatusView(container: .init())
 }

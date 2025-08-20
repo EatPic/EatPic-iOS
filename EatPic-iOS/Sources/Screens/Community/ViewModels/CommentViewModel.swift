@@ -31,7 +31,7 @@ final class CommentViewModel {
     func postComment() {
         guard !commentText.isEmpty else { return }
         
-        let currentUser = CommunityUser(from: dummyFeedUser)
+        let currentUser = dummyFeedUser.toCommunityUser()
         
         // 새 댓글 생성
         let newComment = Comment(user: currentUser, text: commentText, time: "방금 전")
@@ -76,7 +76,7 @@ final class CommentViewModel {
     
     // 댓글 작성자가 현재 사용자인지 확인하는 메서드
     func isMyComment(_ comment: Comment) -> Bool {
-        let currentUser = CommunityUser(from: dummyFeedUser)
+        let currentUser = dummyFeedUser.toCommunityUser()
         return comment.user.id == currentUser.id
     }
     
