@@ -10,9 +10,7 @@ import SwiftUI
 struct CommentBottomSheetView: View {
     @Binding var isShowing: Bool
     @State var viewModel: CommentViewModel
-    
-//    let cardId: Int
-    
+        
     var body: some View {
         VStack {
             ScrollView {
@@ -76,6 +74,19 @@ struct CommentBottomSheetView: View {
             .presentationDetents([.large, .fraction(0.7)])
             .presentationDragIndicator(.hidden)
         }
+        .task(id: viewModel.selectedCardId) {
+            if viewModel.selectedCardId != nil {
+                print("""
+            CommentBottomSheetView task 실행 - selectedCardId: 
+            \(String(describing: viewModel.selectedCardId))
+            """)
+                await viewModel.fetchComments()
+            }
+        }
+//        .onDisappear {
+//            viewModel.nextCursor = nil
+//            viewModel.hasNextPage = true
+//        }
     }
     
     private func commentListView(userName: String, profileImage: String,

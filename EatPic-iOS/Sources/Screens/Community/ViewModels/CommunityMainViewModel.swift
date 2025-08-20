@@ -281,6 +281,10 @@ class CommunityMainViewModel {
     private func handleCommentAction(cardId: Int, count: Int) {
         isShowingCommentBottomSheet = true
         commentVM.selectedCardId = cardId
+        
+        // 디버깅을 위한 로그 추가
+            print("댓글 액션 처리 - cardId: \(cardId), count: \(count)")
+            print("isShowingCommentBottomSheet 상태: \(isShowingCommentBottomSheet)")
     }
     
 //    func postComment(cardId: Int, content: String, parentCommentId: Int = 0) async {

@@ -11,15 +11,12 @@ struct CommunityMainView: View {
     
     @EnvironmentObject private var container: DIContainer
     @State private var viewModel: CommunityMainViewModel
-//    @State private var commentVM: CommentViewModel
     
     init(container: DIContainer) {
         self._viewModel = .init(initialValue: .init(container: container))
-//        self._commentVM = .init(initialValue: .init(container: container))
     }
     
     var body: some View {
-        ZStack {
             ScrollView {
                 VStack(spacing: 40) {
                     userListView()
@@ -30,6 +27,25 @@ struct CommunityMainView: View {
             .scrollIndicators(.hidden)
             .toastView(viewModel: viewModel.toastVM)
             .padding(.horizontal, 16)
+            .overlay {
+                        if viewModel.showDeleteModal {
+                            DecisionModalView(
+                                message: "Pic카드를 정말 삭제하시겠어요?",
+                                messageColor: .gray080,
+                                leftBtnText: "취소",
+                                rightBtnText: "삭제",
+                                rightBtnColor: .red050,
+                                leftBtnAction: {
+                                    viewModel.showDeleteModal = false
+                                },
+                                rightBtnAction: {
+                                    Task {
+                                        await viewModel.confirmDeletion()
+                                    }
+                                }
+                            )
+                        }
+                    }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
                     isShowing: $viewModel.isShowingReportBottomSheet,
@@ -50,27 +66,9 @@ struct CommunityMainView: View {
                     }
                     .onDisappear {
                         print("CommentBottomSheetView disappeared")
+                        viewModel.commentVM.commentText = ""
                     }
             }
-            
-            if viewModel.showDeleteModal {
-                DecisionModalView(
-                    message: "Pic카드를 정말 삭제하시겠어요?",
-                    messageColor: .gray080,
-                    leftBtnText: "취소",
-                    rightBtnText: "삭제",
-                    rightBtnColor: .red050,
-                    leftBtnAction: {
-                        viewModel.showDeleteModal = false
-                    },
-                    rightBtnAction: {
-                        Task {
-                            await viewModel.confirmDeletion()
-                        }
-                    }
-                )
-            }
-        }
     }
     
     private func userListView() -> some View {
