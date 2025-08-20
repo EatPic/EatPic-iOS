@@ -24,8 +24,20 @@ class RecomPicCardViewModel {
             let dto = try JSONDecoder().decode(
                 RecommendedCardsResponse.self,
                 from: response.data)
-            // http/https URL만 필터링하여 유효한 이미지만 받아옴
-            self.cards = dto.result.filter { isValidHTTPURL($0.cardImageUrl) }
+//            // http/https URL만 필터링하여 유효한 이미지만 받아옴
+//            self.cards = dto.result.filter { isValidHTTPURL($0.cardImageUrl) }
+//            
+            
+            
+            // 🔎 원본 서버 응답 로그
+                   print(">>> RAW recommended IDs:", dto.result.map { $0.cardId })
+
+                   // http/https URL만 필터링하여 유효한 이미지만 받아옴
+                   self.cards = dto.result.filter { isValidHTTPURL($0.cardImageUrl) }
+
+                   // 🔎 매핑된 ViewModel.cards 로그
+                   print(">>> MAPPED viewModel.cards IDs:", cards.map { $0.cardId })
+            
             print(dto)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
