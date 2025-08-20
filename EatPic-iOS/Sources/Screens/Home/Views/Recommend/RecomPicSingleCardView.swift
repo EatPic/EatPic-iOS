@@ -39,9 +39,6 @@ struct RecomPicCardView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-//        .task {
-//            await viewModel.recomPicSingleCard(cardId: cardId)
-//        }
         .task {
             await viewModel.recomPicSingleCard(cardId: cardId)
         }
