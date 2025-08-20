@@ -10,6 +10,7 @@ import Moya
 
 enum ReactionTargetType {
     case postReaction(cardId: Int, reactionType: ReactionTypes)
+    case getReactionUsers(cardId: Int, reactionType: ReactionType, page: Int, size: Int)
 }
 
 extension ReactionTargetType: APITargetType {
@@ -17,6 +18,8 @@ extension ReactionTargetType: APITargetType {
         switch self {
         case .postReaction(let cardId, let reactionType):
             return "/api/reactions/\(cardId)/\(reactionType.rawValue)"
+        case .getReactionUsers(let cardId, let reactionType, _, _):
+            return "/api/reactions/\(cardId)/\(reactionType.rawValue)/users"
         }
     }
     
@@ -24,6 +27,8 @@ extension ReactionTargetType: APITargetType {
         switch self {
         case .postReaction:
             return .post
+        case .getReactionUsers:
+            return .get
         }
     }
     
@@ -31,6 +36,14 @@ extension ReactionTargetType: APITargetType {
         switch self {
         case .postReaction(let cardId, let reactionType):
             return .requestPlain
+        case .getReactionUsers(_, _, let page, let size):
+            return .requestParameters(
+                parameters: [
+                    "page": page,
+                    "size": size
+                ],
+                encoding: URLEncoding.queryString
+            )
         }
     }
     
