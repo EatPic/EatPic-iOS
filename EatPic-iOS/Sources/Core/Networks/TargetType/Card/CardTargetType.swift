@@ -15,6 +15,7 @@ enum CardTargetType {
     case deleteCard(cardId: Int)
     case recommendedCard
     case todayMeals
+    case profileFeed(userId: Int, cursor: Int?, size: Int)
     case recomPicSingleCard(cardId: Int)
 }
 
@@ -31,6 +32,8 @@ extension CardTargetType: APITargetType {
             return "/api/cards/recommended-cards"
         case .todayMeals:
             return "/api/cards/home/today-cards"
+        case .profileFeed(let userId, _, _):
+            return "/api/cards/profile/\(userId)"
         case .recomPicSingleCard(let cardId):
             return "/api/cards/\(cardId)/feed"
         }
@@ -38,7 +41,7 @@ extension CardTargetType: APITargetType {
     
     var method: Moya.Method {
         switch self {
-        case .fetchFeeds, .recommendedCard, .todayMeals, .recomPicSingleCard:
+        case .fetchFeeds, .recommendedCard, .todayMeals, .recomPicSingleCard, .profileFeed:
             return .get
         case .createFeed:
             return .post
@@ -87,6 +90,10 @@ extension CardTargetType: APITargetType {
             
         case .recommendedCard, .todayMeals, .recomPicSingleCard:
             return .requestPlain
+        case .profileFeed(_, let cursor, _):
+            return .requestParameters(
+                parameters: ["cursor" : cursor],
+                encoding: URLEncoding.queryString)
         }
     }
     
