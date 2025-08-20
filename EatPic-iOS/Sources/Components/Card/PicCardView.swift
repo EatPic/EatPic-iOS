@@ -130,7 +130,12 @@ struct PicCardFrontView: View {
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 
-                PicCardItemView(card: card, toastVM: toastVM) { action in
+                PicCardItemView(
+                    card: card,
+                    toastVM: toastVM,
+                    commentCount: card.commentCount,
+                    totalReactionCount: card.reactionCount
+                ) { action in
                     onItemAction?(action)
                 }
                     .frame(maxWidth: .infinity, maxHeight: .infinity,

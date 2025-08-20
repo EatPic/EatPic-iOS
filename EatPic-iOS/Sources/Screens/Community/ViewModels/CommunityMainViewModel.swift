@@ -14,7 +14,7 @@ class CommunityMainViewModel {
     
     // MARK: - View State
     var selectedUser: CommunityUser?
-    var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
+    var filteredCards: [PicCard] = sampleCards // 초기값을 비어있는 배열로 변경
     var users: [CommunityUser] = []
     var currentUser: CommunityUser? {
         users.first { $0.userType == .me }

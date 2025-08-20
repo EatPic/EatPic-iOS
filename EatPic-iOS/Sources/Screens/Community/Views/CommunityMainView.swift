@@ -28,24 +28,24 @@ struct CommunityMainView: View {
             .toastView(viewModel: viewModel.toastVM)
             .padding(.horizontal, 16)
             .overlay {
-                        if viewModel.showDeleteModal {
-                            DecisionModalView(
-                                message: "Pic카드를 정말 삭제하시겠어요?",
-                                messageColor: .gray080,
-                                leftBtnText: "취소",
-                                rightBtnText: "삭제",
-                                rightBtnColor: .red050,
-                                leftBtnAction: {
-                                    viewModel.showDeleteModal = false
-                                },
-                                rightBtnAction: {
-                                    Task {
-                                        await viewModel.confirmDeletion()
-                                    }
-                                }
-                            )
+                if viewModel.showDeleteModal {
+                    DecisionModalView(
+                        message: "Pic카드를 정말 삭제하시겠어요?",
+                        messageColor: .gray080,
+                        leftBtnText: "취소",
+                        rightBtnText: "삭제",
+                        rightBtnColor: .red050,
+                        leftBtnAction: {
+                            viewModel.showDeleteModal = false
+                        },
+                        rightBtnAction: {
+                            Task {
+                                await viewModel.confirmDeletion()
+                            }
                         }
-                    }
+                    )
+                }
+            }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
                     isShowing: $viewModel.isShowingReportBottomSheet,
@@ -58,16 +58,10 @@ struct CommunityMainView: View {
             .sheet(isPresented: $viewModel.isShowingCommentBottomSheet) {
                 CommentBottomSheetView(
                     isShowing: $viewModel.isShowingCommentBottomSheet,
-                    viewModel: viewModel.commentVM)
-                    .presentationDetents([.large, .fraction(0.7)])
-                    .presentationDragIndicator(.hidden)
-                    .onAppear {
-                        print("CommentBottomSheetView appeared")
-                    }
-                    .onDisappear {
-                        print("CommentBottomSheetView disappeared")
-                        viewModel.commentVM.commentText = ""
-                    }
+                    viewModel: viewModel.commentVM
+                )
+                .presentationDetents([.large, .fraction(0.7)])
+                .presentationDragIndicator(.hidden)
             }
     }
     
