@@ -6,9 +6,18 @@
 //
 
 import SwiftUI
+import Combine
 
 // 메인 탐색(Explore) 화면 뷰
 struct ExploreMainView: View {
+    private enum ExploreMode: Equatable {
+        case exploreFeed
+        case searchResults
+        case hashtagFeed(hashtagId: Int, title: String)
+    }
+
+    @State private var mode: ExploreMode = .exploreFeed
+
     // 검색창에 입력되는 텍스트 상태
     @State var searchText: String = ""
     @EnvironmentObject private var container: DIContainer
@@ -22,12 +31,19 @@ struct ExploreMainView: View {
     var body: some View {
         VStack(spacing: 20) {
             searchBar()
-            exploreFeed()
+            if case .searchResults = mode,
+               !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                searchResultsView()
+            } else {
+                exploreFeed()
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 16)
         .task {
-            await viewModel.fetch(limit: 20)
+            if case .exploreFeed = mode {
+                await viewModel.fetch(limit: 20)
+            }
         }
     }
     
@@ -40,10 +56,24 @@ struct ExploreMainView: View {
             backgroundColor: .white,
             strokeColor: .gray080,
             onSubmit: {
-                print("onSubmit")
+                Task {
+                    await viewModel.updateQuery(searchText)
+                }
+                // 두 글자 이상
+                if searchText.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2 {
+                    mode = .searchResults
+                }
             },
-            onChange: {_ in 
-                print("onChange")
+            onChange: { newText in
+                Task {
+                    await viewModel.updateQuery(newText)
+                }
+                let trimmed = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed.count >= 2 {
+                    mode = .searchResults
+                } else {
+                    mode = .exploreFeed
+                }
             }
         )
     }
@@ -64,6 +94,110 @@ struct ExploreMainView: View {
                     }
                 }
             })
+        }
+        .scrollIndicators(.hidden)
+    }
+    
+    /// 검색 결과 리스트 (계정 / 해시태그 섹션)
+    private func searchResultsView() -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                // Accounts Section
+                if !viewModel.accounts.isEmpty
+                    || viewModel.isLoadingAccounts {
+                    Text("계정")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    VStack(spacing: 8) {
+                        ForEach(
+                            viewModel.accounts as [AccountSummary],
+                            id: \AccountSummary.userId
+                        ) { (acc: AccountSummary) in
+                            Button {
+                                // 계정 탭 임시 정책: 아직 API 미제작이므로 토스트/무시
+                                // 추후 라우팅 교체
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image("ic_profile_default")
+                                        .resizable()
+                                        .frame(width: 36, height: 36)
+                                        .clipShape(Circle())
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(acc.nickname)
+                                            .font(.dsBold15)
+                                        Text(acc.nameId)
+                                            .font(.dsBold15)
+                                            .foregroundStyle(Color.gray)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                        // Accounts pagination trigger
+                        if viewModel.hasNextAccounts {
+                            HStack {
+                                Spacer()
+                                ProgressView().onAppear {
+                                    Task { await viewModel.loadMoreAccounts() }
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+
+                // Hashtags Section
+                if !viewModel.hashtags.isEmpty || viewModel.isLoadingHashtags {
+                    Text("해시태그")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    VStack(spacing: 8) {
+                        ForEach(viewModel.hashtags, id: \.hashtagId) { tag in
+                            Button {
+                                Task {
+                                    await viewModel.fetchHashtagFeed(
+                                        hashtagId: tag.hashtagId, limit: 20)
+                                    mode = .hashtagFeed(hashtagId: tag.hashtagId, title: tag.title)
+                                    // 검색어는 유지하되 결과 화면 전환
+                                }
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Text("#\(tag.title)")
+                                        .font(.dsBold15)
+                                    Text("\(tag.postCount)")
+                                        .font(.dsTitle1)
+                                        .foregroundStyle(Color.gray050)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                        // Hashtags pagination trigger
+                        if viewModel.hasNextHashtags {
+                            HStack {
+                                Spacer()
+                                ProgressView().onAppear {
+                                    Task { await viewModel.loadMoreHashtags() }
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+
+                if viewModel.isEmptyResults
+                    && !(viewModel.isLoadingAccounts
+                         || viewModel.isLoadingHashtags) {
+                    Text("검색 결과가 없습니다.")
+                        .font(.dsBold15)
+                        .foregroundStyle(Color.gray050)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 24)
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.bottom, 8)
         }
         .scrollIndicators(.hidden)
     }
@@ -90,6 +224,13 @@ struct ExploreMainView: View {
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
+                // Bottom gradient for legibility
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.35), Color.clear]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .allowsHitTesting(false)
                 
                 HStack(spacing: 4) {
                     Image("icon_comment")
@@ -112,142 +253,6 @@ struct ExploreMainView: View {
         .aspectRatio(1, contentMode: .fit)
     }
 }
-
-// MARK: - Models
-struct ExploreCard: Identifiable, Equatable {
-    let id: Int
-    let imageURL: URL
-    let commentCount: Int
-    let reactionCount: Int
-}
-
-// API Response DTOs
-struct ExploreSearchResponseDTO: Decodable {
-    let isSuccess: Bool
-    let code: String
-    let message: String
-    let result: ResultPayload
-
-    struct ResultPayload: Decodable {
-        let cards: [CardDTO]
-        let nextCursor: Int? // null 가능
-        let size: Int
-        let hasNext: Bool
-    }
-}
-
-struct CardDTO: Decodable {
-    let commentCount: Int
-    let reactionCount: Int
-    let cardId: Int
-    let cardImageURL: URL
-
-    private enum CodingKeys: String, CodingKey {
-        case commentCount, reactionCount
-        case cardId = "card_id"
-        case cardImageURL = "card_image_url"
-    }
-}
-
-// DTO -> Domain Mapper
-extension CardDTO {
-    func toDomain() -> ExploreCard {
-        ExploreCard(
-            id: cardId,
-            imageURL: cardImageURL,
-            commentCount: commentCount,
-            reactionCount: reactionCount
-        )
-    }
-}
-
-import Moya
-
-// MARK: - API Target
-enum ExploreAPITarget: APITargetType {
-    case search(limit: Int)
-
-    var path: String {
-        switch self {
-        case .search:
-            return "/api/search"
-        }
-    }
-
-    var method: Moya.Method { .get }
-
-    var task: Task {
-        switch self {
-        case .search(let limit):
-            return .requestParameters(
-                parameters: ["limit": limit],
-                encoding: URLEncoding.queryString
-            )
-        }
-    }
-}
-
-// MARK: - Repository
-protocol ExploreRepository {
-    func fetchCards(limit: Int) async throws -> [ExploreCard]
-}
-
-final class ExploreRepositoryImpl: ExploreRepository {
-    private let provider: MoyaProvider<ExploreAPITarget>
-
-    init(provider: MoyaProvider<ExploreAPITarget> = .init()) {
-        self.provider = provider
-    }
-
-    func fetchCards(limit: Int) async throws -> [ExploreCard] {
-        let response = try await provider.asyncRequest(.search(limit: limit))
-        let decoded = try JSONDecoder().decode(ExploreSearchResponseDTO.self, from: response.data)
-        return decoded.result.cards.map { $0.toDomain() }
-    }
-}
-
-// MARK: - ViewModel
-@MainActor
-final class ExploreViewModel: ObservableObject {
-    @Published private(set) var cards: [ExploreCard] = []
-    @Published private(set) var isLoading = false
-    @Published var errorMessage: String? = nil
-
-    private let repository: ExploreRepository
-
-    init(repository: ExploreRepository = ExploreRepositoryImpl()) {
-        self.repository = repository
-    }
-
-    func fetch(limit: Int) async {
-        isLoading = true
-        defer { isLoading = false }
-        
-        do {
-            let items = try await repository.fetchCards(limit: limit)
-            self.cards = items
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
-}
-
-// MARK: - Moya async helper
-private extension MoyaProvider {
-    func asyncRequest(_ target: Target) async throws -> Response {
-        try await withCheckedThrowingContinuation { continuation in
-            self.request(target) { result in
-                switch result {
-                case .success(let response):
-                    continuation.resume(returning: response)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-}
-
 
 #Preview {
     ExploreMainView()
