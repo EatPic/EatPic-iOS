@@ -9,7 +9,7 @@ import SwiftUI
 
 typealias HashtagRecordVMFactory = @MainActor (_ date: Date) -> HashtagRecordViewModel
 
-private struct AlertPayload: Identifiable {
+struct AlertPayload: Identifiable {
     let id = UUID()
     let title: String
     let message: String

@@ -120,18 +120,6 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
     }
 }
 
-#Preview("뱃지 획득 중 ~ 획득 완료") {
-    BadgeProgressModalView(
-        badgeType: BadgeModalType.badgeUnlocked(
-            progress: 0.7,
-            icon: Image(systemName: "star.fill")),
-        closeBtnAction: { print("close") },
-        badgeSize: 130,
-        badgeTitle: "혼밥러",
-        badgeDescription: "'혼밥' 해시태그를 10회 이상 사용 시 획득할 수 있습니다."
-    )
-}
-
 #Preview("뱃지 잠금") {
     BadgeProgressModalView(
         badgeType: BadgeModalType.badgeLocked,

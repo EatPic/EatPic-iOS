@@ -16,6 +16,9 @@ class CommunityMainViewModel {
     var selectedUser: CommunityUser?
     var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
     var users: [CommunityUser] = []
+    var currentUser: CommunityUser? {
+        users.first { $0.userType == .me }
+    }
     var hasNextPage: Bool = true
     var showDeleteModal = false
     var isShowingReportBottomSheet = false
@@ -29,23 +32,29 @@ class CommunityMainViewModel {
     private let cardProvider: MoyaProvider<CardTargetType>
     private let bookmarkProvider: MoyaProvider<BookmarkTargetType>
     private let userProvider: MoyaProvider<UserTargetType>
+    private let reactionProvider: MoyaProvider<ReactionTargetType>
     
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
         self.bookmarkProvider = container.apiProviderStore.bookmark()
         self.userProvider = container.apiProviderStore.user()
+        self.reactionProvider = container.apiProviderStore.reaction()
     }
     
     func fetchFeeds() async {
         guard hasNextPage && !isFetching else { return }
+        guard let myId = currentUser?.id else {
+            print("❌ 로그인된 유저 ID를 찾을 수 없음")
+            return
+        }
         
         self.isFetching = true
         let pageSize = 15
         
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(userId: 24, cursor: nextCursor, size: pageSize))
+                .fetchFeeds(userId: myId, cursor: nextCursor, size: pageSize))
             let dto = try JSONDecoder().decode(
                 APIResponse<FeedResult>.self, from: response.data)
             
@@ -160,9 +169,8 @@ class CommunityMainViewModel {
     
     // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
     func isMyCard(_ card: PicCard) -> Bool {
-        // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
-        // 예시: return card.user.id == currentUser.id
-        return card.user.id == 24 // 임시 로직
+        guard let me = currentUser else { return false }
+        return card.user.id == me.id
     }
     
     // MARK: - Actions
@@ -230,7 +238,7 @@ class CommunityMainViewModel {
         case .comment(let count):
             handleCommentAction(cardId: cardId, count: count)
         case .reaction(let selected, let counts):
-            handleReactionAction(cardId: cardId, selected: selected, counts: counts)
+            await handleReactionAction(cardId: cardId, selected: selected, counts: counts)
         }
     }
     
@@ -239,7 +247,17 @@ class CommunityMainViewModel {
             let response = try await bookmarkProvider.requestAsync(.postBookmark(cardId: cardId))
             let dto = try JSONDecoder().decode(
                 APIResponse<BookmarkResult>.self, from: response.data)
-                        
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+    
+    func deleteBookmark(cardId: Int) async {
+        do {
+            let response = try await bookmarkProvider.requestAsync(.deleteBookmark(cardId: cardId))
+            let dto = try JSONDecoder().decode(
+                APIResponse<BookmarkResult>.self, from: response.data)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
@@ -247,8 +265,15 @@ class CommunityMainViewModel {
     
     // 북마크 액션 처리
     private func handleBookmarkAction(cardId: Int, isOn: Bool) async {
-        // 실제 구현: API 호출하여 서버에 북마크 상태 업데이트
-        await postBookmark(cardId: cardId)
+        if isOn {
+            // 북마크 추가
+            await postBookmark(cardId: cardId)
+        } else {
+            // 북마크 해제
+            await deleteBookmark(cardId: cardId)
+        }
+        
+        // UI 업데이트
         updateCardBookmarkStatus(cardId: cardId, isBookmarked: isOn)
         
         // 선택적으로 토스트 메시지 표시 (PicCardItemView에서 이미 처리되므로 중복 방지)
@@ -260,19 +285,61 @@ class CommunityMainViewModel {
         isShowingCommentBottomSheet = true
     }
     
+    // 리액션 추가/수정
+    func postReaction(cardId: Int, type: ReactionType) async {
+        guard let reactionToServer = ReactionTypes(rawValue: type.rawValue) else {
+            print("Error: Could not convert reaction type \(type.rawValue) to server type")
+            return
+        }
+        
+        do {
+            _ = try await reactionProvider.requestAsync(
+                .postReaction(cardId: cardId, reactionType: reactionToServer))
+            print("리액션 등록 성공")
+        } catch {
+            print("리액션 등록 실패:", error.localizedDescription)
+        }
+    }
+    
+    // 리액션 삭제
+    //    func deleteReaction(cardId: Int) async {
+    //        do {
+    //            let response = try await reactionProvider.requestAsync(.deleteReaction(cardId: cardId))
+    //            let dto = try JSONDecoder().decode(APIResponse<ReactionResult>.self, from: response.data)
+    //
+    //            DispatchQueue.main.async {
+    //                self.updateCardReactionInfo(cardId: cardId, reactionCount: 0, userReaction: nil)
+    //            }
+    //
+    //            print("리액션 삭제 성공")
+    //        } catch {
+    //            print("리액션 삭제 실패:", error.localizedDescription)
+    //        }
+    //    }
+    
     // 리액션 액션 처리
     private func handleReactionAction(
-        cardId: Int, selected: ReactionType?,
-        counts: [ReactionType: Int]) {
-            // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
-            let totalCount = counts.values.reduce(0, +)
-            updateCardReactionInfo(
-                cardId: cardId, reactionCount: totalCount,
-                userReaction: selected?.rawValue)
-            
-            print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
-            print("리액션 카운트: \(counts)")
-        }
+        cardId: Int,
+        selected: ReactionType?,
+        counts: [ReactionType: Int]
+    ) async {
+            if let selected = selected {
+                // ✅ 변환해서 API 호출
+                await postReaction(cardId: cardId, type: selected)
+            } else {
+                //                    await deleteReaction(cardId: cardId)
+            }
+        
+        // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
+        let totalCount = counts.values.reduce(0, +)
+        updateCardReactionInfo(
+            cardId: cardId, reactionCount: totalCount,
+            userReaction: selected?.rawValue)
+        
+        print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
+        print("리액션 카운트: \(counts)")
+        
+    }
     
     // 특정 카드의 북마크 상태 업데이트
     func updateCardBookmarkStatus(cardId: Int, isBookmarked: Bool) {

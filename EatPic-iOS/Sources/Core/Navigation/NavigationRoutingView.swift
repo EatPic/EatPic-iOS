@@ -116,7 +116,7 @@ struct NavigationRoutingView: View {
         case .home:
             HomeView(container: container)
         case .myBadgeStatusAll:
-            MyBadgeStatusAllView()
+            MyBadgeStatusAllView(container: container)
         case .picCardEdit:
             PicCardEditView()
         case .calenderCard:

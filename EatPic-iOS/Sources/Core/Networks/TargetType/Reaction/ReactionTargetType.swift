@@ -1,5 +1,5 @@
 //
-//  BookmarkTargetType.swift
+//  ReactionTargetType.swift
 //  EatPic-iOS
 //
 //  Created by 원주연 on 8/19/25.
@@ -8,33 +8,28 @@
 import Foundation
 import Moya
 
-/// 북마크 저장/삭제를 위한 API를 정의하는 TargetType입니다.
-enum BookmarkTargetType {
-    case postBookmark(cardId: Int)
-    case deleteBookmark(cardId: Int)
+enum ReactionTargetType {
+    case postReaction(cardId: Int, reactionType: ReactionTypes)
 }
 
-extension BookmarkTargetType: APITargetType {
+extension ReactionTargetType: APITargetType {
     var path: String {
         switch self {
-        case .postBookmark(let cardId),
-                .deleteBookmark(let cardId):
-            return "api/bookmarks/\(cardId)"
+        case .postReaction(let cardId, let reactionType):
+            return "/api/reactions/\(cardId)/\(reactionType.rawValue)"
         }
     }
-
+    
     var method: Moya.Method {
         switch self {
-        case .postBookmark:
+        case .postReaction:
             return .post
-        case .deleteBookmark:
-            return .delete
         }
     }
-
+    
     var task: Task {
         switch self {
-        case .postBookmark, .deleteBookmark:
+        case .postReaction(let cardId, let reactionType):
             return .requestPlain
         }
     }
@@ -48,3 +43,4 @@ extension BookmarkTargetType: APITargetType {
                 """.utf8)
     }
 }
+
