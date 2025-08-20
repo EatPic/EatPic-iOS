@@ -13,13 +13,13 @@ struct MealStatusModel: Identifiable {
     let mealSlot: MealSlot
     let isRecorded: Bool
     let imageName: String?
-    let cardId: Int?   // ⬅️ 추가: 서버 삭제에 필요
+    let cardId: Int?
 
     init(
         mealSlot: MealSlot,
         isRecorded: Bool = false,
         imageName: String? = nil,
-        cardId: Int? = nil   // ⬅️ 추가
+        cardId: Int? = nil
     ) {
         self.mealSlot = mealSlot
         self.isRecorded = isRecorded
