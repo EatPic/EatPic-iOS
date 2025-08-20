@@ -238,7 +238,8 @@ class CommunityMainViewModel {
         case .comment(let count):
             handleCommentAction(cardId: cardId, count: count)
         case .reaction(let selected, let counts):
-            await handleReactionAction(cardId: cardId, selected: selected, counts: counts)
+            await handleReactionAction(cardId: cardId, selected: selected,
+                                       previousReaction: selected, counts: counts)
         }
     }
     
@@ -285,60 +286,58 @@ class CommunityMainViewModel {
         isShowingCommentBottomSheet = true
     }
     
-    // 리액션 추가/수정
-    func postReaction(cardId: Int, type: ReactionType) async {
-        guard let reactionToServer = ReactionTypes(rawValue: type.rawValue) else {
-            print("Error: Could not convert reaction type \(type.rawValue) to server type")
-            return
-        }
-        
-        do {
-            _ = try await reactionProvider.requestAsync(
-                .postReaction(cardId: cardId, reactionType: reactionToServer))
-            print("리액션 등록 성공")
-        } catch {
-            print("리액션 등록 실패:", error.localizedDescription)
-        }
-    }
-    
-    // 리액션 삭제
-    //    func deleteReaction(cardId: Int) async {
-    //        do {
-    //            let response = try await reactionProvider.requestAsync(.deleteReaction(cardId: cardId))
-    //            let dto = try JSONDecoder().decode(APIResponse<ReactionResult>.self, from: response.data)
-    //
-    //            DispatchQueue.main.async {
-    //                self.updateCardReactionInfo(cardId: cardId, reactionCount: 0, userReaction: nil)
-    //            }
-    //
-    //            print("리액션 삭제 성공")
-    //        } catch {
-    //            print("리액션 삭제 실패:", error.localizedDescription)
-    //        }
-    //    }
+    // 리액션 추가/수정/삭제
+//    func postReaction(cardId: Int, type: ReactionType) async {
+//        guard let reactionToServer = ReactionTypes(rawValue: type.rawValue) else {
+//            print("Error: Could not convert reaction type \(type.rawValue) to server type")
+//            return
+//        }
+//        
+//        do {
+//            _ = try await reactionProvider.requestAsync(
+//                .postReaction(cardId: cardId, reactionType: reactionToServer))
+//            print("리액션 등록/삭제 성공")
+//        } catch {
+//            print("리액션 등록/삭제 실패:", error.localizedDescription)
+//        }
+//    }
     
     // 리액션 액션 처리
+    @MainActor
     private func handleReactionAction(
         cardId: Int,
         selected: ReactionType?,
+        previousReaction: ReactionType?,
         counts: [ReactionType: Int]
     ) async {
-            if let selected = selected {
-                // ✅ 변환해서 API 호출
-                await postReaction(cardId: cardId, type: selected)
-            } else {
-                //                    await deleteReaction(cardId: cardId)
+        do {
+            if let newReaction = selected,
+               let serverReaction = ReactionTypes(rawValue: newReaction.rawValue) {
+                // 새로운 리액션 등록
+                try await reactionProvider.requestAsync(
+                    .postReaction(cardId: cardId, reactionType: serverReaction.rawValue)
+                )
+            } else if let prev = previousReaction,
+                      let serverReaction = ReactionTypes(rawValue: prev.rawValue) {
+                // 같은 리액션 삭제
+                try await reactionProvider.requestAsync(
+                    .postReaction(cardId: cardId, reactionType: serverReaction.rawValue)
+                )
             }
+        } catch {
+            print("리액션 API 실패:", error)
+        }
         
         // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
         let totalCount = counts.values.reduce(0, +)
         updateCardReactionInfo(
-            cardId: cardId, reactionCount: totalCount,
-            userReaction: selected?.rawValue)
+            cardId: cardId,
+            reactionCount: totalCount,
+            userReaction: selected?.rawValue
+        )
         
         print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
         print("리액션 카운트: \(counts)")
-        
     }
     
     // 특정 카드의 북마크 상태 업데이트
