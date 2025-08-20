@@ -230,19 +230,18 @@ protocol ExploreRepository {
 }
 
 final class ExploreRepositoryImpl: ExploreRepository {
-    private let provider: MoyaProvider<ExploreAPITarget>
+    private let exploreProvider: MoyaProvider<ExploreAPITarget>
     private let searchProvider: MoyaProvider<SearchAPITarget>
 
     init(
-        provider: MoyaProvider<ExploreAPITarget> = .init(),
-        searchProvider: MoyaProvider<SearchAPITarget> = .init()
+        container: DIContainer
     ) {
-        self.provider = provider
-        self.searchProvider = searchProvider
+        self.exploreProvider = container.apiProviderStore.explore()
+        self.searchProvider = container.apiProviderStore.search()
     }
 
     func fetchCards(limit: Int) async throws -> [ExploreCard] {
-        let response = try await provider.asyncRequest(.search(limit: limit))
+        let response = try await exploreProvider.asyncRequest(.search(limit: limit))
         let decoded = try JSONDecoder().decode(ExploreSearchResponseDTO.self, from: response.data)
         return decoded.result.cards.map { $0.toDomain() }
     }
@@ -292,17 +291,18 @@ final class ExploreViewModel: ObservableObject {
     @Published private(set) var isLoadingHashtags = false
     @Published private(set) var hasNextAccounts = false
     @Published private(set) var hasNextHashtags = false
+    
+    @Published var didLoadSearchOnce = false
+    
+    private let repository: ExploreRepository
     private var nextCursorAccounts: Int? = nil
     private var nextCursorHashtags: Int? = nil
-
     private var currentQuery: String = ""
     
 //    private var searchTask: Task? = nil
 
-    private let repository: ExploreRepository
-
-    init(repository: ExploreRepository = ExploreRepositoryImpl()) {
-        self.repository = repository
+    init(container: DIContainer) {
+        self.repository = ExploreRepositoryImpl(container: container)
     }
 
     // Initial explore feed
@@ -339,28 +339,42 @@ final class ExploreViewModel: ObservableObject {
     private func search(query: String) async {
         isLoadingAccounts = true
         isLoadingHashtags = true
+        nextCursorAccounts = nil
+        nextCursorHashtags = nil
         defer {
             isLoadingAccounts = false
             isLoadingHashtags = false
         }
-        // Reset cursors on new query
-        nextCursorAccounts = nil
-        nextCursorHashtags = nil
-
-        async let accountsResult = repository.searchAccounts(query: query, limit: 20, cursor: nil)
-        async let hashtagsResult = repository.searchHashtags(query: query, limit: 20, cursor: nil)
 
         do {
-            let (acc, hashtag) = try await (accountsResult, hashtagsResult)
+            let acc = try await repository.searchAccounts(
+                query: query, limit: 20, cursor: nil)
             self.accounts = acc.items
-            self.hashtags = hashtag.items
             self.nextCursorAccounts = acc.nextCursor
-            self.nextCursorHashtags = hashtag.nextCursor
             self.hasNextAccounts = acc.hasNext
+        } catch {
+            self.accounts = []
+            self.nextCursorAccounts = nil
+            self.hasNextAccounts = false
+            errorMessage = error.localizedDescription
+            print("errorMessage: \(String(describing: errorMessage))")
+        }
+        
+        do {
+            let hashtag = try await repository.searchHashtags(
+                query: query, limit: 20, cursor: nil)
+            self.hashtags = hashtag.items
+            self.nextCursorHashtags = hashtag.nextCursor
             self.hasNextHashtags = hashtag.hasNext
         } catch {
-            self.errorMessage = error.localizedDescription
+            self.hashtags = []
+            self.nextCursorHashtags = nil
+            self.hasNextHashtags = false
+            errorMessage = error.localizedDescription
+            print("errorMessage: \(String(describing: errorMessage))")
         }
+
+        self.didLoadSearchOnce = true
     }
 
     var isEmptyResults: Bool {

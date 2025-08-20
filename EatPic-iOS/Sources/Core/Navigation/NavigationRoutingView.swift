@@ -125,7 +125,7 @@ struct NavigationRoutingView: View {
         case .receiptDetail:
             ReceiptDetailView()
         case .exploreMain:
-            ExploreMainView()
+            ExploreMainView(container: container)
         case .mealTimeSelection(let images):
             let recordFlowViewModel = container.getRecordFlowVM()
             MealRecordView()

@@ -16,17 +16,21 @@ struct ExploreMainView: View {
         case hashtagFeed(hashtagId: Int, title: String)
     }
 
-    @State private var mode: ExploreMode = .exploreFeed
-
-    // 검색창에 입력되는 텍스트 상태
-    @State var searchText: String = ""
     @EnvironmentObject private var container: DIContainer
-    @StateObject private var viewModel = ExploreViewModel()
+    @StateObject private var viewModel: ExploreViewModel
     
-    let columns: [GridItem] = [
+    @State private var mode: ExploreMode = .exploreFeed
+    @State private var searchText: String = ""
+    
+    private let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
         GridItem(.flexible(minimum: 0), spacing: 9.5)
-        ]
+    ]
+    
+    init(container: DIContainer) {
+        self._viewModel = StateObject(
+            wrappedValue: .init(container: container))
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -255,5 +259,5 @@ struct ExploreMainView: View {
 }
 
 #Preview {
-    ExploreMainView()
+    ExploreMainView(container: .init())
 }
