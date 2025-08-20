@@ -27,7 +27,7 @@ extension EatPicDayMeta {
 
         // 작은 썸네일 테스트용 URL (네트워크/디코딩 가벼움)
         return [
-            today:    EatPicDayMeta(imageURL: "https://picsum.photos/seed/eatpic1/200", cardId: 1)
+            today: EatPicDayMeta(imageURL: "https://picsum.photos/seed/eatpic1/200", cardId: 1)
 //            tomorrow: EatPicDayMeta(imageURL: "https://picsum.photos/seed/eatpic2/200", cardId: 2)
         ]
     }

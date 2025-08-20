@@ -24,7 +24,7 @@ struct Cell: View {
                    calendarDay.isCurrentMonth {
                     Rectangle()
                         .remoteImage(url: imageURL)
-                        
+                        .scaledToFill()
                 } else {
                     Rectangle()
                         .fill(rectangleFillColor)

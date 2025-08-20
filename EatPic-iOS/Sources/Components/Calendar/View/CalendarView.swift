@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct CalendarView: View {
-    
-    @State var viewModel: CalendarViewModel
-    
+
+    /// CalendarScrollView로부터 외부에서 주입
+    @Bindable var viewModel: CalendarViewModel
     private let cellTapAction: (Date) -> Void
     
     init(
         month: Date,
+        viewModel: CalendarViewModel,
         cellTapAction: @escaping (Date) -> Void
     ) {
-        self.viewModel = .init(currentMonth: month)
+        self._viewModel = .init(wrappedValue: viewModel)
         self.cellTapAction = cellTapAction
     }
     
@@ -103,8 +104,8 @@ struct CalendarView: View {
     }
 }
 
-#Preview {
-    CalendarView(month: .now) { _ in
-        print("cellTap")
-    }
-}
+// #Preview {
+//    CalendarView(month: .now) { _ in
+//        print("cellTap")
+//    }
+// }

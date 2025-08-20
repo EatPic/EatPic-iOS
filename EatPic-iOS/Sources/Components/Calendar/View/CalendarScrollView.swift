@@ -36,13 +36,14 @@ struct MonthVisiblePreferenceKey: PreferenceKey {
 struct CalendarScrollView: View {
     /// 이 뷰가 소유하는 뷰모델(Observation 기반). 수명주기와 함께 관리됩니다.
     @State private var calendarScrollVM: CalendarScrollViewModel
+    @State private var calendarVM = CalendarViewModel.init()
     /// 화면에서 **중앙에 가장 가까운 월**(YearMonth). 데이터 요청 트리거로 사용됩니다.
     @State private var visibleYM: YearMonth?
     @State private var months: [Date]
     @State private var isPrepending = false
     @State private var showLoadingIndicator = false
     @State private var isScrollLimited = false
-
+    
     private let calendar = Calendar.current
     private let initailMonthCount: Int = 4
     private let reachTopThreshold: CGFloat = 50
@@ -75,9 +76,13 @@ struct CalendarScrollView: View {
                         ForEach(months, id: \.self) { month in
                             /// 각 월마다 캘린더를 렌더링합니다.
                             /// - Note: onAppear에서 prepend 로직을 트리거합니다.
-                            CalendarView(month: month) { selectedDate in
-                                print("Selected: \(selectedDate)")
-                            }
+                            CalendarView(
+                                month: month,
+                                viewModel: calendarVM,
+                                cellTapAction: { selectedDate in
+                                    print("Selected:", selectedDate)
+                                }
+                            )
                             .background(alignment: .center) {
                                 /// GeometryReader가 **각 월의 프레임**을
                                 /// `.coordinateSpace(name: "scroll")` 기준으로 읽어
@@ -94,7 +99,10 @@ struct CalendarScrollView: View {
                                         .preference(
                                             key: MonthVisiblePreferenceKey.self,
                                             value: [
-                                                month: geo.frame(in: .named("scroll")).minY
+                                                month: geo
+                                                    .frame(
+                                                        in: .named("scroll")
+                                                    ).minY
                                             ]
                                         )
                                 }
@@ -117,9 +125,14 @@ struct CalendarScrollView: View {
                 /// - Step2: 해당 월의 Date → (year, month)로 변환
                 /// - Step3: `visibleYM`이 바뀌었을 때만 갱신(불필요한 상태 변화를 차단)
                 guard let closestMonth = values
-                    .min(by: { abs($0.value) < abs($1.value) })?.key else { return }
+                    .min(by: { abs($0.value) < abs($1.value) })?.key else {
+                    return
+                }
                 
-                let comp = calendar.dateComponents([.year, .month], from: closestMonth)
+                let comp = calendar.dateComponents(
+                    [.year, .month],
+                    from: closestMonth
+                )
                 if let year = comp.year, let month = comp.month {
                     let next = YearMonth(year: year, month: month)
                     if next != visibleYM { // 불필요한 중복 방지
@@ -140,6 +153,9 @@ struct CalendarScrollView: View {
             print(yearAndmonth)
             await calendarScrollVM.fetchCalendarData(
                 year: yearAndmonth.year, month: yearAndmonth.month)
+        }
+        .onChange(of: calendarScrollVM.metaByDate) { _, newMeta in
+            calendarVM.updateMeta(newMeta)
         }
         .background(Color.white)
         .customCenterNavigationBar {
