@@ -132,7 +132,7 @@ struct PicCardItemView: View {
             withAnimation {
                 isShowingReactionBar = true
             }
-            onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
+            //            onAction?(.reaction(selected: selectedReaction, counts: reactionCounts))
         }
     }
     
@@ -146,7 +146,6 @@ struct PicCardItemView: View {
         }
     }
     
-    /// 리액션 선택 처리
     private func handleReactionSelection(_ reaction: ReactionType?) {
         let previousReaction = selectedReaction
         selectedReaction = reaction
