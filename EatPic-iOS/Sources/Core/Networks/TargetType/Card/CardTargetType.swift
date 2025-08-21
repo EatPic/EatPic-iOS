@@ -10,6 +10,7 @@ import Moya
 
 enum CardTargetType {
     case fetchFeeds(userId: Int?, cursor: Int?, size: Int)
+    case getUserProfile(userId: Int) // 유저 프로필 조회
     case fetchCardDetail(cardId: Int)
     case createFeed(
         request: CreateCardRequest, image: Data, fileName: String, mimeType: String)
@@ -25,6 +26,8 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds:
             return "/api/cards/feeds"
+        case .getUserProfile(let userId):
+            return "/api/users/profile/\(userId)"
         case .fetchCardDetail(let cardId):
             return "/api/cards/\(cardId)/feed"
         case .createFeed:
@@ -46,7 +49,7 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds, .recommendedCard,
                 .todayMeals, .fetchCardDetail,
-                .recomPicSingleCard, .profileFeed:
+                .recomPicSingleCard, .profileFeed, .getUserProfile:
             return .get
         case .createFeed:
             return .post
@@ -92,9 +95,8 @@ extension CardTargetType: APITargetType {
                       mimeType: mimeType)     // 예: image/heic / image/jpeg / image/png
             )
             return .uploadMultipart(parts)
-        case .deleteCard:
+        case .deleteCard, .getUserProfile:
             return .requestPlain
-            
         case .recommendedCard, .todayMeals, .recomPicSingleCard:
             return .requestPlain
         case .profileFeed(_, let cursor, let size):

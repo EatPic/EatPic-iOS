@@ -1,5 +1,5 @@
-import Foundation
 import Moya
+import SwiftUI
 
 @Observable
 final class OthersProfileViewModel {
@@ -13,35 +13,31 @@ final class OthersProfileViewModel {
     var nextCursor: Int?
     var feedCards: [FeedCard]
 
-    /// 로딩 상태
+    // 로딩 상태
     private(set) var isLoading: Bool
 
+    // ✅ 프로필 카운트(뷰에서 표시)
+    var picCardCount: Int = 0
+    var followerCount: Int = 0
+    var followingCount: Int = 0
+
+    // Providers
     var cardProvider: MoyaProvider<CardTargetType>
 
     init(user: CommunityUser, container: DIContainer) {
-        // 1) 저장 프로퍼티 전부 초기값 세팅
         self.user = user
         self.isFollowed = false
         self.showBlockModal = false
         self.isShowingReportBottomSheet = false
-        self.hasNext = true            // 첫 로드는 true로 시작
-        self.nextCursor = nil          // 첫 호출은 cursor 미포함
+        self.hasNext = true
+        self.nextCursor = nil
         self.feedCards = []
         self.isLoading = false
+
         self.cardProvider = container.apiProviderStore.card()
 
-        // 2) 이제 안전하게 파생값 설정 가능
         self.isFollowed = (user.nameId == "id3")
     }
-
-    private var allUsers: [CommunityUser] = sampleUsers
-    private var allPicCards: [PicCard] = sampleCards
-
-    var picCardCount: Int {
-        allPicCards.filter { $0.user.id == user.id }.count
-    }
-    var followerCount: Int { 2 }
-    var followingCount: Int { 2 }
 
     struct FeedCard: Identifiable {
         let id: Int
@@ -50,33 +46,58 @@ final class OthersProfileViewModel {
 
     func toggleFollow() {
         isFollowed.toggle()
-        print("\(user.nickname) 팔로우 상태 변경: \(isFollowed)")
     }
 
     func blockUser() {
         BlockedUsersManager.shared.blockUser(userId: user.nameId)
         isFollowed = false
-        print("\(user.nickname) 차단 완료")
     }
 
     func handleProfileReport(_ reportType: String) {
-        print("프로필 신고: \(user.nameId) - 유형: \(reportType)")
         isShowingReportBottomSheet = false
     }
 
-    // MARK: - API 호출 (첫 요청은 cursor 미포함)
-    
+    // 2) 프로필 불러오기
+    @MainActor
+    func fetchUserProfile() async {
+        do {
+            let res = try await cardProvider.requestAsync(.getUserProfile(userId: user.id))
+            let decoded = try JSONDecoder().decode(
+                APIResponse<ProfileDetailResult>.self,
+                from: res.data)
+            let user = decoded.result
+
+            // CommunityUser 갱신
+            self.user = CommunityUser(
+                id: user.userId,
+                nameId: user.nameId,
+                nickname: user.nickname,
+                imageName: user.profileImageUrl ?? UserProfileConstants.defaultImage,
+                introduce: user.introduce,
+                type: .other,
+                isCurrentUser: false,
+                isFollowed: user.isFollowing
+            )
+
+            // 팔로우 상태 & 카운트 갱신
+            self.isFollowed = user.isFollowing
+            self.picCardCount = user.totalCard
+            self.followerCount = user.totalFollower
+            self.followingCount = user.totalFollowing
+        } catch {
+            print("프로필 불러오기 실패:", error)
+        }
+    }
+
+    // 3) 카드 페이징
     @MainActor
     func fetchUserCards(refresh: Bool = false) async {
         guard !isLoading else { return }
-
         if refresh {
             nextCursor = nil
             hasNext = true
             feedCards.removeAll()
         }
-
-        // nextCursor == nil && refresh 아님이면 더 없음
         if !refresh, nextCursor == nil, !feedCards.isEmpty { return }
 
         isLoading = true
@@ -89,30 +110,29 @@ final class OthersProfileViewModel {
             let decoded = try JSONDecoder().decode(
                 APIResponse<ProfileFeedResult>.self,
                 from: response.data)
-
             let newCards = decoded.result.cardsList.map {
                 FeedCard(id: $0.cardId, imageUrl: $0.cardImageUrl)
             }
-
             feedCards.append(contentsOf: newCards)
             hasNext = decoded.result.hasNext
-            nextCursor = decoded.result.nextCursor // 0으로 덮어쓰지 않기
-
-            print(newCards)
+            nextCursor = decoded.result.nextCursor
         } catch {
             print("피드 API 호출/디코딩 실패:", error)
         }
     }
 
-    // MARK: - Pagination Helper
     func loadNextPageIfNeeded(currentCard: FeedCard) async {
         guard !isLoading else { return }
-        // 서버 신호 기준: nextCursor가 nil이면 더 없음
         guard nextCursor != nil else { return }
-
         if let idx = feedCards.firstIndex(where: { $0.id == currentCard.id }),
            idx >= feedCards.count - 6 {
             await fetchUserCards()
         }
     }
+}
+
+/// 유저 프로필 기본값
+struct UserProfileConstants {
+    static let defaultImage = "https://eatpic-bucket.s3.ap-northeast-2.amazonaws.com/" +
+    "newcards/35f6070be118a354c97081b02c8d7dad4dfbeacc.png"
 }
