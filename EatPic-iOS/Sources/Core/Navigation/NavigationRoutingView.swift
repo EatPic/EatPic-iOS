@@ -35,7 +35,7 @@ enum NavigationRoute: Equatable, Hashable {
     case hashtagSelection
     case picCardRecord
     case userProfile(user: CommunityUser)
-    case followList(selected: FollowListView.FollowSegment)
+    case followList(selected: FollowListView.FollowSegment, userId: Int)
     case exploreSelected(cardId: Int)
     case storeLocation(latitude: Double, longitude: Double, title: String)
     case settingPage
@@ -155,9 +155,9 @@ struct NavigationRoutingView: View {
                 )
             }
         case .userProfile(let user):
-            OthersProfileView(user: user)
-        case .followList(let selected):
-            FollowListView(selected: selected)
+            OthersProfileView(user: user, container: container)
+        case .followList(let selected, let userId):
+            FollowListView(selected: selected, container: container, userId: userId)
         case .exploreSelected(let cardId):
             ExploreSelectedView(cardId: cardId, container: container)
         case .storeLocation(let latitude, let longitude, let title):
@@ -168,15 +168,15 @@ struct NavigationRoutingView: View {
                 )]
             )
         case .settingPage:
-            SettingPageView()
+            SettingPageView(container: container)
         case .blockedAccount:
             BlockedAccountView()
         case .myAllPicCard:
-            MyAllPicCardView()
+            MyAllPicCardView(container: container)
         case .profileEdit:
             ProfileEditView()
         case .savedPicCard:
-            SavedPicCardView()
+            SavedPicCardView(container: container)
         case .recomPicSingleCard(let cardId):
             RecomPicCardView(container: container, cardId: cardId)
         }

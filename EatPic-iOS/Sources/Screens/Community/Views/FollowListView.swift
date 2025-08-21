@@ -26,11 +26,20 @@ struct FollowListView: View {
     }
     // MARK: - Properties
     @State private var viewModel: FollowListViewModel
+    
+    ///어떤 유저의 팔로워/팔로잉을 볼지
+    private let userId: Int
+    
     @Namespace var name
     
-    init(selected: FollowSegment) {
-            self._viewModel = State(initialValue: FollowListViewModel(selected: selected))
-        }
+    // MARK: - Init
+    init(selected: FollowSegment, container: DIContainer, userId: Int) {
+        self.userId = userId
+        self._viewModel = State(initialValue: FollowListViewModel(
+            selected: selected,
+            container: container
+        ))
+    }
     
     // MARK: - Body
     var body: some View {
@@ -44,7 +53,9 @@ struct FollowListView: View {
                 backgroundColor: .gray020,
                 strokeColor: nil,
                 onSubmit: {
-                    print("Submitted")
+                    Task {
+                        await viewModel.fetchFollowList(userId: userId) // 검색 실행
+                    }
                 },
                 onChange: {
                     print("Changed to \($0)")
@@ -59,6 +70,18 @@ struct FollowListView: View {
         .customCenterNavigationBar {
             Text("아이디") // 커스텀 네비게이션바 제목
         }
+        // 화면 진입/유저 변경 시 로드
+        .task(id: userId) {
+            await viewModel.fetchFollowList(userId: userId)
+        }
+        // 탭(팔로워/팔로잉) 변경 시 재로드
+        .onChange(of: viewModel.selected) {
+            Task { await viewModel.fetchFollowList(userId: userId) }
+        }
+        // 당겨서 새로고침
+        .refreshable {
+            await viewModel.fetchFollowList(userId: userId)
+        }
     }
     
     // MARK: - Segment View
@@ -71,11 +94,13 @@ struct FollowListView: View {
                     viewModel.selected = segment
                 } label: {
                     VStack {
-                        Text("\(viewModel.userCount(for: segment)) \(segment.rawValue)")
-                            .font(.footnote)
-                            .fontWeight(.medium)
-                            .foregroundStyle(viewModel.selected == segment ?
-                                             Color.gray080 : Color.gray050)
+                        Text(
+                            "\(viewModel.userCount(for: segment)) \(segment.rawValue)"
+                        )
+                        .font(.footnote)
+                        .fontWeight(.medium)
+                        .foregroundStyle(viewModel.selected == segment ?
+                                         Color.gray080 : Color.gray050)
                         ZStack {
                             Capsule()
                                 .fill(Color.clear)
@@ -155,9 +180,4 @@ struct FollowListView: View {
             }
         }
     }
-
-}
-
-#Preview {
-    FollowListView(selected: .followers)
 }

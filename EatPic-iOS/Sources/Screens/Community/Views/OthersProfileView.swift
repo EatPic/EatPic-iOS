@@ -27,18 +27,18 @@ import SwiftUI
  
  ## UI 구성
  - **프로필 영역** (`userProfileView`):
-   - 프로필 이미지, 닉네임, 아이디, 소개글, 팔로워/팔로잉/Pic 카드 수 표시.
+ - 프로필 이미지, 닉네임, 아이디, 소개글, 팔로워/팔로잉/Pic 카드 수 표시.
  - **팔로우 버튼**:
-   - 상태에 따라 색상·텍스트 변경.
+ - 상태에 따라 색상·텍스트 변경.
  - **피드 영역** (`userFeedView`):
-   - 3열 `LazyVGrid`로 이미지 배치.
+ - 3열 `LazyVGrid`로 이미지 배치.
  - **상단 메뉴**:
-   - "차단하기" / "신고하기" 버튼 제공.
+ - "차단하기" / "신고하기" 버튼 제공.
  - **모달 & 바텀시트**:
-   - 차단: `DecisionModalView`
-   - 신고: `ReportBottomSheetView`
+ - 차단: `DecisionModalView`
+ - 신고: `ReportBottomSheetView`
  - **토스트**:
-   - 신고 또는 차단 후 toastVM을 통해 피드백 표시.
+ - 신고 또는 차단 후 toastVM을 통해 피드백 표시.
  
  ## 확장 포인트
  - 실제 API 연동으로 팔로우, 차단, 신고 처리.
@@ -57,8 +57,12 @@ struct OthersProfileView: View {
         GridItem(.flexible(minimum: 0), spacing: 4)
     ]
     
-    init(user: CommunityUser) {
-        self._viewModel = State(initialValue: OthersProfileViewModel(user: user))
+    init(user: CommunityUser, container: DIContainer) {
+        self._viewModel = State(
+            initialValue: OthersProfileViewModel(
+                user: user,
+                container: container)
+        )
     }
     
     var body: some View {
@@ -122,12 +126,10 @@ struct OthersProfileView: View {
             .toastView(viewModel: toastVM)
             .padding(.horizontal, 16)
             .scrollIndicators(.hidden)
-            .onAppear {
-                viewModel.setCardProvider(container.apiProviderStore.card())
-                Task {
-                    print("fetchUser")
-                    await viewModel.fetchUserCards()
-                }
+            .task {
+                // 화면 들어올 때(그리고 user.id 바뀔 때) 프로필 + 첫 페이지 로드
+                await viewModel.fetchUserProfile()
+                await viewModel.fetchUserCards(refresh: true)
             }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
@@ -215,8 +217,9 @@ struct OthersProfileView: View {
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            // 팔로워
             .onTapGesture {
-                container.router.push(.followList(selected: .followers))
+                container.router.push(.followList(selected: .followers, userId: viewModel.user.id))
             }
             
             VStack {
@@ -227,8 +230,9 @@ struct OthersProfileView: View {
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            // 팔로잉
             .onTapGesture {
-                container.router.push(.followList(selected: .followings))
+                container.router.push(.followList(selected: .followings, userId: viewModel.user.id))
             }
         }
     }
@@ -239,19 +243,18 @@ struct OthersProfileView: View {
             let spacing: CGFloat = 8 // 총 spacing (4 * 2)
             let imageSize = (availableWidth - spacing) / 3 // 3개 컬럼
             LazyVGrid(columns: columns, spacing: 4) {
-                        ForEach(viewModel.feedCards) { card in
-                            Rectangle()
-                                .remoteImage(url: card.imageUrl)
-                                .scaledToFill()
-                                .frame(width: imageSize, height: imageSize)
-                                .clipped()
-                                .onAppear {
-                                    Task {
-                                        await viewModel.loadNextPageIfNeeded(currentCard: card)
-                                    }
-                                }
+                ForEach(viewModel.feedCards) { card in
+                    Rectangle()
+                        .remoteImage(url: card.imageUrl)
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .clipped()
+                        .task {
+                            await viewModel
+                                .loadNextPageIfNeeded(currentCard: card)
                         }
-                    }
+                }
+            }
         }
     }
 }

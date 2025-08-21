@@ -188,7 +188,7 @@ struct CardDetail: Decodable {
     let imageUrl: String
     let datetime: String
     let meal: String
-    let memo: String
+    let memo: String?
     let recipe: String?
     let recipeUrl: String?
     let latitude: Double?
@@ -227,7 +227,7 @@ extension CardDetail {
             cardId: cardId,
             user: userDomain,
             time: timeString,
-            memo: memo,
+            memo: memo ?? "",
             imageUrl: imageUrl,
             date: dateString,
             meal: mealSlot,
