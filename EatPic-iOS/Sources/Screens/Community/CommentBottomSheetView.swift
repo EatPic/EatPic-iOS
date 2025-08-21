@@ -10,7 +10,7 @@ import SwiftUI
 struct CommentBottomSheetView: View {
     @Binding var isShowing: Bool
     @State var viewModel: CommentViewModel
-        
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -19,14 +19,14 @@ struct CommentBottomSheetView: View {
                     content: {
                         LazyVStack(spacing: 0) {
                             if viewModel.comments.isEmpty {
-                                    VStack {
-                                        Spacer().frame(height: 40)
-                                        Text("댓글이 아직 없습니다")
-                                            .font(.dsCallout)
-                                            .foregroundStyle(Color.gray060)
-                                            .multilineTextAlignment(.center)
-                                        Spacer()
-                                    }
+                                VStack {
+                                    Spacer().frame(height: 40)
+                                    Text("댓글이 아직 없습니다")
+                                        .font(.dsCallout)
+                                        .foregroundStyle(Color.gray060)
+                                        .multilineTextAlignment(.center)
+                                    Spacer()
+                                }
                             } else {
                                 ForEach(viewModel.comments, id: \.id) { comment in
                                     commentListView(
@@ -35,6 +35,10 @@ struct CommentBottomSheetView: View {
                                         commentText: comment.text,
                                         time: comment.time
                                     )
+                                    .task {
+                                        await viewModel.loadMoreIfNeeded(
+                                            currentItemID: comment.id)
+                                    }
                                     .contextMenu {
                                         if viewModel.isMyComment(comment) {
                                             Button(role: .destructive) {

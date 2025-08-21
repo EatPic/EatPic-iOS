@@ -34,6 +34,8 @@ struct SearchBarView: View {
     /// 텍스트 변경 시 호출되는 콜백
     var onChange: ((String) -> Void)?
     
+    var onDeleteLeft: (() -> Void)?
+    
     // MARK: - Init
     init(
         text: Binding<String>,
@@ -42,7 +44,8 @@ struct SearchBarView: View {
         backgroundColor: Color,
         strokeColor: Color?,
         onSubmit: (() -> Void)?,
-        onChange: ((String) -> Void)?
+        onChange: ((String) -> Void)?,
+        onDeleteLeft: (() -> Void)? = nil
     ) {
         self._text = text
         self.placeholder = placeholder
@@ -51,6 +54,7 @@ struct SearchBarView: View {
         self.strokeColor = strokeColor
         self.onSubmit = onSubmit
         self.onChange = onChange
+        self.onDeleteLeft = onDeleteLeft
     }
     
     // MARK: - body
@@ -66,6 +70,7 @@ struct SearchBarView: View {
                         .font(.dsBody)
                         .foregroundStyle(Color.gray050)
                 }
+                
                 TextField("", text: $text)
                     .font(.dsBody)
                     .foregroundStyle(Color.gray080)
@@ -75,7 +80,8 @@ struct SearchBarView: View {
                     }
                     .onChange(of: text) {
                         onChange?(text)  // text는 클로저 내부에서 직접 접근
-                    }            }
+                    }
+            }
             
             Spacer()
             
@@ -83,6 +89,7 @@ struct SearchBarView: View {
             if showsDeleteButton && !text.isEmpty {
                 Button {
                     text = ""
+                    onDeleteLeft?()
                 } label: {
                     Image("icon_delete")
                 }

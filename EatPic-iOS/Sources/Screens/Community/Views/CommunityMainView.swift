@@ -587,12 +587,17 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
     let userType: CommunityUserType
     let isCurrentUser: Bool
     var isFollowed: Bool
-    
-    init(id: Int, nameId: String, nickname: String,
-         imageName: String?, introduce: String? = nil,
-         type: CommunityUserType = .other,
-         isCurrentUser: Bool = false,
-         isFollowed: Bool = true) {
+
+    init(
+        id: Int = -1,
+        nameId: String = "unknown",
+        nickname: String = "게스트",
+        imageName: String? = nil,
+        introduce: String? = nil,
+        type: CommunityUserType = .other,
+        isCurrentUser: Bool = false,
+        isFollowed: Bool = false
+    ) {
         self.id = id
         self.nameId = nameId
         self.nickname = nickname
@@ -602,6 +607,8 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
         self.isCurrentUser = isCurrentUser
         self.isFollowed = isFollowed
     }
+
+    static let placeholder = CommunityUser()
 }
 
 enum CommunityUserType { case all, me, other }
