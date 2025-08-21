@@ -217,19 +217,19 @@ final class CommunityMainViewModel: ObservableObject {
     
     func fetchFeeds() async {
         guard hasNextPage && !isFetching else { return }
-
+        
         // 사용자 목록이 아직 로드되지 않았다면 먼저 로드 (특히 .me 선택 시 내 ID 필요)
         if users.isEmpty {
             await fetchUserList()
         }
-
+        
         let userIdForRequest = selectedUserIdForRequest()
         await fetchFeedsInternal(userId: userIdForRequest)
     }
-
+    
     private func fetchFeedsInternal(userId: Int?, pageSize: Int = 20) async {
         isFetching = true
-
+        
         do {
             let response = try await cardProvider.requestAsync(
                 .fetchFeeds(
@@ -249,6 +249,28 @@ final class CommunityMainViewModel: ObservableObject {
             }
             self.nextCursor = dto.result.nextCursor
             self.hasNextPage = dto.result.hasNext
+        } catch let err as MoyaError {
+            let apiErr = mapMoyaError(err)
+            switch apiErr {
+            case .serverErrorString(let code, _):
+                if code == "CARD_004" {
+                    hasNextPage = false
+                    nextCursor = nil
+                    if filteredCards.isEmpty {
+                        toastVM.showToast(
+                            title: "작성된 피드가 없습니다.😭"
+                        )
+                    }
+                    isFetching = false
+                    return
+                }
+                toastVM.showToast(title: apiErr.errorDescription ?? "피드 로드에 실패했어요.")
+            default:
+                toastVM.showToast(title: apiErr.errorDescription ?? "피드 로드에 실패했어요.")
+            }
+        } catch let decodeErr as DecodingError {
+            print("디코딩 실패:", decodeErr)
+            toastVM.showToast(title: "피드 로드에 실패했어요.")
         } catch {
             print("요청/디코딩 실패:", error.localizedDescription)
             toastVM.showToast(title: "피드 로드에 실패했어요.")
@@ -424,4 +446,33 @@ final class CommunityMainViewModel: ObservableObject {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
     }
+}
+
+// MARK: - Error Handling
+
+private struct ErrorEnvelope: Decodable {
+    let isSuccess: Bool?
+    let code: String?
+    let message: String?
+}
+
+private func mapMoyaError(_ err: MoyaError) -> APIError {
+    if case .statusCode(let resp) = err {
+        if let env = try? JSONDecoder().decode(ErrorEnvelope.self, from: resp.data),
+           let code = env.code {
+            return .serverErrorString(code: code, message: env.message ?? "")
+        }
+        return .serverError(
+            code: resp.statusCode,
+            message: HTTPURLResponse.localizedString(forStatusCode: resp.statusCode)
+        )
+    }
+    if case .underlying(let underlying, let respOpt) = err, let resp = respOpt {
+        if let env = try? JSONDecoder().decode(ErrorEnvelope.self, from: resp.data),
+           let code = env.code {
+            return .serverErrorString(code: code, message: env.message ?? "")
+        }
+        return .requestFailed(underlying)
+    }
+    return .unknown
 }
