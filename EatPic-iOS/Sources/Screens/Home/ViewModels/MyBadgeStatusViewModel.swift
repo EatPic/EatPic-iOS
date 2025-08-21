@@ -10,7 +10,12 @@ final class MyBadgeStatusViewModel: ObservableObject {
     private let homeProvider: MoyaProvider<HomeTargetType>
     
     /// 뱃지 아이템 목록
-    @Published var badgeItems: [BadgeItem] = []
+    @Published var badgeItems: [BadgeItem] = [] {
+        didSet {
+            updateAcquiredBadgesCount()
+            totalBadges = badgeItems.count
+        }
+    }
     
     /// 전체 뱃지 개수
     @Published var totalBadges: Int = 0
@@ -80,7 +85,7 @@ final class MyBadgeStatusViewModel: ObservableObject {
                 badgeName: $0.badgeName,
                 badgeImageUrl: $0.badgeImageUrl,
                 progressRate: $0.progressRate,
-                achieved: $0.achieved
+                achieved: $0.achieved || $0.progressRate >= 100
             ) }
             print("badgeStatus API 호출 성공🟢")
         } catch {
