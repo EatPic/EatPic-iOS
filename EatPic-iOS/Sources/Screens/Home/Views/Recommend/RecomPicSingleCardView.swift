@@ -1,5 +1,5 @@
 //
-//  RecomPicCardView.swift
+//  RecomPicSingleCardView.swift
 //  EatPic-iOS
 //
 //  Created by 이은정 on 7/28/25.
@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct RecomPicCardView: View {
+struct RecomPicSingleCardView: View {
+    @EnvironmentObject private var container: DIContainer
     @State private var viewModel: RecomPicSingleCardViewModel
     private let cardId: Int
 
@@ -28,7 +29,18 @@ struct RecomPicCardView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     },
-                    onProfileTap: nil,
+                    onProfileTap: {
+                        container.router.push(.userProfile(user: card.user))
+                    },
+                    onLocationTap: { latitude, longitude, locationText in
+                        container.router.push(
+                            .storeLocation(
+                                latitude: latitude,
+                                longitude: longitude,
+                                title: locationText
+                            )
+                        )
+                    },
                     toastVM: ToastViewModel(),
                     onItemAction: nil
                 )
