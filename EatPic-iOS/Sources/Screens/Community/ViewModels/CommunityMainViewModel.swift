@@ -77,15 +77,15 @@ struct MyUserIconResult: Codable, Identifiable {
 
 extension MyUserIconResult {
     func toCommunityUser() -> CommunityUser {
-        return CommunityUser(
+        CommunityUser(
             id: userId,
             nameId: nameId,
             nickname: nickname ?? nameId,
             imageName: profileImageUrl,
             introduce: introduce,
-            type: .other,
-            isCurrentUser: false,
-            isFollowed: isFollowing ?? true
+            type: .me,
+            isCurrentUser: true,
+            isFollowed: false
         )
     }
 }
@@ -162,7 +162,6 @@ final class CommunityMainViewModel: ObservableObject {
     @Published var selectedUser: CommunityUser?
     @Published var filteredCards: [PicCard] = []
     @Published var users: [CommunityUser] = []
-    var currentUser: CommunityUser? { users.first { $0.userType == .me } }
     @Published var hasNextPage: Bool = true
     @Published var showDeleteModal = false
     @Published var isShowingReportBottomSheet = false
@@ -186,6 +185,10 @@ final class CommunityMainViewModel: ObservableObject {
         self.commentVM = CommentViewModel(container: container)
         self.reactionProvider = container.apiProviderStore.reaction()
         self.commentProvider = container.apiProviderStore.comment()
+    }
+    
+    var currentUser: CommunityUser? {
+        users.first { $0.userType == .me }
     }
     
     // MARK: - Feeds

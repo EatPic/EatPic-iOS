@@ -108,7 +108,7 @@ struct CommunityMainView: View {
     private func cardListView() -> some View {
         LazyVStack(spacing: 32) {
             ForEach(viewModel.filteredCards) { card in
-                MainPicCardView( // ✅ 이름 정정: PicCardView → MainPicCardView
+                MainPicCardView(
                     card: card,
                     menuContent: {
                         if viewModel.isMyCard(card) {
@@ -213,8 +213,9 @@ struct MainPicCardItemView: View {
     var body: some View {
         if isShowingReactionBar {
             Color.black.opacity(0.001)
-                .ignoresSafeArea()
-                .onTapGesture { withAnimation { isShowingReactionBar = false } }
+                .onTapGesture {
+                    withAnimation { isShowingReactionBar = false }
+                }
             
             MainReactionBarView(
                 selectedReaction: Binding(
@@ -347,19 +348,30 @@ struct MainPicCardView<Content: View>: View {
                         .contentShape(Rectangle())
                 }
             }
+            .highPriorityGesture(
+                TapGesture().onEnded { onProfileTap?() }
+            )
             
             // 앞/뒷면 전환
             ZStack {
                 if !isFlipped {
-                    MainPicCardFrontView(card: card, toastVM: toastVM) { action in
+                    MainPicCardFrontView(
+                        card: card,
+                        toastVM: toastVM
+                    ) { action in
                         onItemAction?(card.cardId, action)
+                    } onFlip: {
+                        withAnimation { isFlipped.toggle() }
                     }
                 } else {
-                    MainPicCardBackView(card: card, onLocationTap: onLocationTap)
+                    MainPicCardBackView(
+                        card: card,
+                        onLocationTap: onLocationTap
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture { withAnimation { isFlipped.toggle() } }
                 }
             }
-            .animation(.easeInOut(duration: 0.5), value: isFlipped)
-            .onTapGesture { withAnimation { isFlipped.toggle() } }
             .aspectRatio(1, contentMode: .fit)
             
             // 메모
@@ -371,11 +383,13 @@ struct MainPicCardView<Content: View>: View {
     }
 }
 
+// MainPicCardFrontView
 struct MainPicCardFrontView: View {
     let card: PicCard
     let toastVM: ToastViewModel
     let onItemAction: ((MainPicCardItemActionType) -> Void)?
-    
+    let onFlip: () -> Void
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -384,15 +398,16 @@ struct MainPicCardFrontView: View {
                     .frame(width: geometry.size.width, height: geometry.size.width)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                
+
                 MainPicCardItemView(
                     card: card,
                     toastVM: toastVM
-                ) { action in
-                    onItemAction?(action)
-                }
+                ) { action in onItemAction?(action) }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             }
+            // 히트 영역을 카드 사각형으로 한정
+            .contentShape(Rectangle())
+            .onTapGesture { onFlip() }
         }
     }
 }
