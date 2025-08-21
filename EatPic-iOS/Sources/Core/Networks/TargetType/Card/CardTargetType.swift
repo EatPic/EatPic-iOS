@@ -49,7 +49,7 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds, .recommendedCard,
                 .todayMeals, .fetchCardDetail,
-                .recomPicSingleCard, .profileFeed:
+                .recomPicSingleCard, .profileFeed, .myPageMyCards:
             return .get
         case .createFeed:
             return .post
