@@ -65,7 +65,10 @@ extension CardTargetType: APITargetType {
             if let cursor = cursor {
                 params["cursor"] = cursor
             }
-            return .requestParameters(parameters: params, encoding: URLEncoding.default)
+            return .requestParameters(
+                parameters: params,
+                encoding: URLEncoding.default
+            )
         case .fetchCardDetail:
             return .requestPlain
         case let .createFeed(request, image, fileName, mimeType):
@@ -94,29 +97,35 @@ extension CardTargetType: APITargetType {
             
         case .recommendedCard, .todayMeals, .recomPicSingleCard:
             return .requestPlain
-        case .profileFeed(_, let cursor, _):
+        case .profileFeed(_, let cursor, let size):
+            let safeSize = (size > 0) ? size : 15 // 기본값 보정
+            var params: [String: Any] = ["size": safeSize]
+            if let cursor = cursor {
+                params["cursor"] = cursor // cursor는 있을 때만}
+            }
             return .requestParameters(
-                parameters: ["cursor" : cursor],
-                encoding: URLEncoding.queryString)
+                parameters: params,
+                encoding: URLEncoding.queryString
+            )
         }
     }
     
     var sampleData: Data {
         return Data("""
-         {
-           "latitude": 37.5665,
-           "longitude": 126.978,
-           "recipe": "야채, 아보카도, 소스 조합으로 구성된 샐러드입니다.",
-           "recipeUrl": "https://example.com/recipe/123",
-           "memo": "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣었어요",
-           "isShared": true,
-           "locationText": "서울특별시 성북구 정릉동",
-           "meal": "LUNCH",
-           "hashtags": [
-             "샐러드",
-             "건강식"
-           ]
-         }
-        """.utf8)
+             {
+               "latitude": 37.5665,
+               "longitude": 126.978,
+               "recipe": "야채, 아보카도, 소스 조합으로 구성된 샐러드입니다.",
+               "recipeUrl": "https://example.com/recipe/123",
+               "memo": "오늘은 샐러드를 먹었습니다~ 아보카도를 많이 넣었어요",
+               "isShared": true,
+               "locationText": "서울특별시 성북구 정릉동",
+               "meal": "LUNCH",
+               "hashtags": [
+                 "샐러드",
+                 "건강식"
+               ]
+             }
+            """.utf8)
     }
 }
