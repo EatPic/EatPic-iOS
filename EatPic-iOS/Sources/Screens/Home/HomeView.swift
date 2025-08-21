@@ -21,7 +21,7 @@ struct HomeView: View {
     @State private var greetingViewModel: HomeGreetingViewModel
     
     // 카메라 모달 표시 여부
-        @State private var showRecordModal = false
+    @State private var showRecordModal = false
     
     // MARK: - Init
     
@@ -152,4 +152,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView(container: .init())
+        .environmentObject(DIContainer())
 }
