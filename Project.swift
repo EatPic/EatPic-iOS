@@ -37,7 +37,7 @@ let project = Project(
             name: "EatPic-iOS",
             destinations: [.iPhone],
             product: .app,
-            bundleId: "com.eatpic.EatPic",
+            bundleId: "io.tuist.EatPic-iOS.com",
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
