@@ -9,9 +9,16 @@ import SwiftUI
 
 struct MyAllPicCardView: View {
     @State private var showDateFilterDialog = false
+    @State private var viewModel: MyAllPicCardViewModel
+    @EnvironmentObject private var container: DIContainer
+    
+    init(container: DIContainer) {
+        self._viewModel = State(
+            initialValue: MyAllPicCardViewModel(container: container)
+        )
+    }
     
     var body: some View {
-        
         VStack {
             ScrollView {
                 LazyVGrid(columns: [
@@ -19,10 +26,15 @@ struct MyAllPicCardView: View {
                     GridItem(.flexible(), spacing: 2),
                     GridItem(.flexible())
                 ], spacing: 6) {
-                    ForEach(0..<30, id: \.self) { _ in
-                        Image("Community/testImage1")
-                            .resizable()
+                    ForEach(viewModel.feedCards) { card in
+                        Rectangle()
+                            .remoteImage(url: card.imageUrl)
+                            .scaledToFill()
                             .frame(width: 118, height: 118)
+                            .clipped()
+                            .task {
+                                await viewModel.loadNextPageIfNeeded(currentCard: card)
+                            }
                     }
                 }
             }
@@ -61,9 +73,13 @@ struct MyAllPicCardView: View {
             Button("취소", role: .cancel) {
             }
         }
+        .task {
+            await viewModel.fetchMyCards()
+        }
     }
 }
 
 #Preview {
-    MyAllPicCardView()
+    MyAllPicCardView(container: DIContainer())
+        .environmentObject(DIContainer())
 }

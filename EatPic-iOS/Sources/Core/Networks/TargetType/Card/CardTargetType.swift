@@ -19,6 +19,7 @@ enum CardTargetType {
     case todayMeals
     case profileFeed(userId: Int, cursor: Int?, size: Int)
     case recomPicSingleCard(cardId: Int)
+    case myPageMyCards(cursor: Int?, size: Int)
 }
 
 extension CardTargetType: APITargetType {
@@ -42,6 +43,8 @@ extension CardTargetType: APITargetType {
             return "/api/cards/profile/\(userId)"
         case .recomPicSingleCard(let cardId):
             return "/api/cards/\(cardId)/feed"
+        case .myPageMyCards:
+            return "/api/cards/mypage/feeds"
         }
     }
     
@@ -49,7 +52,7 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds, .recommendedCard,
                 .todayMeals, .fetchCardDetail,
-                .recomPicSingleCard, .profileFeed, .getUserProfile:
+                .recomPicSingleCard, .profileFeed, .getUserProfile, .myPageMyCards:
             return .get
         case .createFeed:
             return .post
@@ -104,6 +107,16 @@ extension CardTargetType: APITargetType {
             var params: [String: Any] = ["size": safeSize]
             if let cursor = cursor {
                 params["cursor"] = cursor // cursor는 있을 때만}
+            }
+            return .requestParameters(
+                parameters: params,
+                encoding: URLEncoding.queryString
+            )
+        case .myPageMyCards(let cursor, let size):
+            let safeSize = (size > 0) ? size : 15 // 기본값 15
+            var params: [String: Any] = ["size": safeSize]
+            if let cursor = cursor {
+                params["cursor"] = cursor
             }
             return .requestParameters(
                 parameters: params,

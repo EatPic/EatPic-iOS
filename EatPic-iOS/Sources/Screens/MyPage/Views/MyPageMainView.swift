@@ -11,9 +11,11 @@ import SwiftUI
 struct MyPageMainView: View {
     @EnvironmentObject private var container: DIContainer
     @State private var viewModel: MyPageMainViewModel
+    @State private var allPicCardViewModel: MyAllPicCardViewModel
     
     init(container: DIContainer) {
         self._viewModel = State(initialValue: MyPageMainViewModel(container: container))
+        self._allPicCardViewModel = State(initialValue: MyAllPicCardViewModel(container: container))
     }
     
     var body: some View {
@@ -29,6 +31,7 @@ struct MyPageMainView: View {
         .background(Color.gray020.ignoresSafeArea())
         .task {
             await viewModel.getMyInfo()
+            await allPicCardViewModel.fetchMyCards()
         }
     }
     
@@ -153,7 +156,7 @@ struct MyPageMainView: View {
                 iconName: "card",
                 title: "전체 Pic 카드",
                 description: "나의 전체 Pic 카드 확인해보기",
-                countText: "0개"
+                countText: "\(allPicCardViewModel.feedCards.count)개"
             ) {
                 print("전체 카드 클릭")
                 container.router.push(.myAllPicCard)
