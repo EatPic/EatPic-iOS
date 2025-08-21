@@ -168,7 +168,7 @@ struct NavigationRoutingView: View {
                 )]
             )
         case .settingPage:
-            SettingPageView()
+            SettingPageView(container: container)
         case .blockedAccount:
             BlockedAccountView()
         case .myAllPicCard:

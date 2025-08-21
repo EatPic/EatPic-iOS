@@ -11,9 +11,14 @@ struct SettingPageView: View {
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
     
+    @State private var viewModel: MyPageMainViewModel
     @State private var isNotificationEnabled = true
     @State private var showLogoutModal = false
     @State private var showWithdrawalModal = false
+    
+    init(container: DIContainer) {
+        self._viewModel = State(initialValue: MyPageMainViewModel(container: container))
+    }
     
     var body: some View {
         ZStack {
@@ -45,6 +50,9 @@ struct SettingPageView: View {
             }
             .background(Color.gray020.ignoresSafeArea())
             .navigationBarHidden(true) // 기본 네비게이션 바 숨기기
+            .task {
+                await viewModel.getMyInfo()
+            }
             
             // 로그아웃 모달
             if showLogoutModal {
@@ -116,18 +124,32 @@ struct SettingPageView: View {
     // MARK: 사용자 프로필 뷰
     private var userProfileView: some View {
         HStack {
-            Image("img_mypage_itcong")
-                .resizable()
-                .frame(width: 72, height: 72)
+            Group {
+                if let profileImageUrl = viewModel.user?.profileImageUrl, !profileImageUrl.isEmpty {
+                    AsyncImage(url: URL(string: profileImageUrl)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Image("img_mypage_itcong")
+                    }
+                    .frame(width: 72, height: 72)
+                    .clipShape(Circle())
+                } else {
+                    Image("img_mypage_itcong")
+                        .resizable()
+                        .frame(width: 72, height: 72)
+                }
+            }
             
             Spacer().frame(width: 16)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("잇콩")
+                Text(viewModel.user?.nickname ?? "잇콩")
                     .font(.dsTitle3)
                     .foregroundStyle(Color.gray080)
                 
-                Text("@itcong")
+                Text("@\(viewModel.user?.nameId ?? "itcong")")
                     .font(.dsCallout)
                     .foregroundStyle(Color.gray060)
             }
@@ -271,5 +293,5 @@ struct SettingPageView: View {
 }
 
 #Preview {
-    SettingPageView()
+    SettingPageView(container: .init())
 }
