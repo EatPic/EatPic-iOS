@@ -95,9 +95,15 @@ final class FollowListViewModel {
     // MARK: - API Methods
     /// 팔로우 목록 리스트 불러오기
     @MainActor
-    func fetchFollowList(userId: Int, cursor: Int? = nil, limit: Int = 10) async {
+    func fetchFollowList(
+        userId: Int,
+        cursor: Int? = nil,
+        limit: Int = 10,
+        override statusOverride: FollowStatus? = nil
+    ) async {
         do {
-            let status: FollowStatus = (selected == .followers) ? .followed : .following
+            let status: FollowStatus = statusOverride ?? ((selected == .followers)
+                                                          ? .followed : .following)
             let response = try await userProvider.requestAsync(
                 .getUserFollowList(
                     status: status,
@@ -119,7 +125,7 @@ final class FollowListViewModel {
                     isFollowed: dto.isFollowed
                 )
             }
-            
+
             if status == .followed {
                 self.followers = users
             } else {
@@ -128,6 +134,19 @@ final class FollowListViewModel {
             
         } catch {
             print("팔로워/팔로잉 불러오기 실패:", error)
+        }
+    }
+    
+    /// 초기 진입 시 팔로워 숫자와 팔로잉 숫자 둘 다 선로드
+    @MainActor
+    func preloadBoth(userId: Int) async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.fetchFollowList(userId: userId, override: .followed)
+            }   // 팔로워 숫자 조회
+            group.addTask {
+                await self.fetchFollowList(userId: userId, override: .following)
+            } // 팔로잉 숫자 조회
         }
     }
 }
