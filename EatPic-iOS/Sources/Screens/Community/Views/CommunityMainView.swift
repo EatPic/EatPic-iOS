@@ -313,9 +313,8 @@ struct MainPicCardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 16) {
             // 상단: 프로필/시간/메뉴
             HStack {
-                if let profileImage = card.user.profileImage {
-                    profileImage
-                        .resizable()
+                if let profileImage = card.user.profileImageUrl {
+                    remoteImage(url: profileImage)
                         .scaledToFit()
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
@@ -582,7 +581,7 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
     let nameId: String
     let nickname: String
     let imageName: String?
-    var profileImage: Image? { imageName.map { Image($0) } }
+    let profileImageUrl: String?
     let introduce: String?
     let userType: CommunityUserType
     let isCurrentUser: Bool
@@ -593,6 +592,7 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
         nameId: String = "unknown",
         nickname: String = "게스트",
         imageName: String? = nil,
+        profileImageUrl: String? = nil,
         introduce: String? = nil,
         type: CommunityUserType = .other,
         isCurrentUser: Bool = false,
@@ -602,10 +602,17 @@ struct CommunityUser: Identifiable, Hashable, Equatable {
         self.nameId = nameId
         self.nickname = nickname
         self.imageName = imageName
+        self.profileImageUrl = profileImageUrl
         self.introduce = introduce
         self.userType = type
         self.isCurrentUser = isCurrentUser
         self.isFollowed = isFollowed
+    }
+    
+    /// URL 타입 변환 (UI에서 `AsyncImage` 등에 사용)
+        var profileImageURL: URL? {
+            guard let profileImageUrl else { return nil }
+            return URL(string: profileImageUrl)
     }
 
     static let placeholder = CommunityUser()
