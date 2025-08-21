@@ -92,7 +92,7 @@ struct SavedPicCardView: View {
                 GridItem(.flexible(), spacing: 2),
                 GridItem(.flexible())
             ], spacing: 6) {
-                ForEach(viewModel.feedCards) { card in
+                ForEach(viewModel.orderedFeedCards) { card in
                     Rectangle()
                         .remoteImage(url: card.imageUrl)
                         .scaledToFill()

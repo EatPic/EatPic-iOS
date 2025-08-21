@@ -82,6 +82,17 @@ final class SavedPicCardViewModel {
     func onTabChanged() async {
         await fetchSavedCards(refresh: true)
     }
+    
+    // MARK: - 선택된 탭에 따른 카드 순서 반환
+    var orderedFeedCards: [FeedCard] {
+        if selectedTab == 1 {
+            // 잇친들의 Pic 카드: 최신순으로 표시 (순서 뒤집기)
+            return feedCards.reversed()
+        } else {
+            // 나의 Pic 카드: 기존 순서 유지
+            return feedCards
+        }
+    }
 
     // MARK: - Pagination Helper
     func loadNextPageIfNeeded(currentCard: FeedCard) async {
