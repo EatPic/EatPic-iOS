@@ -178,7 +178,7 @@ struct NavigationRoutingView: View {
         case .savedPicCard:
             SavedPicCardView(container: container)
         case .recomPicSingleCard(let cardId):
-            RecomPicCardView(container: container, cardId: cardId)
+            RecomPicSingleCardView(container: container, cardId: cardId)
         }
     }
 }
