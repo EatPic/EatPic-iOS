@@ -25,8 +25,6 @@ struct MainTabView: View {
     init(container: DIContainer) {
         self.mediaPickerProvider = .init(
             mediaPickerService: container.mediaPickerService)
-        print(Config.appBuild)
-        print(Config.appVersion)
     }
     
     var body: some View {
