@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum CardTargetType {
-    case fetchFeeds(userId: Int, cursor: Int?, size: Int)
+    case fetchFeeds(userId: Int?, cursor: Int?, size: Int)
     case fetchCardDetail(cardId: Int)
     case createFeed(
         request: CreateCardRequest, image: Data, fileName: String, mimeType: String)
@@ -58,11 +58,10 @@ extension CardTargetType: APITargetType {
     var task: Moya.Task {
         switch self {
         case let .fetchFeeds(userId, cursor, size):
-            var params: [String: Any] = [
-                "userId": userId,
-                "size": size
-            ]
-            // nil이 아닐 때만 추가
+            var params: [String: Any] = ["size": size]
+            if let userId = userId {
+                params["userId"] = userId
+            }
             if let cursor = cursor {
                 params["cursor"] = cursor
             }
