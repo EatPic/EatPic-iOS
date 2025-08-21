@@ -157,7 +157,6 @@ struct SettingPageView: View {
             Spacer()
             
             Button(action: {
-                // TODO: [25.08.14] ProfileEditView로 네비게이션 - 비엔/이은정
                 container.router.push(.profileEdit)
                 print("프로필 편집")
             }, label: {
