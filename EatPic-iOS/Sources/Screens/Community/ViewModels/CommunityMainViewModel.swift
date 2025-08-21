@@ -351,8 +351,10 @@ final class CommunityMainViewModel: ObservableObject {
             }
             
         case .comment:
+            // 선택된 카드 ID를 댓글 VM에 전달하고 첫 페이지부터 로드
+            commentVM.selectedCardId = cardId
             isShowingCommentBottomSheet = true
-            // commentVM에서 카드/스레드 설정이 필요하면 여기서 설정
+            await commentVM.refreshComments()
             
         case .reaction(let selected, _):
             do {
