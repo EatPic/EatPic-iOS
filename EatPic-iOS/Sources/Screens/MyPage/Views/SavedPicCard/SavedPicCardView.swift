@@ -9,12 +9,17 @@ import SwiftUI
 
 struct SavedPicCardView: View {
     @State private var showDateFilterDialog = false
-    @State private var selected = 0
+    @State private var viewModel: SavedPicCardViewModel
+    @EnvironmentObject private var container: DIContainer
+    
+    init(container: DIContainer) {
+        self._viewModel = State(
+            initialValue: SavedPicCardViewModel(container: container)
+        )
+    }
     
     var body: some View {
-        
         VStack {
-            
             Spacer().frame(height: 16)
             
             pickerBtn
@@ -57,11 +62,14 @@ struct SavedPicCardView: View {
             Button("취소", role: .cancel) {
             }
         }
+        .task {
+            await viewModel.fetchSavedCards()
+        }
     }
     
-    // MARK: 나의 PicCard, d잇친들의 픽카드 선택 버튼
+    // MARK: 나의 PicCard, 잇친들의 픽카드 선택 버튼
     private var pickerBtn: some View {
-        Picker("", selection: $selected) {
+        Picker("", selection: $viewModel.selectedTab) {
             Text("나의 Pic 카드")
                 .tag(0)
             Text("잇친들의 Pic 카드")
@@ -69,6 +77,11 @@ struct SavedPicCardView: View {
         }
         .pickerStyle(.segmented)
         .padding(.horizontal, 16)
+        .onChange(of: viewModel.selectedTab) {
+            Task {
+                await viewModel.onTabChanged()
+            }
+        }
     }
     
     // MARK: 하단 ScrollView
@@ -79,11 +92,15 @@ struct SavedPicCardView: View {
                 GridItem(.flexible(), spacing: 2),
                 GridItem(.flexible())
             ], spacing: 6) {
-                ForEach(0..<30, id: \.self) { _ in
-                    // selected 값에 따라 다른 이미지 표시
-                    Image(selected == 0 ? "Community/testImage1" : "Community/testImage2")
-                        .resizable()
+                ForEach(viewModel.orderedFeedCards) { card in
+                    Rectangle()
+                        .remoteImage(url: card.imageUrl)
+                        .scaledToFill()
                         .frame(width: 118, height: 118)
+                        .clipped()
+                        .task {
+                            await viewModel.loadNextPageIfNeeded(currentCard: card)
+                        }
                 }
             }
         }
@@ -92,5 +109,6 @@ struct SavedPicCardView: View {
 }
 
 #Preview {
-    SavedPicCardView()
+    SavedPicCardView(container: DIContainer())
+        .environmentObject(DIContainer())
 }

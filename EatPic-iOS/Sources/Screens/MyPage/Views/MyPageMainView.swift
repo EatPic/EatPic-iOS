@@ -12,10 +12,12 @@ struct MyPageMainView: View {
     @EnvironmentObject private var container: DIContainer
     @State private var viewModel: MyPageMainViewModel
     @State private var allPicCardViewModel: MyAllPicCardViewModel
+    @State private var badgeViewModel: MyBadgeStatusViewModel
     
     init(container: DIContainer) {
         self._viewModel = State(initialValue: MyPageMainViewModel(container: container))
         self._allPicCardViewModel = State(initialValue: MyAllPicCardViewModel(container: container))
+        self._badgeViewModel = State(initialValue: MyBadgeStatusViewModel(container: container))
     }
     
     var body: some View {
@@ -32,6 +34,7 @@ struct MyPageMainView: View {
         .task {
             await viewModel.getMyInfo()
             await allPicCardViewModel.fetchMyCards()
+            await badgeViewModel.fetchBadgeList()
         }
     }
     
@@ -167,7 +170,7 @@ struct MyPageMainView: View {
                 iconName: "bookmark",
                 title: "저장한 Pic 카드",
                 description: "내가 저장한 Pic 카드 확인해보기",
-                countText: "0개"
+                countText: "\(allPicCardViewModel.feedCards.count)개"
             ) {
                 print("저장 카드 클릭")
                 container.router.push(.savedPicCard)
@@ -177,7 +180,7 @@ struct MyPageMainView: View {
                 iconName: "badge",
                 title: "활동 배지",
                 description: "지금까지 모은 뱃지 확인해보기",
-                countText: "0개"
+                countText: "\(badgeViewModel.getBadgeStatus())개"
             ) {
                 print("배지 클릭")
                 container.router.push(.myBadgeStatusAll)
