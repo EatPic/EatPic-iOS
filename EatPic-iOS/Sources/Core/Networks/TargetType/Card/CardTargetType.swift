@@ -18,6 +18,7 @@ enum CardTargetType {
     case todayMeals
     case profileFeed(userId: Int, cursor: Int?, size: Int)
     case recomPicSingleCard(cardId: Int)
+    case myPageMyCards
 }
 
 extension CardTargetType: APITargetType {
@@ -39,6 +40,8 @@ extension CardTargetType: APITargetType {
             return "/api/cards/profile/\(userId)"
         case .recomPicSingleCard(let cardId):
             return "/api/cards/\(cardId)/feed"
+        case .myPageMyCards:
+            return "/api/cards/mypage/feeds"
         }
     }
     
@@ -46,7 +49,7 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds, .recommendedCard,
                 .todayMeals, .fetchCardDetail,
-                .recomPicSingleCard, .profileFeed:
+                .recomPicSingleCard, .profileFeed, .myPageMyCards:
             return .get
         case .createFeed:
             return .post
@@ -95,7 +98,7 @@ extension CardTargetType: APITargetType {
         case .deleteCard:
             return .requestPlain
             
-        case .recommendedCard, .todayMeals, .recomPicSingleCard:
+        case .recommendedCard, .todayMeals, .recomPicSingleCard, .myPageMyCards:
             return .requestPlain
         case .profileFeed(_, let cursor, let size):
             let safeSize = (size > 0) ? size : 15 // 기본값 보정
