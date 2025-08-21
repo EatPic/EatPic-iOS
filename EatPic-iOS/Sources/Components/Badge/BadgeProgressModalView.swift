@@ -72,7 +72,6 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        print("모달 나가기 동작")
                         closeBtnAction()
                     }, label: {
                         Image("Modal/btn_close")

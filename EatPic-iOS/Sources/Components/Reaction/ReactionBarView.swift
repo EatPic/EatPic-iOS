@@ -87,18 +87,15 @@ struct ReactionBarView: View {
             selectedReaction = nil
             reactionCounts[reaction, default: 1] -= 1
             newReaction = nil
-            print("리액션 해제됨")
         } else {
             // 이전 리액션이 있다면 감소
             if let previous = selectedReaction {
                 reactionCounts[previous, default: 1] -= 1
-                print("이전 리액션 \(previous) 감소")
             }
             // 새 리액션 선택
             selectedReaction = reaction
             reactionCounts[reaction, default: 0] += 1
             newReaction = reaction
-//            print("새 리액션 \(reaction) 선택됨")
         }
         // 콜백 호출
         onReactionSelected(newReaction)

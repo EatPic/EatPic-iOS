@@ -45,7 +45,6 @@ struct ReplyNotiView: View {
         .background(noticlickstate.backgroundColor)
         .onTapGesture {
             if noticlickstate == .unclicked {
-                print("알림 클릭")
                 noticlickstate = .clicked
             }
         }

@@ -70,7 +70,6 @@ struct ProfileEditView: View {
                 .frame(width: 130, height: 130)
 
             Button(action: {
-                print("프로필 사진 설정")
                 showEditProfileImageDialog = true
             }, label: {
                 Image("btn_home_record")

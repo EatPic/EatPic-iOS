@@ -88,8 +88,6 @@ class LoginViewModel {
             DispatchQueue.main.async {
                 self.container.router.popToRoot()
             }
-            
-            print("로그인 성공")
         } catch {
             loginError = "이메일과 비밀번호가 일치하지 않습니다."
             print("로그인 실패:", error.localizedDescription)

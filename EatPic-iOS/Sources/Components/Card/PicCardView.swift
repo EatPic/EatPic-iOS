@@ -157,7 +157,6 @@ struct PicCardBackView: View {
             recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
             linkURL: card.recipeUrl,
             naviButtonAction: {
-                print("내비게이션 버튼 탭")
                 // 옵셔널 바인딩을 사용하여 안전하게 값 언래핑
                 if let latitude = card.latitude,
                    let longitude = card.longitude,

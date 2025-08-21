@@ -30,7 +30,6 @@ class MyPageMainViewModel {
             )
             
             self.user = dto.result
-            print(dto.result)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
