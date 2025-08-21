@@ -101,6 +101,7 @@ struct HomeView: View {
             await greetingViewModel.fetchGreetingUser()
             await badgeViewModel.fetchBadgeList()
         }
+        .tabBarHidden(showRecordModal)
     }
     
     private var topBar: some View {

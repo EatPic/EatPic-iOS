@@ -50,4 +50,12 @@ extension APIProviderStore {
     func reaction() -> MoyaProvider<ReactionTargetType> {
         return networkService.createProvider(for: ReactionTargetType.self)
     }
+    
+    func explore() -> MoyaProvider<ExploreAPITarget> {
+        return networkService.createProvider(for: ExploreAPITarget.self)
+    }
+    
+    func search() -> MoyaProvider<SearchAPITarget> {
+        return networkService.createProvider(for: SearchAPITarget.self)
+    }
 }

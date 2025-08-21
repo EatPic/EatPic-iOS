@@ -79,10 +79,6 @@ struct CommentBottomSheetView: View {
                 await viewModel.fetchComments()
             }
         }
-//        .onDisappear {
-//            viewModel.nextCursor = nil
-//            viewModel.hasNextPage = true
-//        }
     }
     
     private func commentListView(
@@ -131,7 +127,6 @@ struct CommentBottomSheetView: View {
         }
         .padding(.top, 14)
         .padding(.bottom, 10)
-        .frame(height: 85)
     }
     
     private func commentPostView() -> some View {

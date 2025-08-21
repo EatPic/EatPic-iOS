@@ -9,10 +9,32 @@ import Foundation
 import Moya
 import SwiftUI
 
+// MARK: - Lightweight wrapper that decodes only `result` to avoid `code` type mismatch
+private struct CommentResponseRoot<T: Decodable>: Decodable {
+    let result: T
+}
+
+// MARK: - DTOs for current comment API
+private struct CommentListDTO: Decodable {
+    let hasNext: Bool
+    let nextCursor: Int?
+    let commentList: [CommentItemDTO]
+}
+
+private struct CommentItemDTO: Decodable {
+    let parentCommentId: Int?
+    let commentId: Int
+    let nickname: String
+    let nameId: String
+    let content: String
+    let createdAt: String
+}
+
+@MainActor
 @Observable
 final class CommentViewModel {
     var commentText: String = ""
-    var comments: [Comment] = sampleComments
+    var comments: [Comment] = []
     var isShowingReportBottomSheet: Bool = false
     var commentToReport: Comment? = nil
     var selectedCardId: Int? = nil
@@ -64,16 +86,16 @@ final class CommentViewModel {
     
     func fetchComments() async {
         guard let cardId = selectedCardId else {
-                print("fetchComments 실패: selectedCardId가 nil")
-                return
-            }
-            guard !isFetching else {
-                print("fetchComments 실패: 이미 fetching 중")
-                return
-            }
-            
-            print("fetchComments 시작 - cardId: \(cardId)")
-            isFetching = true
+            print("fetchComments 실패: selectedCardId가 nil")
+            return
+        }
+        guard !isFetching else {
+            print("fetchComments 실패: 이미 fetching 중")
+            return
+        }
+        
+        print("fetchComments 시작 - cardId: \(cardId)")
+        isFetching = true
         
         let cursor = nextCursor
         
@@ -81,51 +103,68 @@ final class CommentViewModel {
             let response = try await commentProvider.requestAsync(
                 .getComment(cardId: cardId, size: 30)
             )
-            let dto = try JSONDecoder()
-                .decode(APIResponse<CommentListResult>.self, from: response.data
+            let decoded = try JSONDecoder().decode(
+                CommentResponseRoot<CommentListDTO>.self,
+                from: response.data
             )
             // CommentItem을 Comment로 변환
-            let newComments = dto.result.cardFeedList.map { commentItem in
+            let mapped = decoded.result.commentList.map { item in
                 Comment(
-                    id: commentItem.cardFeedId,
+                    id: item.commentId,
                     user: CommunityUser(
-                        id: commentItem.user.userId,
-                        nameId: commentItem.user.nameId,
-                        nickname: commentItem.user.nickname,
+                        id: item.commentId, // 서버에서 userId 미제공 → 임시 식별
+                        nameId: item.nameId,
+                        nickname: item.nickname,
                         imageName: nil, // 기본 이미지 사용
                         introduce: nil,
                         type: .other,
                         isCurrentUser: false,
                         isFollowed: false
                     ),
-                    text: commentItem.content,
-                    time: formatTimeString(commentItem.createdAt)
+                    text: item.content,
+                    time: formatTimeString(item.createdAt)
                 )
             }
             
-            DispatchQueue.main.async {
-                if cursor == 0 {
-                    // 첫 번째 로드인 경우 기존 댓글 대체
-                    self.comments = newComments
-                } else {
-                    // 추가 로드인 경우 댓글 추가
-                    self.comments.append(contentsOf: newComments)
-                }
-                
-                self.nextCursor = dto.result.nextCursor
-                self.hasNextPage = dto.result.hasNext
-                self.isFetching = false
+            // 페이징: 첫 페이지면 교체, 이후 페이지면 추가
+            if cursor == nil {
+                self.comments = mapped
+            } else {
+                self.comments.append(contentsOf: mapped)
             }
-            
-            print("댓글 불러오기 성공 - 카드 ID: \(cardId), 댓글 수: \(newComments.count)")
-            
+            self.nextCursor = decoded.result.nextCursor
+            self.hasNextPage = decoded.result.hasNext
+            self.isFetching = false
         } catch {
-            print("댓글 불러오기 실패:", error.localizedDescription)
+            if let decodingError = error as? DecodingError {
+                switch decodingError {
+                case .typeMismatch(let type, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+                    print("디코딩 실패(TypeMismatch): \(type) @ \(path) - \(context.debugDescription)")
+                case .valueNotFound(let type, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+                    print("디코딩 실패(ValueNotFound): \(type) @ \(path) - \(context.debugDescription)")
+                case .keyNotFound(let key, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+                    let keyValue = key.stringValue
+                    print(
+                        "디코딩 실패(KeyNotFound): \(keyValue) @ \(path) - \(context.debugDescription)")
+                case .dataCorrupted(let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+                    print("디코딩 실패(DataCorrupted): \(path) - \(context.debugDescription)")
+                @unknown default:
+                    print("디코딩 실패(Unknown): \(decodingError)")
+                }
+            } else {
+                print("댓글 불러오기 실패(Other):", error.localizedDescription)
+            }
+            toastVM.showToast(title: "댓글을 불러오지 못했습니다.")
         }
     }
     
     // 댓글 새로고침 (첫 페이지부터 다시 로드)
     func refreshComments() async {
+        comments = []
         nextCursor = nil
         hasNextPage = true
         await fetchComments()

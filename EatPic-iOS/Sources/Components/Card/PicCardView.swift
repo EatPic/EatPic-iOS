@@ -55,7 +55,7 @@ struct PicCardView<Content: View>: View {
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
                 } else {
-                    Image(systemName: "person.circle.fill") // 기본 이미지로 대체
+                    Image(.Community.itcong)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 36, height: 36)

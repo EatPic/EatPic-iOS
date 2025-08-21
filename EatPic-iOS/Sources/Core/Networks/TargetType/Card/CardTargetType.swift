@@ -10,6 +10,7 @@ import Moya
 
 enum CardTargetType {
     case fetchFeeds(userId: Int, cursor: Int?, size: Int)
+    case fetchCardDetail(cardId: Int)
     case createFeed(
         request: CreateCardRequest, image: Data, fileName: String, mimeType: String)
     case deleteCard(cardId: Int)
@@ -24,6 +25,8 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds:
             return "/api/cards/feeds"
+        case .fetchCardDetail(let cardId):
+            return "/api/cards/\(cardId)/feed"
         case .createFeed:
             return "/api/cards"
         case .deleteCard(let cardId):
@@ -41,7 +44,9 @@ extension CardTargetType: APITargetType {
     
     var method: Moya.Method {
         switch self {
-        case .fetchFeeds, .recommendedCard, .todayMeals, .recomPicSingleCard, .profileFeed:
+        case .fetchFeeds, .recommendedCard,
+                .todayMeals, .fetchCardDetail,
+                .recomPicSingleCard, .profileFeed:
             return .get
         case .createFeed:
             return .post
@@ -57,13 +62,13 @@ extension CardTargetType: APITargetType {
                 "userId": userId,
                 "size": size
             ]
-            
             // nil이 아닐 때만 추가
             if let cursor = cursor {
                 params["cursor"] = cursor
             }
-            
             return .requestParameters(parameters: params, encoding: URLEncoding.default)
+        case .fetchCardDetail:
+            return .requestPlain
         case let .createFeed(request, image, fileName, mimeType):
             // 멀티파트 파트 구성:
             // 1) name=`request` (application/json) — CreateCardRequest 직렬화

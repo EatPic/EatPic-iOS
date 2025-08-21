@@ -109,4 +109,9 @@ extension View {
             )
         )
     }
+    
+    @ViewBuilder
+    func tabBarHidden(_ hidden: Bool) -> some View {
+        self.toolbar(hidden ? .hidden : .visible, for: .tabBar)
+    }
 }
