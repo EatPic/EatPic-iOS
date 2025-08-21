@@ -250,7 +250,7 @@ struct OthersProfileView: View {
                         .frame(width: imageSize, height: imageSize)
                         .clipped()
                         .onTapGesture {
-                            container.router.push(.recomPicSingleCard(cardId: card.cardId))
+                            container.router.push(.recomPicSingleCard(cardId: card.id))
                         }
                         .task {
                             await viewModel
