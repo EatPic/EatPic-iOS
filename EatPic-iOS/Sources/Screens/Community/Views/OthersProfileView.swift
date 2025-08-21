@@ -127,7 +127,9 @@ struct OthersProfileView: View {
             .padding(.horizontal, 16)
             .scrollIndicators(.hidden)
             .task {
-                await viewModel.fetchUserCards()
+                // 화면 들어올 때(그리고 user.id 바뀔 때) 프로필 + 첫 페이지 로드
+                await viewModel.fetchUserProfile()
+                await viewModel.fetchUserCards(refresh: true)
             }
             .sheet(isPresented: $viewModel.isShowingReportBottomSheet) {
                 ReportBottomSheetView(
