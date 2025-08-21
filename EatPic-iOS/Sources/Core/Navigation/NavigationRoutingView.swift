@@ -176,7 +176,7 @@ struct NavigationRoutingView: View {
         case .profileEdit:
             ProfileEditView()
         case .savedPicCard:
-            SavedPicCardView()
+            SavedPicCardView(container: container)
         case .recomPicSingleCard(let cardId):
             RecomPicCardView(container: container, cardId: cardId)
         }

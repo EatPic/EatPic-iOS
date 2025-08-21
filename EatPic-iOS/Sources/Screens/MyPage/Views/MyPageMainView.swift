@@ -166,7 +166,7 @@ struct MyPageMainView: View {
                 iconName: "bookmark",
                 title: "저장한 Pic 카드",
                 description: "내가 저장한 Pic 카드 확인해보기",
-                countText: "0개"
+                countText: "\(allPicCardViewModel.feedCards.count)개"
             ) {
                 print("저장 카드 클릭")
                 container.router.push(.savedPicCard)
