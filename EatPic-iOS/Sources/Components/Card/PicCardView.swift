@@ -48,15 +48,15 @@ struct PicCardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 16) {
             // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
-                if let profileImage = card.user.profileImage {
-                    profileImage
-                        .resizable()
+                if let profileImage = card.user.profileImageUrl {
+                    Rectangle()
+                        .remoteImage(url: profileImage)
                         .scaledToFit()
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
                 } else {
-                    Image(.Community.itcong)
-                        .resizable()
+                    Rectangle()
+                        .remoteImage(url: UserProfileConstants.defaultImage)
                         .scaledToFit()
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
