@@ -18,7 +18,7 @@ enum CardTargetType {
     case todayMeals
     case profileFeed(userId: Int, cursor: Int?, size: Int)
     case recomPicSingleCard(cardId: Int)
-    case myPageMyCards
+    case myPageMyCards(cursor: Int?, size: Int)
 }
 
 extension CardTargetType: APITargetType {
@@ -49,7 +49,7 @@ extension CardTargetType: APITargetType {
         switch self {
         case .fetchFeeds, .recommendedCard,
                 .todayMeals, .fetchCardDetail,
-                .recomPicSingleCard, .profileFeed, .myPageMyCards:
+                .recomPicSingleCard, .profileFeed:
             return .get
         case .createFeed:
             return .post
@@ -98,13 +98,23 @@ extension CardTargetType: APITargetType {
         case .deleteCard:
             return .requestPlain
             
-        case .recommendedCard, .todayMeals, .recomPicSingleCard, .myPageMyCards:
+        case .recommendedCard, .todayMeals, .recomPicSingleCard:
             return .requestPlain
         case .profileFeed(_, let cursor, let size):
             let safeSize = (size > 0) ? size : 15 // 기본값 보정
             var params: [String: Any] = ["size": safeSize]
             if let cursor = cursor {
                 params["cursor"] = cursor // cursor는 있을 때만}
+            }
+            return .requestParameters(
+                parameters: params,
+                encoding: URLEncoding.queryString
+            )
+        case .myPageMyCards(let cursor, let size):
+            let safeSize = (size > 0) ? size : 15 // 기본값 15
+            var params: [String: Any] = ["size": safeSize]
+            if let cursor = cursor {
+                params["cursor"] = cursor
             }
             return .requestParameters(
                 parameters: params,
