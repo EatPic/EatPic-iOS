@@ -111,8 +111,8 @@ struct MyPageMainView: View {
             Spacer()
             
             Button {
-                print("팔로워 선택")
-                container.router.push(.followList(selected: .followers))
+                guard let uid = viewModel.user?.userId else { return } // 유저 아이디 생성
+                container.router.push(.followList(selected: .followers, userId: uid))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")
@@ -127,8 +127,9 @@ struct MyPageMainView: View {
             Spacer()
             
             Button {
-                print("팔로잉 선택")
-                container.router.push(.followList(selected: .followings))
+                /// 팔로잉 버튼 네비게이션
+                guard let uid = viewModel.user?.userId else { return } // 유저 아이디 생성
+                container.router.push(.followList(selected: .followings, userId: uid))
             } label: {
                 VStack(spacing: 2) {
                     Text("0")

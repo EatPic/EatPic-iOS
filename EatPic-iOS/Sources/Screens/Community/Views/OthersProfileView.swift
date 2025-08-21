@@ -217,8 +217,9 @@ struct OthersProfileView: View {
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            // 팔로워
             .onTapGesture {
-                container.router.push(.followList(selected: .followers))
+                container.router.push(.followList(selected: .followers, userId: viewModel.user.id))
             }
             
             VStack {
@@ -229,8 +230,9 @@ struct OthersProfileView: View {
                     .font(.dsCaption1)
                     .foregroundStyle(Color.gray080)
             }
+            // 팔로잉
             .onTapGesture {
-                container.router.push(.followList(selected: .followings))
+                container.router.push(.followList(selected: .followings, userId: viewModel.user.id))
             }
         }
     }
