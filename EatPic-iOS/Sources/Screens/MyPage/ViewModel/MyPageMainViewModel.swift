@@ -6,23 +6,33 @@
 //
 
 import Foundation
+import Moya
 
 @Observable
-final class MyPageViewModel {
-    private let flow: SignupFlowViewModel
-
-    init(flow: SignupFlowViewModel) {
-        self.flow = flow
+class MyPageMainViewModel {
+    
+    private let userProvider: MoyaProvider<UserTargetType>
+    
+    var user: MyUserIconResult?
+    
+    init(container: DIContainer) {
+        self.userProvider = container.apiProviderStore.user()
     }
-
-    // 닉네임/아이디가 비어있을 때 디폴트 처리(원한다면 제거해도 됨)
-    var displayNickname: String {
-        let nick = flow.model.nickname
-        return nick
-    }
-
-    var displayIdWithAt: String {
-        let id = flow.model.nameId
-        return "@\(id)"
+    
+    @MainActor
+    func getMyInfo() async {
+        do {
+            let response = try await userProvider.requestAsync(.getMyUserIcon)
+            
+            let dto = try JSONDecoder().decode(
+                APIResponse<MyUserIconResult>.self,
+                from: response.data
+            )
+            
+            self.user = dto.result
+            print(dto.result)
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
     }
 }

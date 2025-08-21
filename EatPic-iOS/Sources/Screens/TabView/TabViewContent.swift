@@ -33,7 +33,7 @@ struct TabViewContent: View {
             ExploreMainView(container: container)
 
         case .myPage:
-            MyPageMainView()
+            MyPageMainView(container: container)
         }
     }
 }

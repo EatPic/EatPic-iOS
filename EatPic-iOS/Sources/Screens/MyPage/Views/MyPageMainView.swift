@@ -10,6 +10,11 @@ import SwiftUI
 /// 마이페이지 메인 화면 View
 struct MyPageMainView: View {
     @EnvironmentObject private var container: DIContainer
+    @State private var viewModel: MyPageMainViewModel
+    
+    init(container: DIContainer) {
+        self._viewModel = State(initialValue: MyPageMainViewModel(container: container))
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
@@ -22,6 +27,9 @@ struct MyPageMainView: View {
         }
         .padding(.horizontal, 16)
         .background(Color.gray020.ignoresSafeArea())
+        .task {
+            await viewModel.getMyInfo()
+        }
     }
     
     // MARK: - TopContentes(상단 콘텐츠)
@@ -56,18 +64,32 @@ struct MyPageMainView: View {
     
     /// 중앙 프로필 이미지
     private var middleProfileImage: some View {
-        Image("Community/itcong")
-            .frame(width: 100, height: 100)
-            .padding(.bottom, 16)
+        Group {
+            if let profileImageUrl = viewModel.user?.profileImageUrl, !profileImageUrl.isEmpty {
+                AsyncImage(url: URL(string: profileImageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Image("Community/itcong")
+                }
+                .frame(width: 100, height: 100)
+                .clipShape(Circle())
+            } else {
+                Image("Community/itcong")
+                    .frame(width: 100, height: 100)
+            }
+        }
+        .padding(.bottom, 16)
     }
     
     /// 마이페이지 프로필 닉네임 및 아이디
     private var middleNickname: some View {
         VStack {
-            Text("잇콩")
+            Text(viewModel.user?.nickname ?? "잇콩")
                 .font(.dsTitle3)
 
-            Text("itcong")
+            Text(viewModel.user?.nameId ?? "itcong")
                 .font(.dsSubhead)
                 .foregroundStyle(Color.gray040)
         }
@@ -77,8 +99,7 @@ struct MyPageMainView: View {
     /// 마이페이지 프로필 사용자 한줄소개 텍스트
     private var middleIntroduction: some View {
         VStack {
-            Text("안녕하세요 밥 먹는거 좋아하는 잇콩입니다")
-            Text("밥을 정말 좋아합니다.")
+            Text(viewModel.user?.introduce ?? "안녕하세요 밥 먹는거 좋아하는 잇콩입니다\n밥을 정말 좋아합니다.")
         }
         .font(.dsCaption1)
         .multilineTextAlignment(.center)
@@ -162,5 +183,5 @@ struct MyPageMainView: View {
 }
 
 #Preview {
-    MyPageMainView()
+    MyPageMainView(container: .init())
 }
