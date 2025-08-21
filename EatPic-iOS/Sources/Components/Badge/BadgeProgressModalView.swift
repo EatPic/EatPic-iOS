@@ -37,6 +37,9 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
 
     /// 뱃지 설명 텍스트색상
     let badgeDescriptionColor: Color
+    
+    /// ✅ 외부에서 현재/목표값을 튜플로 주입
+    let progressOverride: (current: Int, condition: Int)?
 
     // MARK: - Init
     init(
@@ -46,7 +49,8 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
         badgeTitle: String,
         badgeTitleColor: Color = .black,
         badgeDescription: String,
-        badgeDescriptionColor: Color = .gray060
+        badgeDescriptionColor: Color = .gray060,
+        progressOverride: (current: Int, condition: Int)? = nil
     ) {
         self.badgeType = badgeType
         self.closeBtnAction = closeBtnAction
@@ -55,6 +59,7 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
         self.badgeTitleColor = badgeTitleColor
         self.badgeDescription = badgeDescription
         self.badgeDescriptionColor = badgeDescriptionColor
+        self.progressOverride = progressOverride
     }
 
     // MARK: - Body
@@ -98,9 +103,15 @@ struct BadgeProgressModalView<T: ModalBadgeTypeProtocol>: View {
                     .multilineTextAlignment(.center)
 
                 Spacer().frame(height: 32)
-
+                
+                // 여기서 튜플 → "현재/목표회" 문자열로 변환
+                let progressText: String = { if let pro = progressOverride {
+                    return "\(pro.current)/\(pro.condition)회" } else {
+                        return "\(badgeType.progressText)회" }
+                }()
+                
                 Button(action: {}, label: {
-                    Text("\(badgeType.progressText)/10회")
+                    Text(progressText)
                         .font(.dsHeadline)
                         .foregroundStyle(badgeType.buttonTextColor)
                         .frame(width: 77, height: 34)
