@@ -23,7 +23,7 @@ extension APIProviderStore {
     /// 기본적으로 테스트용 Provider를 반환하도록 구성되어 있습니다.
     /// 추후, 실제 프로바이더로 변경해야 합니다.
     func user() -> MoyaProvider<UserTargetType> {
-        return networkService.testProvider(for: UserTargetType.self)
+        return networkService.createProvider(for: UserTargetType.self)
     }
     
     /// 로그인 플로우 Provieder
@@ -37,5 +37,25 @@ extension APIProviderStore {
     
     func card() -> MoyaProvider<CardTargetType> {
         return networkService.createProvider(for: CardTargetType.self)
+    }
+    
+    func bookmark() -> MoyaProvider<BookmarkTargetType> {
+        return networkService.createProvider(for: BookmarkTargetType.self)
+    }
+    
+    func comment() -> MoyaProvider<CommentTargetType> {
+        return networkService.createProvider(for: CommentTargetType.self)
+    }
+    
+    func reaction() -> MoyaProvider<ReactionTargetType> {
+        return networkService.createProvider(for: ReactionTargetType.self)
+    }
+    
+    func explore() -> MoyaProvider<ExploreAPITarget> {
+        return networkService.createProvider(for: ExploreAPITarget.self)
+    }
+    
+    func search() -> MoyaProvider<SearchAPITarget> {
+        return networkService.createProvider(for: SearchAPITarget.self)
     }
 }

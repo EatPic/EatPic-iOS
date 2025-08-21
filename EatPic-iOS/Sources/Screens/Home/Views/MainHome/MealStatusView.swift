@@ -9,8 +9,17 @@ import SwiftUI
 
 // MARK: - 메인 뷰
 struct MealStatusView: View {
-    @StateObject private var viewModel = MealStatusViewModel()
+    @State private var viewModel: MealStatusViewModel
     @State private var isEditMode = false
+    
+    // 추가: 빈 카드 탭 시 액션
+    let onTapEmptyMeal: () -> Void
+    
+    init(container: DIContainer, onTapEmptyMeal: @escaping () -> Void) {
+        self._viewModel = .init(wrappedValue: .init(container: container))
+        self.onTapEmptyMeal = onTapEmptyMeal
+    }
+
     
     var body: some View {
         VStack {
@@ -25,8 +34,11 @@ struct MealStatusView: View {
                         mymeal: meal,
                         isEditMode: isEditMode,
                         onDelete: {
-                            viewModel.deleteMealRecord(meal: meal)
-                        }
+                            Task {
+                                await viewModel.confirmMealDeletion(meal: meal)
+                            }
+                        },
+                        onAdd: { onTapEmptyMeal() }
                     )
                 }
                 Spacer()
@@ -36,6 +48,9 @@ struct MealStatusView: View {
         .padding(.horizontal, 19)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
+        .task {
+            await viewModel.fetchMealStatus()
+        }
     }
     
     private var topBarView: some View {
@@ -81,12 +96,13 @@ private struct MealItemView: View {
     let mymeal: MealStatusModel
     let isEditMode: Bool
     let onDelete: () -> Void
+    let onAdd: () -> Void
     
     var body: some View {
         if mymeal.isRecorded {
             RecordedMealView(meal: mymeal, isEditMode: isEditMode, onDelete: onDelete)
         } else {
-            EmptyMealView(meal: mymeal)
+            EmptyMealView(meal: mymeal, onAdd: onAdd)
         }
     }
 }
@@ -94,38 +110,32 @@ private struct MealItemView: View {
 // MARK: - 기록되지 않은 Meal 뷰
 private struct EmptyMealView: View {
     let meal: MealStatusModel
+    let onAdd: () -> Void
 
     var body: some View {
         VStack {
             ZStack {
-                RoundedRectangle(cornerRadius: 100)
-                    .fill(Color.gray030)
-
-                Text(meal.mealTime)
-                    .font(.dsBold15)
-                    .foregroundStyle(Color.gray060)
+                RoundedRectangle(cornerRadius: 100).fill(Color.gray030)
+                Text(meal.displayName).font(.dsBold15).foregroundStyle(Color.gray060)
             }
             .frame(width: 60, height: 26)
 
             Spacer().frame(height: 10)
-            
-            Button(action: {
-                // TODO: 기록 추가 (앨범 여는 액션?)
-                print("식사현황 기록하기")
-            }, label: {
+
+            Button {
+                onAdd()   // ⬅️ 홈에게 ‘모달 열어!’ 신호
+            } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.gray020)
                         .frame(width: 76, height: 76)
-
-                    Image("Home/btn_home_add")
-                        .resizable()
-                        .frame(width: 32, height: 32)
+                    Image("Home/btn_home_add").resizable().frame(width: 32, height: 32)
                 }
-            })
+            }
         }
     }
 }
+
 // MARK: - 기록된 Meal 뷰
 private struct RecordedMealView: View {
     let meal: MealStatusModel
@@ -137,7 +147,7 @@ private struct RecordedMealView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 100)
                     .fill(Color.green050)
-                Text(meal.mealTime)
+                Text(meal.displayName)
                     .font(.dsBold15)
                     .foregroundStyle(Color.white)
             }
@@ -147,8 +157,8 @@ private struct RecordedMealView: View {
 
             ZStack {
                 if let imageName = meal.imageName {
-                    Image(imageName)
-                        .resizable()
+                    Rectangle()
+                        .remoteImage(url: imageName)
                         .frame(width: 76, height: 76)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else {
@@ -174,8 +184,4 @@ private struct RecordedMealView: View {
             }
         }
     }
-}
-
-#Preview {
-    MealStatusView()
 }

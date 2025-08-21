@@ -6,25 +6,49 @@
 //
 
 import SwiftUI
+import Combine
+
+enum ExploreMode: Equatable {
+    case exploreFeed
+    case searchResults
+    case hashtagFeed(hashtagId: Int, title: String)
+}
 
 // 메인 탐색(Explore) 화면 뷰
 struct ExploreMainView: View {
-    // 검색창에 입력되는 텍스트 상태
-    @State var searchText: String = ""
     @EnvironmentObject private var container: DIContainer
+    @StateObject private var viewModel: ExploreViewModel
     
-    let columns: [GridItem] = [
+    @State private var mode: ExploreMode = .exploreFeed
+    @State private var searchText: String = ""
+    
+    private let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 9.5),
         GridItem(.flexible(minimum: 0), spacing: 9.5)
-        ]
+    ]
+    
+    init(container: DIContainer) {
+        self._viewModel = StateObject(
+            wrappedValue: .init(container: container))
+    }
     
     var body: some View {
         VStack(spacing: 20) {
             searchBar()
-            exploreFeed()
+            if case .searchResults = mode,
+               !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                SearchResultListView(viewModel: viewModel, mode: $mode)
+            } else {
+                exploreFeed()
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 16)
+        .task {
+            if case .exploreFeed = mode {
+                await viewModel.fetch(limit: 20)
+            }
+        }
     }
     
     /// 검색 바 구성 뷰
@@ -32,14 +56,38 @@ struct ExploreMainView: View {
         SearchBarView(
             text: $searchText,
             placeholder: "",
-            showsDeleteButton: false,
+            showsDeleteButton: true,
             backgroundColor: .white,
             strokeColor: .gray080,
             onSubmit: {
-                print("onSubmit")
+                Task {
+                    await viewModel.updateQuery(searchText)
+                }
+                // 두 글자 이상
+                if searchText.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2 {
+                    mode = .searchResults
+                }
             },
-            onChange: {_ in 
-                print("onChange")
+            onChange: { newText in
+                Task {
+                    await viewModel.updateQuery(newText)
+                }
+                let trimmed = newText.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed.count >= 2 {
+                    mode = .searchResults
+                } else {
+                    mode = .exploreFeed
+                }
+            },
+            onDeleteLeft: {
+                withAnimation {
+                    searchText = ""
+                    mode = .exploreFeed
+                }
+                
+                Task {
+                    await viewModel.fetch(limit: 20)
+                }
             }
         )
     }
@@ -48,51 +96,161 @@ struct ExploreMainView: View {
     private func exploreFeed() -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 9, content: {
-                ForEach(0..<9) { _ in
+                ForEach(viewModel.cards) { card in
                     Button {
-                        container.router.push(.exploreSelected)
+                        container.router.push(.exploreSelected(cardId: card.id))
                     } label: {
-                        explorePicCard()
+                        ExplorePicCardView(
+                            imageURL: card.imageURL,
+                            commentCount: card.commentCount,
+                            reactionCount: card.reactionCount
+                        )
                     }
                 }
             })
         }
         .scrollIndicators(.hidden)
     }
+}
+
+/// 검색 결과 리스트 (계정 / 해시태그 섹션)
+private struct SearchResultListView: View {
+    @ObservedObject private var viewModel: ExploreViewModel
     
-    /// 각 피드 카드 뷰: 게시물 이미지 + 댓글/공감 수
-    private func explorePicCard() -> some View {
-        GeometryReader { geometry in
-            ZStack {
-                Image("Explore/testImage")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                HStack(spacing: 4) {
-                    Image("icon_comment")
-                        .resizable()
-                        .frame(width: 18, height: 18)
-                    Text("99+")
-                        .font(.dsBold13)
-                        .foregroundStyle(Color.white)
-                    Image("icon_emotion")
-                        .resizable()
-                        .frame(width: 18, height: 18)
-                    Text("10")
-                        .font(.dsBold13)
-                        .foregroundStyle(Color.white)
+    @Binding private var mode: ExploreMode
+    
+    init(
+        viewModel: ExploreViewModel,
+        mode: Binding<ExploreMode>
+    ) {
+        self.viewModel = viewModel
+        self._mode = mode
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                // Accounts Section
+                if !viewModel.accounts.isEmpty
+                    || viewModel.isLoadingAccounts {
+                    Text("계정")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    VStack(spacing: 8) {
+                        ForEach(
+                            viewModel.accounts as [AccountSummary],
+                            id: \AccountSummary.userId
+                        ) { (acc: AccountSummary) in
+                            Button {
+                                // 계정 탭 임시 정책: 아직 API 미제작이므로 토스트/무시
+                                // 추후 라우팅 교체
+                            } label: {
+                                HStack(spacing: 12) {
+                                    if acc.profileImageURL != nil {
+                                        Circle()
+                                            .remoteImage(url: acc.profileImageURL)
+                                            .frame(width: 47, height: 47)
+                                            .clipShape(Circle())
+                                    } else {
+                                        Image(.Community.itcong)
+                                            .resizable()
+                                            .frame(width: 47, height: 47)
+                                            .clipShape(Circle())
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(acc.nickname)
+                                            .font(.dsBold15)
+                                        Text(acc.nameId)
+                                            .font(.dsBold15)
+                                            .foregroundStyle(Color.gray)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                        // Accounts pagination trigger
+                        if viewModel.hasNextAccounts {
+                            HStack {
+                                Spacer()
+                                ProgressView().onAppear {
+                                    Task { await viewModel.loadMoreAccounts() }
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
                 }
-                .padding(8)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+
+                // Hashtags Section
+                if !viewModel.hashtags.isEmpty || viewModel.isLoadingHashtags {
+                    Text("해시태그")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    VStack(spacing: 8) {
+                        ForEach(viewModel.hashtags, id: \.hashtagId) { tag in
+                            Button {
+                                Task {
+                                    await viewModel.fetchHashtagFeed(
+                                        hashtagId: tag.hashtagId, limit: 20)
+                                    // 검색어는 유지하되 결과 화면 전환
+                                    withAnimation {
+                                        mode = .hashtagFeed(
+                                            hashtagId: tag.hashtagId, title: tag.title)
+                                    }
+                                }
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(.Explore.searchHashtagImg)
+                                        .resizable()
+                                        .renderingMode(.original)
+                                        .frame(width: 47, height: 47)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("#\(tag.title)")
+                                            .font(.dsSubhead)
+                                            .foregroundStyle(.black)
+                                        
+                                        Text("게시물 \(tag.postCount)개")
+                                            .font(.dsSubhead)
+                                            .foregroundStyle(Color.gray060)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                        // Hashtags pagination trigger
+                        if viewModel.hasNextHashtags {
+                            HStack {
+                                Spacer()
+                                ProgressView().onAppear {
+                                    Task { await viewModel.loadMoreHashtags() }
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+
+                if viewModel.isEmptyResults
+                    && !(viewModel.isLoadingAccounts
+                         || viewModel.isLoadingHashtags) {
+                    Text("검색 결과가 없습니다.")
+                        .font(.dsBold15)
+                        .foregroundStyle(Color.gray050)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 24)
+                }
             }
+            .padding(.horizontal, 4)
+            .padding(.bottom, 8)
         }
-        .aspectRatio(1, contentMode: .fit)
+        .scrollIndicators(.hidden)
     }
 }
 
 #Preview {
-    ExploreMainView()
+    ExploreMainView(container: .init())
 }

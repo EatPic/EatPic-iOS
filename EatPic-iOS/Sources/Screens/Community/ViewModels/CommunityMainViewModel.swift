@@ -9,95 +9,409 @@ import Foundation
 import SwiftUI
 import Moya
 
-@Observable
-class CommunityMainViewModel {
+// MARK: - DTO
+
+struct FeedResult: Codable {
+    let selectedId: Int?
+    let hasNext: Bool
+    let nextCursor: Int?
+    let cardFeedList: [Feed]
+}
+
+struct Feed: Codable {
+    let cardId: Int
+    let imageUrl: String?
+    let datetime: String
+    let meal: MealSlot
+    let memo: String
+    let recipe: String?
+    let recipeUrl: String?
+    let latitude: Double?
+    let longitude: Double?
+    let locationText: String?
+    let hashtags: [String]
+    let user: FeedUser
+    let reactionCount: Int
+    let userReaction: String?
+    let commentCount: Int
+    let bookmarked: Bool
+}
+
+struct UserListResult: Codable {
+    let page: Int
+    let size: Int
+    let total: Int
+    let userIconList: [UserIconDTO]
+}
+
+struct UserIconDTO: Codable, Identifiable {
+    let userId: Int
+    let profileImageUrl: String?
+    let nameId: String
+    let nickname: String?
+    let introduce: String?
+    let isFollowing: Bool?
+    var id: Int { userId }
+}
+
+extension UserIconDTO {
+    func toCommunityUser() -> CommunityUser {
+        CommunityUser(
+            id: userId,
+            nameId: nameId,
+            nickname: nickname ?? nameId,
+            imageName: profileImageUrl
+        )
+    }
+}
+
+struct MyUserIconResult: Codable, Identifiable {
+    let userId: Int
+    let profileImageUrl: String?
+    let nameId: String
+    let nickname: String?
+    let introduce: String?
+    let isFollowing: Bool?
+    var id: Int { userId }
+}
+
+extension MyUserIconResult {
+    func toCommunityUser() -> CommunityUser {
+        CommunityUser(
+            id: userId,
+            nameId: nameId,
+            nickname: nickname ?? nameId,
+            imageName: profileImageUrl,
+            introduce: introduce,
+            type: .me,
+            isCurrentUser: true,
+            isFollowed: false
+        )
+    }
+}
+
+// MARK: - Mapping
+
+extension Feed {
+    func toPicCard() -> PicCard {
+        let communityUser = user.toCommunityUser()
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        var formattedTime = ""
+        var formattedDate = ""
+        if let dateObj = formatter.date(from: datetime) {
+            formatter.dateFormat = "a hh:mm"
+            formattedTime = formatter.string(from: dateObj)
+            formatter.dateFormat = "yyyy-MM-dd"
+            formattedDate = formatter.string(from: dateObj)
+        }
+        
+        return PicCard(
+            cardId: cardId,
+            user: communityUser,
+            time: formattedTime,
+            memo: memo,
+            imageUrl: imageUrl ?? "",
+            date: formattedDate,
+            meal: meal,
+            recipe: recipe,
+            recipeUrl: recipeUrl.flatMap { URL(string: $0) },
+            latitude: latitude,
+            longitude: longitude,
+            locationText: locationText,
+            hashtags: hashtags,
+            reactionCount: reactionCount,
+            userReaction: userReaction,
+            commentCount: commentCount,
+            bookmarked: bookmarked
+        )
+    }
+}
+
+struct FeedUser: Codable {
+    let userId: Int
+    let nameId: String
+    let nickname: String
+    let profileImageUrl: String?
+}
+
+extension FeedUser {
+    func toCommunityUser() -> CommunityUser {
+        CommunityUser(
+            id: userId,
+            nameId: nameId,
+            nickname: nickname,
+            imageName: profileImageUrl,
+            introduce: nil,
+            type: .other,
+            isCurrentUser: false,
+            isFollowed: true
+        )
+    }
+}
+
+// MARK: - ViewModel
+
+@MainActor
+final class CommunityMainViewModel: ObservableObject {
     
-    // MARK: - View State
-    var selectedUser: CommunityUser?
-    var filteredCards: [PicCard] = [] // 초기값을 비어있는 배열로 변경
-    var hasNextPage: Bool = true
-    var showDeleteModal = false
-    var isShowingReportBottomSheet = false
-    var isShowingCommentBottomSheet = false
-    
-    private var cardToDelete: PicCard?
-    //    private var currentCursor: Int? = nil
-    private var nextCursor: Int? = nil
-    private var isFetching: Bool = false
+    // View State
+    @Published var selectedUser: CommunityUser?
+    @Published var filteredCards: [PicCard] = []
+    @Published var users: [CommunityUser] = []
+    @Published var hasNextPage: Bool = true
+    @Published var showDeleteModal = false
+    @Published var isShowingReportBottomSheet = false
+    @Published var isShowingCommentBottomSheet = false
+    @Published var cardToDelete: PicCard?
+    @Published var nextCursor: Int? = nil
+    @Published var isFetching: Bool = false
     
     let toastVM = ToastViewModel()
-    private let cardProvider: MoyaProvider<CardTargetType>
+    let commentVM: CommentViewModel
+    let cardProvider: MoyaProvider<CardTargetType>
+    let bookmarkProvider: MoyaProvider<BookmarkTargetType>
+    let userProvider: MoyaProvider<UserTargetType>
+    let commentProvider: MoyaProvider<CommentTargetType>
+    let reactionProvider: MoyaProvider<ReactionTargetType>
     
     init(container: DIContainer) {
-        // APIProviderStore에서 제작한 함수 호출
         self.cardProvider = container.apiProviderStore.card()
+        self.bookmarkProvider = container.apiProviderStore.bookmark()
+        self.userProvider = container.apiProviderStore.user()
+        self.commentVM = CommentViewModel(container: container)
+        self.reactionProvider = container.apiProviderStore.reaction()
+        self.commentProvider = container.apiProviderStore.comment()
+        self.commentVM.onCommentPosted = { [weak self] cardId in
+            self?.incrementCommentCount(for: cardId)
+        }
+    }
+    
+    var currentUser: CommunityUser? {
+        users.first { $0.userType == .me }
+    }
+    
+    // MARK: - Feeds
+    
+    func refreshFeeds(reset: Bool) async {
+        guard !isFetching else { return }
+        if reset {
+            nextCursor = nil
+            hasNextPage = true
+            filteredCards = []
+        }
+        await fetchFeeds()
+    }
+    
+    // CommunityMainViewModel.swift (class 내부)
+    func incrementCommentCount(for cardId: Int) {
+        if let idx = filteredCards.firstIndex(where: {
+            $0.cardId == cardId
+        }) {
+            filteredCards[idx].commentCount += 1
+        }
     }
     
     func fetchFeeds() async {
         guard hasNextPage && !isFetching else { return }
-        
-        self.isFetching = true
-        let pageSize = 15
-        
+
+        // 사용자 목록이 아직 로드되지 않았다면 먼저 로드 (특히 .me 선택 시 내 ID 필요)
+        if users.isEmpty {
+            await fetchUserList()
+        }
+
+        let userIdForRequest = selectedUserIdForRequest()
+        await fetchFeedsInternal(userId: userIdForRequest)
+    }
+
+    private func fetchFeedsInternal(userId: Int?, pageSize: Int = 20) async {
+        isFetching = true
+
         do {
             let response = try await cardProvider.requestAsync(
-                .fetchFeeds(userId: 15, cursor: nextCursor, size: pageSize))
+                .fetchFeeds(
+                    userId: userId,
+                    cursor: nextCursor,
+                    size: pageSize
+                )
+            )
             let dto = try JSONDecoder().decode(
                 APIResponse<FeedResult>.self, from: response.data)
+            let newCards = dto.result.cardFeedList.map { $0.toPicCard() }
             
-            // 핵심 변환 로직: Feed 배열을 PicCard 배열로 변환
-            let newCards = dto.result.cardFeedList.map { feed in
-                PicCard(from: feed)
+            if self.nextCursor == nil {
+                self.filteredCards = newCards
+            } else {
+                self.filteredCards.append(contentsOf: newCards)
             }
-            
-            DispatchQueue.main.async {
-                if self.nextCursor == nil {
-                    self.filteredCards = newCards
-                } else {
-                    self.filteredCards.append(contentsOf: newCards)
-                }
-                
-                self.nextCursor = dto.result.nextCursor
-                self.hasNextPage = dto.result.hasNext
-                self.isFetching = false
-            }
+            self.nextCursor = dto.result.nextCursor
+            self.hasNextPage = dto.result.hasNext
         } catch {
-            print("요청 또는 디코딩 실패:", error.localizedDescription)
+            print("요청/디코딩 실패:", error.localizedDescription)
+            toastVM.showToast(title: "피드 로드에 실패했어요.")
+        }
+        isFetching = false
+    }
+    
+    private func selectedUserIdForRequest() -> Int? {
+        guard let selected = selectedUser else { return nil }
+        switch selected.userType {
+        case .all: return nil
+        case .me: return currentUser?.id
+        case .other: return selected.id
         }
     }
     
-    // MARK: - Computed Properties
-    // 사용자 선택 처리
-    func selectUser(_ user: CommunityUser) {
+    // MARK: - Users
+    
+    func fetchUserList() async {
+        let allUser = CommunityUser(
+            id: -1,
+            nameId: "전체",
+            nickname: "전체",
+            imageName: "Community/grid",
+            introduce: nil,
+            type: .all,
+            isCurrentUser: false,
+            isFollowed: false
+        )
+        
+        var finalUsers: [CommunityUser] = [allUser]
+        
+        do {
+            let meResponse = try await userProvider.requestAsync(.getMyUserIcon)
+            let meDto = try JSONDecoder().decode(
+                APIResponse<MyUserIconResult>.self, from: meResponse.data)
+            finalUsers.append(meDto.result.toCommunityUser())
+        } catch {
+            print("내 정보 로드 실패:", error.localizedDescription)
+        }
+        
+        do {
+            let listResponse = try await userProvider.requestAsync(.getFollowingUserIcon)
+            let listDto = try JSONDecoder().decode(
+                APIResponse<UserListResult>.self, from: listResponse.data)
+            let followingUsers = listDto.result.userIconList
+                .filter { $0.isFollowing ?? true }
+                .map { $0.toCommunityUser() }
+            finalUsers.append(contentsOf: followingUsers)
+        } catch {
+            print("팔로우 유저 리스트 로드 실패:", error.localizedDescription)
+        }
+        
+        self.users = finalUsers
+        if self.selectedUser == nil {
+            self.selectedUser = allUser
+        }
+        if let me = finalUsers.first(where: {
+            $0.userType == .me
+        }) {
+            commentVM.setCurrentUser(me)
+        }
+    }
+    
+    func selectUser(_ user: CommunityUser) async {
         selectedUser = user
-        // 선택된 사용자에 따라 카드 필터링 로직 구현
-        //            filterCards(for: user)
+        await refreshFeeds(reset: true)
     }
     
-    // PicCard의 작성자가 현재 사용자인지 확인하는 메서드
+    // MARK: - Card actions
+    
     func isMyCard(_ card: PicCard) -> Bool {
-        // TODO: - 실제 현재 사용자 ID와 비교하는 로직으로 변경
-        // 예시: return card.user.id == currentUser.id
-        return card.user.id == "iannn" // 임시 로직
-    }
-    
-    // MARK: - Actions
-    // PicCard의 메뉴 액션을 처리하는 함수 (예시)
-    func saveCardToPhotos(_ card: PicCard) {
-        toastVM.showToast(title: "사진 앱에 저장되었습니다.")
-        print("사진 앱에 저장: \(card.id)")
-        // TODO: - UIImageWriteToSavedPhotosAlbum 등을 이용한 실제 저장 로직 구현
-    }
-    
-    func editCard(_ card: PicCard) {
-        print("수정하기: \(card.id)")
-        // TODO: - 카드 수정 화면으로 이동하는 로직 구현
+        card.user.id == currentUser?.id
     }
     
     func showDeleteConfirmation(for card: PicCard) {
         cardToDelete = card
         showDeleteModal = true
-        print("삭제 확인 모달 띄우기: \(card.id)")
+    }
+    
+    func confirmDeletion() async {
+        guard let card = cardToDelete else { return }
+        do {
+            _ = try await cardProvider.requestAsync(
+                .deleteCard(cardId: card.cardId))
+            if let idx = filteredCards.firstIndex(where: {
+                $0.cardId == card.cardId
+            }) {
+                filteredCards.remove(at: idx)
+            }
+            toastVM.showToast(title: "삭제되었습니다.")
+        } catch {
+            toastVM.showToast(title: "삭제에 실패했어요. 잠시 후 다시 시도해 주세요.")
+        }
+        showDeleteModal = false
+        cardToDelete = nil
+    }
+    
+    func handleCardAction(cardId: Int, action: MainPicCardItemActionType) async {
+        guard let index = filteredCards.firstIndex(where: { $0.cardId == cardId }) else { return }
+        var card = filteredCards[index]
+        
+        switch action {
+        case .bookmark(let isOn):
+            do {
+                if isOn {
+                    _ = try await bookmarkProvider.requestAsync(
+                        .postBookmark(cardId: cardId))
+                } else {
+                    _ = try await bookmarkProvider.requestAsync(
+                        .deleteBookmark(cardId: cardId))
+                }
+                card.bookmarked = isOn
+                filteredCards[index] = card
+            } catch {
+                toastVM.showToast(title: "북마크 처리 실패")
+            }
+            
+        case .comment:
+            // 선택된 카드 ID를 댓글 VM에 전달하고 첫 페이지부터 로드
+            commentVM.selectedCardId = cardId
+            isShowingCommentBottomSheet = true
+            await commentVM.refreshComments()
+            
+        case .reaction(let selected, _):
+            do {
+                guard let newValue = selected?.rawValue else {
+                    return
+                }
+                _ = try await reactionProvider.requestAsync(
+                    .postReaction(cardId: cardId, reactionType: newValue)
+                )
+                // 낙관적 업데이트: 내 리액션 변경에 따른 총합 보정
+                if card.userReaction == nil,
+                   newValue != nil {
+                    card.reactionCount += 1
+                }
+                if card.userReaction != nil,
+                   newValue == nil {
+                    card.reactionCount = max(0, card.reactionCount - 1)
+                }
+                card.userReaction = newValue
+                filteredCards[index] = card
+            } catch {
+                toastVM.showToast(title: "리액션 처리 실패")
+            }
+        }
+    }
+    
+    // MARK: - Etc (placeholders)
+    
+    func saveCardToPhotos(_ card: PicCard) {
+        // PHPhotoLibrary 저장 로직이 있으면 연결
+    }
+    
+    func editCard(_ card: PicCard) {
+        // Router로 수정 화면 이동 연결
+    }
+    
+    func handleReport(_ reason: String) {
+        // 신고 API 연결 지점
+        isShowingReportBottomSheet = false
+        toastVM.showToast(title: "신고가 접수되었습니다.")
     }
     
     func deleteCard(card: PicCard) async {
@@ -108,94 +422,6 @@ class CommunityMainViewModel {
             
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
-        }
-    }
-    
-    // 모달에서 '삭제' 버튼을 눌렀을 때 실제 삭제를 처리하는 함수
-    func confirmDeletion() async {
-        guard let card = cardToDelete else { return }
-        
-        await deleteCard(card: card)
-        
-        // UI 업데이트: filteredCards에서 삭제
-        if let index = filteredCards.firstIndex(where: { $0.id == card.id }) {
-            filteredCards.remove(at: index)
-        }
-        
-        // 모달 닫기 & 상태 초기화
-        showDeleteModal = false
-        cardToDelete = nil
-        
-        // 토스트 표시
-        toastVM.showToast(title: "삭제되었습니다.")
-        print("카드 삭제 완료: \(card.id)")
-    }
-    
-    // 신고 처리
-    func handleReport(_ reason: String) {
-        isShowingReportBottomSheet = false
-        toastVM.showToast(title: "신고가 접수되었습니다.")
-        print("신고 사유: \(reason)")
-    }
-    
-    // 카드 아이템 액션 처리 (카드 ID와 함께)
-    func handleCardAction(cardId: UUID, action: PicCardItemActionType) {
-        switch action {
-        case .bookmark(let isOn):
-            handleBookmarkAction(cardId: cardId, isOn: isOn)
-        case .comment(let count):
-            handleCommentAction(cardId: cardId, count: count)
-        case .reaction(let selected, let counts):
-            handleReactionAction(cardId: cardId, selected: selected, counts: counts)
-        }
-    }
-    
-    // 북마크 액션 처리
-    private func handleBookmarkAction(cardId: UUID, isOn: Bool) {
-        // 실제 구현: API 호출하여 서버에 북마크 상태 업데이트
-        updateCardBookmarkStatus(cardId: cardId, isBookmarked: isOn)
-        
-        // 선택적으로 토스트 메시지 표시 (PicCardItemView에서 이미 처리되므로 중복 방지)
-        print("북마크 상태 변경: \(isOn) for card: \(cardId)")
-    }
-    
-    // 댓글 액션 처리
-    private func handleCommentAction(cardId: UUID, count: Int) {
-        isShowingCommentBottomSheet = true
-    }
-    
-    // 리액션 액션 처리
-    private func handleReactionAction(
-        cardId: UUID, selected: ReactionType?,
-        counts: [ReactionType: Int]) {
-            // 실제 구현: API 호출하여 서버에 리액션 상태 업데이트
-            let totalCount = counts.values.reduce(0, +)
-            updateCardReactionInfo(
-                cardId: cardId, reactionCount: totalCount,
-                userReaction: selected?.rawValue)
-            
-            print("리액션 상태 변경: \(String(describing: selected)) for card: \(cardId)")
-            print("리액션 카운트: \(counts)")
-        }
-    
-    // 특정 카드의 북마크 상태 업데이트
-    func updateCardBookmarkStatus(cardId: UUID, isBookmarked: Bool) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
-            filteredCards[index].bookmarked = isBookmarked
-        }
-    }
-    
-    // 특정 카드의 리액션 정보 업데이트
-    func updateCardReactionInfo(cardId: UUID, reactionCount: Int, userReaction: String?) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
-            filteredCards[index].updateReaction(newReaction: userReaction, newCount: reactionCount)
-        }
-    }
-    
-    // 특정 카드의 댓글 수 업데이트
-    func updateCardCommentCount(cardId: UUID, commentCount: Int) {
-        if let index = filteredCards.firstIndex(where: { $0.id == cardId }) {
-            filteredCards[index].updateCommentCount(commentCount)
         }
     }
 }

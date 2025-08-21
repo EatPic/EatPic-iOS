@@ -6,17 +6,55 @@
 //
 
 import Foundation
+import Moya
+
+// MARK: - DTO
+
+// /api/search/followList 결과
+struct FollowListResult: Codable {
+    let accounts: [FollowAccountDTO]
+    let nextCursor: Int?   // 서버가 int64지만 iOS Int(64-bit)로 충분
+    let size: Int
+    let hasNext: Bool
+}
+
+// 개별 계정 항목
+struct FollowAccountDTO: Codable {
+    let userId: Int
+    let nameId: String
+    let nickname: String
+    let profileImageUrl: String?
+    let isFollowed: Bool
+    let followed: Bool
+
+    var id: Int { userId }
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case nameId = "name_id"
+        case nickname
+        case profileImageUrl = "profile_image_url"
+        case isFollowed
+        case followed
+    }
+}
 
 @Observable
 final class FollowListViewModel {
     
+    /// Providers
+    var userProvider: MoyaProvider<UserTargetType>
+    
     var selected: FollowListView.FollowSegment
     var searchText: String = ""
-    private var followers: [CommunityUser] = sampleFollowers
-    private var followings: [CommunityUser] = sampleFollowings
-    
-    init(selected: FollowListView.FollowSegment) {
+   
+    // 서버에서 불러온 값 저장
+    private var followers: [CommunityUser] = []
+    private var followings: [CommunityUser] = []
+        
+    init(selected: FollowListView.FollowSegment, container: DIContainer) {
         self.selected = selected
+        self.userProvider = container.apiProviderStore.user()
     }
     
     var filteredUsers: [CommunityUser] {
@@ -26,7 +64,7 @@ final class FollowListViewModel {
         } else {
             return list.filter {
                 $0.nickname.localizedCaseInsensitiveContains(searchText) ||
-                $0.id.localizedCaseInsensitiveContains(searchText)
+                $0.nameId.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
@@ -53,27 +91,43 @@ final class FollowListViewModel {
             }
         }
     }
+    
+    // MARK: - API Methods
+    /// 팔로우 목록 리스트 불러오기
+    @MainActor
+    func fetchFollowList(userId: Int, cursor: Int? = nil, limit: Int = 10) async {
+        do {
+            let status: FollowStatus = (selected == .followers) ? .followed : .following
+            let response = try await userProvider.requestAsync(
+                .getUserFollowList(
+                    status: status,
+                    userId: userId,
+                    query: searchText,
+                    limit: limit,
+                    cursor: cursor)
+            )
+            let decoded = try JSONDecoder().decode(APIResponse<FollowListResult>.self,
+                                                   from: response.data)
+            
+            let users = decoded.result.accounts.map { dto in
+                CommunityUser(
+                    id: dto.userId,
+                    nameId: dto.nameId,
+                    nickname: dto.nickname,
+                    imageName: dto.profileImageUrl,
+                    introduce: nil,
+                    isFollowed: dto.isFollowed
+                )
+            }
+            
+            if status == .followed {
+                self.followers = users
+            } else {
+                self.followings = users
+            }
+            
+        } catch {
+            print("팔로워/팔로잉 불러오기 실패:", error)
+        }
+    }
 }
-
-// MARK: - CommunityUser 더미 데이터를 생성하기 위한 FeedUser 더미
-let feedUserHong: FeedUser = FeedUser(userId: 101, nameId: "hong", nickname: "홍길동",
-                                      profileImageUrl: "https://example.com/images/hong.jpg")
-let feedUserYoung: FeedUser = FeedUser(userId: 102, nameId: "young", nickname: "김영희",
-                                       profileImageUrl: "https://example.com/images/young.jpg")
-let feedUserCheolsoo: FeedUser = FeedUser(userId: 103, nameId: "chul", nickname: "이철수",
-                                          profileImageUrl:
-                                            "https://example.com/images/cheolsoo.jpg")
-let feedUserMinsu: FeedUser = FeedUser(userId: 104, nameId: "minsu", nickname: "박민수",
-                                       profileImageUrl: "https://example.com/images/minsu.jpg")
-
-
-// MARK: - 수정된 CommunityUser 더미 데이터
-let sampleFollowers: [CommunityUser] = [
-    CommunityUser(from: feedUserHong),
-    CommunityUser(from: feedUserYoung)
-]
-
-let sampleFollowings: [CommunityUser] = [
-    CommunityUser(from: feedUserCheolsoo),
-    CommunityUser(from: feedUserMinsu)
-]

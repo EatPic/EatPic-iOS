@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 extension View {
     /// 화면 상단의 내비게이션 바에 커스텀 타이틀 뷰와 오른쪽 버튼을 설정합니다.
@@ -78,5 +79,39 @@ extension View {
                 contentMode: contentMode
             )
         )
+    }
+    
+    /// 현재 포커스된 First Responder를 해제하여 키보드를 내립니다.
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil)
+    }
+    
+    /// 서버에서 불러오는 원격 이미지를 **다운샘플링(Downsampling)** 하여 표시하는 뷰 Modifier 헬퍼 함수입니다.
+    /// - Parameters:
+    ///   - url: 원격 이미지 URL (필수)
+    ///   - contentMode: 이미지가 표시될 때의 크기 맞춤 방식 (`.fill`, `.fit` 등). 기본값은 `.fill`
+    ///   - targetSize: 다운샘플링 시 목표 크기. 지정하지 않으면 뷰의 실제 크기를 측정하여 사용
+    /// - Returns: 다운샘플링이 적용된 `View`
+    ///
+    /// 이 함수를 사용하면 원본 이미지를 그대로 불러오는 것보다 메모리 사용량이 줄어들고, 스크롤 성능이 개선됩니다.
+    /// 내부적으로 `DownsampledRemoteModifier`를 적용합니다.
+    func downsampledRemoteImage(
+        url: String,
+        contentMode: ImageContentMode = .fill,
+        targetSize: CGSize? = nil) -> some View {
+        modifier(
+            DownsampledRemoteModifier(
+                url: url,
+                contentMode: contentMode,
+                targetSize: targetSize
+            )
+        )
+    }
+    
+    @ViewBuilder
+    func tabBarHidden(_ hidden: Bool) -> some View {
+        self.toolbar(hidden ? .hidden : .visible, for: .tabBar)
     }
 }

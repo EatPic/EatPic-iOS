@@ -35,14 +35,15 @@ enum NavigationRoute: Equatable, Hashable {
     case hashtagSelection
     case picCardRecord
     case userProfile(user: CommunityUser)
-    case followList(selected: FollowListView.FollowSegment)
-    case exploreSelected
+    case followList(selected: FollowListView.FollowSegment, userId: Int)
+    case exploreSelected(cardId: Int)
     case storeLocation(latitude: Double, longitude: Double, title: String)
     case settingPage
     case blockedAccount
     case myAllPicCard
     case profileEdit
     case savedPicCard
+    case recomPicSingleCard(cardId: Int)
 }
 
 /// 화면 전환을 위한 라우팅 처리 전용 View입니다.
@@ -53,7 +54,6 @@ struct NavigationRoutingView: View {
     
     @EnvironmentObject private var container: DIContainer
     @EnvironmentObject private var appFlowViewModel: AppFlowViewModel
-    @StateObject private var recordViewModel = PicCardRecorViewModel()  // 하나의 뷰모델 생성
         
     private let route: NavigationRoute
     
@@ -116,7 +116,7 @@ struct NavigationRoutingView: View {
         case .home:
             HomeView(container: container)
         case .myBadgeStatusAll:
-            MyBadgeStatusAllView()
+            MyBadgeStatusAllView(container: container)
         case .picCardEdit:
             PicCardEditView()
         case .calenderCard:
@@ -126,7 +126,7 @@ struct NavigationRoutingView: View {
         case .receiptDetail:
             ReceiptDetailView()
         case .exploreMain:
-            ExploreMainView()
+            ExploreMainView(container: container)
         case .mealTimeSelection(let images):
             let recordFlowViewModel = container.getRecordFlowVM()
             MealRecordView()
@@ -144,16 +144,22 @@ struct NavigationRoutingView: View {
             
         case .picCardRecord:
             if let recordFlowViewModel = container.recordFlowVM {
-                PicCardRecorView().environmentObject(recordFlowViewModel)
+                PicCardRecordView(
+                    container: container,
+                    recordFlowVM: recordFlowViewModel
+                ).environmentObject(recordFlowViewModel)
             } else {
-                PicCardRecorView()
+                PicCardRecordView(
+                    container: container,
+                    recordFlowVM: .init()
+                )
             }
         case .userProfile(let user):
-            OthersProfileView(user: user)
-        case .followList(let selected):
-            FollowListView(selected: selected)
-        case .exploreSelected:
-            ExploreSelectedView()
+            OthersProfileView(user: user, container: container)
+        case .followList(let selected, let userId):
+            FollowListView(selected: selected, container: container, userId: userId)
+        case .exploreSelected(let cardId):
+            ExploreSelectedView(cardId: cardId, container: container)
         case .storeLocation(let latitude, let longitude, let title):
             StoreLocationView(
                 markers: [.init(
@@ -162,15 +168,17 @@ struct NavigationRoutingView: View {
                 )]
             )
         case .settingPage:
-            SettingPageView()
+            SettingPageView(container: container)
         case .blockedAccount:
             BlockedAccountView()
         case .myAllPicCard:
-            MyAllPicCardView()
+            MyAllPicCardView(container: container)
         case .profileEdit:
             ProfileEditView()
         case .savedPicCard:
-            SavedPicCardView()
+            SavedPicCardView(container: container)
+        case .recomPicSingleCard(let cardId):
+            RecomPicCardView(container: container, cardId: cardId)
         }
     }
 }

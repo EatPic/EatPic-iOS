@@ -24,6 +24,10 @@ final class DIContainer: ObservableObject {
     let apiProviderStore: APIProviderStore
     let mediaPickerService: MediaPickerService
     
+    // MARK: - Global UI States
+    @Published var activeTab: TabCase = .home
+    @Published var foregroundRefreshTick: Int = 0  // 포그라운드 복귀 갱신 신호
+
     // MARK: - init
     
     init(
@@ -40,10 +44,46 @@ final class DIContainer: ObservableObject {
         self.mediaPickerService = mediaPickerService
     }
     
+    // MARK: - Global UI State Helpers
+    @MainActor
+    func setActiveTab(_ tab: TabCase) {
+        activeTab = tab
+    }
+    
+    @MainActor
+    func bumpForegroundRefresh() {
+        foregroundRefreshTick &+= 1
+    }
+    
+    // 필요 시 로그아웃 리셋
+    @MainActor
+    func resetForLogout() {
+        router = .init()
+        locationStore = .init()
+        activeTab = .home
+        foregroundRefreshTick = 0
+    }
+    
     // MARK: - FlowViewModel Factory Property
     
     @MainActor var recordFlowVM: RecordFlowViewModel?
+    @MainActor var communityMainVM: CommunityMainViewModel?
+    
     var signupFlowVM: SignupFlowViewModel?
+    
+    @MainActor
+    func getCommunityMainVM() -> CommunityMainViewModel {
+        if let viewModel = communityMainVM { return viewModel }
+        let viewModel = CommunityMainViewModel(container: self)
+        communityMainVM = viewModel
+        return viewModel
+    }
+    
+    @MainActor
+    func clearCommunityMainVM() {
+        communityMainVM = nil
+    }
+    
 }
 
 extension DIContainer {

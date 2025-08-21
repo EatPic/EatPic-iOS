@@ -22,7 +22,7 @@ struct PicCardView<Content: View>: View {
     let onProfileTap: (() -> Void)?
     let onLocationTap: ((Double, Double, String) -> Void)?
     let toastVM: ToastViewModel
-    let onItemAction: ((UUID, PicCardItemActionType) -> Void)? //카드 ID 전달 추가
+    let onItemAction: ((Int, PicCardItemActionType) -> Void)? // 카드 ID 전달 추가
     
     @State private var isFlipped = false
     
@@ -33,7 +33,7 @@ struct PicCardView<Content: View>: View {
         onProfileTap: (() -> Void)? = nil,
         onLocationTap: ((Double, Double, String) -> Void)? = nil,
         toastVM: ToastViewModel,
-        onItemAction: ((UUID, PicCardItemActionType) -> Void)? = nil
+        onItemAction: ((Int, PicCardItemActionType) -> Void)? = nil
     ) {
         self.card = card
         self.menuContent = menuContent
@@ -55,7 +55,7 @@ struct PicCardView<Content: View>: View {
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
                 } else {
-                    Image(systemName: "person.circle.fill") // 기본 이미지로 대체
+                    Image(.Community.itcong)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 36, height: 36)
@@ -63,7 +63,7 @@ struct PicCardView<Content: View>: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(card.user.id)
+                    Text(card.user.nameId)
                         .font(.dsHeadline)
                         .foregroundStyle(Color.gray080)
                     Text(card.time)
@@ -91,7 +91,7 @@ struct PicCardView<Content: View>: View {
                 if !isFlipped {
                     // 카드 앞면 (이미지)
                     PicCardFrontView(card: card, toastVM: toastVM) { action in
-                        onItemAction?(card.id, action)
+                        onItemAction?(card.cardId, action)
                     } 
                 } else {
                     // 카드 뒷면 (레시피)
@@ -125,12 +125,19 @@ struct PicCardFrontView: View {
         GeometryReader { geometry in
             ZStack {
                 Rectangle()
-                    .remoteImage(url: "")
+                    .remoteImage(url: card.imageUrl)
                     .frame(width: geometry.size.width, height: geometry.size.width)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 
-                PicCardItemView(card: card, toastVM: toastVM, onAction: onItemAction)
+                PicCardItemView(
+                    card: card,
+                    toastVM: toastVM,
+                    commentCount: card.commentCount,
+                    totalReactionCount: card.reactionCount
+                ) { action in
+                    onItemAction?(action)
+                }
                     .frame(maxWidth: .infinity, maxHeight: .infinity,
                            alignment: .bottomLeading)
             }

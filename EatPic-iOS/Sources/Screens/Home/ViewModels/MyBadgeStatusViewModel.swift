@@ -1,21 +1,31 @@
 import Foundation
 import SwiftUI
+import Moya
 
-@Observable
-class MyBadgeStatusViewModel {
+final class MyBadgeStatusViewModel: ObservableObject {
+    
+    // MARK: - Properties
+    
+    /// API 연결을 위한 프로바이더
+    private let homeProvider: MoyaProvider<HomeTargetType>
     
     /// 뱃지 아이템 목록
-    var badgeItems: [BadgeItem] = []
+    @Published var badgeItems: [BadgeItem] = [] {
+        didSet {
+            updateAcquiredBadgesCount()
+            totalBadges = badgeItems.count
+        }
+    }
     
     /// 전체 뱃지 개수
-    var totalBadges: Int = 10
+    @Published var totalBadges: Int = 0
     
     /// 획득한 뱃지 개수
-    var acquiredBadges: Int = 0
+    @Published var acquiredBadges: Int = 0
     
     /// 뱃지 아이템 구조체 (홈화면용 - 간단한 정보만)
     struct BadgeItem: Identifiable, Codable {
-        let id = UUID()
+        var id: Int { userBadgeId }
         let userBadgeId: Int
         let badgeName: String
         let badgeImageUrl: String
@@ -25,10 +35,11 @@ class MyBadgeStatusViewModel {
         /// 기존 BadgeState와의 호환성을 위한 computed property
         var state: BadgeState {
             if achieved {
-                return .completed
+                return .completed(iconURL: badgeImageUrl)
             } else if progressRate > 0 {
-                return .progress(progress: Double(progressRate) / 100.0,
-                                 icon: Image(systemName: "star.fill"))
+                return .progress(
+                    progress: Double(progressRate) / 100.0,
+                    iconURL: badgeImageUrl)
             } else {
                 return .locked
             }
@@ -40,46 +51,13 @@ class MyBadgeStatusViewModel {
         }
     }
     
-    init() {
-        setupSampleData()
-        updateAcquiredBadgesCount()
+    // MARK: - Init
+
+    init(container: DIContainer) {
+        self.homeProvider = container.apiProviderStore.home()
     }
     
-    /// 샘플 데이터 설정 (API 연동 전까지 사용)
-    private func setupSampleData() {
-        badgeItems = [
-            BadgeItem(userBadgeId: 1, badgeName: "한끼했당",
-                      badgeImageUrl: "", progressRate: 40,
-                      achieved: false),
-            BadgeItem(userBadgeId: 2, badgeName: "공유왕",
-                      badgeImageUrl: "", progressRate: 60,
-                      achieved: false),
-            BadgeItem(userBadgeId: 3, badgeName: "삼시세끼",
-                      badgeImageUrl: "", progressRate: 80,
-                      achieved: false),
-            BadgeItem(userBadgeId: 4, badgeName: "기록마스터",
-                      badgeImageUrl: "", progressRate: 0,
-                      achieved: false),
-            BadgeItem(userBadgeId: 5, badgeName: "혼밥러",
-                      badgeImageUrl: "", progressRate: 30,
-                      achieved: false),
-            BadgeItem(userBadgeId: 6, badgeName: "꾸준왕",
-                      badgeImageUrl: "", progressRate: 0,
-                      achieved: false),
-            BadgeItem(userBadgeId: 7, badgeName: "맛집왕",
-                      badgeImageUrl: "", progressRate: 70,
-                      achieved: false),
-            BadgeItem(userBadgeId: 8, badgeName: "레시피왕",
-                      badgeImageUrl: "", progressRate: 0,
-                      achieved: false),
-            BadgeItem(userBadgeId: 9, badgeName: "공감왕",
-                      badgeImageUrl: "", progressRate: 0,
-                      achieved: false),
-            BadgeItem(userBadgeId: 10, badgeName: "사진장인",
-                      badgeImageUrl: "", progressRate: 0,
-                      achieved: false)
-        ]
-    }
+    // MARK: - Methods
     
     /// 획득한 뱃지 개수 업데이트
     private func updateAcquiredBadgesCount() {
@@ -89,4 +67,29 @@ class MyBadgeStatusViewModel {
     func getBadgeStatus() -> String {
         return "\(acquiredBadges)"
     }
-} 
+    
+    // MARK: - API Method
+    
+    @MainActor
+    func fetchBadgeList() async {
+        do {
+            let response = try await
+            homeProvider.requestAsync(.badgeList)
+            let dto = try JSONDecoder().decode(
+                BadgeListResponse.self,
+                from: response.data)
+            
+            /// 서버에서 받은 응답과 기존에 쓰던 모델 매핑하기
+            badgeItems = dto.result.map { BadgeItem(
+                userBadgeId: $0.userBadgeId,
+                badgeName: $0.badgeName,
+                badgeImageUrl: $0.badgeImageUrl,
+                progressRate: $0.progressRate,
+                achieved: $0.achieved || $0.progressRate >= 100
+            ) }
+            
+        } catch {
+            print("요청 또는 디코딩 실패:", error.localizedDescription)
+        }
+    }
+}

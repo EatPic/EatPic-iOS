@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct CalendarView: View {
-    
-    @State var viewModel: CalendarViewModel
-    
+    let month: Date
+    @Bindable var viewModel: CalendarViewModel
     private let cellTapAction: (Date) -> Void
     
     init(
         month: Date,
+        viewModel: CalendarViewModel,
         cellTapAction: @escaping (Date) -> Void
     ) {
-        self.viewModel = .init(currentMonth: month)
+        self.month = month
+        self._viewModel = .init(wrappedValue: viewModel)
         self.cellTapAction = cellTapAction
     }
     
@@ -35,7 +36,7 @@ struct CalendarView: View {
     /// 상단 월 변경 컨틀롤러 뷰
     private var hedarController: some View {
         Text(
-            viewModel.currentMonth,
+            month,
             formatter: calendarHeaderDateFormatter
         )
         .font(.dsTitle2)
@@ -65,7 +66,7 @@ struct CalendarView: View {
                 
                 // 날짜
                 ForEach(
-                    viewModel.days,
+                    viewModel.days(for: month),
                     id: \.id
                 ) { calendarDay in
                     Button {
@@ -103,8 +104,8 @@ struct CalendarView: View {
     }
 }
 
-#Preview {
-    CalendarView(month: .now) { _ in
-        print("cellTap")
-    }
-}
+// #Preview {
+//    CalendarView(month: .now) { _ in
+//        print("cellTap")
+//    }
+//}

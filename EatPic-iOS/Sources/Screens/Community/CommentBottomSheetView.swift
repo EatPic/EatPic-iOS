@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CommentBottomSheetView: View {
     @Binding var isShowing: Bool
-    @State private var viewModel = CommentViewModel()
+    @State var viewModel: CommentViewModel
     
     var body: some View {
         VStack {
@@ -18,25 +18,40 @@ struct CommentBottomSheetView: View {
                     title: "댓글",
                     content: {
                         LazyVStack(spacing: 0) {
-                            ForEach(viewModel.comments, id: \.id) { comment in
-                                commentListView(
-                                    userName: comment.user.id,
-                                    profileImage: comment.user.imageName ?? "Community/itcong",
-                                    commentText: comment.text,
-                                    time: comment.time
-                                )
-                                .contextMenu {
-                                    if viewModel.isMyComment(comment) {
-                                        Button(role: .destructive) {
-                                            viewModel.deleteComment(comment)
-                                        } label: {
-                                            Label("삭제하기", systemImage: "trash")
-                                        }
-                                    } else {
-                                        Button(role: .destructive) {
-                                            viewModel.reportComment(comment)
-                                        } label: {
-                                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                            if viewModel.comments.isEmpty {
+                                VStack {
+                                    Spacer().frame(height: 40)
+                                    Text("댓글이 아직 없습니다")
+                                        .font(.dsCallout)
+                                        .foregroundStyle(Color.gray060)
+                                        .multilineTextAlignment(.center)
+                                    Spacer()
+                                }
+                            } else {
+                                ForEach(viewModel.comments, id: \.id) { comment in
+                                    commentListView(
+                                        userName: comment.user.nameId,
+                                        profileImage: comment.user.imageName ?? "Community/itcong",
+                                        commentText: comment.text,
+                                        time: comment.time
+                                    )
+                                    .task {
+                                        await viewModel.loadMoreIfNeeded(
+                                            currentItemID: comment.id)
+                                    }
+                                    .contextMenu {
+                                        if viewModel.isMyComment(comment) {
+                                            Button(role: .destructive) {
+                                                viewModel.deleteComment(comment)
+                                            } label: {
+                                                Label("삭제하기", systemImage: "trash")
+                                            }
+                                        } else {
+                                            Button(role: .destructive) {
+                                                viewModel.reportComment(comment)
+                                            } label: {
+                                                Label("신고하기", systemImage: "exclamationmark.bubble")
+                                            }
                                         }
                                     }
                                 }
@@ -63,10 +78,19 @@ struct CommentBottomSheetView: View {
             .presentationDetents([.large, .fraction(0.7)])
             .presentationDragIndicator(.hidden)
         }
+        .task(id: viewModel.selectedCardId) {
+            if viewModel.selectedCardId != nil {
+                await viewModel.fetchComments()
+            }
+        }
     }
     
-    private func commentListView(userName: String, profileImage: String,
-                                 commentText: String, time: String) -> some View {
+    private func commentListView(
+        userName: String,
+        profileImage: String,
+        commentText: String,
+        time: String
+    ) -> some View {
         HStack(spacing: 13) {
             // 프로필 이미지
             Image(profileImage)
@@ -107,7 +131,6 @@ struct CommentBottomSheetView: View {
         }
         .padding(.top, 14)
         .padding(.bottom, 10)
-        .frame(height: 85)
     }
     
     private func commentPostView() -> some View {
@@ -124,7 +147,9 @@ struct CommentBottomSheetView: View {
                 
                 // 전송 버튼
                 Button(action: {
-                    viewModel.postComment()
+                    Task {
+                        await viewModel.postComment()
+                    }
                 }, label: {
                     if !viewModel.commentText.isEmpty {
                         Image("Community/send_green")
@@ -150,4 +175,9 @@ struct CommentBottomSheetView: View {
         .padding(.top, 6)
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview {
+    CommentBottomSheetView(
+        isShowing: .constant(true), viewModel: .init(container: .init()))
 }

@@ -1,0 +1,45 @@
+//
+//  APIError.swift
+//  EatPic-iOS
+//
+//  Created by jaewon Lee on 8/14/25.
+//
+
+import Foundation
+
+// MARK: - 에러 보조
+
+enum APIError: Error, LocalizedError {
+    case invalidURL
+    case requestFailed(Error)
+    case noData
+    case decodingFailed
+    case unauthorized
+    case notFound
+    case serverError(code: Int, message: String)
+    case serverErrorString(code: String, message: String)
+    case unknown
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "잘못된 URL입니다."
+        case .requestFailed(let error):
+            return "요청 실패: \(error.localizedDescription)"
+        case .noData:
+            return "데이터가 없습니다."
+        case .decodingFailed:
+            return "응답을 해석할 수 없습니다."
+        case .unauthorized:
+            return "로그인이 필요합니다."
+        case .notFound:
+            return "리소스를 찾을 수 없습니다."
+        case .serverError(let code, let message):
+            return "서버 오류 발생 (코드: \(code), 메세지: \(message)"
+        case .serverErrorString(let code, let message):
+            return "서버 오류 발생 (코드: \(code), 메세지: \(message))"
+        case .unknown:
+            return "알 수 없는 오류입니다."
+        }
+    }
+}
