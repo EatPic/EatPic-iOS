@@ -25,6 +25,7 @@ struct MyBadgeStatusHomeView: View {
         .frame(height: 202)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
+        .tabBarHidden(showingBadgeModal)
     }
     
     // MARK: 해당 뷰의 상단 제목 바

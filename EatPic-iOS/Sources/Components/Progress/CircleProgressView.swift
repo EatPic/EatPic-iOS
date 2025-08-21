@@ -72,7 +72,7 @@ struct CircleProgressView: View {
                         .frame(width: iconDiameter, height: iconDiameter)
                         .clipShape(Circle())                   // ✅ 원형 마스킹
                         .clipped()
-                        .allowsHitTesting(false)
+//                        .allowsHitTesting(false)
                 }
             }
             .frame(width: size, height: size)

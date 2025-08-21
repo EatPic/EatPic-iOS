@@ -22,24 +22,17 @@ enum Config {
         return baseURL
     }()
     
-    static let testImageURL: String = {
-        guard let testImageURL = Config.infoDictionary["TEST_IMG_URL"] as? String else {
-            fatalError()
+    static let appVersion: String = {
+        guard let appVersion = Config.infoDictionary["APP_VERSION"] as? String else {
+            fatalError("APP_VERSION not set in Info.plist")
         }
-        return testImageURL
+        return appVersion
     }()
-    
-static let appVersion: String = {
-    guard let appVersion = Config.infoDictionary["APP_VERSION"] as? String else {
-        fatalError("APP_VERSION not set in Info.plist")
-    }
-    return appVersion
-}()
 
-static let appBuild: String = {
-    guard let appBuild = Config.infoDictionary["APP_BUILD"] as? String else {
-        fatalError("APP_BUILD not set in Info.plist")
-    }
-    return appBuild
-}()
+    static let appBuild: String = {
+        guard let appBuild = Config.infoDictionary["APP_BUILD"] as? String else {
+            fatalError("APP_BUILD not set in Info.plist")
+        }
+        return appBuild
+    }()
 }
