@@ -249,6 +249,9 @@ struct OthersProfileView: View {
                         .scaledToFill()
                         .frame(width: imageSize, height: imageSize)
                         .clipped()
+                        .onTapGesture {
+                            container.router.push(.recomPicSingleCard(cardId: card.cardId))
+                        }
                         .task {
                             await viewModel
                                 .loadNextPageIfNeeded(currentCard: card)
