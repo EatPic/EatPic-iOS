@@ -47,7 +47,6 @@ class SignupFlowViewModel {
                 .signup(request: request)
             )
             let dto = try JSONDecoder().decode(SignupResponse.self, from: response.data)
-            print(dto)
         } catch {
             print("회원가입 실패:", error.localizedDescription)
             throw error

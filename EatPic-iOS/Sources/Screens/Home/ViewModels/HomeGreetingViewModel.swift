@@ -27,7 +27,6 @@ class HomeGreetingViewModel {
                 GreetingResponse.self, from: response.data
             )
             self.greetingResponse = dto
-            print("환영인사 API 호출 성공 🟢")
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }

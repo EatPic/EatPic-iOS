@@ -103,9 +103,3 @@ struct CalendarView: View {
         return formatter
     }
 }
-
-// #Preview {
-//    CalendarView(month: .now) { _ in
-//        print("cellTap")
-//    }
-//}

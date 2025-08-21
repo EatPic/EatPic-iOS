@@ -66,7 +66,6 @@ struct MealStatusView: View {
                 // 수정 모드일 때: 수정완료 버튼
                 Button(action: {
                     isEditMode = false
-                    print("수정완료")
                 }, label: {
                     Text("수정완료")
                         .font(.dsSubhead)

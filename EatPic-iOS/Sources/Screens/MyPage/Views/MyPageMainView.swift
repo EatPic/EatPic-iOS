@@ -182,7 +182,6 @@ struct MyPageMainView: View {
                 description: "지금까지 모은 뱃지 확인해보기",
                 countText: "\(badgeViewModel.getBadgeStatus())개"
             ) {
-                print("배지 클릭")
                 container.router.push(.myBadgeStatusAll)
             }
         }
