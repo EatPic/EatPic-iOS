@@ -30,6 +30,17 @@ private struct CommentItemDTO: Decodable {
     let createdAt: String
 }
 
+private struct CommentPostResultDTO: Decodable {
+    let commentId: Int
+    let nameId: String
+    let nickname: String
+    let profileImageUrl: String
+    let parentCommentId: Int?
+    let cardId: Int
+    let userId: Int
+    let content: String
+}
+
 @MainActor
 @Observable
 final class CommentViewModel {
@@ -38,6 +49,9 @@ final class CommentViewModel {
     var isShowingReportBottomSheet: Bool = false
     var commentToReport: Comment? = nil
     var selectedCardId: Int? = nil
+    
+    /// 댓글 등록 성공 시 카드 ID를 전달하는 콜백
+    var onCommentPosted: ((Int) -> Void)?
     
     // 페이징 관련 프로퍼티 추가
     private var nextCursor: Int? = nil
@@ -48,38 +62,80 @@ final class CommentViewModel {
     
     private let commentProvider: MoyaProvider<CommentTargetType>
     
+    private var currentUser: CommunityUser = .placeholder
+    
     init(container: DIContainer) {
         // APIProviderStore에서 제작한 함수 호출
         self.commentProvider = container.apiProviderStore.comment()
     }
     
+    /// 로그인 완료 후 실제 사용자 정보를 주입해 댓글 바인딩에 사용
+    func setCurrentUser(_ user: CommunityUser) {
+        currentUser = user
+    }
+    
     func postComment() async {
         guard let cardId = selectedCardId else { return }
-        guard !commentText.isEmpty else { return }
-        
-        let request = CommentRequest(
-            parentCommentId: nil,
-            content: commentText
-        )
-        
+        let text = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+
+        let request = CommentRequest(parentCommentId: nil, content: text)
+
         do {
             let response = try await commentProvider.requestAsync(
                 .postComment(cardId: cardId, request: request)
             )
-            
-            let dto = try JSONDecoder().decode(
-                APIResponse<CommentPostResult>.self,
-                from: response.data
+
+            let ok = (200...299).contains(response.statusCode)
+            guard ok else {
+                struct ServerErrorEnvelope: Decodable { let message: String? }
+                let msg = (try? JSONDecoder()
+                    .decode(ServerErrorEnvelope.self, from: response.data))?.message
+                    ?? "댓글 등록에 실패했습니다."
+                toastVM.showToast(title: msg)
+                return
+            }
+
+            // 디코딩: Swagger 스키마에 맞춘 최소 DTO만 사용
+            let decoded: CommentResponseRoot<CommentPostResultDTO>
+            = try decodeResponse(response.data)
+
+            // 바인딩: 새 댓글을 즉시 리스트 상단에 삽입 (낙관적 갱신 + 서버 ID 반영)
+            let me = CommunityUser(
+                id: decoded.result.userId,
+                nameId: decoded.result.nameId,
+                nickname: decoded.result.nickname,
+                imageName: currentUser.imageName,
+                introduce: currentUser.introduce,
+                type: .me,
+                isCurrentUser: true,
+                isFollowed: currentUser.isFollowed
             )
             
-            // 댓글 등록 성공 시 목록 새로고침
+            let newComment = Comment(
+                id: decoded.result.commentId,
+                user: me,
+                text: decoded.result.content,
+                time: "방금 전"
+            )
+            
+            comments.insert(newComment, at: 0)
+            
+            // 여기서 메인으로 카운트 증가 알림
+            onCommentPosted?(cardId)
+            
+            commentText = ""
+
+        } catch let error as DecodingError {
+            print("[CommentVM] post decode error: \(error.shortDescription)")
+            // 디코딩 실패 시 전체 새로고침으로 폴백 (백엔드가 바디를 주지 않는 경우 방어)
             commentText = ""
             await refreshComments()
-            
-            print("댓글 등록 성공:", dto.result)
-            
+        } catch let error as MoyaError {
+            print("[CommentVM] post network error: \(error.localizedDescription)")
+            toastVM.showToast(title: "네트워크 오류로 등록에 실패했습니다.")
         } catch {
-            print("댓글 등록 실패:", error.localizedDescription)
+            print("[CommentVM] post unknown error: \(error.localizedDescription)")
             toastVM.showToast(title: "댓글 등록에 실패했습니다.")
         }
     }
@@ -203,8 +259,8 @@ final class CommentViewModel {
     
     // 댓글 작성자가 현재 사용자인지 확인하는 메서드
     func isMyComment(_ comment: Comment) -> Bool {
-        let currentUser = dummyFeedUser.toCommunityUser()
-        return comment.user.id == currentUser.id
+        let me = currentUser
+        return comment.user.id == me.id
     }
     
     /// 공통 디코더 헬퍼

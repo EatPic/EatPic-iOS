@@ -37,8 +37,8 @@ final class OthersProfileViewModel {
             return user.nameId == "id3" ? true : false
         }
     
-    private var allUsers: [CommunityUser] = sampleUsers
-    private var allPicCards: [PicCard] = sampleCards
+    private var allUsers: [CommunityUser] = []
+    private var allPicCards: [PicCard] = []
     
     var picCardCount: Int {
         allPicCards.filter { $0.user.id == user.id }.count

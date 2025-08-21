@@ -28,7 +28,6 @@ final class DIContainer: ObservableObject {
     @Published var activeTab: TabCase = .home
     @Published var foregroundRefreshTick: Int = 0  // 포그라운드 복귀 갱신 신호
 
-    
     // MARK: - init
     
     init(

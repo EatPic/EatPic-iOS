@@ -185,6 +185,9 @@ final class CommunityMainViewModel: ObservableObject {
         self.commentVM = CommentViewModel(container: container)
         self.reactionProvider = container.apiProviderStore.reaction()
         self.commentProvider = container.apiProviderStore.comment()
+        self.commentVM.onCommentPosted = { [weak self] cardId in
+            self?.incrementCommentCount(for: cardId)
+        }
     }
     
     var currentUser: CommunityUser? {
@@ -201,6 +204,15 @@ final class CommunityMainViewModel: ObservableObject {
             filteredCards = []
         }
         await fetchFeeds()
+    }
+    
+    // CommunityMainViewModel.swift (class 내부)
+    func incrementCommentCount(for cardId: Int) {
+        if let idx = filteredCards.firstIndex(where: {
+            $0.cardId == cardId
+        }) {
+            filteredCards[idx].commentCount += 1
+        }
     }
     
     func fetchFeeds() async {
@@ -293,6 +305,11 @@ final class CommunityMainViewModel: ObservableObject {
         self.users = finalUsers
         if self.selectedUser == nil {
             self.selectedUser = allUser
+        }
+        if let me = finalUsers.first(where: {
+            $0.userType == .me
+        }) {
+            commentVM.setCurrentUser(me)
         }
     }
     

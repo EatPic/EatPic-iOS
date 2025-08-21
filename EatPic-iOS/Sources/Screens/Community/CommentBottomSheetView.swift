@@ -36,7 +36,8 @@ struct CommentBottomSheetView: View {
                                         time: comment.time
                                     )
                                     .task {
-                                        await viewModel.loadMoreIfNeeded(currentItemID: comment.id)
+                                        await viewModel.loadMoreIfNeeded(
+                                            currentItemID: comment.id)
                                     }
                                     .contextMenu {
                                         if viewModel.isMyComment(comment) {
