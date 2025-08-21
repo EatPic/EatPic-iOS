@@ -32,6 +32,10 @@ struct MyAllPicCardView: View {
                             .scaledToFill()
                             .frame(width: 118, height: 118)
                             .clipped()
+                            .onTapGesture {
+                                print("Tapped cardId:", card.id)
+                                container.router.push(.recomPicSingleCard(cardId: card.id))
+                            }
                             .task {
                                 await viewModel.loadNextPageIfNeeded(currentCard: card)
                             }
