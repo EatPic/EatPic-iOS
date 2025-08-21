@@ -106,6 +106,7 @@ struct MyPageMainView: View {
     private var middleIntroduction: some View {
         VStack {
             Text(viewModel.user?.introduce ?? "안녕하세요 밥 먹는거 좋아하는 잇콩입니다\n밥을 정말 좋아합니다.")
+                .fixedSize(horizontal: false, vertical: true)
         }
         .font(.dsCaption1)
         .multilineTextAlignment(.center)
