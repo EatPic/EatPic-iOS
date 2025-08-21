@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+let reportTypes = [
+    "욕설 또는 비방",
+    "음란성/선정적 내용",
+    "도배 또는 광고성 게시물",
+    "거짓 정보 또는 허위 사실",
+    "불쾌감을 주는 이미지 또는 언행",
+    "저작권 침해"
+]
+
 struct ReportBottomSheetView: View {
     @Binding var isShowing: Bool
     let onReport: (String) -> Void

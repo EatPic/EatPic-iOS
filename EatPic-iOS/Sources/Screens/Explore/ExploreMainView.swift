@@ -56,7 +56,7 @@ struct ExploreMainView: View {
         SearchBarView(
             text: $searchText,
             placeholder: "",
-            showsDeleteButton: false,
+            showsDeleteButton: true,
             backgroundColor: .white,
             strokeColor: .gray080,
             onSubmit: {
@@ -77,6 +77,16 @@ struct ExploreMainView: View {
                     mode = .searchResults
                 } else {
                     mode = .exploreFeed
+                }
+            },
+            onDeleteLeft: {
+                withAnimation {
+                    searchText = ""
+                    mode = .exploreFeed
+                }
+                
+                Task {
+                    await viewModel.fetch(limit: 20)
                 }
             }
         )

@@ -185,6 +185,9 @@ final class CommunityMainViewModel: ObservableObject {
         self.commentVM = CommentViewModel(container: container)
         self.reactionProvider = container.apiProviderStore.reaction()
         self.commentProvider = container.apiProviderStore.comment()
+        self.commentVM.onCommentPosted = { [weak self] cardId in
+            self?.incrementCommentCount(for: cardId)
+        }
     }
     
     var currentUser: CommunityUser? {
@@ -201,6 +204,15 @@ final class CommunityMainViewModel: ObservableObject {
             filteredCards = []
         }
         await fetchFeeds()
+    }
+    
+    // CommunityMainViewModel.swift (class 내부)
+    func incrementCommentCount(for cardId: Int) {
+        if let idx = filteredCards.firstIndex(where: {
+            $0.cardId == cardId
+        }) {
+            filteredCards[idx].commentCount += 1
+        }
     }
     
     func fetchFeeds() async {
@@ -294,6 +306,11 @@ final class CommunityMainViewModel: ObservableObject {
         if self.selectedUser == nil {
             self.selectedUser = allUser
         }
+        if let me = finalUsers.first(where: {
+            $0.userType == .me
+        }) {
+            commentVM.setCurrentUser(me)
+        }
     }
     
     func selectUser(_ user: CommunityUser) async {
@@ -351,8 +368,10 @@ final class CommunityMainViewModel: ObservableObject {
             }
             
         case .comment:
+            // 선택된 카드 ID를 댓글 VM에 전달하고 첫 페이지부터 로드
+            commentVM.selectedCardId = cardId
             isShowingCommentBottomSheet = true
-            // commentVM에서 카드/스레드 설정이 필요하면 여기서 설정
+            await commentVM.refreshComments()
             
         case .reaction(let selected, _):
             do {
