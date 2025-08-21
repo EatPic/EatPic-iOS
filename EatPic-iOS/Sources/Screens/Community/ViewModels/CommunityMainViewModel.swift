@@ -387,4 +387,14 @@ class CommunityMainViewModel {
             filteredCards[index].updateCommentCount(commentCount)
         }
     }
+    
+    func refreshFeeds(reset: Bool) async {
+        if reset {
+            nextCursor = nil
+            hasNextPage = true
+            filteredCards = []
+        }
+        await fetchFeeds()
+    }
+    
 }

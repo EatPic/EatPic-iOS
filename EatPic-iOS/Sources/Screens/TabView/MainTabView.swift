@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MainTabView: View {
     
+    @Environment(\.scenePhase) private var scenePhase
+    
     @EnvironmentObject private var container: DIContainer
     @State private var mediaPickerProvider: MediaPickerProvider
     
@@ -56,9 +58,32 @@ struct MainTabView: View {
                     if new == .writePost {
                         // 탭 전환 무효화 + 다이얼로그만 띄우기
                         selectedTab = previousTab
+                        
                         showPickerDialog = true
                     } else {
                         previousTab = new
+                        if new == .community {
+                            // 커뮤니티 탭 진입 전 선행 프리패치로 체감 지연 최소화
+                            Task { @MainActor in
+                                let viewModel = container.getCommunityMainVM()
+                                await viewModel.refreshFeeds(reset: false)
+                            }
+                        }
+                    }
+                }
+                // 포그라운드 복귀: 현재 탭이 커뮤니티면 tick 증가 → 커뮤니티 화면에서 .task(id:)가 반응
+                .onChange(of: scenePhase) { _, phase in
+                    guard phase == .active else { return }
+                    if selectedTab == .community {
+                        Task { @MainActor in
+                            container.bumpForegroundRefresh()
+                        }
+                    }
+                }
+                // 앱이 탭 화면에 진입했을 때 최초 1회 activeTab 동기화(안전장치)
+                .task {
+                    await MainActor.run {
+                        container.setActiveTab(selectedTab)
                     }
                 }
                 .task {

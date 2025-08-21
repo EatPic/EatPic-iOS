@@ -13,7 +13,7 @@ struct CommunityMainView: View {
     @State private var viewModel: CommunityMainViewModel
     
     init(container: DIContainer) {
-        self._viewModel = .init(initialValue: .init(container: container))
+        self._viewModel = .init(initialValue: container.getCommunityMainVM())
     }
     
     var body: some View {
@@ -180,9 +180,17 @@ struct CommunityMainView: View {
                 )
             }
         }
-        .task {
-            await viewModel.fetchFeeds()
+        // CommunityMainView 루트 뷰 modifier
+        .task { await viewModel.refreshFeeds(reset: true) }  // 최초 1회
+        .task(id: container.activeTab) {
+            guard container.activeTab == .community else { return }
+            await viewModel.refreshFeeds(reset: false)
         }
+        .task(id: container.foregroundRefreshTick) {
+            guard container.activeTab == .community else { return }
+            await viewModel.refreshFeeds(reset: false)
+        }
+        .refreshable { await viewModel.refreshFeeds(reset: true) }
     }
     
     private func lastContentView() -> some View {

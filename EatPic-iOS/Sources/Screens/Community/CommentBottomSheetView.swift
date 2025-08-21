@@ -74,13 +74,10 @@ struct CommentBottomSheetView: View {
             .presentationDetents([.large, .fraction(0.7)])
             .presentationDragIndicator(.hidden)
         }
-//        .task(id: viewModel.selectedCardId) {
-//            if viewModel.selectedCardId != nil {
-//                await viewModel.fetchComments()
-//            }
-//        }
-        .task {
-            await viewModel.fetchComments()
+        .task(id: viewModel.selectedCardId) {
+            if viewModel.selectedCardId != nil {
+                await viewModel.fetchComments()
+            }
         }
     }
     
