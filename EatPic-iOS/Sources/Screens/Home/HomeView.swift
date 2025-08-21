@@ -75,7 +75,8 @@ struct HomeView: View {
                     badgeTitle: badge.name,
                     badgeDescription: badgeDetailViewModel.description(
                         for: badge.userBadgeId,
-                        fallbackName: badge.name)
+                        fallbackName: badge.name),
+                    progressOverride: badgeDetailViewModel.values(for: badge.userBadgeId)
                 )
                 // 모달 표시 시 설명 지연 로드
                 .task(id: badge.userBadgeId) {

@@ -11,4 +11,6 @@ import Foundation
 struct BadgeDetailDescDTO: Codable {
     let userBadgeId: Int
     let badgeDescription: String
+    let currentValue: Int
+    let conditionValue: Int
 }

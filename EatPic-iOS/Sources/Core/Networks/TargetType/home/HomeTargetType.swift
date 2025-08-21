@@ -19,7 +19,7 @@ extension HomeTargetType: APITargetType {
     var path: String {
         switch self {
         case .fetchCalendar:
-            return "/api/calendar/meals"
+            return "/api/calendar"
         case .greetingMessage:
             return "/api/greeting"
         case .badgeList:

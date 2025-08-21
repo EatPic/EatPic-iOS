@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 홈화며 추천 픽카드 응답 DTO
 struct RecommendedCardsResponse: Codable {
     let isSuccess: Bool
     let code: String

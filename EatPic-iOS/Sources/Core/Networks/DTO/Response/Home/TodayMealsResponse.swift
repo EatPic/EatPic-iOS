@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 홈화면 오늘의 식사 조회 응답 DTO
 struct TodayMealsResponse: Codable {
     let isSuccess: Bool
     let code: String

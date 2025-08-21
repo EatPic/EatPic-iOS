@@ -20,10 +20,25 @@ final class CalendarScrollViewModel {
     /// 이미 성공적으로 로드한 (연, 월) 키 캐시. 중복 호출 방지 용도입니다.
     private var loaded: Set<YearMonth> = []
     
+    /// 셀 렌더링용: 날짜별 이미지 메타
+    var metaByDate: [Date: EatPicDayMeta] = [:]
+    
     /// - Parameter container: DI 컨테이너. 여기서 필요한 Provider를 주입받습니다.
     init(container: DIContainer) {
         self.homeProvider = container.apiProviderStore.home()
     }
+    
+    // MARK: - Func
+    
+    // 서버 "yyyy-MM-dd" 파서
+    private static let yyyyMMdd: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0) // 날짜 문자열만이므로 UTC로 파싱
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
     
     /// 특정 연/월의 캘린더 데이터를 요청합니다.
     /// - Parameters:
@@ -39,15 +54,38 @@ final class CalendarScrollViewModel {
         do {
             let response = try await homeProvider.requestAsync(
                 .fetchCalendar(year: year, month: month))
-            let data = try JSONDecoder().decode(
+            let dto = try JSONDecoder().decode(
                 APIResponse<[CalendarResponse]>.self, from: response.data)
-            
-            guard data.isSuccess else {
-                throw APIError.serverError(code: response.statusCode, message: data.message)
+            guard dto.isSuccess else {
+                throw APIError.serverError(
+                    code: response.statusCode,
+                    message: dto.message)
             }
             
-            await markLoaded(key)
-            print(data.result) // 추후 실제 api 연결시 ui 연결 예정 - 리버/이재원
+            // 1) 백그라운드에서 병합 계산
+            var merged = self.metaByDate
+            let cal = Calendar.current
+            for item in dto.result {
+                guard let date = Self.yyyyMMdd.date(from: item.date) else {
+                    continue
+                }
+                let dayKey = cal.startOfDay(for: date) // 로컬 자정으로 정규화
+                merged[dayKey] = EatPicDayMeta(
+                    imageURL: item.imageUrl,
+                    cardId: item.cardId
+                )
+            }
+            
+            // 2) await 전에 불변 스냅샷 생성
+            let resultMap = merged
+            let loadedKey = key
+            
+            // 3) MainActor에서 UI 상태 갱신
+            await MainActor.run {
+                self.metaByDate = resultMap
+                self.loaded.insert(loadedKey) // 성공 시에만 markLoaded
+            }
+            print("캘린더 API 호출 성공🟢")
         } catch let error as MoyaError {
             let msg = readable(error)
             print("MoyaError:", msg)
@@ -65,7 +103,10 @@ final class CalendarScrollViewModel {
     private func readable(_ error: MoyaError) -> String {
         switch error {
         case let .statusCode(res): return "서버 오류(\(res.statusCode))"
-        case let .underlying(err, _): return "네트워크 오류: \(err.localizedDescription)"
+        case let .underlying(
+            err,
+            _
+        ): return "네트워크 오류: \(err.localizedDescription)"
         default: return "요청 실패: \(error.localizedDescription)"
         }
     }

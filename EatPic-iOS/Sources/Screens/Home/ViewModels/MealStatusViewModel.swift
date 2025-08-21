@@ -45,7 +45,8 @@ class MealStatusViewModel {
                     return MealStatusModel(mealSlot: slot, isRecorded: false)
                 }
             }
-
+            print("오늘의 식사 현황 API 호출 성공🟢")
+            print(mealStatus)
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }

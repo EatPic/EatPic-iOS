@@ -82,7 +82,7 @@ final class MyBadgeStatusViewModel: ObservableObject {
                 progressRate: $0.progressRate,
                 achieved: $0.achieved
             ) }
-            print(badgeItems)
+            print("badgeStatus API 호출 성공🟢")
         } catch {
             print("요청 또는 디코딩 실패:", error.localizedDescription)
         }
