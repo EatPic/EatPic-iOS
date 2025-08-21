@@ -105,7 +105,7 @@ struct MyPageMainView: View {
     /// 마이페이지 프로필 사용자 한줄소개 텍스트
     private var middleIntroduction: some View {
         VStack {
-            Text(viewModel.user?.introduce ?? "안녕하세요 밥 먹는거 좋아하는 잇콩입니다\n밥을 정말 좋아합니다.")
+            Text(viewModel.user?.introduce ?? "")
                 .fixedSize(horizontal: false, vertical: true)
         }
         .font(.dsCaption1)
