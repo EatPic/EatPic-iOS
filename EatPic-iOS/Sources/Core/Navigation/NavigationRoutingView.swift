@@ -155,7 +155,7 @@ struct NavigationRoutingView: View {
                 )
             }
         case .userProfile(let user):
-            OthersProfileView(user: user)
+            OthersProfileView(user: user, container: container)
         case .followList(let selected):
             FollowListView(selected: selected)
         case .exploreSelected(let cardId):
