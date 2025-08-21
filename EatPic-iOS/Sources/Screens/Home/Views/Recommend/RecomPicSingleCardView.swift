@@ -7,10 +7,12 @@
 
 import SwiftUI
 
-struct RecomPicCardView: View {
+struct RecomPicSingleCardView: View {
     @State private var viewModel: RecomPicSingleCardViewModel
     private let cardId: Int
 
+    @EnvironmentObject private var container: DIContainer
+    
     init(container: DIContainer, cardId: Int) {
         self.cardId = cardId
         _viewModel = State(initialValue: RecomPicSingleCardViewModel(container: container))
@@ -28,7 +30,18 @@ struct RecomPicCardView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     },
-                    onProfileTap: nil,
+                    onProfileTap: {
+                        container.router.push(.userProfile(user: card.user))
+                    },
+                    onLocationTap: { latitude, longitude, locationText in
+                        container.router.push(
+                        .storeLocation(
+                        latitude: latitude,
+                        longitude: longitude,
+                        title: locationText
+                            )
+                        )
+                    },
                     toastVM: ToastViewModel(),
                     onItemAction: nil
                 )
@@ -56,4 +69,3 @@ struct RecomPicCardView: View {
         }
     }
 }
-

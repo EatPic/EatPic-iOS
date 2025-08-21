@@ -80,7 +80,7 @@ struct CalendarScrollView: View {
                                 month: month,
                                 viewModel: calendarVM,
                                 cellTapAction: { selectedDate in
-                                    print("Selected:", selectedDate)
+                                    
                                 }
                             )
                             .background(alignment: .center) {
@@ -150,7 +150,6 @@ struct CalendarScrollView: View {
         ///     불필요한 요청을 줄이고, 사용자 체감 성능을 개선합니다.
         .task(id: visibleYM) {
             guard let yearAndmonth = visibleYM else { return }
-            print(yearAndmonth)
             await calendarScrollVM.fetchCalendarData(
                 year: yearAndmonth.year, month: yearAndmonth.month)
         }

@@ -70,15 +70,15 @@ struct FollowListView: View {
         .customCenterNavigationBar {
             Text("아이디") // 커스텀 네비게이션바 제목
         }
-        // 화면 진입/유저 변경 시 로드
+        // ✅ 화면 진입 시 팔로워/팔로잉 동시에 미리 로드 → 세그먼트 숫자 둘 다 즉시 반영
         .task(id: userId) {
-            await viewModel.fetchFollowList(userId: userId)
+            await viewModel.preloadBoth(userId: userId)
         }
-        // 탭(팔로워/팔로잉) 변경 시 재로드
+        // ✅ 탭 전환 시 해당 탭만 새로 로드 (검색어 반영 포함)
         .onChange(of: viewModel.selected) {
             Task { await viewModel.fetchFollowList(userId: userId) }
         }
-        // 당겨서 새로고침
+        // (옵션) 당겨서 새로고침: 현재 탭만 갱신
         .refreshable {
             await viewModel.fetchFollowList(userId: userId)
         }

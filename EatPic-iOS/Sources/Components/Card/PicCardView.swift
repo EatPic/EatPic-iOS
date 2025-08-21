@@ -48,15 +48,15 @@ struct PicCardView<Content: View>: View {
         VStack(alignment: .leading, spacing: 16) {
             // 카드 상단 업로드 정보(프로필, 시간)
             HStack {
-                if let profileImage = card.user.profileImage {
-                    profileImage
-                        .resizable()
+                if let profileImage = card.user.profileImageUrl {
+                    Rectangle()
+                        .remoteImage(url: profileImage)
                         .scaledToFit()
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
                 } else {
-                    Image(.Community.itcong)
-                        .resizable()
+                    Rectangle()
+                        .remoteImage(url: UserProfileConstants.defaultImage)
                         .scaledToFit()
                         .frame(width: 36, height: 36)
                         .onTapGesture { onProfileTap?() }
@@ -157,7 +157,6 @@ struct PicCardBackView: View {
             recipeDescription: card.recipe ?? "레시피 정보가 없습니다.",
             linkURL: card.recipeUrl,
             naviButtonAction: {
-                print("내비게이션 버튼 탭")
                 // 옵셔널 바인딩을 사용하여 안전하게 값 언래핑
                 if let latitude = card.latitude,
                    let longitude = card.longitude,

@@ -82,7 +82,6 @@ struct CalenderCardView: View {
                 CalenderNavigationButton(
                     buttonName: "레시피 링크"
                 ) {
-                    print("레시피 링크 열기")
                     // TODO: [25.07.24] 담아놓은 레시피 Link 연결하여 브라우저에서 열기 – 비엔/이은정
                 }
                 
@@ -92,7 +91,6 @@ struct CalenderCardView: View {
                 CalenderNavigationButton(
                     buttonName: "식당 위치"
                 ) {
-                    print("식당 위치 뷰로 이동")
                     // TODO: [25.07.29] StoreLocationView로 Navigation – 비엔/이은정
                 }
                 
@@ -128,7 +126,6 @@ struct CalenderCardView: View {
             
             Button {
                 // TODO: [25.07.23] 해당 피드 뷰로 Navigation – 비엔/이은정
-                print("해당 피드 바로가기 버튼 클릭")
             } label: {
                 HStack {
                     Text("해당 피드 바로가기")

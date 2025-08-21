@@ -39,7 +39,6 @@ struct MyBadgeStatusHomeView: View {
             
             Button(action: {
                 container.router.push(.myBadgeStatusAll)
-                print("전체보기")
             }, label: {
                 Text("전체보기 >")
                     .foregroundStyle(Color.green060)
