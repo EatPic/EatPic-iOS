@@ -172,7 +172,7 @@ struct NavigationRoutingView: View {
         case .blockedAccount:
             BlockedAccountView()
         case .myAllPicCard:
-            MyAllPicCardView()
+            MyAllPicCardView(container: container)
         case .profileEdit:
             ProfileEditView()
         case .savedPicCard:
