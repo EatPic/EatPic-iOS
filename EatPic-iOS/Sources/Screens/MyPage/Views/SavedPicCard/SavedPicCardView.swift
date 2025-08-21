@@ -77,7 +77,7 @@ struct SavedPicCardView: View {
         }
         .pickerStyle(.segmented)
         .padding(.horizontal, 16)
-        .onChange(of: viewModel.selectedTab) { _, newValue in
+        .onChange(of: viewModel.selectedTab) {
             Task {
                 await viewModel.onTabChanged()
             }
